@@ -125,6 +125,7 @@ while($line_forward = <$INFILE_FORWARD>) {
     if( length($seq) > $count_correct_alphabet ) {#keeps track of the sequences with the wrong alphabet (i.e., that Ns)
         $wrong_alphabet++;
         $wrong_alphabet{"$seq"}++;
+print STDERR "$seq has wrong alphabet\n";
         next FILE_LINE;
     }
     # now correct length
