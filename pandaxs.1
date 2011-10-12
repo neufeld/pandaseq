@@ -1,0 +1,38 @@
+.\" Authors: Andre Masella
+.TH pandaxs 1 "June 2011" "2.0" "USER COMMANDS"
+.SH NAME 
+pandaxs \- PAired-eND Assembler for DNA sequences plugin compiler
+.SH SYNOPSIS
+.B pandaxs
+.I source.c
+.I FLAGS
+.SH DESCRIPTION
+PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. Sequences can be validated by arbitrary user modules.
+.B pandaxs
+facilitiates the compilation of such modules using GNU
+.BR libtool(1)
+and the installed compiler.
+.SH OPTIONS
+.TP
+source.c
+A C program source, with the structure defined below, to be compiled.
+.TP
+FLAGS
+If the module requires libraries or other C files, they may be included. In fact, any typical CFLAGS or LDFLAGS may be included.
+.SH FILES
+A required header file
+.B pandaseq.h
+should be available and a sample module is included in the documentation directory.
+.SH EXAMPLES
+A typical module will include three functions \fBCHECK\fR, \fBINIT\fR, and \fBCLEANUP\fR and can define \fBHELP\fR.
+
+\fBCHECK\fR is called for each sequence. The sequence is available in a variable called \fBsequence\fR which is a pointer to a \fBresultseq\fR. Consult \fBpandaseq.h\fR for more information about the structure; though it includes the raw sequence and statistics about the sequence. If the sequence is to be kept, a non-zero value should be returned.
+
+\fBINIT\fR is called once to initialise the module upon loading. Arguments can be provided to the module upon loading and will be available as a string called \fBargs\fR (e.g., "-C /usr/lib/pandaseq/mynewmodule.so:foo=bar", then args will be "foo=bar"). If a module returns zero, it has indicated that it has failed to intialise properly and the assembler will abort. If a module fails to load, the \fBCLEANUP\fR of any modules already loaded will be called. This function is optional.
+
+\fBCLEANUP\fR is called once upon completion to perform any needed cleanup. This function is optional.
+
+\fBHELP\fR defines a short description of the plugin and usage information. This is optional.
+.SH SEE ALSO
+.BR libtool (1),
+.BR pandaseq (1).

@@ -1,0 +1,40 @@
+#!@SHELL@
+
+for each
+do
+	if [[ "${each}" == -* ]]
+	then
+		PT="${PT} ${each}"
+	else
+		if [ "x${SRC}" = x ]
+		then
+			SRC="${each}"
+			MOD=$(basename "${each}" .c)
+		else
+			SRC="${SRC} ${each}"
+		fi
+	fi
+done
+
+if [ "x${SRC}" = x ]
+then
+	echo "Error: No C file provided."
+	echo "Usage: $0 module.c supplementary.c -lextralib ..."
+	exit 1
+fi
+
+if [ $(uname -s) == Darwin ]
+then
+	LIBTOOL=glibtool
+else
+	LIBTOOL=libtool
+fi
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+${LIBTOOL} --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@PACKAGE@ -I. @CPPFLAGS@ @CFLAGS@ -c -o "${MOD}.lo" $SRC $PT
+${LIBTOOL} --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex '_LTX_(init|check|destroy|desc|usage)$' @LDFLAGS@ -rpath @libdir@/@PACKAGE@ -o "${MOD}.la" "${MOD}.lo" $PT @NO_UNDEFINED@
+if [ -d "@libdir@/@PACKAGE@" -a -w "@libdir@/@PACKAGE@" ]
+then
+	${LIBTOOL} --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@/${MOD}.la"
+fi

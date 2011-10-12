@@ -1,4 +1,23 @@
-pandaseq
---------
+PANDASEQ
+========
 
-PAired-eND Assembly of Illumina sequences
+PANDASEQ is a program to align Illumina reads, optionally with PCR primers embedded in the sequence, and reconstruct an overlapping sequence.
+
+INSTALLATION
+------------
+
+Binary packages are available for recent versions of MacOS and Linux. Installing from source is not too difficult.
+
+Development packages for zlib and libbz2 are needed, as is a standard compiler environment. On Ubuntu, this can be installed via
+	sudo apt-get install build-essentials zlib1g-dev libbz2-dev
+On MacOS, the Apple Developer tools and Fink must be installed, then
+	sudo fink install bzip2-dev
+
+After the support packages are installed, one should be able to do:
+	autoreconf && ./configure && make && sudo make install
+
+USAGE
+-----
+
+Please consult the manual page by invoking
+	man pandaseq

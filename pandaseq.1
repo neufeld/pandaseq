@@ -1,0 +1,133 @@
+.\" Authors: Andre Masella
+.TH pandaseq 1 "June 2011" "2.0" "USER COMMANDS"
+.SH NAME 
+pandaseq \- PAired-eND Assembler for DNA sequences
+.SH SYNOPSIS
+.B pandaseq
+.B \-f
+.I forward.fastq
+.B \-r 
+.I reverse.fastq
+[
+.B \-j 
+] [
+.B \-p
+.I forwardprimer
+] [
+.B \-q
+.I reverseprimer 
+] [
+.B \-t
+.I threshold
+] [
+.B \-N 
+] [
+.B \-o 
+.I minoverlap
+] [ 
+.B \-l
+.I minlen
+] [
+.B \-L
+.I maxlen
+] [
+.B \-C
+.I module
+] [
+.B \-6 
+] [
+.B \-F 
+]
+.SH DESCRIPTION
+PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The assembler reads two files in FASTQ format with quality information. If amplification primers were used (e.g., to isolate a variable region of the 16S gene, or the constant regions around zinc finger binding residues), they can be removed from the sequence. The final sequence will correct any uncalled bases in the overlapping region using the complementary strand. When mismatches occur in the overlapping region, the base with the better quality score is chosen.
+
+The algorithm is as follows:
+.IP 1.
+Find the positions of the forward and reverse primers over threshold.
+.IP 2.
+Pick and overlap to maximise the probability of the forward and reverse reads having come from a single piece of DNA.
+.IP 3.
+Identify the masking of the end of the read with the quality score \fBB\fR.
+.IP 4.
+Construct an assembled sequence between the primers and calculate the quality.
+.IP 5.
+Check for various constraints, including quality, length, uncalled bases, and user-supplied modules.
+.SH OPTIONS
+.TP
+\-C module
+Loads an optional validation module to verify sequences are valid before emitting them. See below for more information.
+.TP
+\-L maxlen 
+Sets maximum length for a sequence. Any sequences longer, after primers are removed, will be discarded.
+.TP
+\-N
+Eliminate all sequences with uncalled nucleotides in the output. Otherwise, during assembly, uncalled bases\ (Ns) from unpaired regions may be emitted.
+.TP
+\-f forward.fastq
+The location of the forward reads in FASTQ format. The file may be plain FASTQ, or compressed with
+.BR gzip (1)
+or
+.BR bzip2 (1).
+Files compressed with gzip are automatically detected. Files compressed with
+.BR bzip2 (1)
+will only be decompressed with the
+.B -j
+option.
+.TP
+\-j
+Input files specified be
+.B -f
+and 
+.B -r
+are compressed by
+.BR bzip2 (1).
+.TP
+\-l minlen
+Sets the minimum length for a sequence. By default, all sequences are kept. With this option, sequences shorter than theoretically possible can be discarded.
+.TP
+\-o minoverlap
+Sets the minimum overlap between forward and reverse reads. By default, this is at least one nucleotide of overlap, but this alignment tends to score poorly.
+.TP
+\-p forwardprimer
+Strip out primers from the start of the sequence. If the data contains a forward primer (e.g., a conserved region to amplify a 16S variable region), specifying it here will cause the primer to be located in the read and the primer, and any sequence before it, will be discarded. It is also possible to specify a number and the same number of leading bases will be stripped from the sequence. This is useful if the sequence has many uncalled bases in the primer region.
+.TP
+\-q reverseprimer
+Strip out primers from the end of the sequence. The primer is specified as it appears in the reverse read.
+.TP
+\-r reverse.fastq
+FASTQ file containing the reverse reads. See
+.B -f
+for more information.
+.TP
+\-t threshold
+The score, between zero and one, that a sequence must meet to be kept in the output. This score is the geometric mean of the bases emitted.
+.TP
+\-6
+Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
+.TP
+\-F
+Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this flag will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33. The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application.
+.SH EXAMPLES
+This will assemble a data from a run in lane 7:
+
+.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 > s_7.fasta
+
+This will assemble data from lane 7, stripping conserved regions around the prokaryotic 16S V3 region and store the results in
+.B s_7.fastq.bz2
+and store the logging output
+.B s_7.log.bz2.
+
+.B (pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG | bzip2 > s_7.fasta.bz2) 2>&1 | bzip2 -c > s_7.log.bz2
+.SH VALIDATON MODULES
+Validation modules are capable of verifying sequences. For example, one could write a module to check secondary structure of a RNA, or that a coding sequence contains no stop codons. To create a module, please read the source distribution. Invoking a module can be done using the
+.B -C
+switch on the command line. As many modules as desired may be added. The path to the module may be followed by a colon (on Windows, a semicolon) and arguments. For example, the following will pass the data through a hypothetical compensatory checker:
+
+.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C compensatory.so:1=12,13=15 > s_7.fasta
+
+Modules can be compiled using
+.BR pandaxs (1).
+.SH SEE ALSO
+.BR pandaxs (1),
+.BR gzip (1),
+.BR bzip2 (1).

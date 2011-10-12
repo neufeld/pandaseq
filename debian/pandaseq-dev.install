@@ -1,0 +1,4 @@
+usr/bin/pandaxs
+usr/share/man/man1/pandaxs.1
+usr/include/*
+usr/share/doc/pandaseq/sample.c

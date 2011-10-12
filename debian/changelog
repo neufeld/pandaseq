@@ -1,0 +1,5 @@
+pandaseq (2.0) lucid; urgency=low
+
+  * First version in C
+
+ -- Andre Masella <andre@masella.name>  Thu, 14 Apr 2011 12:23:33 -0400

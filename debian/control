@@ -1,0 +1,23 @@
+Source: pandaseq
+Section: science
+Maintainer: Andre Masella <andre@masella.name>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, zlib1g-dev, libbz2-dev, libltdl-dev, libtool
+Priority: extra
+Standards-Version: 3.9.1
+Homepage: http://github.com/neufeld/pandaseq
+
+Package: pandaseq
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Pair-end read assembler
+ PANDA assembles forward and reverse reads from Illumina FASTQ data
+
+Package: pandaseq-dev
+Architecture: any
+Depends: ${misc:Depends}, pandaseq (= ${binary:Version}), libtool
+Description: Pair-end read assembler -- Development tools
+ PANDA assembles forward and reverse reads from Illumina FASTQ data
+ .
+ This package contains development tools for creating PANDAseq
+ validation modules. If you are only assembling sequences, this is
+ not necessary.
