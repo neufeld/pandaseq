@@ -31,6 +31,7 @@ struct module_t {
 	int (*init)(char* args);
 	int api;
 	char **version;
+	long rejected;
 	module_t *next;
 };
 
@@ -41,6 +42,7 @@ int module_checkseq(resultseq * sequence)
 	module_t *current = modules;
 	while (current != NULL) {
 		if (!current->check(sequence)) {
+			current->rejected++;
 			return 0;
 		}
 		current = current->next;
@@ -53,6 +55,7 @@ int module_precheckseq(seqidentifier *id, char const *forward, char const *rever
 	module_t *current = modules;
 	while (current != NULL) {
 		if (current->precheck != NULL && !current->precheck(id, forward, reverse)) {
+			current->rejected++;
 			return 0;
 		}
 		current = current->next;
@@ -113,6 +116,8 @@ void module_cleanup()
 		if (modules->destroy != NULL) {
 			modules->destroy();
 		}
+		const lt_dlinfo *info = lt_dlgetinfo(modules->handle);
+		fprintf(stderr, "STAT\t%s\t%ld\n", info == NULL ? "unknown" : info->name, modules->rejected);
 		lt_dlclose(modules->handle);
 		free(modules);
 		modules = next;
@@ -166,6 +171,7 @@ int module_load(char *path)
 	m->args = args;
 	m->init = init;
 	m->api = *api;
+	m->rejected = 0;
 	*(void **)(&m->init) = lt_dlsym(handle, "init");
 	*(void **)(&m->precheck) = lt_dlsym(handle, "precheck");
 	*(void **)(&m->destroy) = lt_dlsym(handle, "destroy");
