@@ -26,13 +26,21 @@ case "$host" in
 *-mingw*)
 	NO_UNDEFINED='-no-undefined'
 	LDFLAGS="$LDFLAGS -Wl,-static"
+	MOD_LIBTOOL=libtool
 	;;
 *openbsd*|*freebsd*)
 	NO_UNDEFINED=''
+	MOD_LIBTOOL=libtool
+	;;
+*darwin*|*Darwin*)
+	os_win32=no
+	NO_UNDEFINED='-no-undefined'
+	MOD_LIBTOOL=glibtool
 	;;
 *)
 	os_win32=no
 	NO_UNDEFINED='-no-undefined'
+	MOD_LIBTOOL=libtool
 	;;
 esac
 AC_MSG_RESULT([$NO_UNDEFINED])
@@ -46,6 +54,7 @@ CPPFLAGS="$MODULE_CPPFLAGS"
 CFLAGS="$MODULE_CFLAGS"
 LDFLAGS="$MODULE_LDFLAGS"
 AC_SUBST(NO_UNDEFINED)
+AC_SUBST(MOD_LIBTOOL)
 AC_CONFIG_FILES([ Makefile ])
 AC_CONFIG_FILES([pandaxs:pandaxs.in], [chmod +x pandaxs])
 AC_OUTPUT

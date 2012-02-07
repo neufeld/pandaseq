@@ -23,18 +23,11 @@ then
 	exit 1
 fi
 
-if [ $(uname -s) == Darwin ]
-then
-	LIBTOOL=glibtool
-else
-	LIBTOOL=libtool
-fi
-
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-${LIBTOOL} --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@PACKAGE@ -I. @CPPFLAGS@ @CFLAGS@ -c -o "${MOD}.lo" $SRC $PT
-${LIBTOOL} --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex '_LTX_(init|check|destroy|desc|usage)$' @LDFLAGS@ -rpath @libdir@/@PACKAGE@ -o "${MOD}.la" "${MOD}.lo" $PT @NO_UNDEFINED@
+@MOD_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@PACKAGE@ -I. @CPPFLAGS@ @CFLAGS@ -c -o "${MOD}.lo" $SRC $PT
+@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@ -o "${MOD}.la" "${MOD}.lo" $PT @NO_UNDEFINED@
 if [ -d "@libdir@/@PACKAGE@" -a -w "@libdir@/@PACKAGE@" ]
 then
-	${LIBTOOL} --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@/${MOD}.la"
+	@MOD_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@/${MOD}.la"
 fi
