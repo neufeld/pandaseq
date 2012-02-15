@@ -14,7 +14,7 @@ On MacOS, the Apple Developer tools and Fink must be installed, then
 	sudo fink install bzip2-dev
 
 After the support packages are installed, one should be able to do:
-	autoreconf && ./configure && make && sudo make install
+	./autogen.sh && ./configure && make && sudo make install
 
 USAGE
 -----
