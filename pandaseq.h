@@ -28,7 +28,7 @@ typedef struct {
 	int tile;
 	int x;
 	int y;
-	char tag[6];
+	char tag[10];
 } seqidentifier;
 
 /* Structure containing a sequence */
