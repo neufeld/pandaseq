@@ -1,4 +1,7 @@
 usr/bin/pandaxs
-usr/share/man/man1/pandaxs.1
 usr/include/*
+usr/lib/*.so
+usr/lib/pkgconfig
 usr/share/doc/pandaseq/sample.c
+usr/share/man/man1/pandaxs.1
+usr/share/vala

@@ -1,4 +1,4 @@
-pandaseq (2.0) lucid; urgency=low
+pandaseq (2.0~ppa0) lucid; urgency=low
 
   * First version in C
 

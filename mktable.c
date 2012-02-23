@@ -1,5 +1,5 @@
 /* PANDAseq -- Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
-     Copyright (C) 2011  Andre Masella
+     Copyright (C) 2011-2012  Andre Masella
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

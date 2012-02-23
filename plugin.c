@@ -1,5 +1,5 @@
 /* PANDAseq -- Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
-     Copyright (C) 2011  Andre Masella
+     Copyright (C) 2011-2012  Andre Masella
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,121 +18,108 @@
 #include<ltdl.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include"pandaseq.h"
-#include"plugin.h"
+#include"assembler.h"
+#ifdef HAVE_PTHREAD
+#include <pthread.h>
+/* All modules share a single mutex to control reference counts */
+static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
+#endif
 
-typedef struct module_t module_t;
-struct module_t {
+struct panda_module {
+	size_t refcnt;
+
+	PandaCheck check;
+	PandaPreCheck precheck;
+	PandaDestroy destroy;
+	void *user_data;
+
 	lt_dlhandle handle;
-	int (*check) (resultseq * sequence);
-	int (*precheck) (seqidentifier *id, char const *forward, char const *reverse);
-	void (*destroy) ();
+	char *name;
+	bool name_free;
 	char *args;
-	int (*init)(char* args);
+
 	int api;
 	char **version;
-	long rejected;
-	module_t *next;
 };
 
-module_t *modules = NULL;
-
-int module_checkseq(resultseq * sequence)
+bool module_checkseq(PandaAssembler assembler, panda_result_seq *sequence)
 {
-	module_t *current = modules;
-	while (current != NULL) {
-		if (!current->check(sequence)) {
-			current->rejected++;
-			return 0;
+	int it;
+	for (it = 0; it < assembler->modules_length; it++) {
+		PandaModule module = assembler->modules[it];
+		if (!module->check(sequence, module->user_data)) {
+			assembler->rejected[it]++;
+			return false;
 		}
-		current = current->next;
 	}
-	return 1;
+	return true;
 }
 
-int module_precheckseq(seqidentifier *id, char const *forward, char const *reverse)
+bool module_precheckseq(PandaAssembler assembler, panda_seq_identifier *id, const panda_qual *forward, size_t forward_length, const panda_qual *reverse, size_t reverse_length)
 {
-	module_t *current = modules;
-	while (current != NULL) {
-		if (current->precheck != NULL && !current->precheck(id, forward, reverse)) {
-			current->rejected++;
-			return 0;
+	int it;
+	for (it = 0; it < assembler->modules_length; it++) {
+		PandaModule module = assembler->modules[it];
+		if (!module->precheck(id, forward, forward_length, reverse, reverse_length, module->user_data)) {
+			assembler->rejected[it]++;
+			return false;
 		}
-		current = current->next;
 	}
-	return 1;
+	return true;
 }
 
-void module_help()
+void module_init(PandaAssembler assembler)
 {
-	module_t *current = modules;
-	while (current != NULL) {
-		const lt_dlinfo *info = lt_dlgetinfo(current->handle);
-		char **desc = lt_dlsym(current->handle, "desc");
-		char **usage = lt_dlsym(current->handle, "usage");
-		fprintf(stderr, "%s: %s\n", info == NULL ? "unknown" : info->name, desc == NULL ? "no description" : *desc);
-		if (usage)
-			fprintf(stderr, "\tUsage: %s\n", *usage);
-		if (info)
-			fprintf(stderr, "\tFile: %s\n", info->filename);
-		if (current->version)
-			fprintf(stderr, "\tVersion: %s\n", *(current->version));
-		current = current->next;
-	}
-}
-
-void module_version()
-{
-	module_t *current = modules;
-	fprintf(stderr, "API: %d\n", PANDA_API);
-	while (current != NULL) {
-		const lt_dlinfo *info = lt_dlgetinfo(current->handle);
-		char **desc = lt_dlsym(current->handle, "desc");
-		fprintf(stderr, "%s\n\tFile: %s\n\tVersion: %s\n\tAPI: %d\n", info == NULL ? "unknown" : info->name, info == NULL ? "unknown" : info->filename, current->version == NULL ? "no version" : *(current->version), current->api);
-		current = current->next;
-	}
-}
-
-int module_init()
-{
-	module_t *current = modules;
-	while (current != NULL) {
-		const lt_dlinfo *info = lt_dlgetinfo(current->handle);
-		fprintf(stderr, "INFO\tMOD\t%s(%s:%d)\t%s\n", info == NULL ? "unknown" : info->name, current->version == NULL ? "?" : *(current->version), current->api, current->args);
-		if (current->init != NULL && !current->init(current->args)) {
-			return 0;
+	int it;
+	LOG(assembler, PANDA_CODE_API_VERSION, PANDA_API);
+	for (it = 0; it < assembler->modules_length; it++) {
+		PandaModule module = assembler->modules[it];
+		if (module->handle != NULL) {
+			const lt_dlinfo *info = lt_dlgetinfo(module->handle);
+			LOG(assembler, PANDA_CODE_MOD_INFO, info == NULL ? "unknown" : info->name, module->version == NULL ? "?" : *(module->version), module->api, module->args);
+			assembler->rejected[it] = 0;
 		}
-		current = current->next;
-	}
-	return 1;
-
-}
-
-
-void module_cleanup()
-{
-	while (modules != NULL) {
-		module_t *next = modules->next;
-		if (modules->destroy != NULL) {
-			modules->destroy();
-		}
-		const lt_dlinfo *info = lt_dlgetinfo(modules->handle);
-		fprintf(stderr, "STAT\t%s\t%ld\n", info == NULL ? "unknown" : info->name, modules->rejected);
-		lt_dlclose(modules->handle);
-		free(modules);
-		modules = next;
 	}
 }
 
-int module_load(char *path)
+void panda_assembler_module_stats(PandaAssembler assembler)
 {
-	module_t *m;
+	int it;
+	for (it = 0; it < assembler->modules_length; it++) {
+		LOG(assembler, PANDA_CODE_REJECT_STAT, assembler->modules[it], assembler->rejected[it]);
+	}
+}
+
+void module_destroy(PandaAssembler assembler)
+{
+	int it;
+	LOG(assembler, PANDA_CODE_API_VERSION, PANDA_API);
+	free(assembler->rejected);
+	for (it = 0; it < assembler->modules_length; it++) {
+		panda_module_unref(assembler->modules[it]);
+	}
+	assembler->modules_length = 0;
+	free(assembler->modules);
+}
+
+PandaModule panda_module_load(char *path)
+{
+	PandaModule m;
 	lt_dlhandle handle;
-	int (*init) (char *args);
-	int (*check) (resultseq * sequence);
+	bool (*init) (char *args);
+	PandaCheck check;
 	int *api;
 	char **version;
-	char *args = path;
+	char *name;
+	char *args;
+	if (lt_dlinit() != 0) {
+		return NULL;
+	}
+	name = malloc(strlen(path));
+	memcpy(name, path, strlen(path));
+	args = name;
 	while (*args != '\0' && *args != LT_PATHSEP_CHAR) {
 		args++;
 	}
@@ -143,39 +130,158 @@ int module_load(char *path)
 		args++;
 	}
 
-	handle = lt_dlopenext(path);
+	handle = lt_dlopenext(name);
 	if (handle == NULL) {
-		fprintf(stderr, "Could not open module %s: %s\n", path,
+		fprintf(stderr, "Could not open module %s: %s\n", name,
 			lt_dlerror());
-		return 0;
+		free(name);
+		return NULL;
 	}
 
 	api = lt_dlsym(handle, "api");
 	if (api == NULL || *api > PANDA_API) {
 		lt_dlclose(handle);
-		fprintf(stderr, "Invalid API in %s. Are you sure this module was compiled for this version of PANDAseq?\n", path);
-		return 0;
+		fprintf(stderr, "Invalid API in %s. Are you sure this module was compiled for this version of PANDAseq?\n", name);
+		free(name);
+		return NULL;
 	}
 
 	*(void **)(&check) = lt_dlsym(handle, "check");
 	if (check == NULL) {
 		lt_dlclose(handle);
-		fprintf(stderr, "Could not find check function in %s\n", path);
-		return 0;
+		fprintf(stderr, "Could not find check function in %s\n", name);
+		free(name);
+		return NULL;
 	}
 
-	m = malloc(sizeof(module_t));
-	m->next = modules;
-	m->handle = handle;
-	m->check = check;
-	m->args = args;
-	m->init = init;
+	*(void **)(&init) = lt_dlsym(handle, "init");
+	if (init != NULL && !init(args)) {
+		free(name);
+		return NULL;
+	}
+
+	m = malloc(sizeof(struct panda_module));
 	m->api = *api;
-	m->rejected = 0;
-	*(void **)(&m->init) = lt_dlsym(handle, "init");
-	*(void **)(&m->precheck) = lt_dlsym(handle, "precheck");
-	*(void **)(&m->destroy) = lt_dlsym(handle, "destroy");
+	m->args = args;
+	m->check = check;
+	m->handle = handle;
+	m->name = name;
+	m->name_free = false;
+	m->refcnt = 1;
+	m->user_data = NULL;
 	m->version = lt_dlsym(handle, "version");
-	modules = m;
-	return 1;
+	*(void **)(&m->destroy) = lt_dlsym(handle, "destroy");
+	*(void **)(&m->precheck) = lt_dlsym(handle, "precheck");
+	return m;
+}
+
+PandaModule panda_module_new(char *name, PandaCheck check, PandaPreCheck precheck, void *user_data, PandaDestroy cleanup)
+{
+	PandaModule m;
+	if (check == NULL)
+		return NULL;
+	m = malloc(sizeof(struct panda_module));
+	m->api = PANDA_API;
+	m->args = NULL;
+	m->check = check;
+	m->destroy = cleanup;
+	m->handle = NULL;
+	m->name = malloc(strlen(name));
+	memcpy(m->name, name, strlen(name));
+	m->name_free = true;
+	m->precheck = precheck;
+	m->refcnt = 1;
+	m->user_data = user_data;
+	m->version = NULL;
+	return m;
+}
+	
+PandaModule panda_module_ref(PandaModule module) {
+#ifdef HAVE_PTHREAD
+	pthread_mutex_lock(&ref_lock);
+#endif
+	module->refcnt++;
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&ref_lock);
+#endif
+	return module;
+}
+
+void panda_module_unref(PandaModule module) {
+	int count;
+#ifdef HAVE_PTHREAD
+	pthread_mutex_lock(&ref_lock);
+#endif
+	count = --(module->refcnt);
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&ref_lock);
+#endif
+	if(count == 0) {
+		if (module->destroy != NULL)
+			module->destroy(module->user_data);
+		if (module->name != NULL && module->name_free)
+			free(module->name);
+		if (module->handle != NULL)
+			lt_dlclose(module->handle);
+		free(module);
+	}
+}
+
+const char *panda_module_get_name(PandaModule module) {
+	return module->name;
+}
+
+const char *panda_module_get_args(PandaModule module) {
+	return module->args;
+}
+
+int panda_module_get_api(PandaModule module) {
+	return module->api;
+}
+
+const char *panda_module_get_version(PandaModule module) {
+	return module->version == NULL ? NULL : *module->version;
+}
+
+const char *panda_module_get_description(PandaModule module) {
+	char **val;
+	const lt_dlinfo *info;
+	if (module->handle == NULL)
+		return NULL;
+	info = lt_dlgetinfo(module->handle);
+	val = lt_dlsym(module->handle, "desc");
+	return val == NULL ? NULL : *val;
+}
+
+const char *panda_module_get_usage(PandaModule module) {
+	char **val;
+	const lt_dlinfo *info;
+	if (module->handle == NULL)
+		return NULL;
+	info = lt_dlgetinfo(module->handle);
+	val = lt_dlsym(module->handle, "usage");
+	return val == NULL ? NULL : *val;
+}
+
+void panda_assembler_add_module(PandaAssembler assembler, PandaModule module) {
+	if (module == NULL) {
+		return;
+	}
+#ifdef HAVE_PTHREAD
+	pthread_mutex_lock(&assembler->mutex);
+#endif
+	if (assembler->modules_length == assembler->modules_size) {
+		if (assembler->modules_size == 0) {
+			assembler->modules_size = 8;
+		} else {
+			assembler->modules_size *= 2;
+		}
+		assembler->modules = realloc(assembler->modules, assembler->modules_size * sizeof(PandaModule));
+		assembler->rejected = realloc(assembler->rejected, assembler->modules_size * sizeof(long));
+	}
+	assembler->rejected[assembler->modules_length] = 0;
+	assembler->modules[assembler->modules_length++] = panda_module_ref(module);
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&assembler->mutex);
+#endif
 }

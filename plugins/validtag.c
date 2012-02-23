@@ -7,33 +7,35 @@ HELP("Filter out any sequences without a valid index tag.", "validtag:TAG1:TAG2:
 VER_INFO("1.0");
 
 char **tags;
+char *tag_data;
 int numtags = 1;
 int taglen = 0;
 
 PRECHECK {
 	int it;
-	char *tag = id->tag;
+	const char *tag = id->tag;
 	if (tag == NULL)
-		return 0;
+		return false;
 
 	for (it = 0; it < numtags; it++) {
 		if (strncmp(tag, tags[it], taglen) == 0) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 CHECK {
-	return 1;
+	return true;
 }
 
 INIT {
-	char *it = args;
+	const char *it = args;
+	char *wit;
 	char **currtag;
 	if (args == NULL) {
 		fprintf(stderr, "ERR\tVALTAG\tNOTAGS\n");
-		return 0;
+		return false;
 	}
 	while (*it != '\0' && *it != ':') {
 		taglen++;
@@ -41,7 +43,7 @@ INIT {
 	}
 	if (taglen == 0) {
 		fprintf(stderr, "ERR\tVALTAG\tNOTAGS\n");
-		return 0;
+		return false;
 	}
 
 	if (*it != '\0') {
@@ -57,27 +59,30 @@ INIT {
 				it++;
 			if (currtaglen != taglen) {
 				fprintf(stderr, "ERR\tVALTAG\tBADTLEN\n");
-				return 0;
+				return false;
 			}
 		}
 	}
 
 	tags = malloc(sizeof(char *) * numtags);
+	tag_data = malloc(strlen(args));
+	memcpy(tag_data, args, strlen(args));
 	currtag = tags;
-	it = args;
-	*currtag++ = it;
-	while (*it != '\0') {
-		if (*it == ':') {
-			*it = '\0';
-			*currtag++ = ++it;
+	wit = tag_data;
+	*currtag++ = wit;
+	while (*wit != '\0') {
+		if (*wit == ':') {
+			*wit = '\0';
+			*currtag++ = ++wit;
 		}
-		it++;
+		wit++;
 	}
 
-	return 1;
+	return true;
 }
 
 CLEANUP {
 	free(tags);
+	free(tag_data);
 	return;
 }

@@ -1,18 +1,25 @@
 ACLOCAL_AMFLAGS = -I m4
 bin_PROGRAMS = pandaseq
+lib_LTLIBRARIES = libpandaseq.la
 noinst_PROGRAMS = mktable
 bin_SCRIPTS = pandaxs
-library_includedir=$(includedir)
+library_includedir=$(includedir)/$(LIB_NAME)
 library_include_HEADERS = pandaseq.h
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = $(LIB_NAME).pc
+vapidir = $(datadir)/vala/vapi
+dist_vapi_DATA = $(LIB_NAME).vapi
 man1_MANS = pandaseq.1 pandaxs.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugins/sample.c
 mktable_CFLAGS = -std=gnu99 -pedantic
 mktable_SOURCES = mktable.c
-pandaseq_CPPFLAGS = $(PANDA_CPPFLAGS)
-pandaseq_CFLAGS = -std=gnu99 -pedantic -DPKGLIBDIR=$(pkglibdir) $(PANDA_CFLAGS)
-pandaseq_LDFLAGS = $(PANDA_LDFLAGS)
-pandaseq_SOURCES = main.c table.c plugin.c parser.c
+pandaseq_CPPFLAGS = $(PANDA_CPPFLAGS) -std=gnu99 -pedantic -DPKGLIBDIR=$(pkglibdir) $(PANDA_CFLAGS)
+pandaseq_LDFLAGS = $(PANDA_LDFLAGS) libpandaseq.la
+pandaseq_SOURCES = main.c
+libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS)
+libpandaseq_la_LDFLAGS = $(PANDA_LDFLAGS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'
+libpandaseq_la_SOURCES = assembler.c table.c plugin.c parser.c output.c
 pkglib_LTLIBRARIES = validtag.la
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag
 validtag_la_SOURCES = plugins/validtag.c

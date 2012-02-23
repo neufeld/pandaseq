@@ -1,5 +1,5 @@
 /* PANDAseq -- Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
-     Copyright (C) 2011  Andre Masella
+     Copyright (C) 2011-2012  Andre Masella
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 #define _PLUGIN_H
 #include "pandaseq.h"
 
-extern int module_checkseq(resultseq * sequence);
-extern int module_precheckseq(seqidentifier *id, char const *forward, char const *reverse);
-extern void module_help();
-extern void module_version();
-extern void module_cleanup();
-extern int module_load(char *path);
-extern int module_init();
+extern bool module_checkseq(PandaAssembler assembler, panda_result_seq *sequence);
+extern bool module_precheckseq(PandaAssembler assembler, panda_seq_identifier *id, const panda_qual *forward, size_t forward_length, const panda_qual *reverse, size_t reverse_length);
+extern void module_help(PandaAssembler assembler);
+extern void module_version(PandaAssembler assembler);
+extern bool module_init(PandaAssembler assembler);
+extern void module_cleanup(PandaAssembler assembler);
+extern void module_destroy(PandaAssembler assembler);
 #endif

@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+bindir=@bindir@
+includedir=@includedir@/pandaseq-2
+datarootdir=@datarootdir@
+datadir=@datadir@
+vapidir=@datadir@/vala/vapi
+
+Name: PANDAseq
+Description: Assemble forward and reverse reads from Illumina FASTQ data
+Version: @VERSION@
+Requires: 
+Libs: -L${libdir} -lpandaseq
+Cflags: -I${includedir}
