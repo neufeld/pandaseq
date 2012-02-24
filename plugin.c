@@ -104,6 +104,37 @@ void module_destroy(PandaAssembler assembler)
 	free(assembler->modules);
 }
 
+static volatile int ltdl_count = 0;
+static bool ref_ltdl() {
+#ifdef HAVE_PTHREAD
+	pthread_mutex_lock(&ref_lock);
+#endif
+	if (ltdl_count == 0) {
+		if (lt_dlinit() != 0) {
+#ifdef HAVE_PTHREAD
+			pthread_mutex_unlock(&ref_lock);
+#endif
+			return false;
+		}
+	}
+	ltdl_count++;
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&ref_lock);
+#endif
+	return true;
+}
+static void unref_ltdl() {
+#ifdef HAVE_PTHREAD
+	pthread_mutex_lock(&ref_lock);
+#endif
+	if (--ltdl_count == 0) {
+		lt_dlexit();
+	}
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&ref_lock);
+#endif
+}
+
 PandaModule panda_module_load(char *path)
 {
 	PandaModule m;
@@ -114,9 +145,7 @@ PandaModule panda_module_load(char *path)
 	char **version;
 	char *name;
 	char *args;
-	if (lt_dlinit() != 0) {
-		return NULL;
-	}
+
 	name = malloc(strlen(path));
 	memcpy(name, path, strlen(path));
 	args = name;
@@ -130,11 +159,19 @@ PandaModule panda_module_load(char *path)
 		args++;
 	}
 
+	if (!ref_ltdl()) {
+		return NULL;
+	}
+
 	handle = lt_dlopenext(name);
 	if (handle == NULL) {
 		fprintf(stderr, "Could not open module %s: %s\n", name,
 			lt_dlerror());
 		free(name);
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&ref_lock);
+#endif
+		unref_ltdl();
 		return NULL;
 	}
 
@@ -143,6 +180,7 @@ PandaModule panda_module_load(char *path)
 		lt_dlclose(handle);
 		fprintf(stderr, "Invalid API in %s. Are you sure this module was compiled for this version of PANDAseq?\n", name);
 		free(name);
+		unref_ltdl();
 		return NULL;
 	}
 
@@ -151,12 +189,14 @@ PandaModule panda_module_load(char *path)
 		lt_dlclose(handle);
 		fprintf(stderr, "Could not find check function in %s\n", name);
 		free(name);
+		unref_ltdl();
 		return NULL;
 	}
 
 	*(void **)(&init) = lt_dlsym(handle, "init");
 	if (init != NULL && !init(args)) {
 		free(name);
+		unref_ltdl();
 		return NULL;
 	}
 
@@ -224,6 +264,7 @@ void panda_module_unref(PandaModule module) {
 		if (module->handle != NULL)
 			lt_dlclose(module->handle);
 		free(module);
+		unref_ltdl();
 	}
 }
 
