@@ -430,6 +430,17 @@ namespace Panda {
 		 */
 		[CCode(cname = "panda_assembler_next")]
 		public result_seq? next();
+
+		/**
+		 * Increment reference count.
+		 */
+		[CCode(cname = "panda_assembler_ref")]
+		public unowned Assembler @ref();
+		/**
+		 * Decrement reference count.
+		 */
+		[CCode(cname = "panda_assembler_unref")]
+		public void unref();
 	}
 
 	/**
@@ -529,6 +540,17 @@ namespace Panda {
 		 */
 		[CCode(cname = "panda_module_load")]
 		public static Module load(string path);
+
+		/**
+		 * Increment reference count.
+		 */
+		[CCode(cname = "panda_module_ref")]
+		public unowned Module @ref();
+		/**
+		 * Decrement reference count.
+		 */
+		[CCode(cname = "panda_module_unref")]
+		public void unref();
 	}
 
 	/**
