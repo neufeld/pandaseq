@@ -30,7 +30,7 @@
 typedef unsigned char seqindex;
 
 struct panda_assembler {
-	size_t refcnt;
+	volatile size_t refcnt;
 
 	MANAGED_MEMBER(PandaNextSeq, next);
 	MANAGED_MEMBER(PandaLogger, logger);

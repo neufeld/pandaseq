@@ -28,7 +28,7 @@ static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 struct panda_module {
-	size_t refcnt;
+	volatile size_t refcnt;
 
 	PandaCheck check;
 	PandaPreCheck precheck;
