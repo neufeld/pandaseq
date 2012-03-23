@@ -140,7 +140,7 @@ typedef struct {
 	 */
 	double p;
 } panda_result;
-
+#define PANDA_TAG_LEN 50
 /**
  * Illumina sequence information from the FASTQ header
  */
@@ -152,7 +152,7 @@ typedef struct {
 	int tile;
 	int x;
 	int y;
-	char tag[10];
+	char tag[PANDA_TAG_LEN];
 } panda_seq_identifier;
 /**
  * Write the Illumina header to a printf-like function

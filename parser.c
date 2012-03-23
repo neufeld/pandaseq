@@ -160,7 +160,7 @@ int panda_seqid_parse(panda_seq_identifier *id, char *input)
 		dest = id->tag;
 		*dest = '\0';
 		PARSE_CHUNK {
-			if (dest >= &id->tag[10])
+			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;
 			*dest++ = (*input);
 			*dest = '\0';
@@ -214,7 +214,7 @@ int panda_seqid_parse(panda_seq_identifier *id, char *input)
 		dest = id->tag;
 		*dest = '\0';
 		PARSE_CHUNK {
-			if (dest >= &id->tag[10])
+			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;
 			*dest++ = (*input);
 			*dest = '\0';
