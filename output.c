@@ -16,6 +16,7 @@
 
  */
 #include<math.h>
+#include<sys/types.h>
 #include"pandaseq.h"
 #include"config.h"
 bool panda_logger_file(FILE *file, PandaCode code, ...) {
