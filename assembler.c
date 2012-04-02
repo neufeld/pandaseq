@@ -367,7 +367,7 @@ align(PandaAssembler assembler, panda_result_seq* result, int maxresult)
 		LOG(assembler, PANDA_CODE_SEQUENCE_TOO_LONG, &result->name);
 		return false;
 	}
-	result->sequence_length = len;
+	result->sequence_length = len - 1;
 	result->degenerates = 0;
 
 	df = (ssize_t) result->forward_length - (ssize_t) result->forward_offset - bestoverlap;
