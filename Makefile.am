@@ -14,8 +14,8 @@ docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugins/sample.c
 mktable_CFLAGS = -std=gnu99 -pedantic
 mktable_SOURCES = mktable.c
-pandaseq_CPPFLAGS = $(PANDA_CPPFLAGS) -std=gnu99 -pedantic -DPKGLIBDIR=$(pkglibdir) $(PANDA_CFLAGS)
-pandaseq_LDFLAGS = $(PANDA_LDFLAGS) libpandaseq.la
+pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -DPKGLIBDIR=$(pkglibdir) $(MAIN_CFLAGS)
+pandaseq_LDFLAGS = $(MAIN_LDFLAGS) libpandaseq.la
 pandaseq_SOURCES = main.c
 libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS)
 libpandaseq_la_LDFLAGS = $(PANDA_LDFLAGS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'

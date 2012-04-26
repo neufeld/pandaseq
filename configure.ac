@@ -12,23 +12,18 @@ AX_PTHREAD
 
 AM_SILENT_RULES([yes])
 
-MODULE_CPPFLAGS="$CPPFLAGS"
-MODULE_CFLAGS="$CFLAGS"
-MODULE_LDFLAGS="$LDFLAGS"
-
-AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([*** zlib.h is required, install zlib header files])])
-AC_CHECK_LIB([z], [gzopen], [], [AC_MSG_ERROR([*** gzopen is required, install zlib library files])])
-AC_CHECK_HEADER([bzlib.h], [], [AC_MSG_ERROR([*** bzlib.h is required, install bzip2 header files])])
-AC_CHECK_LIB([bz2], [BZ2_bzDecompressInit], [], [AC_MSG_ERROR([*** BZ2_bzDecompressInit is required, install bzip2 library files])])
 if test "x$enable_debug" = xyes; then
 	AC_DEFINE(DEBUG, 1, [Enable debugging code])
 fi
-AC_CHECK_LIB(ltdl, lt_dlinit,,AC_MSG_ERROR(Cannot link with libtool libs! (libltdl)))
+
+MODULE_CPPFLAGS="$CPPFLAGS"
+MODULE_CFLAGS="$CFLAGS"
+MODULE_LDFLAGS="$LDFLAGS"
 AC_MSG_CHECKING([for module flags])
 case "$host" in
 *-mingw*)
 	NO_UNDEFINED='-no-undefined'
-	LDFLAGS="$LDFLAGS -Wl,-static"
+	MODULE_LDFLAGS="$LDFLAGS -Wl,-static"
 	MOD_LIBTOOL=libtool
 	;;
 *openbsd*|*freebsd*)
@@ -47,17 +42,32 @@ case "$host" in
 	;;
 esac
 AC_MSG_RESULT([$NO_UNDEFINED])
+AC_SUBST(NO_UNDEFINED)
+AC_SUBST(MOD_LIBTOOL)
+
+AC_CHECK_LIB(ltdl, lt_dlinit,,AC_MSG_ERROR(Cannot link with libtool libs! (libltdl)))
+MAIN_CPPFLAGS="$CPPFLAGS"
+MAIN_CFLAGS="$CFLAGS"
+MAIN_LDFLAGS="$LDFLAGS"
+AC_SUBST(MAIN_CPPFLAGS)
+AC_SUBST(MAIN_CFLAGS)
+AC_SUBST(MAIN_LDFLAGS)
+
+AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([*** zlib.h is required, install zlib header files])])
+AC_CHECK_LIB([z], [gzopen], [], [AC_MSG_ERROR([*** gzopen is required, install zlib library files])])
+AC_CHECK_HEADER([bzlib.h], [], [AC_MSG_ERROR([*** bzlib.h is required, install bzip2 header files])])
+AC_CHECK_LIB([bz2], [BZ2_bzDecompressInit], [], [AC_MSG_ERROR([*** BZ2_bzDecompressInit is required, install bzip2 library files])])
 PANDA_CPPFLAGS="$CPPFLAGS"
 PANDA_CFLAGS="$CFLAGS"
 PANDA_CFLAGS="$LDFLAGS"
+
 AC_SUBST(PANDA_CPPFLAGS)
 AC_SUBST(PANDA_CFLAGS)
 AC_SUBST(PANDA_LDFLAGS)
 CPPFLAGS="$MODULE_CPPFLAGS"
 CFLAGS="$MODULE_CFLAGS"
 LDFLAGS="$MODULE_LDFLAGS"
-AC_SUBST(NO_UNDEFINED)
-AC_SUBST(MOD_LIBTOOL)
+
 LIB_NAME=pandaseq-2
 AC_SUBST(LIB_NAME)
 AC_CONFIG_FILES([ Makefile ${LIB_NAME}.pc ])
