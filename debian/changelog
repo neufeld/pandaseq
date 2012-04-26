@@ -1,3 +1,11 @@
+pandaseq (2.1~ppa0) lucid; urgency=low
+
+  * Allow Illumina tag lengths to be up to 50nt
+  * Created a library interface for PANDAseq
+  * Improved pandaxs and module system
+
+ -- Andre Masella <andre@masella.name>  Wed, 25 Apr 2012 20:56:28 -0700
+
 pandaseq (2.0~ppa0) lucid; urgency=low
 
   * First version in C
