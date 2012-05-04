@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
+#include<assert.h>
 #include<limits.h>
 #include<math.h>
 #include<stdbool.h>
@@ -479,48 +480,55 @@ align(PandaAssembler assembler, panda_result_seq* result, int maxresult)
 	return true;
 }
 
+bool assemble_seq(PandaAssembler assembler) {
+	assembler->count++;
+	if (!module_precheckseq(assembler, &assembler->result.name, assembler->result.forward, assembler->result.forward_length, assembler->result.reverse, assembler->result.reverse_length)) {
+		return false;
+	}
+	if (assembler->forward_primer_length > 0) {
+		assembler->result.forward_offset = computeoffset(assembler, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
+		if (assembler->result.forward_offset == 0) {
+			LOG(assembler, PANDA_CODE_NO_FORWARD_PRIMER, &assembler->result.name);
+			assembler->nofpcount++;
+			return false;
+		}
+		assembler->result.forward_offset--;
+	} else {
+		assembler->result.forward_offset = assembler->forward_trim;
+	}
+	if (assembler->reverse_primer_length > 0) {
+		assembler->result.reverse_offset = computeoffset(assembler, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
+		if (assembler->result.reverse_offset == 0) {
+			LOG(assembler, PANDA_CODE_NO_REVERSE_PRIMER, &assembler->result.name);
+			assembler->norpcount++;
+			return false;
+		}
+		assembler->result.reverse_offset--;
+	} else {
+		assembler->result.reverse_offset = assembler->reverse_trim;
+	}
+	if (!align(assembler, &assembler->result, PANDA_MAX_LEN)) {
+		return false;
+	}
+	if (assembler->result.quality < assembler->threshold) {
+		assembler->lowqcount++;
+		LOG(assembler, PANDA_CODE_LOW_QUALITY_REJECT, exp(assembler->result.quality), exp(assembler->threshold));
+		return false;
+	}
+	if (module_checkseq(assembler, &assembler->result)) {
+		assembler->okcount++;
+		return true;
+	}
+}
 
 const panda_result_seq *panda_assembler_next(PandaAssembler assembler) {
 	while(true) {
 		if (!assembler->next(&assembler->result.name, &assembler->result.forward, &assembler->result.forward_length, &assembler->result.reverse, &assembler->result.reverse_length, assembler->next_data)) {
 			return NULL;
 		}
-		assembler->count++;
-		if (!module_precheckseq(assembler, &assembler->result.name, assembler->result.forward, assembler->result.forward_length, assembler->result.reverse, assembler->result.reverse_length)) {
-			return NULL;
-		}
-		if (assembler->forward_primer_length > 0) {
-			assembler->result.forward_offset = computeoffset(assembler, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
-			if (assembler->result.forward_offset == 0) {
-				LOG(assembler, PANDA_CODE_NO_FORWARD_PRIMER, &assembler->result.name);
-				assembler->nofpcount++;
-				continue;
-			}
-			assembler->result.forward_offset--;
-		} else {
-			assembler->result.forward_offset = assembler->forward_trim;
-		}
-		if (assembler->reverse_primer_length > 0) {
-			assembler->result.reverse_offset = computeoffset(assembler, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
-			if (assembler->result.reverse_offset == 0) {
-				LOG(assembler, PANDA_CODE_NO_REVERSE_PRIMER, &assembler->result.name);
-				assembler->norpcount++;
-				continue;
-			}
-			assembler->result.reverse_offset--;
-		} else {
-			assembler->result.reverse_offset = assembler->reverse_trim;
-		}
-		if (!align(assembler, &assembler->result, PANDA_MAX_LEN)) {
-			continue;
-		}
-		if (assembler->result.quality < assembler->threshold) {
-			assembler->lowqcount++;
-			LOG(assembler, PANDA_CODE_LOW_QUALITY_REJECT, exp(assembler->result.quality), exp(assembler->threshold));
-			continue;
-		}
-		if (module_checkseq(assembler, &assembler->result)) {
-			assembler->okcount++;
+		assert(assembler->result.forward_length < PANDA_MAX_LEN);
+		assert(assembler->result.reverse_length < PANDA_MAX_LEN);
+		if (assemble_seq(assembler)) {
 			return &assembler->result;
 		}
 	}
