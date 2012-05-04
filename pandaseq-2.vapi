@@ -395,11 +395,11 @@ namespace Panda {
 		/**
 		 * Create a new assembler from a sequence source.
 		 *
-		 * @param next, next_data, next_destroy the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroy, it will call next_destroy(next_data).
-		 * @param logger, logger_data, logger_destroy the function to call to report information to the user
+		 * @param next the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call or destruction. If not provided, you may use {@link assemble} but not {@link next}
+		 * @param logger the function to call to report information to the user.
 		 */
 		[CCode(cname = "panda_assembler_new")]
-		public Assembler(owned NextSeq next, owned Logger logger);
+		public Assembler(owned NextSeq? next, owned Logger logger);
 
 		/**
 		 * Create a new assembler for given to FASTQ streams.

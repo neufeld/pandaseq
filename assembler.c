@@ -522,6 +522,9 @@ bool assemble_seq(PandaAssembler assembler) {
 }
 
 const panda_result_seq *panda_assembler_next(PandaAssembler assembler) {
+	if (assembler->next == NULL) {
+		return NULL;
+	}
 	while(true) {
 		if (!assembler->next(&assembler->result.name, &assembler->result.forward, &assembler->result.forward_length, &assembler->result.reverse, &assembler->result.reverse_length, assembler->next_data)) {
 			return NULL;
