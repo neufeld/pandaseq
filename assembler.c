@@ -529,8 +529,8 @@ const panda_result_seq *panda_assembler_next(PandaAssembler assembler) {
 		if (!assembler->next(&assembler->result.name, &assembler->result.forward, &assembler->result.forward_length, &assembler->result.reverse, &assembler->result.reverse_length, assembler->next_data)) {
 			return NULL;
 		}
-		assert(assembler->result.forward_length < PANDA_MAX_LEN);
-		assert(assembler->result.reverse_length < PANDA_MAX_LEN);
+		assert(assembler->result.forward_length <= PANDA_MAX_LEN);
+		assert(assembler->result.reverse_length <= PANDA_MAX_LEN);
 		if (assemble_seq(assembler)) {
 			return &assembler->result;
 		}
@@ -540,8 +540,8 @@ const panda_result_seq *panda_assembler_next(PandaAssembler assembler) {
 
 const panda_result_seq *panda_assembler_assemble(PandaAssembler assembler, panda_seq_identifier *id, const panda_qual *forward, size_t forward_length, const panda_qual *reverse, size_t reverse_length) {
 	size_t it;
-	assert(forward_length < PANDA_MAX_LEN);
-	assert(reverse_length < PANDA_MAX_LEN);
+	assert(forward_length <= PANDA_MAX_LEN);
+	assert(reverse_length <= PANDA_MAX_LEN);
 	assembler->result.name = *id;
 	assembler->result.forward_length = forward_length;
 	assembler->result.reverse_length = reverse_length;

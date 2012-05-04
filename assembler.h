@@ -50,9 +50,7 @@ struct panda_assembler {
 
 	panda_result_seq result;
 
-	panda_nt forward_primer[PANDA_MAX_LEN];
 	size_t forward_primer_length;
-	panda_nt reverse_primer[PANDA_MAX_LEN];
 	size_t reverse_primer_length;
 	size_t forward_trim;
 	size_t reverse_trim;
@@ -68,6 +66,8 @@ struct panda_assembler {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_t mutex;
 #endif
+	panda_nt forward_primer[PANDA_MAX_LEN];
+	panda_nt reverse_primer[PANDA_MAX_LEN];
 };
 
 #endif
