@@ -429,7 +429,7 @@ namespace Panda {
 		 * The returned sequence becomes invalid after the next call.
 		 */
 		[CCode(cname = "panda_assembler_next")]
-		public result_seq? next();
+		public unowned result_seq? next();
 
 		/**
 		 * Increment reference count.
