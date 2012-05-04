@@ -409,6 +409,14 @@ namespace Panda {
 		public Assembler.fastq (owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33);
 
 		/**
+		 * Assemble a single sequence pair not drawn from the sequence stream.
+		 *
+		 * This works exactly like {@link next}, but instead of asking the {@link NextSeq} for the data, it expects this information to be provided.
+		 */
+		[CCode(cname = "panda_assembler_assemble")]
+		public unowned result_seq? assemble(identifier id, qual[] forward, qual[] reverse);
+
+		/**
 		 * Add a module to this assembly process.
 		 *
 		 * Sequences will be checked using this module.

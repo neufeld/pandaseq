@@ -485,6 +485,12 @@ void panda_assembler_module_stats(/*@notnull@*/PandaAssembler assembler);
  */
 /*@null@*/const panda_result_seq *panda_assembler_next(/*@notnull@*/PandaAssembler assembler);
 /**
+ * Assemble a single sequence pair not drawn from the sequence stream.
+ *
+ * This works exactly like panda_assembler_next, but instead of asking the PandaSeqNext for the data, it expects this information to be provided.
+ */
+/*@null@*/const panda_result_seq *panda_assembler_assemble(/*@notnull@*/PandaAssembler assembler, /*@notnull@*/panda_seq_identifier *id, /*@notnull@*/const panda_qual *forward, size_t forward_length, /*@notnull@*/const panda_qual *reverse, size_t reverse_length);
+/**
  * Write an assembly to a FASTA file.
  */
 bool panda_output_fasta(/*@notnull@*/const panda_result_seq *sequence, /*@notnull@*/FILE *file);

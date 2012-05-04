@@ -534,3 +534,17 @@ const panda_result_seq *panda_assembler_next(PandaAssembler assembler) {
 	}
 	return NULL;
 }
+
+const panda_result_seq *panda_assembler_assemble(PandaAssembler assembler, panda_seq_identifier *id, const panda_qual *forward, size_t forward_length, const panda_qual *reverse, size_t reverse_length) {
+	size_t it;
+	assert(forward_length < PANDA_MAX_LEN);
+	assert(reverse_length < PANDA_MAX_LEN);
+	assembler->result.name = *id;
+	assembler->result.forward_length = forward_length;
+	assembler->result.reverse_length = reverse_length;
+	for (it = 0; it < forward_length; it++)
+		assembler->result.forward[it] = forward[it];
+	for (it = 0; it < reverse_length; it++)
+		assembler->result.reverse[it] = reverse[it];
+	return assemble_seq(assembler) ? &assembler->result : NULL;
+}
