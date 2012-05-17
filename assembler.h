@@ -19,6 +19,7 @@
 #ifndef PANDAASM_H
 #define PANDAASM_H
 #include "pandaseq.h"
+#include "config.h"
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
 #endif
