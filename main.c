@@ -255,6 +255,10 @@ int main(int argc, char **argv)
 	}
 	fprintf(stderr, "INFO\tVER\t%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
 
+	for(it = 0; it < argc; it++) {
+		fprintf(stderr, "INFO\tARG[%d]\t%s\n", (int)it, argv[it]);
+	}
+
 	assembler = bzip ? panda_assembler_open_bz2(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin) : panda_assembler_open_gz(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin);
 
 	if (assembler == NULL) {
