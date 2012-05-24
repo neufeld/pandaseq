@@ -24,3 +24,16 @@ USAGE
 
 Please consult the manual page by invoking
 	man pandaseq
+
+The short version is
+	pandaseq -f forward.fastq -r reverse.fastq
+
+
+FAQ
+---
+
+Q: Can I insist that PANDAseq only assembler perfect sequences?
+A: No. The whole point is to fix sequences which are probably good. There is no quality setting that will acheive this effect. You could write a plug-in to examine `overlap_mismatches`, but this really does miss the point. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
+
+Q: Can PANDAseq use multiple core/threads?
+A: The code is written such that doing this would be reasonably straight forward, but it is not presently done. In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with `top`; watch the CPU% for the PANDAseq process and the overall system CPU waiting time (`%wa` in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
