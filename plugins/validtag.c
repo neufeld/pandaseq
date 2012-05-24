@@ -58,7 +58,7 @@ INIT {
 			if (*it == ':')
 				it++;
 			if (currtaglen != taglen) {
-				fprintf(stderr, "ERR\tVALTAG\tBADTLEN\n");
+				fprintf(stderr, "ERR\tVALTAG\tBADTLEN\t%d != %d %s\n", currtaglen, taglen, it - currtaglen);
 				return false;
 			}
 		}
