@@ -33,6 +33,7 @@
 
 #define STR0(x) #x
 #define STR(x) STR0(x)
+#define MAX_MODULES 100
 static void printtime(long count, time_t starttime)
 {
 	time_t now;
@@ -68,7 +69,7 @@ int main(int argc, char **argv)
 	ssize_t maxlen = SSIZE_MAX;
 	size_t minlen = 0;
 	int minoverlap = 1;
-	PandaModule modules[100];
+	PandaModule modules[MAX_MODULES];
 	size_t modules_length = 0;
 	bool no_n = false;
 	double q = 0.36;
@@ -200,11 +201,15 @@ int main(int argc, char **argv)
 			}
 			break;
 		case 'C':
-			if ((modules[modules_length++] = panda_module_load(optarg)) == NULL) {
+			if (modules_length == MAX_MODULES || (modules[modules_length] = panda_module_load(optarg)) == NULL) {
+				if (modules_length == MAX_MODULES) {
+					fprintf(stderr, "Too many modules.\n");
+				}
 				for(it = 0; it < modules_length; it++) panda_module_unref(modules[it]);
 				lt_dlexit();
 				return 1;
 			}
+			modules_length++;
 			break;
 		case '6':
 			qualmin = 64;
