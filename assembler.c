@@ -402,6 +402,7 @@ align(PandaAssembler assembler, panda_result_seq* result, int maxresult)
 		result->reverse[i].qual = '\0';
 	}
 	/* Copy the paired sequence adjusting the probabilities based on the quality information from both sequences. */
+	result->overlap_mismatches = 0;
 	for (i = 0; i < bestoverlap + WEDGEZ(df) + WEDGEZ(dr); i++) {
 		int index = VEEZ(df) + i;
 		int findex = result->forward_offset + VEEZ(df) + i;
@@ -425,6 +426,7 @@ align(PandaAssembler assembler, panda_result_seq* result, int maxresult)
 		if (!ismatch) {
 			LOG(assembler, PANDA_CODE_MISMATCHED_BASE, findex, rindex, &result->forward[findex],
 				&result->reverse[rindex]);
+			result->overlap_mismatches++;
 		}
 
 		if (result->forward[findex].qual == '\0'

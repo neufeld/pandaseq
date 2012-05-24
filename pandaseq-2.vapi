@@ -706,6 +706,11 @@ file);
 		size_t reverse_offset;
 
 		/**
+		 * The number of mismatches in the overlap region.
+		 */
+		size_t overlap_mismatches;
+
+		/**
 		 * Write an assembly to a FASTA file.
 		 */
 		[CCode(cname = "panda_output_fasta")]

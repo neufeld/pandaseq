@@ -221,6 +221,10 @@ typedef struct {
 	 * The number of nucleotides clipped from the reverse sequence
 	 */
 	size_t reverse_offset;
+	/**
+	 * The number of mismatches in the overlap region.
+	 */
+	size_t overlap_mismatches;
 } panda_result_seq;
 
 /**
