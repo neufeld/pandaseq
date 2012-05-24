@@ -19,6 +19,7 @@
 #include<sys/types.h>
 #include"pandaseq.h"
 #include"config.h"
+#include"table.h"
 bool panda_logger_file(FILE *file, PandaCode code, ...) {
 	va_list args;
 	bool ret;
@@ -198,7 +199,6 @@ bool panda_output_fasta(const panda_result_seq *sequence, FILE *file) {
 	return true;
 }
 bool panda_output_fastq(const panda_result_seq *sequence, FILE *file) {
-	static double ln_10 = log(10);
 	size_t it;
 	(void)fputc('@', file);
 	panda_seqid_print(&sequence->name, file);

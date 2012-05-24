@@ -102,8 +102,8 @@ int main(int argc, char **argv)
 	}
 
 	fprintf(header,
-		"#ifndef _TABLE_H\n#define _TABLE_H\n#define qual_nn %f\n",
-		log(0.25));
+		"#ifndef _TABLE_H\n#define _TABLE_H\n#define qual_nn %f\n#define ln_10 %f\n",
+		log(0.25), log(10));
 	buildmatrix(header, source, "qual_match", match);
 	buildmatrix(header, source, "qual_mismatch", mismatch);
 	buildlist(header, source, "qual_nmatch", nmatch);
