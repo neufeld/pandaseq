@@ -146,8 +146,8 @@ PandaModule panda_module_load(char *path)
 	char *name;
 	char *args;
 
-	name = malloc(strlen(path));
-	memcpy(name, path, strlen(path));
+	name = malloc(strlen(path) + 1);
+	memcpy(name, path, strlen(path) + 1);
 	args = name;
 	while (*args != '\0' && *args != LT_PATHSEP_CHAR) {
 		args++;
