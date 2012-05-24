@@ -92,7 +92,7 @@ bool panda_logger_v(PandaPrintf xprintf, void *x, PandaCode code, va_list va)
 			break;
 		case PANDA_CODE_REJECT_STAT:
 			m = va_arg(va, PandaModule);
-			xprintf(x, "INFO\t%s\t%ld\n", panda_module_get_name(m), va_arg(va, long));
+			xprintf(x, "STAT\t%s\t%ld\n", panda_module_get_name(m), va_arg(va, long));
 			break;
 		case PANDA_CODE_INSUFFICIENT_KMER_TABLE:
 			xprintf(x, "ERR\tKLNG\t");

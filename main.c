@@ -336,6 +336,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "STAT\tSHORT\t%ld\n", shortcount);
 	if (maxlen < SSIZE_MAX)
 		fprintf(stderr, "STAT\tLONG\t%ld\n", longcount);
+	panda_assembler_module_stats(assembler);
 	fprintf(stderr, "STAT\tOK\t%ld\n", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
 
 	panda_assembler_unref(assembler);
