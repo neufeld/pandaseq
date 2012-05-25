@@ -77,11 +77,17 @@ PandaAssembler panda_assembler_open_gz(char *forward, char *reverse, PandaLogger
 	forward_file = gzopen(forward, "r");
 	if (forward_file == NULL) {
 		logger(logger_data, PANDA_CODE_NO_FILE, forward);
+		if (logger_destroy != NULL) {
+			logger_destroy(logger_data);
+		}
 		return NULL;
 	}
 	reverse_file = gzopen(reverse, "r");
 	if (reverse_file == NULL) {
 		logger(logger_data, PANDA_CODE_NO_FILE, reverse);
+		if (logger_destroy != NULL) {
+			logger_destroy(logger_data);
+		}
 		gzclose(forward_file);
 		return NULL;
 	}
@@ -104,11 +110,17 @@ PandaAssembler panda_assembler_open_bz2(char *forward, char *reverse, PandaLogge
 	forward_file = BZ2_bzopen(forward, "r");
 	if (forward_file == NULL) {
 		logger(logger_data, PANDA_CODE_NO_FILE, forward);
+		if (logger_destroy != NULL) {
+			logger_destroy(logger_data);
+		}
 		return NULL;
 	}
 	reverse_file = BZ2_bzopen(reverse, "r");
 	if (reverse_file == NULL) {
 		logger(logger_data, PANDA_CODE_NO_FILE, reverse);
+		if (logger_destroy != NULL) {
+			logger_destroy(logger_data);
+		}
 		BZ2_bzclose(forward_file);
 		return NULL;
 	}
