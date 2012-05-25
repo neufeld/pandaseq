@@ -425,6 +425,14 @@ namespace Panda {
 		public void add_module(Module module);
 
 		/**
+		 * Clone the configuration of one assembler to another.
+		 *
+		 * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.
+		 */
+		[CCode(cname = "panda_assembler_copy_configuration")]
+		public void copy_configuration(Assembler src);
+
+		/**
 		 * Log the number of sequences rejected by each module.
 		 */
 		[CCode(cname = "panda_assembler_module_stats")]

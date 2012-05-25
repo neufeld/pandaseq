@@ -377,7 +377,12 @@ PandaNextSeq panda_assembler_create_fastq_reader(/*@notnull@*/PandaNextChar forw
  * @param logger, logger_data, logger_destroy the function to call to report information to the user
  */
 /*@notnull@*/PandaAssembler panda_assembler_new(/*@notnull@*/PandaNextSeq next, /*@null@*/void *next_data, /*@null@*/PandaDestroy next_destroy, /*@notnull@*/PandaLogger logger, /*@null@*/void *logger_data, /*@null@*/PandaDestroy logger_destroy);
-
+/**
+ * Clone the configuration of one assembler to another.
+ *
+ * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.
+ */
+void panda_assembler_copy_configuration(/*@notnull@*/PandaAssembler dest, /*@notnull@*/PandaAssembler src);
 /**
  * Increase the reference count on an assembler.
  *

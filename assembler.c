@@ -98,6 +98,18 @@ PandaAssembler panda_assembler_new(PandaNextSeq next, void *next_data, PandaDest
 	return assembler;
 }
 
+void panda_assembler_copy_configuration(PandaAssembler dest, PandaAssembler src) {
+	int it;
+	for(it = 0; it < src->modules_length; it++) {
+		panda_assembler_add_module(dest, src->modules[it]);
+	}
+	panda_assembler_set_forward_primer(dest, src->forward_primer, src->forward_primer_length);
+	panda_assembler_set_reverse_primer(dest, src->reverse_primer, src->reverse_primer_length);
+	dest->forward_trim = src->forward_trim;
+	dest->reverse_trim = src->reverse_trim;
+	dest->no_n = src->no_n;
+}
+
 int panda_assembler_get_minimum_overlap(PandaAssembler assembler) {
 	return assembler->minoverlap;
 }
