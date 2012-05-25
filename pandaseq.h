@@ -376,7 +376,7 @@ PandaNextSeq panda_assembler_create_fastq_reader(/*@notnull@*/PandaNextChar forw
  * @param next, next_data, next_destroy the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroy, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
  * @param logger, logger_data, logger_destroy the function to call to report information to the user
  */
-/*@notnull@*/PandaAssembler panda_assembler_new(/*@null@*/PandaNextSeq next, /*@null@*/void *next_data, /*@null@*/PandaDestroy next_destroy, /*@notnull@*/PandaLogger logger, /*@null@*/void *logger_data, /*@null@*/PandaDestroy logger_destroy);
+/*@notnull@*/PandaAssembler panda_assembler_new(/*@notnull@*/PandaNextSeq next, /*@null@*/void *next_data, /*@null@*/PandaDestroy next_destroy, /*@notnull@*/PandaLogger logger, /*@null@*/void *logger_data, /*@null@*/PandaDestroy logger_destroy);
 
 /**
  * Increase the reference count on an assembler.
