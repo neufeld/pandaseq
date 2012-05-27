@@ -9,7 +9,25 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .B \-r 
 .I reverse.fastq
 [
+.B \-6 
+] [
+.B \-C
+.I module
+] [
+.B \-F 
+] [
 .B \-j 
+] [ 
+.B \-l
+.I minlen
+] [
+.B \-L
+.I maxlen
+] [
+.B \-N 
+] [
+.B \-o 
+.I minoverlap
 ] [
 .B \-p
 .I forwardprimer
@@ -20,23 +38,8 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .B \-t
 .I threshold
 ] [
-.B \-N 
-] [
-.B \-o 
-.I minoverlap
-] [ 
-.B \-l
-.I minlen
-] [
-.B \-L
-.I maxlen
-] [
-.B \-C
-.I module
-] [
-.B \-6 
-] [
-.B \-F 
+.B \-T
+.I threads
 ]
 .SH DESCRIPTION
 PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The assembler reads two files in FASTQ format with quality information. If amplification primers were used (e.g., to isolate a variable region of the 16S gene, or the constant regions around zinc finger binding residues), they can be removed from the sequence. The final sequence will correct any uncalled bases in the overlapping region using the complementary strand. When mismatches occur in the overlapping region, the base with the better quality score is chosen.
@@ -54,14 +57,11 @@ Construct an assembled sequence between the primers and calculate the quality.
 Check for various constraints, including quality, length, uncalled bases, and user-supplied modules.
 .SH OPTIONS
 .TP
+\-6
+Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
+.TP
 \-C module
 Loads an optional validation module to verify sequences are valid before emitting them. See below for more information.
-.TP
-\-L maxlen 
-Sets maximum length for a sequence. Any sequences longer, after primers are removed, will be discarded.
-.TP
-\-N
-Eliminate all sequences with uncalled nucleotides in the output. Otherwise, during assembly, uncalled bases\ (Ns) from unpaired regions may be emitted.
 .TP
 \-f forward.fastq
 The location of the forward reads in FASTQ format. The file may be plain FASTQ, or compressed with
@@ -74,6 +74,9 @@ will only be decompressed with the
 .B -j
 option.
 .TP
+\-F
+Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this flag will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33. The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application.
+.TP
 \-j
 Input files specified be
 .B -f
@@ -84,6 +87,12 @@ are compressed by
 .TP
 \-l minlen
 Sets the minimum length for a sequence. By default, all sequences are kept. With this option, sequences shorter than theoretically possible can be discarded.
+.TP
+\-L maxlen 
+Sets maximum length for a sequence. Any sequences longer, after primers are removed, will be discarded.
+.TP
+\-N
+Eliminate all sequences with uncalled nucleotides in the output. Otherwise, during assembly, uncalled bases\ (Ns) from unpaired regions may be emitted.
 .TP
 \-o minoverlap
 Sets the minimum overlap between forward and reverse reads. By default, this is at least one nucleotide of overlap, but this alignment tends to score poorly.
@@ -102,11 +111,12 @@ for more information.
 \-t threshold
 The score, between zero and one, that a sequence must meet to be kept in the output. This score is the geometric mean of the bases emitted.
 .TP
-\-6
-Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
-.TP
-\-F
-Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this flag will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33. The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application.
+\-T threads
+The number of threads to spawn. This will only be avilable if PANDAseq was compiled with 
+.BR pthreads (7).
+In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with 
+.BR top (1);
+watch the CPU% for the PANDAseq process and the overall system CPU waiting time (\fI%wa\fR in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
 .SH OUTPUT STATISTICS
 At the end of reconstruction, several statistics are output on lines beginning with \fBSTAT\fR.
 .TP

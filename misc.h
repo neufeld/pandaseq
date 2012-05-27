@@ -1,5 +1,5 @@
 /* PANDAseq -- Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
-    Copyright (C) 2011-2012  Andre Masella
+     Copyright (C) 2011-2012  Andre Masella
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,10 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#ifndef PROB_H
-#define PROB_H
+#ifndef MISC_H
+#define MISC_H
 
-#define PROBABILITY(score) (pow(10.0, (-(double)(score)) / 10.0))
-#define PHREDMAX 46
+#define DESTROY_MEMBER(self, name) if ((self)->name ## _destroy != NULL && (self)->name != NULL) { (self)->name ## _destroy((self)->name ## _data); } (self)->name = NULL; (self)->name ## _data = NULL; (self)->name ## _destroy = NULL
+#define MANAGED_MEMBER(type, name) type name; void * name ## _data; PandaDestroy name ## _destroy
+#define free0(val) if ((val) != NULL) free(val); (val) = NULL
 
 #endif

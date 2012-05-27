@@ -16,25 +16,25 @@
 
  */
 
-#ifndef PANDAASM_H
-#define PANDAASM_H
-#include "pandaseq.h"
+#ifndef ASM_H
+#define ASM_H
 #include "config.h"
+#include "pandaseq.h"
+#include "misc.h"
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
 #endif
 
-#define LOG(assembler, ...) (assembler)->logger((assembler)->logger_data, __VA_ARGS__);
-#define DESTROY_MEMBER(self, name) if ((self)->name ## _destroy != NULL && (self)->name != NULL) { (self)->name ## _destroy((self)->name ## _data); } (self)->name = NULL; (self)->name ## _data = NULL; (self)->name ## _destroy = NULL
-#define MANAGED_MEMBER(type, name) type name; void * name ## _data; PandaDestroy name ## _destroy
-#define free0(val) if ((val) != NULL) free(val); (val) = NULL
 typedef unsigned char seqindex;
+#define NUM_KMERS 2
+#define KMER_LEN 8
+#define KMERSEEN_SIZE (sizeof(seqindex) * NUM_KMERS * (1 << (2 * KMER_LEN)))
 
 struct panda_assembler {
 	volatile size_t refcnt;
 
-	MANAGED_MEMBER(PandaNextSeq, next);
-	MANAGED_MEMBER(PandaLogger, logger);
+	 MANAGED_MEMBER(PandaNextSeq, next);
+	 MANAGED_MEMBER(PandaLogger, logger);
 
 	size_t *rejected;
 	PandaModule *modules;

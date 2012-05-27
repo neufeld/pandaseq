@@ -15,202 +15,143 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#include<math.h>
-#include<sys/types.h>
-#include"pandaseq.h"
-#include"config.h"
-#include"table.h"
-bool panda_logger_file(FILE *file, PandaCode code, ...) {
-	va_list args;
-	bool ret;
-	va_start(args, code);
-	ret = panda_logger_v((PandaPrintf)fprintf, file, code, args);
-	va_end(args);
-	return ret;
-}
+#include "config.h"
+#include <math.h>
+#include <sys/types.h>
+#include "pandaseq.h"
+#include "buffer.h"
+#include "table.h"
 
-bool panda_logger_v(PandaPrintf xprintf, void *x, PandaCode code, va_list va)
+bool panda_logger_file(PandaCode code, panda_seq_identifier *id,
+		       const char *message, FILE *file)
 {
-	double d;
-	PandaModule m;
-	int i;
-	int i2;
-	int i3;
-	panda_qual *q1;
-	panda_qual *q2;
-	panda_result *r;
-	size_t s1;
-	size_t s2;
-	size_t s3;
-	size_t s4;
-	switch (code) {
-		case PANDA_CODE_API_VERSION:
-			xprintf(x, "INFO\tAPI\t%d\n", PANDA_API);
-			break;
-		case PANDA_CODE_BAD_NT:
-			xprintf(x, "ERR\tBADNT\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			i = va_arg(va, int);
-			xprintf(x, "\t%c@%d\n", i, va_arg(va, int));
-			break;
-		case PANDA_CODE_ID_PARSE_FAILURE:
-			xprintf(x, "ERR\tBADID\t%s\n", va_arg(va, const char*));
-			break;
-		case PANDA_CODE_MOD_INFO:
-			m = va_arg(va, PandaModule);
-			xprintf(x, "INFO\tMOD\t%s(%s:%d)\t%s\n", panda_module_get_name(m), panda_module_get_version(m), panda_module_get_api(m), panda_module_get_args(m));
-			break;
-		case PANDA_CODE_NO_DATA:
-			xprintf(x, "ERR\tNODATA\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\n");
-			break;
-		case PANDA_CODE_NO_FILE:
-			xprintf(x, "ERR\tNOFILE\t%s\n", va_arg(va, const char*));
-			break;
-		case PANDA_CODE_NO_QUALITY_INFO:
-			xprintf(x, "ERR\tNOQUAL\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\n");
-			break;
-		case PANDA_CODE_NOT_PAIRED:
-			xprintf(x, "ERR\tNOTPAIRED\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\n");
-			break;
-		case PANDA_CODE_PARSE_FAILURE:
-			xprintf(x, "ERR\tBADSEQ\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\n");
-			break;
-		case PANDA_CODE_PREMATURE_EOF:
-			xprintf(x, "ERR\tEOF\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\n");
-			break;
-		case PANDA_CODE_REJECT_STAT:
-			m = va_arg(va, PandaModule);
-			xprintf(x, "STAT\t%s\t%ld\n", panda_module_get_name(m), va_arg(va, long));
-			break;
-		case PANDA_CODE_INSUFFICIENT_KMER_TABLE:
-			xprintf(x, "ERR\tKLNG\t");
-			panda_seqid_xprint(va_arg(va, panda_seq_identifier*), xprintf, x);
-			xprintf(x, "\n");
-			break;
-		case PANDA_CODE_FORWARD_KMER:
-			(void)va_arg(va, panda_seq_identifier*);
-			i = va_arg(va, unsigned int);
-			xprintf(x, "DBG\tFMER\t%x @ %d\n", i, va_arg(va, ssize_t));
-			break;
-		case PANDA_CODE_REVERSE_KMER:
-			(void)va_arg(va, panda_seq_identifier*);
-			i = va_arg(va, unsigned int);
-			xprintf(x, "DBG\tRMER\t%x @ %d\n", i, va_arg(va, ssize_t));
-			break;
-		case PANDA_CODE_LOST_KMER:
-			(void)va_arg(va, panda_seq_identifier*);
-			i = va_arg(va, unsigned int);
-			xprintf(x, "DBG\tFML\t%x @ %d\n", i, va_arg(va, ssize_t));
-			break;
-		case PANDA_CODE_OVERLAP_POSSIBILITY:
-			(void)va_arg(va, panda_seq_identifier*);
-			s1 = va_arg(va, size_t);
-			s2 = va_arg(va, size_t);
-			s3 = va_arg(va, size_t);
-			s4 = va_arg(va, size_t);
-			xprintf(x, "INFO\tOLD\t%d mat = %d, mismat = %d, unk = %d, prob = %f\n", s1, s2, s3, s4, va_arg(va, double));
-			break;
-		case PANDA_CODE_BEST_OVERLAP:
-			(void)va_arg(va, panda_seq_identifier*);
-			xprintf(x,  "INFO\tBESTOLP\t%d\n", va_arg(va, int));
-			break;
-		case PANDA_CODE_NO_FORWARD_PRIMER:
-			xprintf(x, "ERR\tNOFP\t\n");
-			break;
-		case PANDA_CODE_NO_REVERSE_PRIMER:
-			xprintf(x, "ERR\tNORP\t\n");
-			break;
-		case PANDA_CODE_LOW_QUALITY_REJECT:
-			(void)va_arg(va, panda_seq_identifier*);
-			d = va_arg(va, double);
-			xprintf(x, "ERR\tLOWQ\t%f %f\n", d, va_arg(va, double));
-			break;
-		case PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH:
-			xprintf(x, "ERR\tNEGS\n");
-			break;
-		case PANDA_CODE_SEQUENCE_TOO_LONG:
-			xprintf(x, "ERR\tOOM\n");
-			break;
-		case PANDA_CODE_BUILD_FORWARD:
-		case PANDA_CODE_BUILD_REVERSE:
-			(void)va_arg(va, panda_seq_identifier*);
-			i = va_arg(va, int);
-			i2 = va_arg(va, int);
-			r = va_arg(va, panda_result*);
-			xprintf(x, "INFO\tBUILD\tr[%d] = %c[%d] | %e\n", i, (int)panda_nt_to_ascii(r->nt), i2, exp(r->p));
-			break;
-		case PANDA_CODE_BUILD_OVERLAP:
-			(void)va_arg(va, panda_seq_identifier*);
-			i = va_arg(va, int);
-			i2 = va_arg(va, int);
-			i3 = va_arg(va, int);
-			r = va_arg(va, panda_result*);
-			q1 = va_arg(va, panda_qual*);
-			q2 = va_arg(va, panda_qual*);
-			
-			xprintf(x, "INFO\tBUILD\tr[%d] = %c | %e given %c[%d] | %e and %c[%d] | %e\n", i, (int)panda_nt_to_ascii(r->nt), exp(r->p), (int)panda_nt_to_ascii(q1->nt), i2, panda_quality_probability(q1),
-			(int)panda_nt_to_ascii(q2->nt), i3, panda_quality_probability(q1));
-			break;
-		case PANDA_CODE_RECONSTRUCTION_PARAM:
-			(void)va_arg(va, panda_seq_identifier*);
-			i = va_arg(va, int);
-			i2 = va_arg(va, int);
-			xprintf(x, "INFO\tRECR\toverlap = %d df = %d dr = %d\n", i, i2, va_arg(va, int));
-			break;
-		case PANDA_CODE_MISMATCHED_BASE:
-			(void)va_arg(va, int);
-			(void)va_arg(va, int);
-			q1 = va_arg(va, panda_qual*);
-			q2 = va_arg(va, panda_qual*);
-			xprintf(x, "INFO\tMISM\t%d %d\n", (int)q1->qual, (int)q2->qual);
-			break;
-		default:
-			xprintf(x, "ERR\tUNKNOWN ERROR\t%x\n", code);
-			break;
+#if HAVE_PTHREAD
+	fprintf(file, "%p\t", static_buffer());
+#endif
+	fputs(panda_code_str(code), file);
+	if (id != NULL) {
+		fputc('\t', file);
+		panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
 	}
+	if (message != NULL) {
+		fputc('\t', file);
+		fputs(message, file);
+	}
+	fputc('\n', file);
 	return true;
 }
 
-const char *panda_version(void) {
-	return PACKAGE_STRING;
+const char const *panda_code_str(PandaCode code)
+{
+	switch (code) {
+	case PANDA_CODE_BAD_NT:
+		return "ERR\tBADNT";
+		break;
+	case PANDA_CODE_ID_PARSE_FAILURE:
+		return "ERR\tBADID";
+		break;
+	case PANDA_CODE_MOD_INFO:
+		return "INFO\tMOD";
+		break;
+	case PANDA_CODE_NO_DATA:
+		return "ERR\tNODATA";
+		break;
+	case PANDA_CODE_NO_FILE:
+		return "ERR\tNOFILE";
+		break;
+	case PANDA_CODE_NO_QUALITY_INFO:
+		return "ERR\tNOQUAL";
+		break;
+	case PANDA_CODE_NOT_PAIRED:
+		return "ERR\tNOTPAIRED";
+		break;
+	case PANDA_CODE_PARSE_FAILURE:
+		return "ERR\tBADSEQ";
+		break;
+	case PANDA_CODE_PREMATURE_EOF:
+		return "ERR\tEOF";
+		break;
+	case PANDA_CODE_REJECT_STAT:
+		return "STAT";
+		break;
+	case PANDA_CODE_INSUFFICIENT_KMER_TABLE:
+		return "ERR\tKLNG";
+		break;
+	case PANDA_CODE_FORWARD_KMER:
+		return "DBG\tFMER";
+		break;
+	case PANDA_CODE_REVERSE_KMER:
+		return "DBG\tRMER";
+		break;
+	case PANDA_CODE_LOST_KMER:
+		return "DBG\tFML";
+		break;
+	case PANDA_CODE_OVERLAP_POSSIBILITY:
+		return "INFO\tOLD";
+		break;
+	case PANDA_CODE_BEST_OVERLAP:
+		return "INFO\tBESTOLP";
+		break;
+	case PANDA_CODE_NO_FORWARD_PRIMER:
+		return "ERR\tNOFP";
+		break;
+	case PANDA_CODE_NO_REVERSE_PRIMER:
+		return "ERR\tNORP";
+		break;
+	case PANDA_CODE_LOW_QUALITY_REJECT:
+		return "ERR\tLOWQ";
+		break;
+	case PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH:
+		return "ERR\tNEGS";
+		break;
+	case PANDA_CODE_SEQUENCE_TOO_LONG:
+		return "ERR\tOOM";
+		break;
+	case PANDA_CODE_BUILD_FORWARD:
+	case PANDA_CODE_BUILD_REVERSE:
+	case PANDA_CODE_BUILD_OVERLAP:
+		return "INFO\tBUILD";
+		break;
+	case PANDA_CODE_RECONSTRUCTION_PARAM:
+		return "INFO\tRECR";
+		break;
+	case PANDA_CODE_MISMATCHED_BASE:
+		return "INFO\tMISM";
+		break;
+	default:
+		return "ERR\tUNKNOWN ERROR";
+		break;
+	}
 }
 
-bool panda_output_fasta(const panda_result_seq *sequence, FILE *file) {
+bool panda_output_fasta(const panda_result_seq *sequence, FILE *file)
+{
 	size_t it;
 	(void)fputc('>', file);
 	panda_seqid_print(&sequence->name, file);
 	(void)fputc('\n', file);
-	for(it = 0; it < sequence->sequence_length; it++) {
+	for (it = 0; it < sequence->sequence_length; it++) {
 		(void)fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
-	}
-	(void)fputc('\n', file);
-	return true;
-}
-bool panda_output_fastq(const panda_result_seq *sequence, FILE *file) {
-	size_t it;
-	(void)fputc('@', file);
-	panda_seqid_print(&sequence->name, file);
-	(void)fputc('\n', file);
-	for(it = 0; it < sequence->sequence_length; it++) {
-		(void)fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
-	}
-	fprintf(file, "\n+\n");
-	for(it = 0; it < sequence->sequence_length; it++) {
-		(void)fputc(33 - (int)(10 * log(1 - exp(sequence->sequence[it].p)) / ln_10), file);
 	}
 	(void)fputc('\n', file);
 	return true;
 }
 
+bool panda_output_fastq(const panda_result_seq *sequence, FILE *file)
+{
+	size_t it;
+	(void)fputc('@', file);
+	panda_seqid_print(&sequence->name, file);
+	(void)fputc('\n', file);
+	for (it = 0; it < sequence->sequence_length; it++) {
+		(void)fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
+	}
+	fprintf(file, "\n+\n");
+	for (it = 0; it < sequence->sequence_length; it++) {
+		(void)fputc(33 -
+			    (int)(10 * log(1 - exp(sequence->sequence[it].p)) /
+				  ln_10), file);
+	}
+	(void)fputc('\n', file);
+	return true;
+}

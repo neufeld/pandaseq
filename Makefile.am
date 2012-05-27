@@ -1,3 +1,4 @@
+NULL =
 ACLOCAL_AMFLAGS = -I m4
 bin_PROGRAMS = pandaseq
 lib_LTLIBRARIES = libpandaseq.la
@@ -19,7 +20,20 @@ pandaseq_LDFLAGS = $(MAIN_LDFLAGS) libpandaseq.la
 pandaseq_SOURCES = main.c
 libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS)
 libpandaseq_la_LDFLAGS = $(PANDA_LDFLAGS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'
-libpandaseq_la_SOURCES = assembler.c table.c plugin.c parser.c output.c
+libpandaseq_la_SOURCES = \
+	assembler.c \
+	assembler_support.c \
+	buffer.c \
+	fastq.c \
+	fileio.c \
+	misc.c \
+	module.c \
+	mux.c \
+	nt.c \
+	output.c \
+	seqid.c \
+	table.c \
+	$(NULL)
 pkglib_LTLIBRARIES = validtag.la
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag
 validtag_la_SOURCES = plugins/validtag.c

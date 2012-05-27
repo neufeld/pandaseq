@@ -16,8 +16,8 @@
 
  */
 
-#include<stdio.h>
-#include<math.h>
+#include <stdio.h>
+#include <math.h>
 #include "prob.h"
 
 static void buildmatrix(FILE * header, FILE * source, char *name,

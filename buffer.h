@@ -1,5 +1,5 @@
 /* PANDAseq -- Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
-    Copyright (C) 2011-2012  Andre Masella
+     Copyright (C) 2011-2012  Andre Masella
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,10 +15,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#ifndef PROB_H
-#define PROB_H
+#ifndef BUFFER_H
+#define BUFFER_H
 
-#define PROBABILITY(score) (pow(10.0, (-(double)(score)) / 10.0))
-#define PHREDMAX 46
+#include "pandaseq.h"
+#define BUFFER_SIZE 1024
+
+#define BUFFER(name, type, length) /*@only@ @notnull@*/ type *PANDACONCAT(name, _buffer)(void);
+#include "buffer.list"
+#undef BUFFER
+
+void bufferprintf(char *buffer, char *fmt, ...);
 
 #endif

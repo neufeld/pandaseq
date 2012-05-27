@@ -14,12 +14,6 @@ namespace Panda {
 	[CCode(cname = "PandaCode", has_type_id = false, cprefix = "PANDA_CODE_")]
 	public enum Code {
 		/**
-		 * Show version of the module API.
-		 *
-		 * (int api_version)
-		 */
-		API_VERSION,
-		/**
 		 * Invalid character in nucleotide data
 		 *
 		 * (panda_seq_identifier *id, int character)
@@ -175,7 +169,9 @@ namespace Panda {
 		 *
 		 * (panda_seq_identifier *id)
 		 */
-		SEQUENCE_TOO_LONG,
+		SEQUENCE_TOO_LONG;
+		[CCode(cname = "panda_code_str")]
+		public unowned string to_string();
 	}
 
 	/**
@@ -570,6 +566,56 @@ namespace Panda {
 	}
 
 	/**
+	 * A threading-safe wrapper to allow multiple assemblers to share a single data source.
+	 */
+	[CCode(cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref", has_type_id = false)]
+	public class Mux {
+		/**
+		 * Open a pair of gzipped files for multi-threaded assembled.
+		 * @see Assembler.open_gz
+		 */
+		[CCode(cname = "panda_mux_open_gz")]
+		public static Mux? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33);
+		/**
+		 * Open a pair of zipped for multi-threaded assembly.
+		 *
+		 * @see Assembler.open_bz2
+		 */
+		[CCode(cname = "panda_mux_open_bz2")]
+		public static Mux? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33);
+		/**
+		 * Create a new multiplexed data source from a sequence callback.
+		 *
+		 * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
+		 */
+		[CCode(cname = "PandaMux")]
+		public Mux(owned NextSeq next, owned Logger logger);
+		/**
+		 * Create a new multiplexed reader for given to FASTQ streams.
+		 * @see create_fastq_reader
+		 */
+		public Mux.fastq(owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33);
+		/**
+		 * Create a new assembler using the multiplexer as it sequence source.
+		 *
+		 * The new assembler will draw sequences from the original source in a thread-safe way. Each assembler is not thread-safe. This means that, to use the interface correctly, one creates a sequence source, wraps it in a multiplexer, then creates an assembler for every thread. Each assembler should be accessed in only one thread. It may be advisable to create a single assembler and set its configuration, then copy the settings to subsequently created assemblers.
+		 * @see Assembler.copy_configuration
+		 */
+		[CCode(cname = "panda_mux_create_assembler")]
+		public Assembler create_assembler();
+		/**
+		 * Increase the reference count on a multiplexer.
+		 */
+		[CCode(cname = "panda_mux_ref")]
+		public void @ref();
+		/**
+		 * Decrease the reference count on a multiplexer.
+		 */
+		[CCode(cname = "panda_mux_unref")]
+		public void mux_unref();
+	}
+
+	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
 	[CCode(cname = "panda_seq_identifier", has_type_id = false, destroy_function = "")]
@@ -755,8 +801,8 @@ file);
 	 * The variadic arguments will provide context based on the particular code passed.
 	 * @see Code
 	 */
-	[CCode(cname = "PandaLogger", instance_pos = 0)]
-	public delegate bool Logger(Code code, ...);
+	[CCode(cname = "PandaLogger")]
+	public delegate bool Logger(Code code, identifer? id, string? message);
 
 	/**
 	 * Get the next character from a FASTQ file or EOF.
@@ -791,6 +837,15 @@ file);
 	[CCode(cname = "panda_assembler_create_fastq_reader")]
 	public static NextSeq create_fastq_reader(owned NextChar forward, owned NextChar reverse, Logger logger, uint8 qualmin = 33);
 
+	/**
+	 * The current module API version of the running library
+	 */
+	[CCode(cname = "panda_api_version")]
+	int get_api_version();
+
+	/**
+	 * The current version string
+	 */
 	[CCode(cname = "panda_version")]
 	public unowned string get_version();
 
@@ -798,19 +853,14 @@ file);
 	 * Write errors and information to a file.
 	 */
 	[CCode(cname = "panda_logger_file")]
-	public bool file_logger(
+	public bool file_logger(Code code, identifier? id, string? message,
 #if POSIX
 Posix.FILE
 #else
 GLib.FileStream
 #endif
-file, Code code, ...);
+file);
 
-	/**
-	 * Writes an error message using the supplied printf-like function.
-	 */
-	[CCode(cname = "panda_logger_v")]
-	bool logger_v(PrintfFunc func, Code code, va_list va);
 	/**
 	 * Create a file logger
 	 */

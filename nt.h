@@ -15,9 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-
-#ifndef PANDASEQ_PARSER_H
-#define PANDASEQ_PARSER_H
-#include "pandaseq.h"
-
+#ifndef NT_H
+#define NT_H
+extern char iupac_forward[32];
+extern char iupac_reverse[32];
 #endif

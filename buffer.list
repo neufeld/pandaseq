@@ -1,0 +1,3 @@
+BUFFER(forward, panda_qual, PANDA_MAX_LEN)
+BUFFER(reverse, panda_qual, PANDA_MAX_LEN)
+BUFFER(static, char, BUFFER_SIZE)
