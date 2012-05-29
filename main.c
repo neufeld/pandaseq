@@ -439,6 +439,9 @@ int main(int argc, char **argv)
 		fprintf(stderr, "ERR\tLIB\tCould not create assembler.\n");
 		for (it = 0; it < modules_length; it++)
 			panda_module_unref(modules[it]);
+#if HAVE_PTHREAD
+		panda_mux_unref(mux);
+#endif
 		lt_dlexit();
 		return 1;
 	}
@@ -457,6 +460,9 @@ int main(int argc, char **argv)
 		     forward_primer, panda_nt_from_ascii)) {
 			fprintf(stderr, "ERR\tBADNT\tFPRIMER\n");
 			panda_assembler_unref(assembler);
+#if HAVE_PTHREAD
+			panda_mux_unref(mux);
+#endif
 			(void)lt_dlexit();
 			return 1;
 		}
@@ -469,6 +475,9 @@ int main(int argc, char **argv)
 		     reverse_primer, panda_nt_from_ascii_complement)) {
 			fprintf(stderr, "ERR\tBADNT\tRPRIMER\n");
 			panda_assembler_unref(assembler);
+#if HAVE_PTHREAD
+			panda_mux_unref(mux);
+#endif
 			(void)lt_dlexit();
 			return 1;
 		}
@@ -501,6 +510,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
+	panda_mux_unref(mux);
 #endif
 	do_assembly(assembler);
 #if HAVE_PTHREAD
