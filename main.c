@@ -39,7 +39,7 @@
 #define MAX_MODULES 100
 bool fastq = false;
 char *forward_primer = NULL;
-ssize_t maxlen = SSIZE_MAX;
+ssize_t maxlen = PANDA_MAX_LEN + 1;
 size_t minlen = 0;
 bool no_n = false;
 char *reverse_primer = NULL;
@@ -76,7 +76,7 @@ static void *do_assembly(PandaAssembler assembler)
 			fputc('\n', stderr);
 			shortcount++;
 		} else if (result->sequence_length > maxlen) {
-			fputs("ERR\tSHORT\t%s\n", stderr);
+			fputs("ERR\tLONG\t%s\n", stderr);
 			panda_seqid_print(&result->name, stderr);
 			fputc('\n', stderr);
 			shortcount++;
@@ -108,7 +108,7 @@ static void *do_assembly(PandaAssembler assembler)
 			panda_assembler_get_degenerate_count(assembler));
 	if (minlen > 0)
 		fprintf(stderr, "STAT\tSHORT\t%ld\n", shortcount);
-	if (maxlen < SSIZE_MAX)
+	if (maxlen <= PANDA_MAX_LEN)
 		fprintf(stderr, "STAT\tLONG\t%ld\n", longcount);
 	panda_assembler_module_stats(assembler);
 	fprintf(stderr, "STAT\tOK\t%ld\n",
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
 		case 'l':
 			errno = 0;
 			minlen = (size_t)strtol(optarg, NULL, 10);
-			if (errno != 0 || minlen < 0) {
+			if (errno != 0 || minlen < 0 || minlen > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad minimum length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 		case 'L':
 			errno = 0;
 			maxlen = (size_t)strtol(optarg, NULL, 10);
-			if (errno != 0 || minlen < 0) {
+			if (errno != 0 || maxlen < 1 || maxlen > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad maximum length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 		case 'o':
 			errno = 0;
 			minoverlap = strtol(optarg, NULL, 10);
-			if (errno != 0 || minoverlap < 1) {
+			if (errno != 0 || minoverlap < 1 || minoverlap > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad minimum overlap.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 			foffset = strtol(optarg, &endptr, 10);
 			if (*endptr != '\0') {
 				forward_primer = optarg;
-			} else if (errno != 0 || foffset < 1) {
+			} else if (errno != 0 || foffset < 1 || foffset > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad forward primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -279,7 +279,7 @@ int main(int argc, char **argv)
 			roffset = strtol(optarg, &endptr, 10);
 			if (*endptr != '\0') {
 				reverse_primer = optarg;
-			} else if (errno != 0 || roffset < 1) {
+			} else if (errno != 0 || roffset < 1 || roffset > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad reverse primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -398,6 +398,16 @@ int main(int argc, char **argv)
 				panda_module_get_usage(modules[it]));
 			panda_module_unref(modules[it]);
 		}
+		lt_dlexit();
+		return 1;
+	}
+	if (maxlen < minlen || minoverlap > maxlen) {
+		fprintf(stderr, "The minimum length (%d), maximum length (%d), and minimum overlap (%d) are not sensible if you think about the sequence reconstruction.\n",
+			(int)minlen,
+			(int)maxlen,
+			minoverlap);
+		for (it = 0; it < modules_length; it++)
+			panda_module_unref(modules[it]);
 		lt_dlexit();
 		return 1;
 	}
