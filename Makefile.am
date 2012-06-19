@@ -34,10 +34,16 @@ libpandaseq_la_SOURCES = \
 	seqid.c \
 	table.c \
 	$(NULL)
-pkglib_LTLIBRARIES = validtag.la
+pkglib_LTLIBRARIES = \
+	completely_miss_the_point.la \
+	validtag.la \
+	$(NULL)
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag
 validtag_la_SOURCES = plugins/validtag.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
+completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point
+completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c
+completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
 BUILT_SOURCES = table.c table.h
 CLEANFILES = table.c table.h $(bin_SCRIPTS)
 
