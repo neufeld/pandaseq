@@ -27,6 +27,5 @@ INIT {
 		fprintf(stderr, "Bad maximum allowed mismatches.\n");
 		return false;
 	}
-	fprintf(stderr, "INFO\tSAMPLE\tINIT\t%s\n", args);
 	return true;
 }
