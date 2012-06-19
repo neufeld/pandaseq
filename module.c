@@ -56,7 +56,8 @@ bool module_checkseq(PandaAssembler assembler, panda_result_seq *sequence)
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
-		if (!module->check(sequence, module->user_data)) {
+		if (module->check != NULL
+		    && !module->check(sequence, module->user_data)) {
 			assembler->rejected[it]++;
 			return false;
 		}
@@ -71,8 +72,9 @@ bool module_precheckseq(PandaAssembler assembler, panda_seq_identifier *id,
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
-		if (!module->precheck(id, forward, forward_length, reverse,
-				      reverse_length, module->user_data)) {
+		if (module->precheck != NULL
+		    && !module->precheck(id, forward, forward_length, reverse,
+					 reverse_length, module->user_data)) {
 			assembler->rejected[it]++;
 			return false;
 		}
@@ -88,9 +90,9 @@ void module_init(PandaAssembler assembler)
 		if (module->handle != NULL) {
 			const lt_dlinfo *info = lt_dlgetinfo(module->handle);
 			LOGV(PANDA_CODE_MOD_INFO, "%s(%s:%d)\t%s",
-			    info == NULL ? "unknown" : info->name,
-			    module->version == NULL ? "?" : *(module->version),
-			    module->api, module->args);
+			     info == NULL ? "unknown" : info->name,
+			     module->version == NULL ? "?" : *(module->version),
+			     module->api, module->args);
 			assembler->rejected[it] = 0;
 		}
 	}
@@ -100,8 +102,8 @@ void panda_assembler_module_stats(PandaAssembler assembler)
 {
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
-		LOGV(PANDA_CODE_REJECT_STAT, "%s\t%ld", assembler->modules[it]->name,
-		    assembler->rejected[it]);
+		LOGV(PANDA_CODE_REJECT_STAT, "%s\t%ld",
+		     assembler->modules[it]->name, assembler->rejected[it]);
 	}
 }
 
@@ -156,6 +158,7 @@ PandaModule panda_module_load(char *path)
 	lt_dlhandle handle;
 	bool(*init) (char *args);
 	PandaCheck check;
+	PandaPreCheck precheck;
 	int *api;
 	char **version;
 	char *name;
@@ -202,9 +205,12 @@ PandaModule panda_module_load(char *path)
 	}
 
 	*(void **)(&check) = lt_dlsym(handle, "check");
-	if (check == NULL) {
+	*(void **)(&precheck) = lt_dlsym(handle, "precheck");
+	if (check == NULL && precheck == NULL) {
 		lt_dlclose(handle);
-		fprintf(stderr, "Could not find check function in %s\n", name);
+		fprintf(stderr,
+			"Could not find check or precheck function in %s\n",
+			name);
 		free(name);
 		unref_ltdl();
 		return NULL;
@@ -221,6 +227,7 @@ PandaModule panda_module_load(char *path)
 	m->api = *api;
 	m->args = args;
 	m->check = check;
+	m->precheck = precheck;
 	m->handle = handle;
 	m->name = name;
 	m->name_free = false;
@@ -228,7 +235,6 @@ PandaModule panda_module_load(char *path)
 	m->user_data = NULL;
 	m->version = lt_dlsym(handle, "version");
 	*(void **)(&m->destroy) = lt_dlsym(handle, "destroy");
-	*(void **)(&m->precheck) = lt_dlsym(handle, "precheck");
 	return m;
 }
 

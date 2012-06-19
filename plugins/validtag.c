@@ -25,10 +25,6 @@ PRECHECK {
 	return false;
 }
 
-CHECK {
-	return true;
-}
-
 INIT {
 	const char *it = args;
 	char *wit;
