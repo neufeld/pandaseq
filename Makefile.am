@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libpandaseq.la
 noinst_PROGRAMS = mktable
 bin_SCRIPTS = pandaxs
 library_includedir=$(includedir)/$(LIB_NAME)
-library_include_HEADERS = pandaseq.h
+library_include_HEADERS = pandaseq.h panda_api.c
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(LIB_NAME).pc
 vapidir = $(datadir)/vala/vapi
@@ -39,10 +39,10 @@ pkglib_LTLIBRARIES = \
 	validtag.la \
 	$(NULL)
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag
-validtag_la_SOURCES = plugins/validtag.c
+validtag_la_SOURCES = plugins/validtag.c panda_api.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
 completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point
-completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c
+completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c panda_api.c
 completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
 BUILT_SOURCES = table.c table.h
 CLEANFILES = table.c table.h $(bin_SCRIPTS)

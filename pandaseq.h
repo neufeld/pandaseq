@@ -732,14 +732,17 @@ void panda_mux_unref( /*@notnull@ */ PandaMux mux);
  */
 #define PANDA_LOGGER(file, user_data, destroy) (*user_data = file, *destroy = NULL, (PandaLogger) panda_logger_file)
 
-/* Convenience macros for creating modules */
 #define PANDA_API 1
 #define PANDACONCATE(x,y) x ## y
 #define PANDACONCAT(x,y) PANDACONCATE(x, y)
+
+/* Convenience macros for creating modules */
+#ifdef PANDASEQ_MODULE
 #define PRECHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_precheck) (const panda_seq_identifier *id, panda_qual *forward, size_t forward_length, panda_qual *reverse, size_t reverse_length)
-#define CHECK int PANDACONCAT(PANDASEQ_MODULE,_LTX_api) = PANDA_API; bool PANDACONCAT(PANDASEQ_MODULE,_LTX_check) (const panda_result_seq *sequence)
+#define CHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_check) (const panda_result_seq *sequence)
 #define INIT bool PANDACONCAT(PANDASEQ_MODULE,_LTX_init)(const char *args)
 #define CLEANUP void PANDACONCAT(PANDASEQ_MODULE,_LTX_destroy)(void)
 #define HELP(desc, usage) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_desc) = desc; const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_usage) = usage
 #define VER_INFO(version) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_version) = version
+#endif
 #endif
