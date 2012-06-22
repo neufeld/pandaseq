@@ -149,6 +149,7 @@ int main(int argc, char **argv)
 	int minoverlap = 1;
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
+	bool okay;
 	double q = 0.36;
 	int qualmin = 33;
 	char *reverse_filename = NULL;
@@ -455,9 +456,26 @@ int main(int argc, char **argv)
 		lt_dlexit();
 		return 1;
 	}
+	okay = true;
 	for (it = 0; it < modules_length; it++) {
-		panda_assembler_add_module(assembler, modules[it]);
+		bool add = panda_assembler_add_module(assembler, modules[it]);
+		if (!add) {
+			fprintf(stderr, "Problem with %s(%s) %s\n\t%s\n",
+				panda_module_get_name(modules[it]),
+				panda_module_get_description(modules[it]),
+				panda_module_get_version(modules[it]),
+				panda_module_get_usage(modules[it]));
+		}
+		okay &= add;
 		panda_module_unref(modules[it]);
+	}
+	if (!okay) {
+		panda_assembler_unref(assembler);
+#if HAVE_PTHREAD
+		panda_mux_unref(mux);
+#endif
+		(void)lt_dlexit();
+		return 1;
 	}
 	modules_length = 0;
 	panda_assembler_set_threshold(assembler, threshold);

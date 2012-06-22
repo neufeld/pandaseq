@@ -416,9 +416,10 @@ namespace Panda {
 		 * Add a module to this assembly process.
 		 *
 		 * Sequences will be checked using this module.
+		 * @return true if the module was successfully initialised and added
 		 */
 		[CCode(cname = "panda_assembler_add_module")]
-		public void add_module(Module module);
+		public bool add_module(Module module);
 
 		/**
 		 * Clone the configuration of one assembler to another.

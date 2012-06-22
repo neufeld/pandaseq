@@ -37,6 +37,7 @@ static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
 struct panda_module {
 	volatile size_t refcnt;
 
+	 bool(*init) (char *args);
 	PandaCheck check;
 	PandaPreCheck precheck;
 	PandaDestroy destroy;
@@ -155,7 +156,6 @@ PandaModule panda_module_load(char *path)
 {
 	PandaModule m;
 	lt_dlhandle handle;
-	bool(*init) (char *args);
 	PandaCheck check;
 	PandaPreCheck precheck;
 	int *api;
@@ -215,16 +215,14 @@ PandaModule panda_module_load(char *path)
 		return NULL;
 	}
 
-	*(void **)(&init) = lt_dlsym(handle, "init");
-	if (init != NULL && !init(args)) {
-		free(name);
-		unref_ltdl();
-		return NULL;
-	}
-
 	m = malloc(sizeof(struct panda_module));
 	m->api = *api;
-	m->args = args;
+	if (args == NULL || *args == '\0') {
+		m->args = NULL;
+	} else {
+		m->args = malloc(strlen(args) + 1);
+		memcpy(m->args, args, strlen(args) + 1);
+	}
 	m->check = check;
 	m->precheck = precheck;
 	m->handle = handle;
@@ -233,6 +231,8 @@ PandaModule panda_module_load(char *path)
 	m->user_data = NULL;
 	m->version = lt_dlsym(handle, "version");
 	*(void **)(&m->destroy) = lt_dlsym(handle, "destroy");
+	*(void **)(&m->init) = lt_dlsym(handle, "init");
+
 	return m;
 }
 
@@ -285,6 +285,8 @@ void panda_module_unref(PandaModule module)
 			module->destroy(module->user_data);
 		if (module->name != NULL)
 			free(module->name);
+		if (module->args != NULL)
+			free(module->args);
 		if (module->handle != NULL)
 			lt_dlclose(module->handle);
 		free(module);
@@ -334,11 +336,25 @@ const char *panda_module_get_usage(PandaModule module)
 	return val == NULL ? NULL : *val;
 }
 
-void panda_assembler_add_module(PandaAssembler assembler, PandaModule module)
+bool panda_assembler_add_module(PandaAssembler assembler, PandaModule module)
 {
+	bool init = true;
 	if (module == NULL) {
-		return;
+		return false;
 	}
+#ifdef HAVE_PTHREAD
+	pthread_mutex_lock(&ref_lock);
+#endif
+	if (module->init != NULL) {
+		init = module->init(module->args);
+		if (init)
+			module->init = NULL;
+	}
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&ref_lock);
+#endif
+	if (!init)
+		return false;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&assembler->mutex);
 #endif
@@ -361,4 +377,5 @@ void panda_assembler_add_module(PandaAssembler assembler, PandaModule module)
 #ifdef HAVE_PTHREAD
 	pthread_mutex_unlock(&assembler->mutex);
 #endif
+	return true;
 }

@@ -488,8 +488,10 @@ void panda_assembler_unref( /*@notnull@ */ PandaAssembler assembler);
  * Add a module to this assembly process.
  *
  * Sequences will be checked using this module.
+ * Returns true if the module was successfully initialised and added. If the
+ * module's command line arguments are not processed correctly, this will fail.
  */
-void panda_assembler_add_module( /*@notnull@ */ PandaAssembler assembler,
+bool panda_assembler_add_module( /*@notnull@ */ PandaAssembler assembler,
 				/*@notnull@ */ PandaModule module);
 
 /**
