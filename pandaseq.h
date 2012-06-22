@@ -311,8 +311,10 @@ void panda_module_unref( /*@notnull@ */ PandaModule module);
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_description( /*@notnull@ */
-							 PandaModule module);
+								/*@dependent@*/ const char *panda_module_get_description(
+								/*@notnull@ */
+																PandaModule
+																module);
 /**
  * Get the usage information (i.e., help text) of a module.
  *
@@ -423,48 +425,58 @@ PandaNextSeq panda_create_fastq_reader( /*@notnull@ */ PandaNextChar forward,
  * Create a new assembler for given to FASTQ streams.
  * @see panda_create_fastq_reader
  */
-/*@notnull@*/ PandaAssembler panda_assembler_new_fastq_reader( /*@notnull@ */
-							      PandaNextChar
-							      forward,
-							      /*@null@ */
-							      void
-							      *forward_data,
-							      /*@null@ */
-							      PandaDestroy
-							      forward_destroy,
-							      /*@notnull@ */
-							      PandaNextChar
-							      reverse,
-							      /*@null@ */
-							      void
-							      *reverse_data,
-							      /*@null@ */
-							      PandaDestroy
-							      reverse_destroy,
-							      /*@notnull@ */
-							      PandaLogger
-							      logger,
-							      /*@null@ */
-							      void *logger_data,
-							      /*@null@ */
-							      PandaDestroy
-							      logger_destroy,
-							      unsigned char
-							      qualmin);
+/*@notnull@*/ PandaAssembler panda_assembler_new_fastq_reader(
+								     /*@notnull@ */
+								     PandaNextChar
+								     forward,
+								     /*@null@ */
+								     void
+								     *forward_data,
+								     /*@null@ */
+								     PandaDestroy
+								     forward_destroy,
+								     /*@notnull@ */
+								     PandaNextChar
+								     reverse,
+								     /*@null@ */
+								     void
+								     *reverse_data,
+								     /*@null@ */
+								     PandaDestroy
+								     reverse_destroy,
+								     /*@notnull@ */
+								     PandaLogger
+								     logger,
+								     /*@null@ */
+								     void
+								     *logger_data,
+								     /*@null@ */
+								     PandaDestroy
+								     logger_destroy,
+								     unsigned
+								     char
+								     qualmin);
 /**
  * Create a new assembler from a sequence source.
  *
  * @param next, next_data, next_destroy the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroy, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
  * @param logger, logger_data, logger_destroy the function to call to report information to the user
  */
-/*@notnull@*/ PandaAssembler panda_assembler_new( /*@notnull@ */ PandaNextSeq
-						 next,	/*@null@ */
-						 void *next_data,	/*@null@ */
-						 PandaDestroy next_destroy,
-						 /*@notnull@ */
-						 PandaLogger logger,	/*@null@ */
-						 void *logger_data,	/*@null@ */
-						 PandaDestroy logger_destroy);
+/*@notnull@*/ PandaAssembler panda_assembler_new(
+							/*@notnull@ */
+							PandaNextSeq next,
+							/*@null@ */
+							void *next_data,
+							/*@null@ */
+							PandaDestroy
+							next_destroy,
+							/*@notnull@ */
+							PandaLogger logger,
+							/*@null@ */
+							void *logger_data,
+							/*@null@ */
+							PandaDestroy
+							logger_destroy);
 /**
  * Clone the configuration of one assembler to another.
  *
@@ -562,12 +574,13 @@ void panda_assembler_set_disallow_degenerates( /*@notnull@ */ PandaAssembler
  * 
  * This is mutually exclusive with forward_trim
  */
-/*@null@*/ panda_nt *panda_assembler_get_forward_primer( /*@notnull@ */
-							PandaAssembler
-							assembler,
-							/*@notnull@ */
-							size_t
-							*length);
+								/*@null@*/ panda_nt *panda_assembler_get_forward_primer(
+								/*@notnull@ */
+															       PandaAssembler
+															       assembler,
+															       /*@notnull@ */
+															       size_t
+															       *length);
 void panda_assembler_set_forward_primer( /*@notnull@ */ PandaAssembler
 					assembler, panda_nt *sequence,
 					size_t length);

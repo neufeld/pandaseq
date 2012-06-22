@@ -118,8 +118,8 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 	/* For determining overlap. */
 	size_t maxoverlap =
 	    result->forward_length <
-	    result->reverse_length ? result->forward_length : result->
-	    reverse_length;
+	    result->reverse_length ? result->
+	    forward_length : result->reverse_length;
 	double bestprobability =
 	    qual_nn * (result->forward_length + result->reverse_length);
 	int bestoverlap = -1;
@@ -326,13 +326,16 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 			q = ismatch ? fpr : qual_nn;
 		} else {
 			q = (ismatch ? qual_match :
-			     qual_mismatch)[result->forward[findex].
-					    qual][result->reverse[rindex].qual];
+			     qual_mismatch)[result->
+					    forward[findex].qual][result->
+								  reverse
+								  [rindex].
+								  qual];
 		}
 
 		if (ismatch) {
-			nt = (result->reverse[rindex].nt & result->
-			      forward[findex].nt);
+			nt = (result->reverse[rindex].
+			      nt & result->forward[findex].nt);
 		} else {
 			if (result->forward[rindex].qual <
 			    result->reverse[rindex].qual) {
@@ -438,12 +441,11 @@ const panda_result_seq *panda_assembler_next(PandaAssembler assembler)
 		return NULL;
 	}
 	while (true) {
-		if (!assembler->
-		    next(&assembler->result.name, &assembler->result.forward,
-			 &assembler->result.forward_length,
-			 &assembler->result.reverse,
-			 &assembler->result.reverse_length,
-			 assembler->next_data)) {
+		if (!assembler->next
+		    (&assembler->result.name, &assembler->result.forward,
+		     &assembler->result.forward_length,
+		     &assembler->result.reverse,
+		     &assembler->result.reverse_length, assembler->next_data)) {
 			return NULL;
 		}
 		assert(assembler->result.forward_length <= PANDA_MAX_LEN);

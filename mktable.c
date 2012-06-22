@@ -20,8 +20,8 @@
 #include <math.h>
 #include "prob.h"
 
-static void buildmatrix(FILE * header, FILE * source, char *name,
-		 double (*formula) (double, double))
+static void buildmatrix(FILE *header, FILE *source, char *name,
+			double (*formula) (double, double))
 {
 	int i, j;
 	fprintf(header, "extern double %s[][%d];\n", name, PHREDMAX + 1);
@@ -46,8 +46,8 @@ static void buildmatrix(FILE * header, FILE * source, char *name,
 
 }
 
-static void buildlist(FILE * header, FILE * source, char *name,
-	       double (*formula) (double))
+static void buildlist(FILE *header, FILE *source, char *name,
+		      double (*formula) (double))
 {
 	int i;
 	fprintf(header, "extern double %s[%d];\n", name, PHREDMAX + 1);

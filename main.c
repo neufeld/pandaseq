@@ -240,7 +240,8 @@ int main(int argc, char **argv)
 		case 'o':
 			errno = 0;
 			minoverlap = strtol(optarg, NULL, 10);
-			if (errno != 0 || minoverlap < 1 || minoverlap > PANDA_MAX_LEN) {
+			if (errno != 0 || minoverlap < 1
+			    || minoverlap > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad minimum overlap.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -265,7 +266,8 @@ int main(int argc, char **argv)
 			foffset = strtol(optarg, &endptr, 10);
 			if (*endptr != '\0') {
 				forward_primer = optarg;
-			} else if (errno != 0 || foffset < 1 || foffset > PANDA_MAX_LEN) {
+			} else if (errno != 0 || foffset < 1
+				   || foffset > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad forward primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -280,7 +282,8 @@ int main(int argc, char **argv)
 			roffset = strtol(optarg, &endptr, 10);
 			if (*endptr != '\0') {
 				reverse_primer = optarg;
-			} else if (errno != 0 || roffset < 1 || roffset > PANDA_MAX_LEN) {
+			} else if (errno != 0 || roffset < 1
+				   || roffset > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad reverse primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -403,10 +406,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	if (maxlen < minlen || minoverlap > maxlen) {
-		fprintf(stderr, "The minimum length (%d), maximum length (%d), and minimum overlap (%d) are not sensible if you think about the sequence reconstruction.\n",
-			(int)minlen,
-			(int)maxlen,
-			minoverlap);
+		fprintf(stderr,
+			"The minimum length (%d), maximum length (%d), and minimum overlap (%d) are not sensible if you think about the sequence reconstruction.\n",
+			(int)minlen, (int)maxlen, minoverlap);
 		for (it = 0; it < modules_length; it++)
 			panda_module_unref(modules[it]);
 		lt_dlexit();
