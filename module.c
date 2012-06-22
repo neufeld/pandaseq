@@ -44,7 +44,6 @@ struct panda_module {
 
 	lt_dlhandle handle;
 	char *name;
-	bool name_free;
 	char *args;
 
 	int api;
@@ -230,7 +229,6 @@ PandaModule panda_module_load(char *path)
 	m->precheck = precheck;
 	m->handle = handle;
 	m->name = name;
-	m->name_free = false;
 	m->refcnt = 1;
 	m->user_data = NULL;
 	m->version = lt_dlsym(handle, "version");
@@ -251,9 +249,8 @@ PandaModule panda_module_new(char *name, PandaCheck check,
 	m->check = check;
 	m->destroy = cleanup;
 	m->handle = NULL;
-	m->name = malloc(strlen(name));
-	memcpy(m->name, name, strlen(name));
-	m->name_free = true;
+	m->name = malloc(strlen(name) + 1);
+	memcpy(m->name, name, strlen(name) + 1);
 	m->precheck = precheck;
 	m->refcnt = 1;
 	m->user_data = user_data;
@@ -286,7 +283,7 @@ void panda_module_unref(PandaModule module)
 	if (count == 0) {
 		if (module->destroy != NULL)
 			module->destroy(module->user_data);
-		if (module->name != NULL && module->name_free)
+		if (module->name != NULL)
 			free(module->name);
 		if (module->handle != NULL)
 			lt_dlclose(module->handle);
