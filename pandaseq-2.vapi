@@ -9,165 +9,112 @@ namespace Panda {
 	 * Codes used for logging conditions during the assembly
 	 *
 	 * Some of these are errors and some are informational.
-	 * The variadic arguments provided are listed.
 	 */
 	[CCode(cname = "PandaCode", has_type_id = false, cprefix = "PANDA_CODE_")]
 	public enum Code {
 		/**
 		 * Invalid character in nucleotide data
-		 *
-		 * (panda_seq_identifier *id, int character)
 		 */
 		BAD_NT,
 		/**
 		 * The best computed overlap
-		 *
-		 * (panda_seq_identifier *id, int overlap)
 		 */
 		BEST_OVERLAP,
 		/**
 		 * A nucleotide copied during reconstruction of the forward sequence
-		 *
-		 * (panda_seq_identifier *id, int index_in_assembly, int index_in_reverse, panda_result *nt)
 		 */
 		BUILD_FORWARD,
 		/**
 		 * A nucleotide determined during reconstruction of the overlap region
-		 *
-		 * (panda_seq_identifier *id, int index_in_assembly, int index_in_forward, int index_in_reverse, panda_result *nt, panda_nt *forward, panda_nt *reverse)
 		 */
 		BUILD_OVERLAP,
 		/**
 		 * A nucleotide copied during reconstruction of the reverse sequence
-		 *
-		 * (panda_seq_identifier *id, int index_in_assembly, int index_in_reverse, panda_result *nt)
 		 */
 		BUILD_REVERSE,
 		/**
 		 * A //k//-mer found in the forward sequence
-		 *
-		 * (panda_seq_identifier *id, unsigned int kmer, ssize_t position)
 		 */
 		FORWARD_KMER,
 		/**
 		 * An incorrect Illumina FASTQ header
-		 *
-		 *  (const char *id)
 		 */
 		ID_PARSE_FAILURE,
 		/**
 		 * The //k//-mer table is too small for the sequence
-		 *
-		 * (panda_seq_identifer *id)
 		 */
 		INSUFFICIENT_KMER_TABLE,
 		/**
 		 * A //k//-mer is thrown away due to a collision
-		 *
-		 * (panda_seq_identifier *id, unsigned int kmer, ssize_t position)
 		 */
 		LOST_KMER,
 		/**
 		 * A reconstruction is rejected because the quality score is below threshold
-		 *
-		 * (panda_seq_identifier *id, double quality, double threshold)
 		 */
 		LOW_QUALITY_REJECT,
 		/**
 		 * A pair of bases disagree in the reconstruction
-		 *
-		 * (panda_seq_identifier *id, int index_in_forward, int index_in_reverse, panda_qual *forward, panda_qual *reverse)
 		 */
 		MISMATCHED_BASE,
 		/**
 		 * Display information about a module
-		 *
-		 * (PandaModule module)
 		 */
 		MOD_INFO,
 		/**
 		 * The computed sequence length is invalid
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		NEGATIVE_SEQUENCE_LENGTH,
 		/**
 		 * No sequence data is availble in the file
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		NO_DATA,
 		/**
 		 * The file could not be opened
-		 *
-		 * (const char *filename)
 		 */
 		NO_FILE,
 		/**
 		 * The forward primer cannot be found in the sequence
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		NO_FORWARD_PRIMER,
 		/**
 		 * The quality information is missing in the FASTQ file
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		NO_QUALITY_INFO,
 		/**
 		 * The reverse primer cannot be found in the sequence
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		NO_REVERSE_PRIMER,
 		/**
 		 * The Illumina headers from the forward and reverse sequences do not match
-		 *
-		 * (panda_seq_identifier *foward, panda_seq_identifier *reverse)
 		 */
 		NOT_PAIRED,
 		/**
 		 * A possible overlap has been determined
-		 *
-		 * (panda_seq_identifier *id, size_t overlap, size_t matches, size_t mismatches, size_t unknowns, double probability)
 		 */
 		OVERLAP_POSSIBILITY,
 		/**
 		 * Error parsing FASTQ data
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		PARSE_FAILURE,
 		/**
 		 * An input file ended in the middle of a FASTQ file
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		PREMATURE_EOF,
 		/**
 		 * Reconstruction will commence with provided parameters
-		 *
-		 * (panda_seq_identifier *id, int overlap, int forward_unpaired, int reverse_unpaired)
 		 */
 		RECONSTRUCTION_PARAM,
 		/**
 		 * The number of sequences rejected by a particular module
-		 *
-		 * (PandaModule module, long rejected_sequence_count)
 		 * @see Assembler.module_stats
 		 */
 		REJECT_STAT,
 		/**
 		 * A //k//-mer found in the reverse sequence
-		 *
-		 * (panda_seq_identifier *id, unsigned int kmer, ssize_t position)
 		 */
 		REVERSE_KMER,
 		/**
 		 * The reconsructed sequence will exceed the memory buffer
-		 *
-		 * (panda_seq_identifier *id)
 		 */
 		SEQUENCE_TOO_LONG;
 		[CCode(cname = "panda_code_str")]
