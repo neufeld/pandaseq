@@ -66,8 +66,8 @@ static bool read_line(char *buffer, size_t max_len, struct stream_data *stream,
 	return false;
 }
 
-#define LOG(code) data->logger((code), id, NULL, data->logger_data);
-#define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); data->logger((code), id, static_buffer(), data->logger_data);
+#define LOG(flag, code) do { if(panda_debug_flags & flag) data->logger((code), id, NULL, data->logger_data); } while(0)
+#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); data->logger((code), id, static_buffer(), data->logger_data); }} while(0)
 #define TOINDEX(val) (((int)(val)) < data->qualmin ? 0 : ((((int)(val)) > data->qualmin + PHREDMAX ? PHREDMAX : (int)(val)) - data->qualmin))
 static bool read_seq(panda_seq_identifier *id, panda_qual *buffer,
 		     size_t max_len, struct stream_data *stream, char *table,
@@ -82,7 +82,7 @@ static bool read_seq(panda_seq_identifier *id, panda_qual *buffer,
 		v = stream->next(stream->next_data);
 		if (v == EOF) {
 			DESTROY_MEMBER(stream, next);
-			LOG(PANDA_CODE_PREMATURE_EOF);
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_PREMATURE_EOF);
 			return false;
 		}
 		if (v == '\r' || v == '\n') {
@@ -91,40 +91,40 @@ static bool read_seq(panda_seq_identifier *id, panda_qual *buffer,
 			}
 		} else {
 			if ((buffer[pos++].nt = table[v & 0x1F]) == '\0') {
-				LOGV(PANDA_CODE_BAD_NT, "%c@%d", v, pos);
+				LOGV(PANDA_DEBUG_FILE, PANDA_CODE_BAD_NT, "%c@%d", v, pos);
 				return false;
 			}
 		}
 	}
 	for (; v == '\n' || v == '\r'; v = stream->next(stream->next_data)) {
 		if (v == EOF) {
-			LOG(PANDA_CODE_PREMATURE_EOF);
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_PREMATURE_EOF);
 			DESTROY_MEMBER(stream, next);
 			return false;
 		}
 	}
 	if (v != '+') {
-		LOG(PANDA_CODE_PARSE_FAILURE);
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 		DESTROY_MEMBER(stream, next);
 		return false;
 	}
 	for (; v != '\n' && v != '\r'; v = stream->next(stream->next_data)) {
 		if (v == EOF) {
-			LOG(PANDA_CODE_PREMATURE_EOF);
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_PREMATURE_EOF);
 			DESTROY_MEMBER(stream, next);
 			return false;
 		}
 	}
 	for (; v == '\n' || v == '\r'; v = stream->next(stream->next_data)) {
 		if (v == EOF) {
-			LOG(PANDA_CODE_PREMATURE_EOF);
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_PREMATURE_EOF);
 			DESTROY_MEMBER(stream, next);
 			return false;
 		}
 	}
 	for (; v != '\n' && v != '\r'; v = stream->next(stream->next_data)) {
 		if (v == EOF) {
-			LOG(PANDA_CODE_PARSE_FAILURE);
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 			DESTROY_MEMBER(stream, next);
 			return false;
 		}
@@ -132,11 +132,11 @@ static bool read_seq(panda_seq_identifier *id, panda_qual *buffer,
 	}
 
 	if (pos == 0) {
-		LOG(PANDA_CODE_NO_DATA);
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NO_DATA);
 		return false;
 	}
 	if (qpos != pos) {
-		LOG(PANDA_CODE_NO_QUALITY_INFO);
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NO_QUALITY_INFO);
 		return false;
 	}
 	*length = pos;
@@ -163,18 +163,18 @@ static bool stream_next_seq(panda_seq_identifier *id, panda_qual **forward,
 		return false;
 	}
 	if ((fdir = panda_seqid_parse(id, &buffer[1])) == 0) {
-		LOGV(PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
+		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
 		return false;
 	}
 	if (!read_line(buffer, BUFFER_SIZE, &data->reverse, &rsize)) {
 		return false;
 	}
 	if ((rdir = panda_seqid_parse(&rid, &buffer[1])) == 0) {
-		LOGV(PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
+		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
 		return false;
 	}
 	if (!panda_seqid_equal(id, &rid)) {
-		LOG(PANDA_CODE_NOT_PAIRED);
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
 		return false;
 	}
 	if (!read_seq
@@ -182,7 +182,7 @@ static bool stream_next_seq(panda_seq_identifier *id, panda_qual **forward,
 	     iupac_forward, data, forward_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
-		LOG(PANDA_CODE_PARSE_FAILURE);
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 		return false;
 	}
 	if (!read_seq
@@ -190,7 +190,7 @@ static bool stream_next_seq(panda_seq_identifier *id, panda_qual **forward,
 	     iupac_reverse, data, reverse_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
-		LOG(PANDA_CODE_PARSE_FAILURE);
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 		return false;
 	}
 	*forward = data->forward_seq;

@@ -120,6 +120,42 @@ namespace Panda {
 		[CCode(cname = "panda_code_str")]
 		public unowned string to_string();
 	}
+	/**
+	 * Decide what kinds of messages are passed to the logger.
+	 */
+	[CCode(cname = "PandaDebug", has_type_id = false, cprefix = "PANDA_DEBUG_")]
+	[Flags]
+	public enum Debug {
+		/**
+		 * Usual output about assembly.
+		 */
+		BUILD,
+		/**
+		 * Input processing-related errors.
+		 */
+		FILE,
+		/**
+		 * Extra statistics.
+		 */
+		STAT,
+		/**
+		 * Information about building the //k//-mer table (long and boring).
+		 */
+		KMER,
+		/**
+		 * Excruciating detail about the reconstruction.
+		 */
+		RECON,
+		/**
+		 * Bucket loads of data about mistatches.
+		 */
+		MISMATCH,
+		DEFAULT;
+		[CCode(cname = "panda_debug_flags |= ")]
+		public void enable();
+		[CCode(cname = "panda_debug_flags &= ~")]
+		public void disable();
+	}
 
 	/**
 	 * A single nucleotide
@@ -594,7 +630,7 @@ namespace Panda {
 		[CCode(cname = "panda_seqid_xprint")]
 		public void print(PrintfFunc func);
 		/**
-		 * Write an Illumina header for a sequence identifer to a file
+		 * Write an Illumina header for a sequence identifier to a file
 		 */
 		[CCode(cname = "panda_seqid_print")]
 		public void to_file(
@@ -750,7 +786,7 @@ file);
 	 * @see Code
 	 */
 	[CCode(cname = "PandaLogger")]
-	public delegate bool Logger(Code code, identifer? id, string? message);
+	public delegate bool Logger(Code code, identifier? id, string? message);
 
 	/**
 	 * Get the next character from a FASTQ file or EOF.
@@ -820,4 +856,10 @@ Posix.FILE
 GLib.FileStream
 #endif
 file);
+
+	/**
+	 * The current flags used be the assember to report errors. Some errors are always reported.
+	 */
+	[CCode(cname = "panda_debug_flags")]
+	public Debug debug_flags;
 }

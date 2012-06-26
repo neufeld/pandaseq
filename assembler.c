@@ -35,8 +35,8 @@
 #include "prob.h"
 #include "table.h"
 
-#define LOG(code) assembler->logger((code), &assembler->result.name, NULL, assembler->logger_data);
-#define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); assembler->logger((code), &assembler->result.name, static_buffer(), assembler->logger_data);
+#define LOG(flag, code) do { if(panda_debug_flags & flag) assembler->logger((code), &assembler->result.name, NULL, assembler->logger_data); } while(0)
+#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); assembler->logger((code), &assembler->result.name, static_buffer(), assembler->logger_data); }} while(0)
 
 typedef unsigned int bitstype;
 #define FOR_BITS_IN_LIST(bits,index) for (index = 0; index < bits##_size; index++) if ((bits)[index / sizeof(bitstype) / 8] & (1 << (index % (8 * sizeof(bitstype)))))
@@ -135,22 +135,20 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 	BITS_INIT(posn, maxoverlap - assembler->minoverlap + 1);
 
 	if (result->forward_length >= (1 << (8 * sizeof(seqindex)))) {
-		LOG(PANDA_CODE_INSUFFICIENT_KMER_TABLE);
+		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_INSUFFICIENT_KMER_TABLE);
 		return false;
 	}
 
 	/* Scan forward sequence building k-mers and appending the position to kmerseen[k] */
 	FOREACH_KMER(it, result->forward) {
-#ifdef DEBUG
-		LOGV(PANDA_CODE_FORWARD_KMER, "%d@%d", (int)KMER(it),
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%d@%d", (int)KMER(it),
 		     (int)KMER_POSITION(it));
-#endif
 		for (j = 0;
 		     j < NUM_KMERS
 		     && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
 		if (j == NUM_KMERS) {
 			/* If we run out of storage, we lose k-mers. */
-			LOGV(PANDA_CODE_LOST_KMER, "%d@%d", (int)KMER(it),
+			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%d@%d", (int)KMER(it),
 			     (int)KMER_POSITION(it));
 		} else {
 			assembler->kmerseen[(KMER(it) << 1) + j] =
@@ -160,10 +158,8 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
 	FOREACH_KMER_REVERSE(it, result->reverse) {
-#ifdef DEBUG
-		LOG(PANDA_CODE_REVERSE_KMER, "%d@%d", (int)KMER(it),
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%d@%d", (int)KMER(it),
 		    (int)KMER_POSITION(it));
-#endif
 		for (j = 0;
 		     j < NUM_KMERS
 		     && assembler->kmerseen[(KMER(it) << 1) + j] !=
@@ -216,18 +212,16 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 		      2 * overlap + unknowns) + matches * assembler->pmatch +
 		     mismatches * assembler->pmismatch);
 
-#ifdef DEBUG
-		LOGV(PANDA_CODE_OVERLAP_POSSIBILITY,
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY,
 		     "overlap = %d, matches = %d, mismatches = %d, unknowns = %d, probability = %f",
-		     overlap, matches, mismatches, unknowns, probability);
-#endif
+		     (int) overlap, (int) matches, (int) mismatches, (int) unknowns, (float) probability);
 		if (probability > bestprobability) {
 			bestprobability = probability;
 			bestoverlap = overlap;
 		}
 	}
 
-	LOGV(PANDA_CODE_BEST_OVERLAP, "%d", (int)bestoverlap);
+	LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_BEST_OVERLAP, "%d", (int)bestoverlap);
 
 	if (bestoverlap == -1) {
 		return false;
@@ -239,11 +233,11 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 	    bestoverlap + result->reverse_length -
 	    (ssize_t) result->reverse_offset + 1;
 	if (len <= 0) {
-		LOG(PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
+		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
 		return false;
 	}
 	if (len > maxresult) {
-		LOG(PANDA_CODE_SEQUENCE_TOO_LONG);
+		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_SEQUENCE_TOO_LONG);
 		return false;
 	}
 	result->sequence_length = len - 1;
@@ -254,11 +248,9 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 	dr = (ssize_t) result->reverse_length -
 	    (ssize_t) result->reverse_offset - bestoverlap;
 	/* Copy the unpaired forward sequence. */
-#ifdef DEBUG
-	LOGV(PANDA_CODE_RECONSTRUCTION_PARAM,
+	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM,
 	     "bestoverlap = %d, dforward = %d, dreverse = %d", (int)bestoverlap,
 	     (int)df, (int)dr);
-#endif
 	for (i = 0; i < VEEZ(df); i++) {
 		int findex = i + result->forward_offset;
 		panda_nt fbits = result->forward[findex].nt;
@@ -269,10 +261,8 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 			result->degenerates++;
 		}
 		fquality += q;
-#ifdef DEBUG
-		LOGV(PANDA_CODE_BUILD_FORWARD, "S[%d] = F[%d] = %c", i, findex,
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_FORWARD, "S[%d] = F[%d] = %c", (int) i, (int) findex,
 		     panda_nt_to_ascii(result->sequence[i].nt));
-#endif
 	}
 
 	/* Mask out the B-cliff at the end of sequences */
@@ -309,7 +299,7 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 		    qual_score[result->reverse[rindex].qual];
 
 		if (!ismatch) {
-			LOGV(PANDA_CODE_MISMATCHED_BASE,
+			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE,
 			     "(F[%d] = %c) != (R[%d] = %c)", findex,
 			     panda_nt_to_ascii(result->forward[findex].nt),
 			     rindex,
@@ -350,13 +340,11 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 			result->degenerates++;
 		}
 		oquality += q;
-#ifdef DEBUG
-		LOGV(PANDA_CODE_BUILD_OVERLAP,
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_OVERLAP,
 		     "S[%d] = %c, F[%d] = %c, R[%d] = %c", index,
 		     panda_nt_to_ascii(nt), findex,
 		     panda_nt_to_ascii(result->forward[findex].nt), rindex,
 		     panda_nt_to_ascii(result->reverse[rindex].nt));
-#endif
 	}
 
 	/* Copy the unpaired reverse sequence. */
@@ -371,10 +359,8 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 		if (PANDA_NT_IS_DEGN(rbits)) {
 			result->degenerates++;
 		}
-#ifdef DEBUG
-		LOGV(PANDA_CODE_BUILD_REVERSE, "S[%d] = R[%d] = %c", index,
-		     rindex, panda_nto_to_ascii(result->sequence[index].nt));
-#endif
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_REVERSE, "S[%d] = R[%d] = %c", index,
+		     rindex, panda_nt_to_ascii(result->sequence[index].nt));
 	}
 	result->quality = (fquality + rquality + oquality) / len;
 
@@ -397,7 +383,7 @@ bool assemble_seq(PandaAssembler assembler)
 				  assembler->forward_primer,
 				  assembler->forward_primer_length);
 		if (assembler->result.forward_offset == 0) {
-			LOG(PANDA_CODE_NO_FORWARD_PRIMER);
+			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
 			assembler->nofpcount++;
 			return false;
 		}
@@ -412,7 +398,7 @@ bool assemble_seq(PandaAssembler assembler)
 				  assembler->reverse_primer,
 				  assembler->reverse_primer_length);
 		if (assembler->result.reverse_offset == 0) {
-			LOG(PANDA_CODE_NO_REVERSE_PRIMER);
+			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
 			assembler->norpcount++;
 			return false;
 		}
@@ -425,7 +411,7 @@ bool assemble_seq(PandaAssembler assembler)
 	}
 	if (assembler->result.quality < assembler->threshold) {
 		assembler->lowqcount++;
-		LOGV(PANDA_CODE_LOW_QUALITY_REJECT, "%f < %f",
+		LOGV(PANDA_DEBUG_STAT, PANDA_CODE_LOW_QUALITY_REJECT, "%f < %f",
 		     exp(assembler->result.quality), exp(assembler->threshold));
 		return false;
 	}

@@ -24,6 +24,8 @@
 #endif
 #include "buffer.h"
 
+PandaDebug panda_debug_flags = PANDA_DEBUG_DEFAULT;
+
 #if HAVE_PTHREAD
 
 #define BUFFER(name, type, size) pthread_key_t PANDACONCAT(name, _key);

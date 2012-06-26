@@ -75,6 +75,31 @@ typedef enum {
 const char const *panda_code_str(PandaCode code);
 
 /**
+ * Decide what kinds of messages are passed to the logger.
+ */
+typedef unsigned int PandaDebug;
+
+/** Usual output about assembly. */
+#define PANDA_DEBUG_BUILD 1
+/** Input processing-related errors. */
+#define PANDA_DEBUG_FILE 2
+/** Extra statistics. */
+#define PANDA_DEBUG_STAT 4
+/** Information about building the k-mer table (long and boring). */
+#define PANDA_DEBUG_KMER 8
+/** Excruciating detail about the reconstruction. */
+#define PANDA_DEBUG_RECON 16
+/** Bucket loads of data about mistatches. */
+#define PANDA_DEBUG_MISMATCH 32
+
+#define PANDA_DEBUG_DEFAULT PANDA_DEBUG_BUILD | PANDA_DEBUG_FILE | PANDA_DEBUG_STAT
+
+/**
+ * The current flags used be the assember to report errors. Some errors are always reported.
+ */
+extern PandaDebug panda_debug_flags;
+
+/**
  * A single nucleotide
  */
 typedef char panda_nt;
@@ -169,7 +194,7 @@ typedef struct {
 void panda_seqid_xprint(const panda_seq_identifier *id, PandaPrintf xprintf,
 			void *x);
 /**
- * Write an Illumina header for a sequence identifer to a file
+ * Write an Illumina header for a sequence identifier to a file
  */
 void panda_seqid_print(const panda_seq_identifier *id, FILE *file);
 /**

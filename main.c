@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Process command line arguments. */
-	while ((c = getopt(argc, argv, "hvjp:q:f:r:t:o:Nl:L:Q:C:6F"
+	while ((c = getopt(argc, argv, "hvjp:q:f:r:t:o:Nl:L:Q:C:6Fd:"
 #ifdef HAVE_PTHREAD
 			   "T:"
 #endif
@@ -323,11 +323,45 @@ int main(int argc, char **argv)
 			}
 			break;
 #endif
+		case 'd':
+			for(it = 0; it < strlen(optarg); it++) {
+				PandaDebug flag = 0;
+				switch (tolower(optarg[it])) {
+					case 'b':
+						flag = PANDA_DEBUG_BUILD;
+						break;
+					case 'f':
+						flag = PANDA_DEBUG_FILE;
+						break;
+					case 's':
+						flag = PANDA_DEBUG_STAT;
+						break;
+					case 'k':
+						flag = PANDA_DEBUG_KMER;
+						break;
+					case 'r':
+						flag = PANDA_DEBUG_RECON;
+						break;
+					case 'm':
+						flag = PANDA_DEBUG_MISMATCH;
+						break;
+					default:
+						fprintf(stderr, "Ignoring unknown debug flag `%c'.\n", (int) optarg[it]);
+						continue;
+				}
+				if (islower(optarg[it])) {
+					panda_debug_flags &= ~flag;
+				} else {
+					panda_debug_flags |= flag;
+				}
+			}
+			break;
 		case '?':
 			if (optopt == (int)'f' || optopt == (int)'r'
 			    || optopt == (int)'p' || optopt == (int)'q'
 			    || optopt == (int)'l' || optopt == (int)'L'
-			    || optopt == (int)'Q' || optopt == (int)'C') {
+			    || optopt == (int)'Q' || optopt == (int)'C'
+					|| optopt == (int)'T' || optopt == (int)'d') {
 				fprintf(stderr,
 					"Option -%c requires an argument.\n",
 					optopt);
@@ -364,6 +398,7 @@ int main(int argc, char **argv)
 			"-r reverse.fastq "
 			"[-6] "
 			"[-C module1 -C module2 ...] "
+			"[-d flags] "
 			"[-F] "
 			"[-j] "
 			"[-L maxlen] "
@@ -378,6 +413,13 @@ int main(int argc, char **argv)
 			"\n"
 			"\t-6\tUse PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+).\n"
 			"\t-C module\tLoad a sequence validation module.\n"
+			"\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n"
+				"\t\t(R)econstruction detail.\n"
+				"\t\tSequence (b)uilding information.\n"
+				"\t\t(F)ile processing.\n"
+				"\t\t(k)-mer table construction.\n"
+				"\t\tShow every (m)ismatch.\n"
+				"\t\tOptional (s)tatistics.\n"
 			"\t-f\tInput FASTQ file containing forward reads.\n"
 			"\t-F\tOutput FASTQ instead of FASTA.\n"
 			"\t-j\tInput files are bzipped.\n"
