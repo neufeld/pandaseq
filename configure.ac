@@ -10,7 +10,7 @@ AC_CHECK_HEADERS([math.h])
 AC_CHECK_LIB([m],[pow])
 ACX_PTHREAD
 
-AM_SILENT_RULES([yes])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])], )
 
 if test "x$enable_debug" = xyes; then
 	AC_DEFINE(DEBUG, 1, [Enable debugging code])
