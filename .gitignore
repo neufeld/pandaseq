@@ -17,6 +17,7 @@ debian/*debhelper*
 debian/*substvars
 debian/files
 debian/libpandaseq0
+debian/pandaseq-dbg
 debian/pandaseq-dev
 debian/tmp/
 depcomp

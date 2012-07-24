@@ -15,10 +15,10 @@ docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugins/sample.c
 mktable_CFLAGS = -std=gnu99 -pedantic
 mktable_SOURCES = mktable.c
-pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -DPKGLIBDIR=$(pkglibdir) $(MAIN_CFLAGS)
+pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -DPKGLIBDIR=$(pkglibdir) $(MAIN_CFLAGS) -g
 pandaseq_LDFLAGS = $(MAIN_LDFLAGS) libpandaseq.la
 pandaseq_SOURCES = main.c
-libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS)
+libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS) -g
 libpandaseq_la_LDFLAGS = $(PANDA_LDFLAGS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'
 libpandaseq_la_SOURCES = \
 	assembler.c \
@@ -38,10 +38,10 @@ pkglib_LTLIBRARIES = \
 	completely_miss_the_point.la \
 	validtag.la \
 	$(NULL)
-validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag
+validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
 validtag_la_SOURCES = plugins/validtag.c panda_api.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
-completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point
+completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point -g
 completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c panda_api.c
 completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
 BUILT_SOURCES = table.c table.h

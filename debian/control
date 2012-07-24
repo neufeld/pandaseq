@@ -27,3 +27,17 @@ Description: Pair-end read assembler -- Development tools
  This package contains development tools for creating PANDAseq
  validation modules. If you are only assembling sequences, this is
  not necessary.
+
+Package: pandaseq-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends:
+    pandaseq (= ${binary:Version}),
+    ${misc:Depends}
+Description: Pair-end read assembler -- Debugging symbols
+ PANDA assembles forward and reverse reads from Illumina FASTQ data
+ .
+ This package contains debugging symbols.  If you are only assembling
+ sequences, this is not necessary.
+
