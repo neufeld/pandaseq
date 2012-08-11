@@ -27,6 +27,8 @@
 #include "assembler.h"
 #include "buffer.h"
 
+#define STR0(x) #x
+#define STR(x) STR0(x)
 #define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); assembler->logger((code), &assembler->result.name, static_buffer(), assembler->logger_data);
 
 #ifdef HAVE_PTHREAD
@@ -125,11 +127,19 @@ static bool ref_ltdl()
 	pthread_mutex_lock(&ref_lock);
 #endif
 	if (ltdl_count == 0) {
+		const char *path;
 		if (lt_dlinit() != 0) {
 #ifdef HAVE_PTHREAD
 			pthread_mutex_unlock(&ref_lock);
 #endif
 			return false;
+		}
+		path = lt_dlgetsearchpath();
+		if (path == NULL || strstr(path, STR(PKGLIBDIR)) == NULL) {
+			if (lt_dladdsearchdir(STR(PKGLIBDIR)) != 0) {
+				(void)lt_dlexit();
+				return false;
+			}
 		}
 	}
 	ltdl_count++;

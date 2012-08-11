@@ -34,8 +34,6 @@
 #include<pthread.h>
 #endif
 
-#define STR0(x) #x
-#define STR(x) STR0(x)
 #define MAX_MODULES 100
 bool fastq = false;
 char *forward_primer = NULL;
@@ -166,11 +164,6 @@ int main(int argc, char **argv)
 
 	if (lt_dlinit() != 0) {
 		fprintf(stderr, "ERR\tLTLD\tINIT\n");
-		return 1;
-	}
-	if (lt_dladdsearchdir(STR(PKGLIBDIR)) != 0) {
-		fprintf(stderr, "ERR\tLTLD\tPKGDIR\t%s\n", STR(PKGLIBDIR));
-		(void)lt_dlexit();
 		return 1;
 	}
 
