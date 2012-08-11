@@ -70,6 +70,7 @@ LDFLAGS="$MODULE_LDFLAGS"
 
 LIB_NAME=pandaseq-2
 AC_SUBST(LIB_NAME)
-AC_CONFIG_FILES([ Makefile ${LIB_NAME}.pc ])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([${LIB_NAME}.pc:${LIB_NAME}.pc.in], , [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES([pandaxs:pandaxs.in], [chmod +x pandaxs])
 AC_OUTPUT
