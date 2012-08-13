@@ -1,3 +1,20 @@
+pandaseq (2.2~ppa0) precise; urgency=low
+
+  * Created a debug package for Debian
+  * Improve debugging/logging control (now controllable by flags)
+  * Fixed memory leaks
+  * Add a plugin to allow kicking out sequences with overlap errors
+    (completely_miss_the_point)
+  * Require only one of check/precheck in modules
+  * Support for multithreading
+  * Added a library function to clone assembler configurations
+  * Fixed bug causing segfault if a module failed to load
+  * Include command line arguments in log
+  * Provide count the number of mismatches in the overlap region
+  * Adds a panda_assembler_assemble to assemble a one-off sequence
+
+ -- Andre Masella <andre@masella.name>  Mon, 13 Aug 2012 18:37:33 -0400
+
 pandaseq (2.1~ppa0) lucid; urgency=low
 
   * Allow Illumina tag lengths to be up to 50nt
