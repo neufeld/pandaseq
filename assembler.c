@@ -42,15 +42,15 @@ typedef unsigned int bitstype;
 #define FOR_BITS_IN_LIST(bits,index) for (index = 0; index < bits##_size; index++) if ((bits)[index / sizeof(bitstype) / 8] & (1 << (index % (8 * sizeof(bitstype)))))
 #define BIT_LIST_SET(bits,index) (bits)[(index) / sizeof(bitstype) / 8] |= (1 << ((index) % (8 * sizeof(bitstype))));
 #define BIT_LIST_GET(bits,index) ((bits)[(index) / sizeof(bitstype) / 8] & (1 << ((index) % (8 * sizeof(bitstype)))))
-#define BITS_INIT(bits,size) bitstype bits[(size) / 8 + 1]; size_t bits##_size = (size); memset(&bits, 0, (size) / 8 + 1)
-#define ALL_BITS_IF_NONE(bits,size) do { int _all = 0; int _bitctr; for (_bitctr = 0; _bitctr < ((size) / 8 + 1); _bitctr++) { _all |= (bits)[_bitctr]; } if (_all != 0) { memset(&(bits), 0xFF, (size) / 8 + 1); }} while (0)
+#define BITS_INIT(bits,size) bitstype bits[(size) / 8 / sizeof(bitstype) + 1]; size_t bits##_size = (size); memset(&bits, 0, ((size) / 8 / sizeof(bitstype) + 1) * sizeof(bitstype))
+#define ALL_BITS_IF_NONE(bits) do { bitstype _all = 0; size_t _bitctr; for (_bitctr = 0; _bitctr < ((bits##_size) / 8 / sizeof(bitstype) + 1); _bitctr++) { _all |= (bits)[_bitctr]; } if (_all == 0) { memset(&bits, 0xFF, (bits##_size / 8 / sizeof(bitstype) + 1) * sizeof(bitstype)); }} while (0)
 
 typedef struct {
 	unsigned int kmer;
 	ssize_t posn;
 	ssize_t bad;
 } kmer_it;
-#define _FOREACH_KMER(iterator,sequence,start,check,step) for ((iterator).posn = (start), (iterator).bad = KMER_LEN; (iterator).posn check; (iterator).posn step, (iterator).kmer = (((iterator).kmer << 2) | ((sequence)[(iterator).posn].nt == PANDA_NT_T ? 3 : (sequence)[(iterator).posn].nt == PANDA_NT_G ? 2 : (sequence)[(iterator).posn].nt == PANDA_NT_C ? 1 : 0)) & ((1 << (2 * KMER_LEN)) - 1)) if (PANDA_NT_IS_N((sequence)[(iterator).posn].nt)) { (iterator).bad = KMER_LEN; } else if ((iterator).bad > 0) { (iterator).bad--; } else
+#define _FOREACH_KMER(iterator,sequence,start,check,step) for ((iterator).posn = (start), (iterator).bad = KMER_LEN; (iterator).posn check; (iterator).posn step) if ((iterator).kmer = (((iterator).kmer << 2) | ((sequence)[(iterator).posn].nt == PANDA_NT_T ? 3 : (sequence)[(iterator).posn].nt == PANDA_NT_G ? 2 : (sequence)[(iterator).posn].nt == PANDA_NT_C ? 1 : 0)) & ((1 << (2 * KMER_LEN)) - 1), PANDA_NT_IS_N((sequence)[(iterator).posn].nt)) { (iterator).bad = KMER_LEN; } else if ((iterator).bad > 0) { (iterator).bad--; } else
 #define FOREACH_KMER(iterator,sequence) _FOREACH_KMER(iterator,sequence, 0, < sequence ## _length, ++)
 #define FOREACH_KMER_REVERSE(iterator,sequence) _FOREACH_KMER(iterator,sequence, sequence ## _length - 1, >= 0, --)
 #define KMER(kmerit) ((kmerit).kmer)
@@ -183,7 +183,7 @@ align(PandaAssembler assembler, panda_result_seq *result)
 			assembler->kmerseen[(KMER(it) << 1) + j] = 0;
 	}
 
-	ALL_BITS_IF_NONE(posn, maxoverlap - assembler->minoverlap + 1);
+	ALL_BITS_IF_NONE(posn);
 
 	/* Compute the quality of the overlapping region for the various overlaps and pick the best one. */
 	FOR_BITS_IN_LIST(posn, counter) {
