@@ -19,9 +19,7 @@
 #include<ctype.h>
 #include<errno.h>
 #include<float.h>
-#include<ltdl.h>
 #include<limits.h>
-#include<math.h>
 #include<stdbool.h>
 #include<stdio.h>
 #include<stdlib.h>
@@ -162,11 +160,6 @@ int main(int argc, char **argv)
 	(void)time(&starttime);
 	threshold = 0.6;
 
-	if (lt_dlinit() != 0) {
-		fprintf(stderr, "ERR\tLTLD\tINIT\n");
-		return 1;
-	}
-
 	/* Process command line arguments. */
 	while ((c = getopt(argc, argv, "hvjp:q:f:r:t:o:Nl:L:Q:C:6Fd:"
 #ifdef HAVE_PTHREAD
@@ -192,7 +185,6 @@ int main(int argc, char **argv)
 					"Bad threshold. It should be between 0 and 1.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			}
 			break;
@@ -204,7 +196,6 @@ int main(int argc, char **argv)
 					"Bad quality. It should be between 0 and 1.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			}
 			break;
@@ -215,7 +206,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Bad minimum length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			}
 			break;
@@ -226,7 +216,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Bad maximum length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			}
 			break;
@@ -238,7 +227,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Bad minimum overlap.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			}
 			break;
@@ -264,7 +252,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Bad forward primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			} else {
 				foffset++;
@@ -280,7 +267,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Bad reverse primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			} else {
 				roffset++;
@@ -295,7 +281,6 @@ int main(int argc, char **argv)
 				}
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				lt_dlexit();
 				return 1;
 			}
 			modules_length++;
@@ -311,7 +296,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Bad number of threads.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
-				(void)lt_dlexit();
 				return 1;
 			}
 			break;
@@ -366,7 +350,6 @@ int main(int argc, char **argv)
 					"Unknown option character `\\x%x'.\n",
 					(unsigned int)optopt);
 			}
-			lt_dlexit();
 			return 1;
 		default:
 			abort();
@@ -381,7 +364,6 @@ int main(int argc, char **argv)
 				panda_module_get_version(modules[it]));
 			panda_module_unref(modules[it]);
 		}
-		lt_dlexit();
 		return 1;
 	}
 	if (forward_filename == NULL || reverse_filename == NULL || help) {
@@ -437,7 +419,6 @@ int main(int argc, char **argv)
 				panda_module_get_usage(modules[it]));
 			panda_module_unref(modules[it]);
 		}
-		lt_dlexit();
 		return 1;
 	}
 	if (maxlen < minlen || minoverlap > maxlen) {
@@ -446,7 +427,6 @@ int main(int argc, char **argv)
 			(int)minlen, (int)maxlen, minoverlap);
 		for (it = 0; it < modules_length; it++)
 			panda_module_unref(modules[it]);
-		lt_dlexit();
 		return 1;
 	}
 	fprintf(stderr, "INFO\tVER\t%s <%s>\n", PACKAGE_STRING,
@@ -468,7 +448,6 @@ int main(int argc, char **argv)
 		fprintf(stderr, "ERR\tLIB\tCould not create multiplexer.\n");
 		for (it = 0; it < modules_length; it++)
 			panda_module_unref(modules[it]);
-		lt_dlexit();
 		return 1;
 	}
 	assembler = panda_mux_create_assembler(mux);
@@ -490,7 +469,6 @@ int main(int argc, char **argv)
 #if HAVE_PTHREAD
 		panda_mux_unref(mux);
 #endif
-		lt_dlexit();
 		return 1;
 	}
 	okay = true;
@@ -511,7 +489,6 @@ int main(int argc, char **argv)
 #if HAVE_PTHREAD
 		panda_mux_unref(mux);
 #endif
-		(void)lt_dlexit();
 		return 1;
 	}
 	modules_length = 0;
@@ -528,7 +505,6 @@ int main(int argc, char **argv)
 #if HAVE_PTHREAD
 			panda_mux_unref(mux);
 #endif
-			(void)lt_dlexit();
 			return 1;
 		}
 	} else {
@@ -543,7 +519,6 @@ int main(int argc, char **argv)
 #if HAVE_PTHREAD
 			panda_mux_unref(mux);
 #endif
-			(void)lt_dlexit();
 			return 1;
 		}
 	} else {
@@ -586,6 +561,5 @@ int main(int argc, char **argv)
 		free(thread_list);
 	}
 #endif
-	(void)lt_dlexit();
 	return 0;
 }

@@ -46,13 +46,14 @@ AC_SUBST(MODULE_CFLAGS)
 AC_SUBST(MODULE_LIBS)
 
 ACX_PTHREAD
-AC_CHECK_LIB(ltdl, lt_dlinit,,AC_MSG_ERROR(Cannot link with libtool libs! (libltdl)))
 MAIN_CPPFLAGS="$CPPFLAGS"
 MAIN_CFLAGS="$CFLAGS"
 MAIN_LIBS="$LIBS"
 AC_SUBST(MAIN_CPPFLAGS)
 AC_SUBST(MAIN_CFLAGS)
 AC_SUBST(MAIN_LIBS)
+
+AC_CHECK_LIB(ltdl, lt_dlinit,,AC_MSG_ERROR(Cannot link with libtool libs! (libltdl)))
 
 AC_CHECK_HEADERS([math.h])
 AC_CHECK_LIB([m],[pow])
