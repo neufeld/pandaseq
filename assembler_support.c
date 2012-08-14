@@ -63,7 +63,7 @@ PandaAssembler panda_assembler_new(PandaNextSeq next, void *next_data,
 	memset(assembler->kmerseen, 0, KMERSEEN_SIZE);
 	panda_assembler_set_error_estimation(assembler, 0.36);
 	panda_assembler_set_threshold(assembler, 0.6);
-	panda_assembler_set_minimum_overlap(assembler, 1);
+	panda_assembler_set_minimum_overlap(assembler, 2);
 	return assembler;
 }
 
