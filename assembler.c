@@ -112,7 +112,7 @@ static size_t computeoffset(PandaAssembler assembler, panda_qual *seq,
 
 /* Try to align forward and reverse reads and return the quality of the aligned sequence and the sequence itself. */
 static bool
-align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
+align(PandaAssembler assembler, panda_result_seq *result)
 {
 	ssize_t i, j;
 	ssize_t df, dr;
@@ -237,7 +237,7 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
 		return false;
 	}
-	if (len > maxresult) {
+	if (len > PANDA_MAX_LEN) {
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_SEQUENCE_TOO_LONG);
 		return false;
 	}
@@ -407,7 +407,7 @@ bool assemble_seq(PandaAssembler assembler)
 	} else {
 		assembler->result.reverse_offset = assembler->reverse_trim;
 	}
-	if (!align(assembler, &assembler->result, PANDA_MAX_LEN)) {
+	if (!align(assembler, &assembler->result)) {
 		return false;
 	}
 	if (assembler->result.quality < assembler->threshold) {
