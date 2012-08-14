@@ -13,13 +13,15 @@ dist_vapi_DATA = $(LIB_NAME).vapi
 man1_MANS = pandaseq.1 pandaxs.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugins/sample.c
-mktable_CFLAGS = -std=gnu99 -pedantic
+mktable_CPPFLAGS = -std=gnu99 -pedantic $(PANDA_CPPFLAGS)
+mktable_LDFLAGS = $(PANDA_LIBS)
 mktable_SOURCES = mktable.c
-pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic $(MAIN_CFLAGS) -g
-pandaseq_LDFLAGS = $(MAIN_LDFLAGS) libpandaseq.la
+pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
+pandaseq_CFLAGS = $(MAIN_CFLAGS)
+pandaseq_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
 pandaseq_SOURCES = main.c
 libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS) -DPKGLIBDIR=$(pkglibdir) -g
-libpandaseq_la_LDFLAGS = $(PANDA_LDFLAGS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'
+libpandaseq_la_LDFLAGS = $(PANDA_LIBS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'
 libpandaseq_la_SOURCES = \
 	assembler.c \
 	assembler_support.c \
@@ -40,10 +42,10 @@ pkglib_LTLIBRARIES = \
 	$(NULL)
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
 validtag_la_SOURCES = plugins/validtag.c panda_api.c
-validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
+validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point -g
 completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c panda_api.c
-completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED)
+completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 BUILT_SOURCES = table.c table.h
 CLEANFILES = table.c table.h $(bin_SCRIPTS)
 
