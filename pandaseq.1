@@ -152,6 +152,83 @@ The number of sequences where the final reconstructed sequence is too long. This
 .TP
 OK
 The number of sequences output.
+.SH LOGGING MESSAGES
+During output, the assembler may output any of the following errors.
+.TP
+ERR BADID
+The name of the input read did not follow the know Illumina standard formats. Older versions of CASAVA produce sequences with IDs that look like \fBHWUSI-EAS1661_9323_FC619KG:7:1:1190:15190#ATCACG/1\fR, where the fields are \fIinstrument:lane:tile:x:y#tag/direction\fR. Newer version of CASAVA produce IDs that look like \fB@HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR, where the fields are \fIinstrument:run:flowcell:lane:tile:x:y direction:filtered:flags:tag\fR. If your sequence headers do not look like either of these, either Illumina has created yet-another header format or, more likely, your sequence headers have been manipulated by some upstream processing. PANDAseq needs the original Illumina probabilties; not ones manipulated by other programs. We're very picky about that.
+.TP
+ERR BADNT
+An invaid letter was found in a nucleotide read. Likely caused by incorrect or corrupt input files.
+.TP
+ERR BADSEQ
+The an unexpected character or end of the input file was detected. Likely caused by incorrect or corrupt input files.
+.TP
+ERR EOF
+The end of the input file was detected before it was expected. Likely caused by incorrect or corrupt input files.
+.TP
+ERR KLNG
+The \fIk\fR-mer table is too small to hold a read of the size requested. This is a bug or platform-dependent behaviour. Please file a ticket either way.
+.TP
+ERR LOWQ
+The sequence is discarded because the quality is too low given the supplied threshold.
+.TP
+ERR NEGS
+The reconstruction parameters do not produce a valid sequence. Instead, they produce a negative-length sequence.
+.TP
+ERR NODATA
+A FASTQ record has no sequence data.
+.TP
+ERR NOFILE
+The input file was not found.
+.TP
+ERR NOFP
+The forward primer could not be matched to the forward read. Either the primer is incorrect or the read is low quality or not the correct original molecule.
+.TP
+ERR NOQUAL
+Quality information is missing from the FASTQ file. This data is required to reconstruct the sequence.
+.TP
+ERR NORP
+The reverse primer could not be matched to the reverse read. Either the primer is incorrect or the read is low quality or not the correct original molecule.
+.TP
+ERR NOTPAIRED
+Sequences from FASTQ files are not pairing correctly given their sequence names. Likely, the files are mismatched.
+.TP
+ERR OOM
+An out of memory condition has occured. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a bug.
+.TP
+INFO BESTOLP
+The best overlap parameter for a sequence.
+.TP
+INFO BUILD
+The parameters of a reconstructed base.
+.TP
+INFO MISM
+A mismatch has been identified in the reconstruction.
+.TP
+INFO MOD
+Information about a module.
+.TP
+INFO OLD
+An overlap possibility, with probability, as been identified.
+.TP
+INFO RECR
+The proposed reconstruction parameters.
+.TP
+STAT
+Some statistical information about the assembly process.
+.TP
+DBG FMER
+A \fIk\fR-mer has been identified in the forward read.
+.TP
+DBG FML
+A duplicate \fIk\fR-mer has been identified in the forward read and discarded. This might cause failure to assemble a sequence if repeated too often.
+.TP
+DBG RMER
+A \fIk\fR-mer has been identified in the reverse read.
+.TP
+ERR UNKNOWN ERROR
+Something truly unexpected has happened. This probably involves an external module.
 .SH EXAMPLES
 This will assemble a data from a run in lane 7:
 
