@@ -58,18 +58,19 @@ typedef struct {
 #define VEEZ(x) ((x) < 0 ? 0 : (x))
 #define WEDGEZ(x) ((x) > 0 ? 0 : (x))
 #define CIRC(index, len) (((index) + (len)) % (len))
+#define PHREDCLAMP(x) ((x) > PHREDMAX ? PHREDMAX : ((x) < 0 ? 0 : (x)))
 static double qualscore(panda_nt nt1, char qual1, panda_nt nt2, char qual2)
 {
 	if (PANDA_NT_IS_N(nt1)) {
 		if (PANDA_NT_IS_N(nt2)) {
 			return qual_nn;
 		}
-		return qual_nmatch[qual2];
+		return qual_nmatch[PHREDCLAMP(qual2)];
 	}
 	if (PANDA_NT_IS_N(nt2)) {
-		return qual_nmatch[qual1];
+		return qual_nmatch[PHREDCLAMP(qual1)];
 	}
-	return (nt1 == nt2 ? qual_match : qual_mismatch)[qual1][qual2];
+	return (nt1 == nt2 ? qual_match : qual_mismatch)[PHREDCLAMP(qual1)][PHREDCLAMP(qual2)];
 }
 
 /* Find the offset of a primer in a sequence and return the offset (i.e., the start of the useful sequence. */
@@ -254,7 +255,7 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 	for (i = 0; i < VEEZ(df); i++) {
 		int findex = i + result->forward_offset;
 		panda_nt fbits = result->forward[findex].nt;
-		double q = qual_score[result->forward[findex].qual];
+		double q = qual_score[PHREDCLAMP(result->forward[findex].qual)];
 		result->sequence[i].nt = fbits;
 		result->sequence[i].p = q;
 		if (PANDA_NT_IS_DEGN(fbits)) {
@@ -294,9 +295,9 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 			continue;
 
 		fpr = result->forward[findex].qual == '\0' ? qual_nn :
-		    qual_score[result->forward[findex].qual];
+		    qual_score[PHREDCLAMP(result->forward[findex].qual)];
 		rpr = result->reverse[rindex].qual == '\0' ? qual_nn :
-		    qual_score[result->reverse[rindex].qual];
+		    qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
 
 		if (!ismatch) {
 			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE,
@@ -316,11 +317,11 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 			q = ismatch ? fpr : qual_nn;
 		} else {
 			q = (ismatch ? qual_match :
-			     qual_mismatch)[result->
-					    forward[findex].qual][result->
+			     qual_mismatch)[PHREDCLAMP(result->
+					    forward[findex].qual)][PHREDCLAMP(result->
 								  reverse
 								  [rindex].
-								  qual];
+								  qual)];
 		}
 
 		if (ismatch) {
@@ -352,7 +353,7 @@ align(PandaAssembler assembler, panda_result_seq *result, int maxresult)
 		int index = df + bestoverlap + i;
 		int rindex = result->reverse_length - bestoverlap - i - 1;
 		panda_nt rbits = result->reverse[rindex].nt;
-		double q = qual_score[result->reverse[rindex].qual];
+		double q = qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
 		rquality += q;
 		result->sequence[index].nt = rbits;
 		result->sequence[index].p = q;
