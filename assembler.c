@@ -371,6 +371,9 @@ align(PandaAssembler assembler, panda_result_seq *result)
 bool assemble_seq(PandaAssembler assembler)
 {
 	assembler->count++;
+	if (assembler->result.forward_length < 2 ||  assembler->result.reverse_length < 2) {
+		return false;
+	}
 	if (!module_precheckseq
 	    (assembler, &assembler->result.name, assembler->result.forward,
 	     assembler->result.forward_length, assembler->result.reverse,
