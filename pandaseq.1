@@ -249,6 +249,14 @@ switch on the command line. As many modules as desired may be added. The path to
 
 Modules can be compiled using
 .BR pandaxs (1).
+.SH INCLUDED MODULES
+There are some included modules:
+.TP
+validtag:\fItag1\fR:\fItag2\fR:...
+This can be used to demultiplex sequences. It will only include sequences in the output with the tags specified.
+.TP
+completely_miss_the_point
+This can be used to only include sequences with perfect overlap regions. You shouldn't want to do it. The whole point is to fix sequences which are probably good. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
 .SH SEE ALSO
 .BR pandaxs (1),
 .BR gzip (1),
