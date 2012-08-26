@@ -16,7 +16,7 @@ On MacOS, the Apple Developer tools and Fink must be installed, then
 After the support packages are installed, one should be able to do:
 	./autogen.sh && ./configure && make && sudo make install
 
-If you receive an error that libpandaseq.so.0 is not found, try running:
+If you receive an error that libpandaseq.so.0 is not found on Linux, try running:
 	sudo ldconfig
 
 USAGE
