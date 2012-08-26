@@ -3,6 +3,8 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_ARG_ENABLE(debug, [  --enable-debug          build with debugging output [default=no].], [DEBUG="$enableval"], [DEBUG="no"])
+AM_PROG_AR
+AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AX_CHECK_CFLAGS([-std=c99 -pedantic])
 AC_HEADER_STDC

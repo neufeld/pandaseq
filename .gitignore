@@ -9,8 +9,10 @@
 Makefile
 Makefile.in
 aclocal.m4
+ar-lib
 autom4te.cache
 build-stamp
+compile
 config.*
 configure
 debian/*debhelper*
