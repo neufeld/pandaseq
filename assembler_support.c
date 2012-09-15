@@ -16,6 +16,7 @@
 
  */
 #include "config.h"
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +57,7 @@ PandaAssembler panda_assembler_new(PandaNextSeq next, void *next_data,
 	assembler->noalgncount = 0;
 	assembler->count = 0;
 	assembler->no_n = false;
+	assert(1 << (8 * sizeof(seqindex)) > PANDA_MAX_LEN);
 	assembler->kmerseen = malloc(KMERSEEN_SIZE);
 #ifdef HAVE_PTHREAD
 	pthread_mutex_init(&assembler->mutex, NULL);

@@ -203,7 +203,7 @@ PandaModule panda_module_load(char *path)
 	}
 
 	api = lt_dlsym(handle, "api");
-	if (api == NULL || *api > PANDA_API) {
+	if (api == NULL || *api != PANDA_API) {
 		lt_dlclose(handle);
 		fprintf(stderr,
 			"Invalid API in %s. Are you sure this module was compiled for this version of PANDAseq?\n",

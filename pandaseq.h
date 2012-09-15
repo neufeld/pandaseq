@@ -25,7 +25,7 @@
 /**
  * Maximum length of a sequence
  */
-#define PANDA_MAX_LEN 300
+#define PANDA_MAX_LEN 255
 
 typedef void (*PandaPrintf) (void *data, const char *format, ...);
 
@@ -236,7 +236,7 @@ typedef struct {
 	/**
 	 * The reconstructed sequence with quality information
 	 */
-	panda_result sequence[PANDA_MAX_LEN];
+	panda_result sequence[2 * PANDA_MAX_LEN];
 	size_t sequence_length;
 	/**
 	 * The original forward sequence
@@ -772,7 +772,7 @@ void panda_mux_unref( /*@notnull@ */ PandaMux mux);
  */
 #define PANDA_LOGGER(file, user_data, destroy) (*user_data = file, *destroy = NULL, (PandaLogger) panda_logger_file)
 
-#define PANDA_API 1
+#define PANDA_API 2
 #define PANDACONCATE(x,y) x ## y
 #define PANDACONCAT(x,y) PANDACONCATE(x, y)
 

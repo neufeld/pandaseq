@@ -237,7 +237,7 @@ align(PandaAssembler assembler, panda_result_seq *result)
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
 		return false;
 	}
-	if (len > PANDA_MAX_LEN) {
+	if (len > 2 * PANDA_MAX_LEN) {
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_SEQUENCE_TOO_LONG);
 		return false;
 	}
