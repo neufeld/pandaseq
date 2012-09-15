@@ -67,12 +67,12 @@ static void *do_assembly(PandaAssembler assembler)
 			printtime(count, starttime);
 		}
 		if (result->sequence_length < minlen) {
-			fputs("ERR\tSHORT\t%s\n", stderr);
+			fputs("ERR\tSHORT\t", stderr);
 			panda_seqid_print(&result->name, stderr);
 			fputc('\n', stderr);
 			shortcount++;
 		} else if (result->sequence_length > maxlen) {
-			fputs("ERR\tLONG\t%s\n", stderr);
+			fputs("ERR\tLONG\t", stderr);
 			panda_seqid_print(&result->name, stderr);
 			fputc('\n', stderr);
 			shortcount++;
