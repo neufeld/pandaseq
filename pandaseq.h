@@ -643,6 +643,21 @@ void panda_assembler_set_reverse_trim(PandaAssembler assembler, size_t trim);
  * Log the number of sequences rejected by each module.
  */
 void panda_assembler_module_stats( /*@notnull@ */ PandaAssembler assembler);
+
+/**
+ * A callback for iterating over the current modules.
+ * @param assembler the assembler which is being queried
+ * @param module the module selected
+ * @param rejected the number of sequences rejected by this module in the context of the current assembler.
+ * @param data some user context data provided
+ * @return true to continue iterating, false to stop
+ */
+typedef bool (*PandaModuleCallback)(PandaAssembler assembler, PandaModule module, size_t rejected, void *data);
+/**
+ * Review all the modules associated with an assembler.
+ * @return true if callback has seen each module
+ */
+bool panda_assembler_foreach_module(PandaAssembler assembler, PandaModuleCallback callback, void *data);
 /**
  * Assemble the next sequence from the input
  *

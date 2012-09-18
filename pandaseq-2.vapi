@@ -413,6 +413,13 @@ namespace Panda {
 		public void copy_configuration(Assembler src);
 
 		/**
+		 * Review all the modules associated with an assembler.
+		 * @return true if callback has seen each module
+		 */
+		[CCode(cname = "panda_assembler_foreach_module")]
+		public bool for_each_module(ModuleCallback callback);
+
+		/**
 		 * Log the number of sequences rejected by each module.
 		 */
 		[CCode(cname = "panda_assembler_module_stats")]
@@ -787,6 +794,15 @@ file);
 	 */
 	[CCode(cname = "PandaLogger")]
 	public delegate bool Logger(Code code, identifier? id, string? message);
+	/**
+	 * A callback for iterating over the current modules.
+	 * @param assembler the assembler which is being queried
+	 * @param module the module selected
+	 * @param rejected the number of sequences rejected by this module in the context of the current assembler
+	 * @return true to continue iterating, false to stop
+	 */
+	[CCode(cname = "PandaModuleCallback")]
+	public delegate bool ModuleCallback(Assembler assembler, Module module, size_t rejected);
 
 	/**
 	 * Get the next character from a FASTQ file or EOF.

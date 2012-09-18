@@ -109,6 +109,17 @@ void panda_assembler_module_stats(PandaAssembler assembler)
 	}
 }
 
+bool panda_assembler_foreach_module(PandaAssembler assembler, PandaModuleCallback callback, void *data)
+{
+	int it;
+	for (it = 0; it < assembler->modules_length; it++) {
+		if (!callback(assembler, assembler->modules[it], assembler->rejected[it], data)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void module_destroy(PandaAssembler assembler)
 {
 	int it;
