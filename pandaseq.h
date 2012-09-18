@@ -92,7 +92,7 @@ typedef unsigned int PandaDebug;
 /** Bucket loads of data about mistatches. */
 #define PANDA_DEBUG_MISMATCH 32
 
-#define PANDA_DEBUG_DEFAULT PANDA_DEBUG_BUILD | PANDA_DEBUG_FILE | PANDA_DEBUG_STAT
+#define PANDA_DEBUG_DEFAULT (PANDA_DEBUG_BUILD | PANDA_DEBUG_FILE | PANDA_DEBUG_STAT)
 
 /**
  * The current flags used be the assember to report errors. Some errors are always reported.
