@@ -24,10 +24,22 @@ USAGE
 
 Please consult the manual page by invoking
 	man pandaseq
+or visiting http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_man1.html
 
 The short version is
 	pandaseq -f forward.fastq -r reverse.fastq
 
+BINDING
+-------
+
+PANDAseq may be used in other programs via a programmatic interface. Consult the header file pandaseq.h for more details. The C interface is pseudo-object oriented and documented in the header. The library provides pkg-config information, so compiling against it can be done using something like:
+	cc mycode.c `pkg-config --cflags --libs pandaseq-2`
+or using, in configure.ac:
+	PKG_CHECK_MODULES(PANDASEQ, [ pandaseq-2 >= 2.2 ])
+
+A Vala binding is also included. Documentation is available at http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-vapi/
+
+Other lanugage bindings are welcome.
 
 FAQ
 ---
