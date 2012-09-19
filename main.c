@@ -146,6 +146,7 @@ int main(int argc, char **argv)
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
 	bool okay;
+	PandaTagging policy = PANDA_TAG_PRESENT;
 	double q = 0.36;
 	int qualmin = 33;
 	char *reverse_filename = NULL;
@@ -161,13 +162,16 @@ int main(int argc, char **argv)
 	threshold = 0.6;
 
 	/* Process command line arguments. */
-	while ((c = getopt(argc, argv, "hvjp:q:f:r:t:o:Nl:L:Q:C:6Fd:"
+	while ((c = getopt(argc, argv, "Bhvjp:q:f:r:t:o:Nl:L:Q:C:6Fd:"
 #ifdef HAVE_PTHREAD
 			   "T:"
 #endif
 		)) != -1) {
 		char *endptr;
 		switch (c) {
+		case 'B':
+			policy = PANDA_TAG_OPTIONAL;
+			break;
 		case 'h':
 			help = true;
 			break;
@@ -387,6 +391,7 @@ int main(int argc, char **argv)
 			"[-t threshold] "
 			"\n"
 			"\t-6\tUse PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+).\n"
+			"\t-B\tAllow unbarcoded sequences (try this for BADID errors).\n"
 			"\t-C module\tLoad a sequence validation module.\n"
 			"\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n"
 				"\t\t(R)econstruction detail.\n"
@@ -439,11 +444,10 @@ int main(int argc, char **argv)
 	mux =
 	    bzip ? panda_mux_open_bz2(forward_filename, reverse_filename,
 				      (PandaLogger)panda_logger_file, stderr,
-				      NULL,
-				      qualmin) :
+				      NULL, qualmin, policy) :
 	    panda_mux_open_gz(forward_filename, reverse_filename,
 			      (PandaLogger)panda_logger_file, stderr, NULL,
-			      qualmin);
+			      qualmin, policy);
 	if (mux == NULL) {
 		fprintf(stderr, "ERR\tLIB\tCould not create multiplexer.\n");
 		for (it = 0; it < modules_length; it++)
@@ -456,11 +460,10 @@ int main(int argc, char **argv)
 	assembler =
 	    bzip ? panda_assembler_open_bz2(forward_filename, reverse_filename,
 					    (PandaLogger)panda_logger_file,
-					    stderr, NULL,
-					    qualmin) :
+					    stderr, NULL, qualmin, policy) :
 	    panda_assembler_open_gz(forward_filename, reverse_filename,
 				    (PandaLogger)panda_logger_file, stderr,
-				    NULL, qualmin);
+				    NULL, qualmin, policy);
 #endif
 	if (assembler == NULL) {
 		fprintf(stderr, "ERR\tLIB\tCould not create assembler.\n");

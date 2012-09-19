@@ -205,6 +205,24 @@ namespace Panda {
 		[CCode(cname = "panda_nt_to_ascii")]
 		public char to_ascii();
 	}
+	/**
+	 * The policy for Illumina tags/barcodes in sequence names.
+	 */
+	[CCode(cname = "PandaTagging", has_type_id = false, cprefix = "PANDA_TAG_")]
+	public enum Tagging {
+		/**
+		 * The parsing should return an error if the sequence does not have a tag.
+		 */
+		PRESENT,
+		/**
+		 * The parsing should return an error if the sequence has a tag.
+		 */
+		ABSENT,
+		/**
+		 * The parsing should not care if the sequence a tag.
+		 */
+		OPTIONAL,
+	}
 
 	/**
 	 * The manager for an assembly
@@ -358,18 +376,18 @@ namespace Panda {
 		/**
 		 * Open a pair of bzipped for assembly.
 		 *
-		 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_open_bz2")]
-		public static Assembler? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33);
+		public static Assembler? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Open a pair of gzipped (or uncompressed files) for assembly.
 		 *
-		 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_open_gz")]
-		public static Assembler? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33);
+		public static Assembler? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Create a new assembler from a sequence source.
@@ -385,7 +403,7 @@ namespace Panda {
 		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_new_fastq_reader")]
-		public Assembler.fastq (owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33);
+		public Assembler.fastq (owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Assemble a single sequence pair not drawn from the sequence stream.
@@ -566,14 +584,14 @@ namespace Panda {
 		 * @see Assembler.open_gz
 		 */
 		[CCode(cname = "panda_mux_open_gz")]
-		public static Mux? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33);
+		public static Mux? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Open a pair of zipped for multi-threaded assembly.
 		 *
 		 * @see Assembler.open_bz2
 		 */
 		[CCode(cname = "panda_mux_open_bz2")]
-		public static Mux? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33);
+		public static Mux? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new multiplexed data source from a sequence callback.
 		 *
@@ -585,7 +603,7 @@ namespace Panda {
 		 * Create a new multiplexed reader for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
-		public Mux.fastq(owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33);
+		public Mux.fastq(owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new assembler using the multiplexer as it sequence source.
 		 *
@@ -625,7 +643,7 @@ namespace Panda {
 		 * Fills `id` with the parse result. The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
 		 */
 		[CCode(cname = "panda_seqid_parse")]
-		public static int parse(out identifier id, string input);
+		public static int parse(out identifier id, string input, Tagging policy);
 		/**
 		 * Compare two Illumina headers
 		 */
@@ -833,9 +851,11 @@ file);
 	 * @param forward the stream of forward characters, called every time a new character is required.
 	 * @param reverse the stream of reverse characters, called every time a new character is required.
 	 * @param logger the logging function to use during assembly.
+	 * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
+	 * @param policy method to handle unbarcoded sequences
 	 */
 	[CCode(cname = "panda_assembler_create_fastq_reader")]
-	public static NextSeq create_fastq_reader(owned NextChar forward, owned NextChar reverse, Logger logger, uint8 qualmin = 33);
+	public static NextSeq create_fastq_reader(owned NextChar forward, owned NextChar reverse, Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * The current module API version of the running library

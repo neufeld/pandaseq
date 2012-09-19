@@ -219,7 +219,7 @@ PandaAssembler panda_assembler_new_fastq_reader(PandaNextChar forward,
 						PandaLogger logger,
 						void *logger_data,
 						PandaDestroy logger_destroy,
-						unsigned char qualmin)
+						unsigned char qualmin, PandaTagging policy)
 {
 	void *user_data;
 	PandaDestroy destroy;
@@ -227,7 +227,7 @@ PandaAssembler panda_assembler_new_fastq_reader(PandaNextChar forward,
 	next =
 	    panda_create_fastq_reader(forward, forward_data, forward_destroy,
 				      reverse, reverse_data, reverse_destroy,
-				      logger, logger_data, qualmin, &user_data,
+				      logger, logger_data, qualmin, policy, &user_data,
 				      &destroy);
 	return panda_assembler_new(next, user_data, destroy, logger,
 				   logger_data, logger_destroy);

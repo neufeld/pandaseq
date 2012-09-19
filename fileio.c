@@ -27,7 +27,7 @@
 PandaAssembler panda_assembler_open_gz(char *forward, char *reverse,
 				       PandaLogger logger, void *logger_data,
 				       PandaDestroy logger_destroy,
-				       unsigned char qualmin)
+				       unsigned char qualmin, PandaTagging policy)
 {
 	gzFile *forward_file;
 	gzFile *reverse_file;
@@ -55,13 +55,13 @@ PandaAssembler panda_assembler_open_gz(char *forward, char *reverse,
 						reverse_file,
 						(PandaDestroy) gzclose, logger,
 						logger_data, logger_destroy,
-						qualmin);
+						qualmin, policy);
 }
 
 #ifdef HAVE_PTHREAD
 PandaMux panda_mux_open_gz(char *forward, char *reverse, PandaLogger logger,
 			   void *logger_data, PandaDestroy logger_destroy,
-			   unsigned char qualmin)
+			   unsigned char qualmin, PandaTagging policy)
 {
 	gzFile *forward_file;
 	gzFile *reverse_file;
@@ -88,7 +88,7 @@ PandaMux panda_mux_open_gz(char *forward, char *reverse, PandaLogger logger,
 					  reverse_file, (PandaDestroy) gzclose,
 					  (PandaLogger) logger, logger_data,
 					  (PandaDestroy) logger_destroy,
-					  qualmin);
+					  qualmin, policy);
 }
 #endif
 
@@ -104,7 +104,7 @@ static int bzgetc(BZFILE * file)
 PandaAssembler panda_assembler_open_bz2(char *forward, char *reverse,
 					PandaLogger logger, void *logger_data,
 					PandaDestroy logger_destroy,
-					unsigned char qualmin)
+					unsigned char qualmin, PandaTagging policy)
 {
 	BZFILE *forward_file;
 	BZFILE *reverse_file;
@@ -129,13 +129,13 @@ PandaAssembler panda_assembler_open_bz2(char *forward, char *reverse,
 						BZ2_bzclose, bzgetc,
 						reverse_file, BZ2_bzclose,
 						logger, logger_data,
-						logger_destroy, qualmin);
+						logger_destroy, qualmin, policy);
 }
 
 #ifdef HAVE_PTHREAD
 PandaMux panda_mux_open_bz2(char *forward, char *reverse, PandaLogger logger,
 			    void *logger_data, PandaDestroy logger_destroy,
-			    unsigned char qualmin)
+			    unsigned char qualmin, PandaTagging policy)
 {
 	BZFILE *forward_file;
 	BZFILE *reverse_file;
@@ -160,6 +160,6 @@ PandaMux panda_mux_open_bz2(char *forward, char *reverse, PandaLogger logger,
 					  bzgetc, reverse_file, BZ2_bzclose,
 					  (PandaLogger) logger, logger_data,
 					  (PandaDestroy) logger_destroy,
-					  qualmin);
+					  qualmin, policy);
 }
 #endif

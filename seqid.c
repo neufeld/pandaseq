@@ -59,10 +59,11 @@ bool panda_seqid_equal(const panda_seq_identifier *one,
 #define PARSE_CHUNK if (*input == '\0') return 0; for(;*input != '\0' && *input != ':' && *input != '#' && *input != '/' && *input != ' '; input++)
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (*input >= '0' && *input <= '9') { value = 10*value + (*input - '0'); } else { return 0; } } } while(0)
 
-int panda_seqid_parse(panda_seq_identifier *id, char *input)
+int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy)
 {
 	char *dest;
 	int value;
+	bool has_tag;
 	if (strchr(input, '#') != NULL) {
 		/* Old CASAVA 1.4-1.6 format */
 		id->run = 0;
@@ -93,7 +94,8 @@ int panda_seqid_parse(panda_seq_identifier *id, char *input)
 			*dest++ = (*input);
 			*dest = '\0';
 		}
-		if (id->tag[0] == '\0') {
+		has_tag = id->tag[0] != '\0';
+		if (!has_tag && policy == PANDA_TAG_PRESENT || has_tag && policy == PANDA_TAG_ABSENT) {
 			return 0;
 		}
 		input++;
@@ -147,7 +149,8 @@ int panda_seqid_parse(panda_seq_identifier *id, char *input)
 			*dest++ = (*input);
 			*dest = '\0';
 		}
-		if (id->tag[0] == '\0') {
+		has_tag = id->tag[0] != '\0';
+		if (!has_tag && policy == PANDA_TAG_PRESENT || has_tag && policy == PANDA_TAG_ABSENT) {
 			return 0;
 		}
 		return mate;

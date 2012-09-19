@@ -21,7 +21,7 @@ pandaseq_CFLAGS = $(MAIN_CFLAGS)
 pandaseq_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
 pandaseq_SOURCES = main.c
 libpandaseq_la_CPPFLAGS = $(PANDA_CPPFLAGS) $(PTHREAD_CFLAGS) -DPKGLIBDIR=$(pkglibdir) -g
-libpandaseq_la_LDFLAGS = $(PANDA_LIBS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_'
+libpandaseq_la_LDFLAGS = $(PANDA_LIBS) $(PTHREAD_LIBS) -export-symbols-regex '^panda_' -version-info $(LIB_VER)
 libpandaseq_la_SOURCES = \
 	assembler.c \
 	assembler_support.c \

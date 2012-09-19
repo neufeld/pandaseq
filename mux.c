@@ -56,7 +56,7 @@ PandaMux panda_mux_new_fastq_reader(PandaNextChar forward, void *forward_data,
 				    PandaDestroy reverse_destroy,
 				    PandaLogger logger, void *logger_data,
 				    PandaDestroy logger_destroy,
-				    unsigned char qualmin)
+				    unsigned char qualmin, PandaTagging policy)
 {
 	void *user_data;
 	PandaDestroy destroy;
@@ -65,7 +65,7 @@ PandaMux panda_mux_new_fastq_reader(PandaNextChar forward, void *forward_data,
 	    panda_create_fastq_reader(forward, forward_data, forward_destroy,
 				      reverse, reverse_data, reverse_destroy,
 				      (PandaLogger)logger, logger_data,
-				      qualmin, &user_data, &destroy);
+				      qualmin, policy, &user_data, &destroy);
 	return panda_mux_new(next, user_data, destroy, logger, logger_data,
 			     logger_destroy);
 }

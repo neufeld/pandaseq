@@ -11,6 +11,8 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 [
 .B \-6 
 ] [
+.B \-B 
+] [
 .B \-C
 .I module
 ] [
@@ -62,6 +64,9 @@ Check for various constraints, including quality, length, uncalled bases, and us
 .TP
 \-6
 Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
+.TP
+\-B
+Allow input sequences to lack a barcode/tag. Normally, Illumina sequences have barcodes attached to the sequence. This allows the barcode to be missing.
 .TP
 \-C module
 Loads an optional validation module to verify sequences are valid before emitting them. See below for more information.
@@ -156,10 +161,10 @@ The number of sequences output.
 During output, the assembler may output any of the following errors.
 .TP
 ERR BADID
-The name of the input read did not follow the know Illumina standard formats. Older versions of CASAVA produce sequences with IDs that look like \fBHWUSI-EAS1661_9323_FC619KG:7:1:1190:15190#ATCACG/1\fR, where the fields are \fIinstrument:lane:tile:x:y#tag/direction\fR. Newer version of CASAVA produce IDs that look like \fB@HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR, where the fields are \fIinstrument:run:flowcell:lane:tile:x:y direction:filtered:flags:tag\fR. If your sequence headers do not look like either of these, either Illumina has created yet-another header format or, more likely, your sequence headers have been manipulated by some upstream processing. PANDAseq needs the original Illumina probabilties; not ones manipulated by other programs. We're very picky about that.
+The name of the input read did not follow the know Illumina standard formats. Older versions of CASAVA produce sequences with IDs that look like \fBHWUSI-EAS1661_9323_FC619KG:7:1:1190:15190#ATCACG/1\fR, where the fields are \fIinstrument:lane:tile:x:y#tag/direction\fR. Newer version of CASAVA produce IDs that look like \fB@HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR, where the fields are \fIinstrument:run:flowcell:lane:tile:x:y direction:filtered:flags:tag\fR. If your sequence headers do not look like either of these, either Illumina has created yet-another header format or, more likely, your sequence headers have been manipulated by some upstream processing. PANDAseq needs the original Illumina probabilities; not ones manipulated by other programs. We're very picky about that. Sometimes, for mysterious reasons, the sequences lack the barcoding tag. The \fB-B\fR option will cause the lack of barcode to be ignored. This will obviously invalidate the use of modules that depend on the barcode.
 .TP
 ERR BADNT
-An invaid letter was found in a nucleotide read. Likely caused by incorrect or corrupt input files.
+An invalid letter was found in a nucleotide read. Likely caused by incorrect or corrupt input files.
 .TP
 ERR BADSEQ
 The an unexpected character or end of the input file was detected. Likely caused by incorrect or corrupt input files.
@@ -195,7 +200,7 @@ ERR NOTPAIRED
 Sequences from FASTQ files are not pairing correctly given their sequence names. Likely, the files are mismatched.
 .TP
 ERR OOM
-An out of memory condition has occured. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a bug.
+An out of memory condition has occurred. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a bug.
 .TP
 INFO BESTOLP
 The best overlap parameter for a sequence.

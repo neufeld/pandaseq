@@ -173,6 +173,24 @@ typedef struct {
 	double p;
 } panda_result;
 
+/**
+ * The policy for Illumina tags/barcodes in sequence names.
+ */
+typedef enum {
+	/**
+	 * The parsing should return an error if the sequence does not have a tag.
+	 */
+	PANDA_TAG_PRESENT,
+	/**
+	 * The parsing should return an error if the sequence has a tag.
+	 */
+	PANDA_TAG_ABSENT,
+	/**
+	 * The parsing should not care if the sequence a tag.
+	 */
+	PANDA_TAG_OPTIONAL,
+} PandaTagging;
+
 #define PANDA_TAG_LEN 50
 
 /**
@@ -213,7 +231,7 @@ bool panda_seqid_equal(const panda_seq_identifier *one,
  *
  * Fills `id` with the parse result. The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
  */
-int panda_seqid_parse(panda_seq_identifier *id, char *input);
+int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy);
 
 /**
  * A reconstructed sequence with meta information
@@ -387,7 +405,7 @@ typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
 						  /*@null@ */ void *logger_data,
 						  /*@null@ */
 						  PandaDestroy logger_destroy,
-						  unsigned char qualmin);
+						  unsigned char qualmin, PandaTagging policy);
 /**
  * Open a pair of bzipped for assembly.
  *
@@ -401,7 +419,7 @@ typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
 						   void *logger_data,
 						   /*@null@ */
 						   PandaDestroy logger_destroy,
-						   unsigned char qualmin);
+						   unsigned char qualmin, PandaTagging policy);
 
 /**
  * Get the next character from a FASTQ file or EOF.
@@ -430,6 +448,8 @@ typedef bool(*PandaNextSeq) ( /*@notnull@@out@ */ panda_seq_identifier *id,
  *
  * @param forward, forward_data, forward_destroy the functions to provide the stream of forward characters. Every time a new character is required, forward(forward_data) is called. When the stream has returned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
  * @param reverse, reverse_data, reverse_destroy the same for the reverse sequence.
+ * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
+ * @param policy method to handle unbarcoded sequences
  * @param logger, logger_data the logging function to use during assembly. The logging function will not be memory managed.
  * @param user_data where to store the user_data for this function
  * @param destroy where to store the destroy function for the user data
@@ -443,6 +463,7 @@ PandaNextSeq panda_create_fastq_reader( /*@notnull@ */ PandaNextChar forward,
 				       /*@notnull@ */ PandaLogger logger,
 				       /*@null@ */ void *logger_data,
 				       unsigned char qualmin,
+				       PandaTagging policy,
 				       /*@notnull@@out@ */ void **user_data,
 				       /*@notnull@@out@ */
 				       PandaDestroy * destroy);
@@ -480,7 +501,8 @@ PandaNextSeq panda_create_fastq_reader( /*@notnull@ */ PandaNextChar forward,
 								     logger_destroy,
 								     unsigned
 								     char
-								     qualmin);
+								     qualmin,
+								     PandaTagging policy);
 /**
  * Create a new assembler from a sequence source.
  *
@@ -748,7 +770,7 @@ void panda_mux_unref( /*@notnull@ */ PandaMux mux);
 				      /*@null@ */ void *logger_data,
 				      /*@null@ */
 				      PandaDestroy logger_destroy,
-				      unsigned char qualmin);
+				      unsigned char qualmin, PandaTagging policy);
 /**
  * Open a pair of bzipped for multi-threaded assembly.
  *
@@ -759,7 +781,7 @@ void panda_mux_unref( /*@notnull@ */ PandaMux mux);
 				       /*@notnull@ */ PandaLogger logger,
 				       /*@null@ */ void *logger_data,
 				       /*@null@ */ PandaDestroy logger_destroy,
-				       unsigned char qualmin);
+				       unsigned char qualmin, PandaTagging policy);
 /**
  * Create a new multiplexed reader for given to FASTQ streams.
  * @see panda_create_fastq_reader
@@ -780,7 +802,7 @@ void panda_mux_unref( /*@notnull@ */ PandaMux mux);
 						  /*@null@ */ void *logger_data,
 						  /*@null@ */
 						  PandaDestroy logger_destroy,
-						  unsigned char qualmin);
+						  unsigned char qualmin, PandaTagging policy);
 
 /*
  * Convenience macro is for Vala
