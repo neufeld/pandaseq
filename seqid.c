@@ -56,7 +56,8 @@ bool panda_seqid_equal(const panda_seq_identifier *one,
 	;
 }
 
-#define PARSE_CHUNK if (*input == '\0') return 0; for(;*input != '\0' && *input != ':' && *input != '#' && *input != '/' && *input != ' '; input++)
+#define PARSE_CHUNK_MAYBE for(;*input != '\0' && *input != ':' && *input != '#' && *input != '/' && *input != ' '; input++)
+#define PARSE_CHUNK if (*input == '\0') return 0; PARSE_CHUNK_MAYBE
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (*input >= '0' && *input <= '9') { value = 10*value + (*input - '0'); } else { return 0; } } } while(0)
 
 int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy)
@@ -88,7 +89,7 @@ int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy
 		id->y = value;
 		dest = id->tag;
 		*dest = '\0';
-		PARSE_CHUNK {
+		PARSE_CHUNK_MAYBE {
 			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;
 			*dest++ = (*input);
@@ -143,7 +144,7 @@ int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy
 		/* control bits */
 		dest = id->tag;
 		*dest = '\0';
-		PARSE_CHUNK {
+		PARSE_CHUNK_MAYBE {
 			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;
 			*dest++ = (*input);
