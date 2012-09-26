@@ -22,9 +22,12 @@
 #include "buffer.h"
 #include "table.h"
 
-bool panda_logger_file(PandaCode code, panda_seq_identifier *id,
-		       const char *message, FILE *file)
-{
+bool
+panda_logger_file(
+	PandaCode code,
+	panda_seq_identifier *id,
+	const char *message,
+	FILE *file) {
 #if HAVE_PTHREAD
 	fprintf(file, "%p\t", static_buffer());
 #endif
@@ -41,8 +44,9 @@ bool panda_logger_file(PandaCode code, panda_seq_identifier *id,
 	return true;
 }
 
-const char const *panda_code_str(PandaCode code)
-{
+const char const *
+panda_code_str(
+	PandaCode code) {
 	switch (code) {
 	case PANDA_CODE_BAD_NT:
 		return "ERR\tBADNT";
@@ -124,34 +128,36 @@ const char const *panda_code_str(PandaCode code)
 	}
 }
 
-bool panda_output_fasta(const panda_result_seq *sequence, FILE *file)
-{
+bool
+panda_output_fasta(
+	const panda_result_seq *sequence,
+	FILE *file) {
 	size_t it;
-	(void)fputc('>', file);
+	(void) fputc('>', file);
 	panda_seqid_print(&sequence->name, file);
-	(void)fputc('\n', file);
+	(void) fputc('\n', file);
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void)fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
+		(void) fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
 	}
-	(void)fputc('\n', file);
+	(void) fputc('\n', file);
 	return true;
 }
 
-bool panda_output_fastq(const panda_result_seq *sequence, FILE *file)
-{
+bool
+panda_output_fastq(
+	const panda_result_seq *sequence,
+	FILE *file) {
 	size_t it;
-	(void)fputc('@', file);
+	(void) fputc('@', file);
 	panda_seqid_print(&sequence->name, file);
-	(void)fputc('\n', file);
+	(void) fputc('\n', file);
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void)fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
+		(void) fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
 	}
 	fprintf(file, "\n+\n");
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void)fputc(33 -
-			    (int)(10 * log(1 - exp(sequence->sequence[it].p)) /
-				  ln_10), file);
+		(void) fputc(33 - (int) (10 * log(1 - exp(sequence->sequence[it].p)) / ln_10), file);
 	}
-	(void)fputc('\n', file);
+	(void) fputc('\n', file);
 	return true;
 }

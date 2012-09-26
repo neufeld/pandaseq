@@ -17,24 +17,28 @@
  */
 
 #ifndef ASM_H
-#define ASM_H
-#include "config.h"
-#include "pandaseq.h"
-#include "misc.h"
-#ifdef HAVE_PTHREAD
-#include <pthread.h>
-#endif
+#        define ASM_H
+#        include "config.h"
+#        include "pandaseq.h"
+#        include "misc.h"
+#        ifdef HAVE_PTHREAD
+#                include <pthread.h>
+#        endif
 
 typedef unsigned char seqindex;
-#define NUM_KMERS 2
-#define KMER_LEN 8
-#define KMERSEEN_SIZE (sizeof(seqindex) * NUM_KMERS * (1 << (2 * KMER_LEN)))
+#        define NUM_KMERS 2
+#        define KMER_LEN 8
+#        define KMERSEEN_SIZE (sizeof(seqindex) * NUM_KMERS * (1 << (2 * KMER_LEN)))
 
 struct panda_assembler {
 	volatile size_t refcnt;
 
-	 MANAGED_MEMBER(PandaNextSeq, next);
-	 MANAGED_MEMBER(PandaLogger, logger);
+	 MANAGED_MEMBER(
+		PandaNextSeq,
+		next);
+	 MANAGED_MEMBER(
+		PandaLogger,
+		logger);
 
 	size_t *rejected;
 	PandaModule *modules;
@@ -64,9 +68,9 @@ struct panda_assembler {
 	long noalgncount;
 	long count;
 	bool no_n;
-#ifdef HAVE_PTHREAD
+#        ifdef HAVE_PTHREAD
 	pthread_mutex_t mutex;
-#endif
+#        endif
 	panda_nt forward_primer[PANDA_MAX_LEN];
 	panda_nt reverse_primer[PANDA_MAX_LEN];
 };

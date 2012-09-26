@@ -16,20 +16,27 @@
 
  */
 #ifndef PLUGIN_H
-#define PLUGIN_H
-#include "pandaseq.h"
+#        define PLUGIN_H
+#        include "pandaseq.h"
 
-extern bool module_checkseq(PandaAssembler assembler,
-			    panda_result_seq *sequence);
-extern bool module_precheckseq(PandaAssembler assembler,
-			       panda_seq_identifier *id,
-			       const panda_qual *forward,
-			       size_t forward_length,
-			       const panda_qual *reverse,
-			       size_t reverse_length);
-extern void module_help(PandaAssembler assembler);
-extern void module_version(PandaAssembler assembler);
-extern bool module_init(PandaAssembler assembler);
-extern void module_cleanup(PandaAssembler assembler);
-extern void module_destroy(PandaAssembler assembler);
+extern bool module_checkseq(
+	PandaAssembler assembler,
+	panda_result_seq *sequence);
+extern bool module_precheckseq(
+	PandaAssembler assembler,
+	panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length);
+extern void module_help(
+	PandaAssembler assembler);
+extern void module_version(
+	PandaAssembler assembler);
+extern bool module_init(
+	PandaAssembler assembler);
+extern void module_cleanup(
+	PandaAssembler assembler);
+extern void module_destroy(
+	PandaAssembler assembler);
 #endif

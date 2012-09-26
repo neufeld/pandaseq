@@ -29,7 +29,7 @@
 #include "config.h"
 #include "pandaseq.h"
 #ifdef HAVE_PTHREAD
-#include<pthread.h>
+#        include<pthread.h>
 #endif
 
 #define MAX_MODULES 100
@@ -43,16 +43,18 @@ time_t starttime;
 #ifdef HAVE_PTHREAD
 pthread_mutex_t output_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
-static void printtime(long count, time_t starttime)
-{
+static void
+printtime(
+	long count,
+	time_t starttime) {
 	time_t now;
-	(void)time(&now);
-	fprintf(stderr, "STAT\tTIME\t%s\nSTAT\tELAPSED\t%d\nSTAT\tREADS\t%ld\n",
-		ctime(&now), (int)(now - starttime), count);
+	(void) time(&now);
+	fprintf(stderr, "STAT\tTIME\t%s\nSTAT\tELAPSED\t%d\nSTAT\tREADS\t%ld\n", ctime(&now), (int) (now - starttime), count);
 }
 
-static void *do_assembly(PandaAssembler assembler)
-{
+static void *
+do_assembly(
+	PandaAssembler assembler) {
 	long count;
 	long longcount = 0;
 	const panda_result_seq *result;
@@ -91,25 +93,18 @@ static void *do_assembly(PandaAssembler assembler)
 	count = panda_assembler_get_count(assembler);
 	printtime(count, starttime);
 	if (forward_primer != NULL)
-		fprintf(stderr, "STAT\tNOFP\t%ld\n",
-			panda_assembler_get_no_forward_primer_count(assembler));
+		fprintf(stderr, "STAT\tNOFP\t%ld\n", panda_assembler_get_no_forward_primer_count(assembler));
 	if (reverse_primer != NULL)
-		fprintf(stderr, "STAT\tNORP\t%ld\n",
-			panda_assembler_get_no_reverse_primer_count(assembler));
-	fprintf(stderr, "STAT\tNOALGN\t%ld\nSTAT\tLOWQ\t%ld\n",
-		panda_assembler_get_failed_alignment_count(assembler),
-		panda_assembler_get_low_quality_count(assembler));
+		fprintf(stderr, "STAT\tNORP\t%ld\n", panda_assembler_get_no_reverse_primer_count(assembler));
+	fprintf(stderr, "STAT\tNOALGN\t%ld\nSTAT\tLOWQ\t%ld\n", panda_assembler_get_failed_alignment_count(assembler), panda_assembler_get_low_quality_count(assembler));
 	if (no_n)
-		fprintf(stderr, "STAT\tDEGENERATE\t%ld\n",
-			panda_assembler_get_degenerate_count(assembler));
+		fprintf(stderr, "STAT\tDEGENERATE\t%ld\n", panda_assembler_get_degenerate_count(assembler));
 	if (minlen > 0)
 		fprintf(stderr, "STAT\tSHORT\t%ld\n", shortcount);
 	if (maxlen <= 2 * PANDA_MAX_LEN)
 		fprintf(stderr, "STAT\tLONG\t%ld\n", longcount);
 	panda_assembler_module_stats(assembler);
-	fprintf(stderr, "STAT\tOK\t%ld\n",
-		panda_assembler_get_ok_count(assembler) - shortcount -
-		longcount);
+	fprintf(stderr, "STAT\tOK\t%ld\n", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
 #ifdef HAVE_PTHREAD
 	pthread_mutex_unlock(&output_mutex);
 #endif
@@ -118,10 +113,14 @@ static void *do_assembly(PandaAssembler assembler)
 	return NULL;
 }
 
-bool set_primer(PandaAssembler assembler,
-		void (*set_func) (PandaAssembler, panda_nt *, size_t),
-		const char *str, panda_nt (*parse) (char))
-{
+bool
+set_primer(
+	PandaAssembler assembler,
+	void (*set_func) (PandaAssembler,
+		panda_nt *,
+		size_t),
+	const char *str,
+	panda_nt (*parse) (char)) {
 	panda_nt buffer[PANDA_MAX_LEN];
 	size_t it;
 	for (it = 0; it < strlen(str); it++) {
@@ -133,8 +132,10 @@ bool set_primer(PandaAssembler assembler,
 	return true;
 }
 
-int main(int argc, char **argv)
-{
+int
+main(
+	int argc,
+	char **argv) {
 	PandaAssembler assembler;
 	bool bzip = false;
 	int c;
@@ -146,6 +147,11 @@ int main(int argc, char **argv)
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
 	bool okay;
+	const char *optlist = "6BC:d:f:Fhjl:L:No:p:q:Q:r:t:v"
+#ifdef HAVE_PTHREAD
+		"T:"
+#endif
+		;
 	PandaTagging policy = PANDA_TAG_PRESENT;
 	double q = 0.36;
 	int qualmin = 33;
@@ -158,54 +164,78 @@ int main(int argc, char **argv)
 	int threads = 1;
 	pthread_t *thread_list;
 #endif
-	(void)time(&starttime);
+	(void) time(&starttime);
 	threshold = 0.6;
 
 	/* Process command line arguments. */
-	while ((c = getopt(argc, argv, "Bhvjp:q:f:r:t:o:Nl:L:Q:C:6Fd:"
-#ifdef HAVE_PTHREAD
-			   "T:"
-#endif
-		)) != -1) {
+	while ((c = getopt(argc, argv, optlist)) != -1) {
 		char *endptr;
 		switch (c) {
+		case '6':
+			qualmin = 64;
+			break;
 		case 'B':
 			policy = PANDA_TAG_OPTIONAL;
+			break;
+		case 'C':
+			if (modules_length == MAX_MODULES || (modules[modules_length] = panda_module_load(optarg)) == NULL) {
+				if (modules_length == MAX_MODULES) {
+					fprintf(stderr, "Too many modules.\n");
+				}
+				for (it = 0; it < modules_length; it++)
+					panda_module_unref(modules[it]);
+				return 1;
+			}
+			modules_length++;
+			break;
+		case 'd':
+			for (it = 0; it < strlen(optarg); it++) {
+				PandaDebug flag = 0;
+				switch (tolower(optarg[it])) {
+				case 'b':
+					flag = PANDA_DEBUG_BUILD;
+					break;
+				case 'f':
+					flag = PANDA_DEBUG_FILE;
+					break;
+				case 's':
+					flag = PANDA_DEBUG_STAT;
+					break;
+				case 'k':
+					flag = PANDA_DEBUG_KMER;
+					break;
+				case 'r':
+					flag = PANDA_DEBUG_RECON;
+					break;
+				case 'm':
+					flag = PANDA_DEBUG_MISMATCH;
+					break;
+				default:
+					fprintf(stderr, "Ignoring unknown debug flag `%c'.\n", (int) optarg[it]);
+					continue;
+				}
+				if (islower(optarg[it])) {
+					panda_debug_flags &= ~flag;
+				} else {
+					panda_debug_flags |= flag;
+				}
+			}
+			break;
+		case 'f':
+			forward_filename = optarg;
+			break;
+		case 'F':
+			fastq = 1;
 			break;
 		case 'h':
 			help = true;
 			break;
-		case 'v':
-			version = true;
-			break;
 		case 'j':
 			bzip = true;
 			break;
-		case 't':
-			errno = 0;
-			threshold = strtod(optarg, NULL);
-			if (errno != 0 || threshold < 0 || threshold > 1) {
-				fprintf(stderr,
-					"Bad threshold. It should be between 0 and 1.\n");
-				for (it = 0; it < modules_length; it++)
-					panda_module_unref(modules[it]);
-				return 1;
-			}
-			break;
-		case 'Q':
-			errno = 0;
-			q = strtod(optarg, NULL);
-			if (errno != 0 || q < 0 || q > 1) {
-				fprintf(stderr,
-					"Bad quality. It should be between 0 and 1.\n");
-				for (it = 0; it < modules_length; it++)
-					panda_module_unref(modules[it]);
-				return 1;
-			}
-			break;
 		case 'l':
 			errno = 0;
-			minlen = (size_t)strtol(optarg, NULL, 10);
+			minlen = (size_t) strtol(optarg, NULL, 10);
 			if (errno != 0 || minlen < 0 || minlen > 2 * PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad minimum length.\n");
 				for (it = 0; it < modules_length; it++)
@@ -215,7 +245,7 @@ int main(int argc, char **argv)
 			break;
 		case 'L':
 			errno = 0;
-			maxlen = (size_t)strtol(optarg, NULL, 10);
+			maxlen = (size_t) strtol(optarg, NULL, 10);
 			if (errno != 0 || maxlen < 1 || maxlen > 2 * PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad maximum length.\n");
 				for (it = 0; it < modules_length; it++)
@@ -223,36 +253,25 @@ int main(int argc, char **argv)
 				return 1;
 			}
 			break;
+		case 'N':
+			no_n = true;
+			break;
 		case 'o':
 			errno = 0;
 			minoverlap = strtol(optarg, NULL, 10);
-			if (errno != 0 || minoverlap < 1
-			    || minoverlap > PANDA_MAX_LEN) {
+			if (errno != 0 || minoverlap < 1 || minoverlap > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad minimum overlap.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
 				return 1;
 			}
 			break;
-		case 'f':
-			forward_filename = optarg;
-			break;
-		case 'r':
-			reverse_filename = optarg;
-			break;
-		case 'N':
-			no_n = true;
-			break;
-		case 'F':
-			fastq = 1;
-			break;
 		case 'p':
 			errno = 0;
 			foffset = strtol(optarg, &endptr, 10);
 			if (*endptr != '\0') {
 				forward_primer = optarg;
-			} else if (errno != 0 || foffset < 1
-				   || foffset > PANDA_MAX_LEN) {
+			} else if (errno != 0 || foffset < 1 || foffset > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad forward primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -266,8 +285,7 @@ int main(int argc, char **argv)
 			roffset = strtol(optarg, &endptr, 10);
 			if (*endptr != '\0') {
 				reverse_primer = optarg;
-			} else if (errno != 0 || roffset < 1
-				   || roffset > PANDA_MAX_LEN) {
+			} else if (errno != 0 || roffset < 1 || roffset > PANDA_MAX_LEN) {
 				fprintf(stderr, "Bad reverse primer length.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
@@ -276,26 +294,36 @@ int main(int argc, char **argv)
 				roffset++;
 			}
 			break;
-		case 'C':
-			if (modules_length == MAX_MODULES
-			    || (modules[modules_length] =
-				panda_module_load(optarg)) == NULL) {
-				if (modules_length == MAX_MODULES) {
-					fprintf(stderr, "Too many modules.\n");
-				}
+		case 'Q':
+			errno = 0;
+			q = strtod(optarg, NULL);
+			if (errno != 0 || q < 0 || q > 1) {
+				fprintf(stderr, "Bad quality. It should be between 0 and 1.\n");
 				for (it = 0; it < modules_length; it++)
 					panda_module_unref(modules[it]);
 				return 1;
 			}
-			modules_length++;
 			break;
-		case '6':
-			qualmin = 64;
+		case 'r':
+			reverse_filename = optarg;
+			break;
+		case 't':
+			errno = 0;
+			threshold = strtod(optarg, NULL);
+			if (errno != 0 || threshold < 0 || threshold > 1) {
+				fprintf(stderr, "Bad threshold. It should be between 0 and 1.\n");
+				for (it = 0; it < modules_length; it++)
+					panda_module_unref(modules[it]);
+				return 1;
+			}
+			break;
+		case 'v':
+			version = true;
 			break;
 #ifdef HAVE_PTHREAD
 		case 'T':
 			errno = 0;
-			threads = (size_t)strtol(optarg, NULL, 10);
+			threads = (size_t) strtol(optarg, NULL, 10);
 			if (errno != 0 || threads < 1) {
 				fprintf(stderr, "Bad number of threads.\n");
 				for (it = 0; it < modules_length; it++)
@@ -304,55 +332,13 @@ int main(int argc, char **argv)
 			}
 			break;
 #endif
-		case 'd':
-			for(it = 0; it < strlen(optarg); it++) {
-				PandaDebug flag = 0;
-				switch (tolower(optarg[it])) {
-					case 'b':
-						flag = PANDA_DEBUG_BUILD;
-						break;
-					case 'f':
-						flag = PANDA_DEBUG_FILE;
-						break;
-					case 's':
-						flag = PANDA_DEBUG_STAT;
-						break;
-					case 'k':
-						flag = PANDA_DEBUG_KMER;
-						break;
-					case 'r':
-						flag = PANDA_DEBUG_RECON;
-						break;
-					case 'm':
-						flag = PANDA_DEBUG_MISMATCH;
-						break;
-					default:
-						fprintf(stderr, "Ignoring unknown debug flag `%c'.\n", (int) optarg[it]);
-						continue;
-				}
-				if (islower(optarg[it])) {
-					panda_debug_flags &= ~flag;
-				} else {
-					panda_debug_flags |= flag;
-				}
-			}
-			break;
 		case '?':
-			if (optopt == (int)'f' || optopt == (int)'r'
-			    || optopt == (int)'p' || optopt == (int)'q'
-			    || optopt == (int)'l' || optopt == (int)'L'
-			    || optopt == (int)'Q' || optopt == (int)'C'
-					|| optopt == (int)'T' || optopt == (int)'d') {
-				fprintf(stderr,
-					"Option -%c requires an argument.\n",
-					optopt);
+			if (strchr(optlist, optopt) != NULL) {
+				fprintf(stderr, "Option -%c requires an argument.\n", optopt);
 			} else if (isprint(optopt)) {
-				fprintf(stderr, "Unknown option `-%c'.\n",
-					optopt);
+				fprintf(stderr, "Unknown option `-%c'.\n", optopt);
 			} else {
-				fprintf(stderr,
-					"Unknown option character `\\x%x'.\n",
-					(unsigned int)optopt);
+				fprintf(stderr, "Unknown option character `\\x%x'.\n", (unsigned int) optopt);
 			}
 			return 1;
 		default:
@@ -363,91 +349,74 @@ int main(int argc, char **argv)
 	if (version) {
 		fprintf(stderr, "%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
 		for (it = 0; it < modules_length; it++) {
-			fprintf(stderr, "%s %s\n",
-				panda_module_get_name(modules[it]),
-				panda_module_get_version(modules[it]));
+			fprintf(stderr, "%s %s\n", panda_module_get_name(modules[it]), panda_module_get_version(modules[it]));
 			panda_module_unref(modules[it]);
 		}
 		return 1;
 	}
 	if (forward_filename == NULL || reverse_filename == NULL || help) {
-		fprintf(stderr,
-			"%s <%s>\nUsage: %s "
-			"-f forward.fastq "
-			"-r reverse.fastq "
-			"[-6] "
-			"[-C module1 -C module2 ...] "
-			"[-d flags] "
-			"[-F] "
-			"[-j] "
-			"[-L maxlen] "
-			"[-l minlen] "
-			"[-N] "
-			"[-o minoverlap] "
-			"[-p forwardprimer] " "[-q reverseprimer] "
-#ifdef HAVE_PTHREAD
-			"[-T threads] "
-#endif
-			"[-t threshold] "
-			"\n"
-			"\t-6\tUse PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+).\n"
-			"\t-B\tAllow unbarcoded sequences (try this for BADID errors).\n"
-			"\t-C module\tLoad a sequence validation module.\n"
-			"\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n"
-				"\t\t(R)econstruction detail.\n"
-				"\t\tSequence (b)uilding information.\n"
-				"\t\t(F)ile processing.\n"
-				"\t\t(k)-mer table construction.\n"
-				"\t\tShow every (m)ismatch.\n"
-				"\t\tOptional (s)tatistics.\n"
-			"\t-f\tInput FASTQ file containing forward reads.\n"
-			"\t-F\tOutput FASTQ instead of FASTA.\n"
-			"\t-j\tInput files are bzipped.\n"
-			"\t-L maxlen\tMaximum length for a sequence\n"
-			"\t-l minlen\tMinimum length for a sequence\n"
-			"\t-N\tEliminate all sequences with unknown nucleotides in the output.\n"
-			"\t-o minoverlap\tMinimum overlap between forward and reverse reads (default = %d)\n"
-			"\t-p\tForward primer sequence or number of bases to be removed.\n"
-			"\t-q\tReverse primer sequence or number of bases to be removed.\n"
-			"\t-r\tInput FASTQ file containing reverse reads.\n"
-#ifdef HAVE_PTHREAD
-			"\t-T thread\tRun with a number of parallel threads.\n"
-#endif
-			"\t-t\tThe minimum probability that a sequence must have to match a primer. (default = %e)\n",
-			PACKAGE_STRING, PACKAGE_BUGREPORT, argv[0],
-			minoverlap, threshold);
+		fprintf(stderr, "%s <%s>\nUsage: %s ", PACKAGE_STRING, PACKAGE_BUGREPORT, argv[0]);
+		fprintf(stderr, "-f forward.fastq ");
+		fprintf(stderr, "-r reverse.fastq ");
+		fprintf(stderr, "[-6] ");
+		fprintf(stderr, "[-C module1 -C module2 ...] ");
+		fprintf(stderr, "[-d flags] ");
+		fprintf(stderr, "[-F] ");
+		fprintf(stderr, "[-j] ");
+		fprintf(stderr, "[-L maxlen] ");
+		fprintf(stderr, "[-l minlen] ");
+		fprintf(stderr, "[-N] ");
+		fprintf(stderr, "[-o minoverlap] ");
+		fprintf(stderr, "[-p forwardprimer] ");
+		fprintf(stderr, "[-q reverseprimer] ");
+#		ifdef HAVE_PTHREAD
+		fprintf(stderr, "[-T threads] ");
+#		endif
+		fprintf(stderr, "[-t threshold] ");
+		fprintf(stderr, "\n");
+		fprintf(stderr, "\t-6\tUse PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+).\n");
+		fprintf(stderr, "\t-B\tAllow unbarcoded sequences (try this for BADID errors).\n");
+		fprintf(stderr, "\t-C module\tLoad a sequence validation module.\n");
+		fprintf(stderr, "\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n");
+		fprintf(stderr, "\t\t(R)econstruction detail.\n");
+		fprintf(stderr, "\t\tSequence (b)uilding information.\n");
+		fprintf(stderr, "\t\t(F)ile processing.\n");
+		fprintf(stderr, "\t\t(k)-mer table construction.\n");
+		fprintf(stderr, "\t\tShow every (m)ismatch.\n");
+		fprintf(stderr, "\t\tOptional (s)tatistics.\n");
+		fprintf(stderr, "\t-f\tInput FASTQ file containing forward reads.\n");
+		fprintf(stderr, "\t-F\tOutput FASTQ instead of FASTA.\n");
+		fprintf(stderr, "\t-j\tInput files are bzipped.\n");
+		fprintf(stderr, "\t-L maxlen\tMaximum length for a sequence\n");
+		fprintf(stderr, "\t-l minlen\tMinimum length for a sequence\n");
+		fprintf(stderr, "\t-N\tEliminate all sequences with unknown nucleotides in the output.\n");
+		fprintf(stderr, "\t-o minoverlap\tMinimum overlap between forward and reverse reads (default = %d)\n", minoverlap);
+		fprintf(stderr, "\t-p\tForward primer sequence or number of bases to be removed.\n");
+		fprintf(stderr, "\t-q\tReverse primer sequence or number of bases to be removed.\n");
+		fprintf(stderr, "\t-r\tInput FASTQ file containing reverse reads.\n");
+#		ifdef HAVE_PTHREAD
+		fprintf(stderr, "\t-T thread\tRun with a number of parallel threads.\n");
+#		endif
+		fprintf(stderr, "\t-t\tThe minimum probability that a sequence must have to match a primer. (default = %e)\n", threshold);
 		for (it = 0; it < modules_length; it++) {
-			fprintf(stderr, "%s(%s) %s\n\t%s\n",
-				panda_module_get_name(modules[it]),
-				panda_module_get_description(modules[it]),
-				panda_module_get_version(modules[it]),
-				panda_module_get_usage(modules[it]));
+			fprintf(stderr, "%s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
 			panda_module_unref(modules[it]);
 		}
 		return 1;
 	}
 	if (maxlen < minlen || minoverlap > maxlen) {
-		fprintf(stderr,
-			"The minimum length (%d), maximum length (%d), and minimum overlap (%d) are not sensible if you think about the sequence reconstruction.\n",
-			(int)minlen, (int)maxlen, minoverlap);
+		fprintf(stderr, "The minimum length (%d), maximum length (%d), and minimum overlap (%d) are not sensible if you think about the sequence reconstruction.\n", (int) minlen, (int) maxlen, minoverlap);
 		for (it = 0; it < modules_length; it++)
 			panda_module_unref(modules[it]);
 		return 1;
 	}
-	fprintf(stderr, "INFO\tVER\t%s <%s>\n", PACKAGE_STRING,
-		PACKAGE_BUGREPORT);
+	fprintf(stderr, "INFO\tVER\t%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
 
 	for (it = 0; it < argc; it++) {
-		fprintf(stderr, "INFO\tARG[%d]\t%s\n", (int)it, argv[it]);
+		fprintf(stderr, "INFO\tARG[%d]\t%s\n", (int) it, argv[it]);
 	}
 #ifdef HAVE_PTHREAD
-	mux =
-	    bzip ? panda_mux_open_bz2(forward_filename, reverse_filename,
-				      (PandaLogger)panda_logger_file, stderr,
-				      NULL, qualmin, policy) :
-	    panda_mux_open_gz(forward_filename, reverse_filename,
-			      (PandaLogger)panda_logger_file, stderr, NULL,
-			      qualmin, policy);
+	mux = bzip ? panda_mux_open_bz2(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy) : panda_mux_open_gz(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy);
 	if (mux == NULL) {
 		fprintf(stderr, "ERR\tLIB\tCould not create multiplexer.\n");
 		for (it = 0; it < modules_length; it++)
@@ -457,13 +426,7 @@ int main(int argc, char **argv)
 	assembler = panda_mux_create_assembler(mux);
 
 #else
-	assembler =
-	    bzip ? panda_assembler_open_bz2(forward_filename, reverse_filename,
-					    (PandaLogger)panda_logger_file,
-					    stderr, NULL, qualmin, policy) :
-	    panda_assembler_open_gz(forward_filename, reverse_filename,
-				    (PandaLogger)panda_logger_file, stderr,
-				    NULL, qualmin, policy);
+	assembler = bzip ? panda_assembler_open_bz2(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy) : panda_assembler_open_gz(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy);
 #endif
 	if (assembler == NULL) {
 		fprintf(stderr, "ERR\tLIB\tCould not create assembler.\n");
@@ -478,11 +441,7 @@ int main(int argc, char **argv)
 	for (it = 0; it < modules_length; it++) {
 		bool add = panda_assembler_add_module(assembler, modules[it]);
 		if (!add) {
-			fprintf(stderr, "Problem with %s(%s) %s\n\t%s\n",
-				panda_module_get_name(modules[it]),
-				panda_module_get_description(modules[it]),
-				panda_module_get_version(modules[it]),
-				panda_module_get_usage(modules[it]));
+			fprintf(stderr, "Problem with %s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
 		}
 		okay &= add;
 		panda_module_unref(modules[it]);
@@ -500,9 +459,7 @@ int main(int argc, char **argv)
 	panda_assembler_set_disallow_degenerates(assembler, no_n);
 
 	if (forward_primer != NULL) {
-		if (!set_primer
-		    (assembler, panda_assembler_set_forward_primer,
-		     forward_primer, panda_nt_from_ascii)) {
+		if (!set_primer(assembler, panda_assembler_set_forward_primer, forward_primer, panda_nt_from_ascii)) {
 			fprintf(stderr, "ERR\tBADNT\tFPRIMER\n");
 			panda_assembler_unref(assembler);
 #if HAVE_PTHREAD
@@ -514,9 +471,7 @@ int main(int argc, char **argv)
 		panda_assembler_set_forward_trim(assembler, foffset - 1);
 	}
 	if (reverse_primer != NULL) {
-		if (!set_primer
-		    (assembler, panda_assembler_set_reverse_primer,
-		     reverse_primer, panda_nt_from_ascii_complement)) {
+		if (!set_primer(assembler, panda_assembler_set_reverse_primer, reverse_primer, panda_nt_from_ascii_complement)) {
 			fprintf(stderr, "ERR\tBADNT\tRPRIMER\n");
 			panda_assembler_unref(assembler);
 #if HAVE_PTHREAD
@@ -532,22 +487,15 @@ int main(int argc, char **argv)
 	if (threads > 1) {
 		thread_list = malloc(sizeof(pthread_t) * (threads - 1));
 		for (it = 0; it < threads - 1; it++) {
-			PandaAssembler slave_assembler =
-			    panda_mux_create_assembler(mux);
+			PandaAssembler slave_assembler = panda_mux_create_assembler(mux);
 			if (slave_assembler == NULL) {
-				fprintf(stderr, "ERR\tMUXCREATE\t%d\n",
-					(int)it + 1);
+				fprintf(stderr, "ERR\tMUXCREATE\t%d\n", (int) it + 1);
 				threads = it + 1;
 				break;
 			}
-			panda_assembler_copy_configuration(slave_assembler,
-							   assembler);
-			if (pthread_create
-			    (&thread_list[it], NULL,
-			     (void *(*)(void *))do_assembly,
-			     slave_assembler) != 0) {
-				fprintf(stderr, "ERR\tPCREATE\t%d\n",
-					(int)it + 1);
+			panda_assembler_copy_configuration(slave_assembler, assembler);
+			if (pthread_create(&thread_list[it], NULL, (void *(*)(void *)) do_assembly, slave_assembler) != 0) {
+				fprintf(stderr, "ERR\tPCREATE\t%d\n", (int) it + 1);
 				threads = it + 1;
 				break;
 			}

@@ -16,7 +16,7 @@
 
  */
 #ifndef NT_H
-#define NT_H
+#        define NT_H
 extern char iupac_forward[32];
 extern char iupac_reverse[32];
 #endif

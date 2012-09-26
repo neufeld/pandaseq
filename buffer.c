@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #ifdef HAVE_PTHREAD
-#include <pthread.h>
+#        include <pthread.h>
 #endif
 #include "buffer.h"
 
@@ -28,28 +28,32 @@ PandaDebug panda_debug_flags = PANDA_DEBUG_DEFAULT;
 
 #if HAVE_PTHREAD
 
-#define BUFFER(name, type, size) pthread_key_t PANDACONCAT(name, _key);
-#include "buffer.list"
-#undef BUFFER
+#        define BUFFER(name, type, size) pthread_key_t PANDACONCAT(name, _key);
+#        include "buffer.list"
+#        undef BUFFER
 
 __attribute__ ((constructor))
-static void lib_init(void)
-{
-#define BUFFER(name, type, size) pthread_key_create(&PANDACONCAT(name, _key), &free);
-#include "buffer.list"
-#undef BUFFER
+static void
+lib_init(
+	void) {
+#        define BUFFER(name, type, size) pthread_key_create(&PANDACONCAT(name, _key), &free);
+#        include "buffer.list"
+#        undef BUFFER
 }
 
 __attribute__ (())
-void lib_destroy(void)
-{
-#define BUFFER(name, type, size) pthread_key_delete(PANDACONCAT(name, _key));
-#include "buffer.list"
-#undef BUFFER
+void
+lib_destroy(
+	void) {
+#        define BUFFER(name, type, size) pthread_key_delete(PANDACONCAT(name, _key));
+#        include "buffer.list"
+#        undef BUFFER
 }
 
-static void *get_buffer(pthread_key_t key, size_t size)
-{
+static void *
+get_buffer(
+	pthread_key_t key,
+	size_t size) {
 	void *buffer;
 	if ((buffer = pthread_getspecific(key)) == NULL) {
 		buffer = malloc(size);
@@ -58,17 +62,20 @@ static void *get_buffer(pthread_key_t key, size_t size)
 	return buffer;
 }
 
-#define BUFFER(name, type, size) type *PANDACONCAT(name, _buffer)(void) { return get_buffer(PANDACONCAT(name, _key), sizeof(type) * size); }
-#include "buffer.list"
-#undef BUFFER
+#        define BUFFER(name, type, size) type *PANDACONCAT(name, _buffer)(void) { return get_buffer(PANDACONCAT(name, _key), sizeof(type) * size); }
+#        include "buffer.list"
+#        undef BUFFER
 #else
-#define BUFFER(name, type, size) static type PANDACONCAT(name, buffer)[size]; type *PANDACONCAT(name, buffer)(void) { return PANDACONCAT(name, buffer); }
-#include "buffer.list"
-#undef BUFFER
+#        define BUFFER(name, type, size) static type PANDACONCAT(name, buffer)[size]; type *PANDACONCAT(name, buffer)(void) { return PANDACONCAT(name, buffer); }
+#        include "buffer.list"
+#        undef BUFFER
 #endif
 
-void bufferprintf(char *buffer, char *fmt, ...)
-{
+void
+bufferprintf(
+	char *buffer,
+	char *fmt,
+	...) {
 	va_list va;
 	va_start(va, fmt);
 	vsnprintf(buffer, BUFFER_SIZE, fmt, va);

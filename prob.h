@@ -16,9 +16,9 @@
 
  */
 #ifndef PROB_H
-#define PROB_H
+#        define PROB_H
 
-#define PROBABILITY(score) (pow(10.0, (-(double)(score)) / 10.0))
-#define PHREDMAX 46
+#        define PROBABILITY(score) (pow(10.0, (-(double)(score)) / 10.0))
+#        define PHREDMAX 46
 
 #endif

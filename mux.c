@@ -17,25 +17,37 @@
  */
 #include "config.h"
 #if HAVE_PTHREAD
-#include <stdlib.h>
-#include <string.h>
-#include "pandaseq.h"
-#include "assembler.h"
-#include "buffer.h"
+#        include <stdlib.h>
+#        include <string.h>
+#        include "pandaseq.h"
+#        include "assembler.h"
+#        include "buffer.h"
 
 struct panda_mux {
 	pthread_mutex_t mutex;
 	pthread_mutex_t next_mutex;
 	pthread_mutex_t logger_mutex;
-	 MANAGED_MEMBER(PandaNextSeq, next);
-	 MANAGED_MEMBER(PandaLogger, logger);
+	pthread_mutex_t noalgn_mutex;
+	 MANAGED_MEMBER(
+		PandaNextSeq,
+		next);
+	 MANAGED_MEMBER(
+		PandaLogger,
+		logger);
+	 MANAGED_MEMBER(
+		PandaFailAlign,
+		noalgn);
 	volatile size_t refcnt;
 };
 
-PandaMux panda_mux_new(PandaNextSeq next, void *next_data,
-		       PandaDestroy next_destroy, PandaLogger logger,
-		       void *logger_data, PandaDestroy logger_destroy)
-{
+PandaMux
+panda_mux_new(
+	PandaNextSeq next,
+	void *next_data,
+	PandaDestroy next_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy) {
 	PandaMux mux = malloc(sizeof(struct panda_mux));
 	mux->refcnt = 1;
 	mux->next = next;
@@ -50,36 +62,38 @@ PandaMux panda_mux_new(PandaNextSeq next, void *next_data,
 	return mux;
 }
 
-PandaMux panda_mux_new_fastq_reader(PandaNextChar forward, void *forward_data,
-				    PandaDestroy forward_destroy,
-				    PandaNextChar reverse, void *reverse_data,
-				    PandaDestroy reverse_destroy,
-				    PandaLogger logger, void *logger_data,
-				    PandaDestroy logger_destroy,
-				    unsigned char qualmin, PandaTagging policy)
-{
+PandaMux
+panda_mux_new_fastq_reader(
+	PandaNextChar forward,
+	void *forward_data,
+	PandaDestroy forward_destroy,
+	PandaNextChar reverse,
+	void *reverse_data,
+	PandaDestroy reverse_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy) {
 	void *user_data;
 	PandaDestroy destroy;
 	PandaNextSeq next;
-	next =
-	    panda_create_fastq_reader(forward, forward_data, forward_destroy,
-				      reverse, reverse_data, reverse_destroy,
-				      (PandaLogger)logger, logger_data,
-				      qualmin, policy, &user_data, &destroy);
-	return panda_mux_new(next, user_data, destroy, logger, logger_data,
-			     logger_destroy);
+	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, (PandaLogger) logger, logger_data, qualmin, policy, &user_data, &destroy);
+	return panda_mux_new(next, user_data, destroy, logger, logger_data, logger_destroy);
 }
 
-PandaMux panda_mux_ref(PandaMux mux)
-{
+PandaMux
+panda_mux_ref(
+	PandaMux mux) {
 	pthread_mutex_lock(&mux->mutex);
 	mux->refcnt++;
 	pthread_mutex_unlock(&mux->mutex);
 	return mux;
 }
 
-void panda_mux_unref(PandaMux mux)
-{
+void
+panda_mux_unref(
+	PandaMux mux) {
 	int count;
 	pthread_mutex_lock(&mux->mutex);
 	count = --(mux->refcnt);
@@ -100,9 +114,12 @@ void panda_mux_unref(PandaMux mux)
 	}
 }
 
-static bool mux_logger(PandaCode code, panda_seq_identifier *id, char *msg,
-		       PandaMux mux)
-{
+static bool
+mux_logger(
+	PandaCode code,
+	panda_seq_identifier *id,
+	char *msg,
+	PandaMux mux) {
 	bool ret;
 	pthread_mutex_lock(&mux->logger_mutex);
 	ret = (mux->logger) (code, id, msg, mux->logger_data);
@@ -110,46 +127,50 @@ static bool mux_logger(PandaCode code, panda_seq_identifier *id, char *msg,
 	return ret;
 }
 
-static bool mux_next(panda_seq_identifier *id, panda_qual **forward,
-		     size_t *forward_length, panda_qual **reverse,
-		     size_t *reverse_length, PandaMux mux)
-{
+static bool
+mux_next(
+	panda_seq_identifier *id,
+	panda_qual **forward,
+	size_t *forward_length,
+	panda_qual **reverse,
+	size_t *reverse_length,
+	PandaMux mux) {
 	bool result;
 	panda_qual *common_forward;
 	panda_qual *common_reverse;
 	pthread_mutex_lock(&mux->next_mutex);
 
-	result =
-	    mux->next(id, &common_forward, forward_length, &common_reverse,
-		      reverse_length, mux->next_data);
+	result = mux->next(id, &common_forward, forward_length, &common_reverse, reverse_length, mux->next_data);
 	if (common_forward == NULL) {
 		*forward = NULL;
 		*forward_length = 0;
 	} else {
 		*forward = forward_buffer();
-		memcpy(*forward, common_forward,
-		       sizeof(panda_qual) * *forward_length);
+		memcpy(*forward, common_forward, sizeof(panda_qual) * *forward_length);
 	}
 	if (common_reverse == NULL) {
 		*reverse = NULL;
 		*reverse_length = 0;
 	} else {
 		*reverse = reverse_buffer();
-		memcpy(*reverse, common_reverse,
-		       sizeof(panda_qual) * *reverse_length);
+		memcpy(*reverse, common_reverse, sizeof(panda_qual) * *reverse_length);
 	}
 	pthread_mutex_unlock(&mux->next_mutex);
 	return result;
 }
 
-PandaAssembler panda_mux_create_assembler(PandaMux mux)
-{
+PandaAssembler
+panda_mux_create_assembler(
+	PandaMux mux) {
+	PandaAssembler assembler;
 	pthread_mutex_lock(&mux->mutex);
 	mux->refcnt += 2;
 	pthread_mutex_unlock(&mux->mutex);
-	return panda_assembler_new((PandaNextSeq) mux_next, mux,
-				   (PandaDestroy) panda_mux_unref,
-				   (PandaLogger)mux_logger, mux,
-				   (PandaDestroy) panda_mux_unref);
+	assembler = panda_assembler_new((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, (PandaLogger) mux_logger, mux, (PandaDestroy) panda_mux_unref);
+	if (assembler != NULL) {
+		panda_assembler_set_fail_alignment(assembler, (PandaFailAlign)
+			mux_fail_algn, mux, NULL);
+	}
+	return assembler;
 }
 #endif

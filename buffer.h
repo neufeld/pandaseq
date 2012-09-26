@@ -16,15 +16,18 @@
 
  */
 #ifndef BUFFER_H
-#define BUFFER_H
+#        define BUFFER_H
 
-#include "pandaseq.h"
-#define BUFFER_SIZE 1024
+#        include "pandaseq.h"
+#        define BUFFER_SIZE 1024
 
-#define BUFFER(name, type, length) /*@only@ @notnull@*/ type *PANDACONCAT(name, _buffer)(void);
-#include "buffer.list"
-#undef BUFFER
+#        define BUFFER(name, type, length) /*@only@ @notnull@*/ type *PANDACONCAT(name, _buffer)(void);
+#        include "buffer.list"
+#        undef BUFFER
 
-void bufferprintf(char *buffer, char *fmt, ...);
+void bufferprintf(
+	char *buffer,
+	char *fmt,
+	...);
 
 #endif

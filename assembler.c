@@ -26,7 +26,7 @@
 #include <string.h>
 #include <unistd.h>
 #ifdef HAVE_PTHREAD
-#include <pthread.h>
+#        include <pthread.h>
 #endif
 #include "pandaseq.h"
 #include "assembler.h"
@@ -59,8 +59,12 @@ typedef struct {
 #define WEDGEZ(x) ((x) > 0 ? 0 : (x))
 #define CIRC(index, len) (((index) + (len)) % (len))
 #define PHREDCLAMP(x) ((x) > PHREDMAX ? PHREDMAX : ((x) < 0 ? 0 : (x)))
-static double qualscore(panda_nt nt1, char qual1, panda_nt nt2, char qual2)
-{
+static double
+qualscore(
+	panda_nt nt1,
+	char qual1,
+	panda_nt nt2,
+	char qual2) {
 	if (PANDA_NT_IS_N(nt1)) {
 		if (PANDA_NT_IS_N(nt2)) {
 			return qual_nn;
@@ -74,10 +78,13 @@ static double qualscore(panda_nt nt1, char qual1, panda_nt nt2, char qual2)
 }
 
 /* Find the offset of a primer in a sequence and return the offset (i.e., the start of the useful sequence. */
-static size_t computeoffset(PandaAssembler assembler, panda_qual *seq,
-			    size_t seq_length, panda_nt *primer,
-			    size_t primerlen)
-{
+static size_t
+computeoffset(
+	PandaAssembler assembler,
+	panda_qual *seq,
+	size_t seq_length,
+	panda_nt *primer,
+	size_t primerlen) {
 	/* Circular buffer of probabilities of primer alignment indexed by the offset. */
 	double probabilities[primerlen];
 	double bestpr = primerlen * assembler->threshold;
@@ -94,11 +101,8 @@ static size_t computeoffset(PandaAssembler assembler, panda_qual *seq,
 
 	for (index = 0; index < seq_length; index++) {
 		ssize_t x;
-		for (x = (ssize_t) (primerlen > index ? index : primerlen - 1);
-		     x >= 0; x--) {
-			probabilities[CIRC(index - x, primerlen)] +=
-			    qualscore(seq[index].nt, seq[index].qual,
-				      primer[x], (char)PHREDMAX);
+		for (x = (ssize_t) (primerlen > index ? index : primerlen - 1); x >= 0; x--) {
+			probabilities[CIRC(index - x, primerlen)] += qualscore(seq[index].nt, seq[index].qual, primer[x], (char) PHREDMAX);
 		}
 		/* The last bucket in the buffer holds the probability of a complete alignment. If it so better than we have seen previously, store it. */
 		if (probabilities[CIRC(index, primerlen)] > bestpr) {
@@ -112,17 +116,14 @@ static size_t computeoffset(PandaAssembler assembler, panda_qual *seq,
 
 /* Try to align forward and reverse reads and return the quality of the aligned sequence and the sequence itself. */
 static bool
-align(PandaAssembler assembler, panda_result_seq *result)
-{
+align(
+	PandaAssembler assembler,
+	panda_result_seq *result) {
 	ssize_t i, j;
 	ssize_t df, dr;
 	/* For determining overlap. */
-	size_t maxoverlap =
-	    result->forward_length <
-	    result->reverse_length ? result->
-	    forward_length : result->reverse_length;
-	double bestprobability =
-	    qual_nn * (result->forward_length + result->reverse_length);
+	size_t maxoverlap = result->forward_length < result->reverse_length ? result->forward_length : result->reverse_length;
+	double bestprobability = qual_nn * (result->forward_length + result->reverse_length);
 	int bestoverlap = -1;
 	size_t overlap;
 	size_t counter;
@@ -142,34 +143,21 @@ align(PandaAssembler assembler, panda_result_seq *result)
 
 	/* Scan forward sequence building k-mers and appending the position to kmerseen[k] */
 	FOREACH_KMER(it, result->forward) {
-		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%d@%d", (int)KMER(it),
-		     (int)KMER_POSITION(it));
-		for (j = 0;
-		     j < NUM_KMERS
-		     && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
+		for (j = 0; j < NUM_KMERS && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
 		if (j == NUM_KMERS) {
 			/* If we run out of storage, we lose k-mers. */
-			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%d@%d", (int)KMER(it),
-			     (int)KMER_POSITION(it));
+			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
 		} else {
-			assembler->kmerseen[(KMER(it) << 1) + j] =
-			    KMER_POSITION(it);
+			assembler->kmerseen[(KMER(it) << 1) + j] = KMER_POSITION(it);
 		}
 	}
 
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
 	FOREACH_KMER_REVERSE(it, result->reverse) {
-		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%d@%d", (int)KMER(it),
-		    (int)KMER_POSITION(it));
-		for (j = 0;
-		     j < NUM_KMERS
-		     && assembler->kmerseen[(KMER(it) << 1) + j] !=
-		     (seqindex) 0; j++) {
-			int index =
-			    result->forward_length + result->reverse_length -
-			    KMER_POSITION(it) -
-			    assembler->kmerseen[(KMER(it) << 1) + j] -
-			    assembler->minoverlap - 1;
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
+		for (j = 0; j < NUM_KMERS && assembler->kmerseen[(KMER(it) << 1) + j] != (seqindex) 0; j++) {
+			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) << 1) + j] - assembler->minoverlap - 1;
 
 			if (index >= 0) {
 				BIT_LIST_SET(posn, index);
@@ -207,32 +195,23 @@ align(PandaAssembler assembler, panda_result_seq *result)
 			}
 		}
 
-		probability =
-		    (qual_nn *
-		     (result->forward_length + result->reverse_length -
-		      2 * overlap + unknowns) + matches * assembler->pmatch +
-		     mismatches * assembler->pmismatch);
+		probability = (qual_nn * (result->forward_length + result->reverse_length - 2 * overlap + unknowns) + matches * assembler->pmatch + mismatches * assembler->pmismatch);
 
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY,
-		     "overlap = %d, matches = %d, mismatches = %d, unknowns = %d, probability = %f",
-		     (int) overlap, (int) matches, (int) mismatches, (int) unknowns, (float) probability);
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %d, matches = %d, mismatches = %d, unknowns = %d, probability = %f", (int) overlap, (int) matches, (int) mismatches, (int) unknowns, (float) probability);
 		if (probability > bestprobability) {
 			bestprobability = probability;
 			bestoverlap = overlap;
 		}
 	}
 
-	LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_BEST_OVERLAP, "%d", (int)bestoverlap);
+	LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_BEST_OVERLAP, "%d", (int) bestoverlap);
 
 	if (bestoverlap == -1) {
 		return false;
 	}
 
 	/* Compute the correct alignment and the quality score of the entire sequence. */
-	len =
-	    result->forward_length - (ssize_t) result->forward_offset -
-	    bestoverlap + result->reverse_length -
-	    (ssize_t) result->reverse_offset + 1;
+	len = result->forward_length - (ssize_t) result->forward_offset - bestoverlap + result->reverse_length - (ssize_t) result->reverse_offset + 1;
 	if (len <= 0) {
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
 		return false;
@@ -244,14 +223,10 @@ align(PandaAssembler assembler, panda_result_seq *result)
 	result->sequence_length = len - 1;
 	result->degenerates = 0;
 
-	df = (ssize_t) result->forward_length -
-	    (ssize_t) result->forward_offset - bestoverlap;
-	dr = (ssize_t) result->reverse_length -
-	    (ssize_t) result->reverse_offset - bestoverlap;
+	df = (ssize_t) result->forward_length - (ssize_t) result->forward_offset - bestoverlap;
+	dr = (ssize_t) result->reverse_length - (ssize_t) result->reverse_offset - bestoverlap;
 	/* Copy the unpaired forward sequence. */
-	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM,
-	     "bestoverlap = %d, dforward = %d, dreverse = %d", (int)bestoverlap,
-	     (int)df, (int)dr);
+	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM, "bestoverlap = %d, dforward = %d, dreverse = %d", (int) bestoverlap, (int) df, (int) dr);
 	for (i = 0; i < VEEZ(df); i++) {
 		int findex = i + result->forward_offset;
 		panda_nt fbits = result->forward[findex].nt;
@@ -262,17 +237,14 @@ align(PandaAssembler assembler, panda_result_seq *result)
 			result->degenerates++;
 		}
 		fquality += q;
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_FORWARD, "S[%d] = F[%d] = %c", (int) i, (int) findex,
-		     panda_nt_to_ascii(result->sequence[i].nt));
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_FORWARD, "S[%d] = F[%d] = %c", (int) i, (int) findex, panda_nt_to_ascii(result->sequence[i].nt));
 	}
 
 	/* Mask out the B-cliff at the end of sequences */
-	for (i = result->forward_length - 1;
-	     i > 0 && result->forward[i].qual == (char)2; i--) {
+	for (i = result->forward_length - 1; i > 0 && result->forward[i].qual == (char) 2; i--) {
 		result->forward[i].qual = '\0';
 	}
-	for (i = result->reverse_length - 1;
-	     i > 0 && result->reverse[i].qual == (char)2; i--) {
+	for (i = result->reverse_length - 1; i > 0 && result->reverse[i].qual == (char) 2; i--) {
 		result->reverse[i].qual = '\0';
 	}
 	/* Copy the paired sequence adjusting the probabilities based on the quality information from both sequences. */
@@ -281,55 +253,38 @@ align(PandaAssembler assembler, panda_result_seq *result)
 		int index = VEEZ(df) + i;
 		int findex = result->forward_offset + VEEZ(df) + i;
 		int rindex = result->reverse_length - i - 1 + WEDGEZ(df);
-		bool ismatch =
-		    (result->reverse[rindex].nt & result->forward[findex].nt) !=
-		    '\0';
+		bool ismatch = (result->reverse[rindex].nt & result->forward[findex].nt) != '\0';
 		double fpr;
 		double rpr;
 		double q;
 		char nt;
 
-		if (index < 0 || findex < 0 || rindex < 0
-		    || findex >= result->forward_length
-		    || rindex >= result->reverse_length)
+		if (index < 0 || findex < 0 || rindex < 0 || findex >= result->forward_length || rindex >= result->reverse_length)
 			continue;
 
-		fpr = result->forward[findex].qual == '\0' ? qual_nn :
-		    qual_score[PHREDCLAMP(result->forward[findex].qual)];
-		rpr = result->reverse[rindex].qual == '\0' ? qual_nn :
-		    qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
+		fpr = result->forward[findex].qual == '\0' ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
+		rpr = result->reverse[rindex].qual == '\0' ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
 
 		if (!ismatch) {
-			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE,
-			     "(F[%d] = %c) != (R[%d] = %c)", findex,
-			     panda_nt_to_ascii(result->forward[findex].nt),
-			     rindex,
-			     panda_nt_to_ascii(result->reverse[rindex].nt));
+			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE, "(F[%d] = %c) != (R[%d] = %c)", findex, panda_nt_to_ascii(result->forward[findex].nt), rindex, panda_nt_to_ascii(result->reverse[rindex].nt));
 			result->overlap_mismatches++;
 		}
 
-		if (result->forward[findex].qual == '\0'
-		    && result->reverse[rindex].qual == '\0') {
+		if (result->forward[findex].qual == '\0' && result->reverse[rindex].qual == '\0') {
 			q = qual_nn;
 		} else if (result->forward[findex].qual == '\0') {
 			q = ismatch ? rpr : qual_nn;
 		} else if (result->reverse[rindex].qual == '\0') {
 			q = ismatch ? fpr : qual_nn;
 		} else {
-			q = (ismatch ? qual_match :
-			     qual_mismatch)[PHREDCLAMP(result->
-					    forward[findex].qual)][PHREDCLAMP(result->
-								  reverse
-								  [rindex].
-								  qual)];
+			q = (ismatch ? qual_match : qual_mismatch)[PHREDCLAMP(result->forward[findex].qual)]
+				[PHREDCLAMP(result->reverse[rindex].qual)];
 		}
 
 		if (ismatch) {
-			nt = (result->reverse[rindex].
-			      nt & result->forward[findex].nt);
+			nt = (result->reverse[rindex].nt & result->forward[findex].nt);
 		} else {
-			if (result->forward[rindex].qual <
-			    result->reverse[rindex].qual) {
+			if (result->forward[rindex].qual < result->reverse[rindex].qual) {
 				nt = result->reverse[rindex].nt;
 			} else {
 				nt = result->forward[findex].nt;
@@ -341,11 +296,7 @@ align(PandaAssembler assembler, panda_result_seq *result)
 			result->degenerates++;
 		}
 		oquality += q;
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_OVERLAP,
-		     "S[%d] = %c, F[%d] = %c, R[%d] = %c", index,
-		     panda_nt_to_ascii(nt), findex,
-		     panda_nt_to_ascii(result->forward[findex].nt), rindex,
-		     panda_nt_to_ascii(result->reverse[rindex].nt));
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_OVERLAP, "S[%d] = %c, F[%d] = %c, R[%d] = %c", index, panda_nt_to_ascii(nt), findex, panda_nt_to_ascii(result->forward[findex].nt), rindex, panda_nt_to_ascii(result->reverse[rindex].nt));
 	}
 
 	/* Copy the unpaired reverse sequence. */
@@ -360,32 +311,25 @@ align(PandaAssembler assembler, panda_result_seq *result)
 		if (PANDA_NT_IS_DEGN(rbits)) {
 			result->degenerates++;
 		}
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_REVERSE, "S[%d] = R[%d] = %c", index,
-		     rindex, panda_nt_to_ascii(result->sequence[index].nt));
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_REVERSE, "S[%d] = R[%d] = %c", index, rindex, panda_nt_to_ascii(result->sequence[index].nt));
 	}
 	result->quality = (fquality + rquality + oquality) / len;
 
 	return true;
 }
 
-bool assemble_seq(PandaAssembler assembler)
-{
+bool
+assemble_seq(
+	PandaAssembler assembler) {
 	assembler->count++;
-	if (assembler->result.forward_length < 2 ||  assembler->result.reverse_length < 2) {
+	if (assembler->result.forward_length < 2 || assembler->result.reverse_length < 2) {
 		return false;
 	}
-	if (!module_precheckseq
-	    (assembler, &assembler->result.name, assembler->result.forward,
-	     assembler->result.forward_length, assembler->result.reverse,
-	     assembler->result.reverse_length)) {
+	if (!module_precheckseq(assembler, &assembler->result.name, assembler->result.forward, assembler->result.forward_length, assembler->result.reverse, assembler->result.reverse_length)) {
 		return false;
 	}
 	if (assembler->forward_primer_length > 0) {
-		assembler->result.forward_offset =
-		    computeoffset(assembler, assembler->result.forward,
-				  assembler->result.forward_length,
-				  assembler->forward_primer,
-				  assembler->forward_primer_length);
+		assembler->result.forward_offset = computeoffset(assembler, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
 		if (assembler->result.forward_offset == 0) {
 			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
 			assembler->nofpcount++;
@@ -396,11 +340,7 @@ bool assemble_seq(PandaAssembler assembler)
 		assembler->result.forward_offset = assembler->forward_trim;
 	}
 	if (assembler->reverse_primer_length > 0) {
-		assembler->result.reverse_offset =
-		    computeoffset(assembler, assembler->result.reverse,
-				  assembler->result.reverse_length,
-				  assembler->reverse_primer,
-				  assembler->reverse_primer_length);
+		assembler->result.reverse_offset = computeoffset(assembler, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
 		if (assembler->result.reverse_offset == 0) {
 			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
 			assembler->norpcount++;
@@ -415,8 +355,7 @@ bool assemble_seq(PandaAssembler assembler)
 	}
 	if (assembler->result.quality < assembler->threshold) {
 		assembler->lowqcount++;
-		LOGV(PANDA_DEBUG_STAT, PANDA_CODE_LOW_QUALITY_REJECT, "%f < %f",
-		     exp(assembler->result.quality), exp(assembler->threshold));
+		LOGV(PANDA_DEBUG_STAT, PANDA_CODE_LOW_QUALITY_REJECT, "%f < %f", exp(assembler->result.quality), exp(assembler->threshold));
 		return false;
 	}
 	if (module_checkseq(assembler, &assembler->result)) {
@@ -425,17 +364,14 @@ bool assemble_seq(PandaAssembler assembler)
 	}
 }
 
-const panda_result_seq *panda_assembler_next(PandaAssembler assembler)
-{
+const panda_result_seq *
+panda_assembler_next(
+	PandaAssembler assembler) {
 	if (assembler->next == NULL) {
 		return NULL;
 	}
 	while (true) {
-		if (!assembler->next
-		    (&assembler->result.name, &assembler->result.forward,
-		     &assembler->result.forward_length,
-		     &assembler->result.reverse,
-		     &assembler->result.reverse_length, assembler->next_data)) {
+		if (!assembler->next(&assembler->result.name, &assembler->result.forward, &assembler->result.forward_length, &assembler->result.reverse, &assembler->result.reverse_length, assembler->next_data)) {
 			return NULL;
 		}
 		assert(assembler->result.forward_length <= PANDA_MAX_LEN);
@@ -447,13 +383,14 @@ const panda_result_seq *panda_assembler_next(PandaAssembler assembler)
 	return NULL;
 }
 
-const panda_result_seq *panda_assembler_assemble(PandaAssembler assembler,
-						 panda_seq_identifier *id,
-						 const panda_qual *forward,
-						 size_t forward_length,
-						 const panda_qual *reverse,
-						 size_t reverse_length)
-{
+const panda_result_seq *
+panda_assembler_assemble(
+	PandaAssembler assembler,
+	panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length) {
 	size_t it;
 	assert(forward_length <= PANDA_MAX_LEN);
 	assert(reverse_length <= PANDA_MAX_LEN);

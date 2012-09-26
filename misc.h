@@ -16,10 +16,10 @@
 
  */
 #ifndef MISC_H
-#define MISC_H
+#        define MISC_H
 
-#define DESTROY_MEMBER(self, name) if ((self)->name ## _destroy != NULL && (self)->name != NULL) { (self)->name ## _destroy((self)->name ## _data); } (self)->name = NULL; (self)->name ## _data = NULL; (self)->name ## _destroy = NULL
-#define MANAGED_MEMBER(type, name) type name; void * name ## _data; PandaDestroy name ## _destroy
-#define free0(val) if ((val) != NULL) free(val); (val) = NULL
+#        define DESTROY_MEMBER(self, name) if ((self)->name ## _destroy != NULL && (self)->name != NULL) { (self)->name ## _destroy((self)->name ## _data); } (self)->name = NULL; (self)->name ## _data = NULL; (self)->name ## _destroy = NULL
+#        define MANAGED_MEMBER(type, name) type name; void * name ## _data; PandaDestroy name ## _destroy
+#        define free0(val) if ((val) != NULL) free(val); (val) = NULL
 
 #endif

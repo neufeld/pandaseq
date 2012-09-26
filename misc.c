@@ -18,12 +18,14 @@
 #include "config.h"
 #include "pandaseq.h"
 
-const char const *panda_version(void)
-{
+const char const *
+panda_version(
+	void) {
 	return PACKAGE_STRING;
 }
 
-int panda_api_version(void)
-{
+int
+panda_api_version(
+	void) {
 	return PANDA_API;
 }

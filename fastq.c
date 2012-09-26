@@ -25,7 +25,9 @@
 #include "prob.h"
 
 struct stream_data {
-	MANAGED_MEMBER(PandaNextChar, next);
+	MANAGED_MEMBER(
+		PandaNextChar,
+		next);
 };
 
 struct fastq_data {
@@ -41,9 +43,12 @@ struct fastq_data {
 	PandaTagging policy;
 };
 
-static bool read_line(char *buffer, size_t max_len, struct stream_data *stream,
-		      size_t *len)
-{
+static bool
+read_line(
+	char *buffer,
+	size_t max_len,
+	struct stream_data *stream,
+	size_t *len) {
 	int pos = 0;
 	if (stream->next == NULL)
 		return false;
@@ -70,10 +75,15 @@ static bool read_line(char *buffer, size_t max_len, struct stream_data *stream,
 #define LOG(flag, code) do { if(panda_debug_flags & flag) data->logger((code), id, NULL, data->logger_data); } while(0)
 #define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); data->logger((code), id, static_buffer(), data->logger_data); }} while(0)
 #define TOINDEX(val) (((int)(val)) < data->qualmin ? 0 : ((((int)(val)) > data->qualmin + PHREDMAX ? PHREDMAX : (int)(val)) - data->qualmin))
-static bool read_seq(panda_seq_identifier *id, panda_qual *buffer,
-		     size_t max_len, struct stream_data *stream, char *table,
-		     struct fastq_data *data, size_t *length)
-{
+static bool
+read_seq(
+	panda_seq_identifier *id,
+	panda_qual *buffer,
+	size_t max_len,
+	struct stream_data *stream,
+	char *table,
+	struct fastq_data *data,
+	size_t *length) {
 	int pos = 0;
 	int qpos = 0;
 	int v = EOF;
@@ -146,10 +156,14 @@ static bool read_seq(panda_seq_identifier *id, panda_qual *buffer,
 
 #undef TOINDEX
 
-static bool stream_next_seq(panda_seq_identifier *id, panda_qual **forward,
-			    size_t *forward_length, panda_qual **reverse,
-			    size_t *reverse_length, struct fastq_data *data)
-{
+static bool
+stream_next_seq(
+	panda_seq_identifier *id,
+	panda_qual **forward,
+	size_t *forward_length,
+	panda_qual **reverse,
+	size_t *reverse_length,
+	struct fastq_data *data) {
 	panda_seq_identifier rid;
 	char buffer[BUFFER_SIZE];
 	size_t fsize;
@@ -178,17 +192,13 @@ static bool stream_next_seq(panda_seq_identifier *id, panda_qual **forward,
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
 		return false;
 	}
-	if (!read_seq
-	    (id, data->forward_seq, PANDA_MAX_LEN, &data->forward,
-	     iupac_forward, data, forward_length)) {
+	if (!read_seq(id, data->forward_seq, PANDA_MAX_LEN, &data->forward, iupac_forward, data, forward_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 		return false;
 	}
-	if (!read_seq
-	    (id, data->reverse_seq, PANDA_MAX_LEN, &data->reverse,
-	     iupac_reverse, data, reverse_length)) {
+	if (!read_seq(id, data->reverse_seq, PANDA_MAX_LEN, &data->reverse, iupac_reverse, data, reverse_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
@@ -199,23 +209,28 @@ static bool stream_next_seq(panda_seq_identifier *id, panda_qual **forward,
 	return true;
 }
 
-static void stream_destroy(struct fastq_data *data)
-{
+static void
+stream_destroy(
+	struct fastq_data *data) {
 	DESTROY_MEMBER(&data->forward, next);
 	DESTROY_MEMBER(&data->reverse, next);
 	free(data);
 }
 
-PandaNextSeq panda_create_fastq_reader(PandaNextChar forward,
-				       void *forward_data,
-				       PandaDestroy forward_destroy,
-				       PandaNextChar reverse,
-				       void *reverse_data,
-				       PandaDestroy reverse_destroy,
-				       PandaLogger logger, void *logger_data,
-				       unsigned char qualmin, PandaTagging policy,
-				       void **user_data, PandaDestroy * destroy)
-{
+PandaNextSeq
+panda_create_fastq_reader(
+	PandaNextChar forward,
+	void *forward_data,
+	PandaDestroy forward_destroy,
+	PandaNextChar reverse,
+	void *reverse_data,
+	PandaDestroy reverse_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	unsigned char qualmin,
+	PandaTagging policy,
+	void **user_data,
+	PandaDestroy *destroy) {
 	struct fastq_data *data;
 	data = malloc(sizeof(struct fastq_data));
 	data->forward.next = forward;

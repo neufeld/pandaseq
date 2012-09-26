@@ -1,9 +1,22 @@
--nbad -bap -nbc -bbo -hnl -br -brs -c33 -cd33 -ncdb -ce -ci4 -cli0 -d0 -di1 -nfc1 -i8 -ip0 -l80 -lp -npcs -nprs -npsl -sai -saf -saw -ncs -nsc -sob -nfca -cp33 -ss -ts8 -il1 -lc80
+-nbad -bap -bfda -nbc -bbo -hnl -br -brf -brs -c33 -cd33 -ncdb -cdw -ce -ci8 -cli0 -d0 -di1 -nfc1 -i8 -ip0 -l0 -nlp -npcs -nprs -psl -sai -saf -saw -nbs -cs -sc -sob -nfca -cp33 -ss -ts8 -il1 -lc80 -ppi8
 -T FILE
--T PandaDestory
+-T PandaAssembler
+-T PandaCheck
+-T PandaCode
+-T PandaDebug
+-T PandaDestroy
 -T PandaLogger
+-T PandaModule
+-T PandaModuleCallback
+-T PandaMux
+-T PandaNextChar
+-T PandaNextSeq
 -T panda_nt
+-T PandaPreCheck
+-T PandaPrintf
 -T panda_qual
+-T panda_result
 -T panda_result_seq
 -T panda_seq_identifier
+-T PandaTagging
 -T size_t

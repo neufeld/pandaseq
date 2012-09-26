@@ -21,13 +21,10 @@
 #include "prob.h"
 #include "table.h"
 
-static char ntchar[16] =
-    { 'N', 'A', 'C', 'M', 'G', 'R', 'S', 'V', 'T', 'W', 'Y', 'H', 'K', 'D', 'B',
-	'N'
-};
+static char ntchar[16] = { 'N', 'A', 'C', 'M', 'G', 'R', 'S', 'V', 'T', 'W', 'Y', 'H', 'K', 'D', 'B', 'N' };
 
-char iupac_forward[32] =
-    { /* @ */ 0, /*A*/ PANDA_NT_A, /*B*/ PANDA_NT_C | PANDA_NT_G | PANDA_NT_T,
+char iupac_forward[32] = { /* @ */ 0, /*A*/ PANDA_NT_A,
+	 /*B*/ PANDA_NT_C | PANDA_NT_G | PANDA_NT_T,
 	 /*C*/ PANDA_NT_C,
 	 /*D*/ PANDA_NT_A | PANDA_NT_G | PANDA_NT_T, /*E*/ 0, /*F*/ 0,
 	 /*G*/ PANDA_NT_G,
@@ -44,8 +41,8 @@ char iupac_forward[32] =
 	0, /*^ */ 0, /*_*/ 0
 };
 
-char iupac_reverse[32] =
-    { /* @ */ 0, /*A*/ PANDA_NT_T, /*B*/ PANDA_NT_G | PANDA_NT_C | PANDA_NT_A,
+char iupac_reverse[32] = { /* @ */ 0, /*A*/ PANDA_NT_T,
+	 /*B*/ PANDA_NT_G | PANDA_NT_C | PANDA_NT_A,
 	 /*C*/ PANDA_NT_G,
 	 /*D*/ PANDA_NT_T | PANDA_NT_C | PANDA_NT_A, /*E*/ 0, /*F*/ 0,
 	 /*G*/ PANDA_NT_C,
@@ -62,13 +59,15 @@ char iupac_reverse[32] =
 	0, /*^ */ 0, /*_*/ 0
 };
 
-double panda_quality_probability(const panda_qual *q)
-{
+double
+panda_quality_probability(
+	const panda_qual *q) {
 	return exp(panda_quality_log_probability(q));
 }
 
-double panda_quality_log_probability(const panda_qual *q)
-{
+double
+panda_quality_log_probability(
+	const panda_qual *q) {
 	int index = q->qual;
 	if (index < 0) {
 		index = 0;
@@ -78,20 +77,23 @@ double panda_quality_log_probability(const panda_qual *q)
 	return qual_score[index];
 }
 
-panda_nt panda_nt_from_ascii(char c)
-{
+panda_nt
+panda_nt_from_ascii(
+	char c) {
 	return iupac_forward[c & 0x1F];
 }
 
-panda_nt panda_nt_from_ascii_complement(char c)
-{
+panda_nt
+panda_nt_from_ascii_complement(
+	char c) {
 	return iupac_reverse[c & 0x1F];
 }
 
-char panda_nt_to_ascii(panda_nt val)
-{
+char
+panda_nt_to_ascii(
+	panda_nt val) {
 	if (val < 0 || val > 15) {
 		return 'N';
 	}
-	return ntchar[(int)(val)];
+	return ntchar[(int) (val)];
 }

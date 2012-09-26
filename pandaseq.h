@@ -17,26 +17,32 @@
  */
 
 #ifndef _PANDASEQ_H
-#define _PANDASEQ_H
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdbool.h>
+#        define _PANDASEQ_H
+#        include <stdarg.h>
+#        include <stdio.h>
+#        include <stdbool.h>
 
 /**
  * Maximum length of a sequence
  */
-#define PANDA_MAX_LEN 255
+#        define PANDA_MAX_LEN 255
 
-typedef void (*PandaPrintf) (void *data, const char *format, ...);
+typedef void (
+	*PandaPrintf) (
+	void *data,
+	const char *format,
+	...);
 
 /**
  * The current version string
  */
-const char *panda_version(void);
+const char *panda_version(
+	void);
 /**
  * The current module API version of the running library
  */
-int panda_api_version(void);
+int panda_api_version(
+	void);
 
 /**
  * Codes used for logging conditions during the assembly.
@@ -72,7 +78,8 @@ typedef enum {
 	PANDA_CODE_SEQUENCE_TOO_LONG,
 } PandaCode;
 
-const char const *panda_code_str(PandaCode code);
+const char const *panda_code_str(
+	PandaCode code);
 
 /**
  * Decide what kinds of messages are passed to the logger.
@@ -80,19 +87,19 @@ const char const *panda_code_str(PandaCode code);
 typedef unsigned int PandaDebug;
 
 /** Usual output about assembly. */
-#define PANDA_DEBUG_BUILD 1
+#        define PANDA_DEBUG_BUILD 1
 /** Input processing-related errors. */
-#define PANDA_DEBUG_FILE 2
+#        define PANDA_DEBUG_FILE 2
 /** Extra statistics. */
-#define PANDA_DEBUG_STAT 4
+#        define PANDA_DEBUG_STAT 4
 /** Information about building the k-mer table (long and boring). */
-#define PANDA_DEBUG_KMER 8
+#        define PANDA_DEBUG_KMER 8
 /** Excruciating detail about the reconstruction. */
-#define PANDA_DEBUG_RECON 16
+#        define PANDA_DEBUG_RECON 16
 /** Bucket loads of data about mistatches. */
-#define PANDA_DEBUG_MISMATCH 32
+#        define PANDA_DEBUG_MISMATCH 32
 
-#define PANDA_DEBUG_DEFAULT (PANDA_DEBUG_BUILD | PANDA_DEBUG_FILE | PANDA_DEBUG_STAT)
+#        define PANDA_DEBUG_DEFAULT (PANDA_DEBUG_BUILD | PANDA_DEBUG_FILE | PANDA_DEBUG_STAT)
 
 /**
  * The current flags used be the assember to report errors. Some errors are always reported.
@@ -106,39 +113,42 @@ typedef char panda_nt;
 /**
  * Adenine
  */
-#define PANDA_NT_A ((panda_nt)1)
+#        define PANDA_NT_A ((panda_nt)1)
 /**
  * Cytosine
  */
-#define PANDA_NT_C ((panda_nt)2)
+#        define PANDA_NT_C ((panda_nt)2)
 /**
  * Guanine
  */
-#define PANDA_NT_G ((panda_nt)4)
+#        define PANDA_NT_G ((panda_nt)4)
 /**
  * Thyamine
  */
-#define PANDA_NT_T ((panda_nt)8)
+#        define PANDA_NT_T ((panda_nt)8)
 /**
  * Is nucleotide degenerate?
  */
-#define PANDA_NT_IS_DEGN(v) (((((unsigned int)(v)) * 0x200040008001ULL & 0x111111111111111ULL) % 0xf) != 1)
+#        define PANDA_NT_IS_DEGN(v) (((((unsigned int)(v)) * 0x200040008001ULL & 0x111111111111111ULL) % 0xf) != 1)
 /**
  * Is nucleotide all possible values?
  */
-#define PANDA_NT_IS_N(n) ((n) == (panda_nt)0x0F)
+#        define PANDA_NT_IS_N(n) ((n) == (panda_nt)0x0F)
 /**
  * Get the nucleotide code for an ASCII character in IUPAC
  */
-panda_nt panda_nt_from_ascii(char c);
+panda_nt panda_nt_from_ascii(
+	char c);
 /**
  * Get the complement nucleotide code for an ASCII character in IUPAC
  */
-panda_nt panda_nt_from_ascii_complement(char c);
+panda_nt panda_nt_from_ascii_complement(
+	char c);
 /**
  * Convert a nucleotide to an IUPAC representation
  */
-char panda_nt_to_ascii(panda_nt val);
+char panda_nt_to_ascii(
+	panda_nt val);
 
 /**
  * A single nucleotide with quality information
@@ -156,11 +166,13 @@ typedef struct {
 /**
  * Convert the PHRED quality score to a probability.
  */
-double panda_quality_probability(const panda_qual *q);
+double panda_quality_probability(
+	const panda_qual *q);
 /**
  * Convert the PHRED quality score to a log probability.
  */
-double panda_quality_log_probability(const panda_qual *q);
+double panda_quality_log_probability(
+	const panda_qual *q);
 
 typedef struct {
 	/**
@@ -191,7 +203,7 @@ typedef enum {
 	PANDA_TAG_OPTIONAL,
 } PandaTagging;
 
-#define PANDA_TAG_LEN 50
+#        define PANDA_TAG_LEN 50
 
 /**
  * Illumina sequence information from the FASTQ header
@@ -209,29 +221,38 @@ typedef struct {
 /**
  * Write the Illumina header to a printf-like function
  */
-void panda_seqid_xprint(const panda_seq_identifier *id, PandaPrintf xprintf,
-			void *x);
+void panda_seqid_xprint(
+	const panda_seq_identifier *id,
+	PandaPrintf xprintf,
+	void *x);
 /**
  * Write an Illumina header for a sequence identifier to a file
  */
-void panda_seqid_print(const panda_seq_identifier *id, FILE *file);
+void panda_seqid_print(
+	const panda_seq_identifier *id,
+	FILE *file);
 /**
  * Create an Illumina header for a sequence identifier
  *
  * The return string must not be freed and subsequent calls will obliterate the previously returned string.
  */
-/*@dependent@*/ const char *panda_seqid_str(const panda_seq_identifier *id);
+/*@dependent@*/ const char *panda_seqid_str(
+	const panda_seq_identifier *id);
 /**
  * Compare two Illumina headers
  */
-bool panda_seqid_equal(const panda_seq_identifier *one,
-		       const panda_seq_identifier *two);
+bool panda_seqid_equal(
+	const panda_seq_identifier *one,
+	const panda_seq_identifier *two);
 /**
  * Parse an Illumina header
  *
  * Fills `id` with the parse result. The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
  */
-int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy);
+int panda_seqid_parse(
+	panda_seq_identifier *id,
+	char *input,
+	PandaTagging policy);
 
 /**
  * A reconstructed sequence with meta information
@@ -289,28 +310,41 @@ typedef /*@refcounted@ */ struct panda_module *PandaModule;
 /**
  * Check a sequence after reconstruction for validity.
  */
-typedef bool(*PandaCheck) (const panda_result_seq *sequence, void *user_data);
+typedef bool(
+	*PandaCheck) (
+	const panda_result_seq *sequence,
+	void *user_data);
 /**
  * Check a sequence before reconstruction for validity.
  */
-typedef bool(*PandaPreCheck) (const panda_seq_identifier *id,
-			      const panda_qual *forward, size_t forward_length,
-			      const panda_qual *reverse, size_t reverse_length,
-			      void *user_data);
+typedef bool(
+	*PandaPreCheck) (
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length,
+	void *user_data);
 /**
  * Free user data
  *
  * Any method which takes user data with a function pointer will call a destroy function when the user data is not longer needed such that the memory can be freed, if necessary. A destroy function may always be null, in which case, the memory managment is the responsibility of the caller.
  */
-typedef void (*PandaDestroy) (void *user_data);
+typedef void (
+	*PandaDestroy) (
+	void *user_data);
 /**
  * Log an error/event
  *
  * If the function returns false, assembly will be halted.
  * @see PandaCode
  */
-typedef bool(*PandaLogger) (PandaCode code, panda_seq_identifier *id,
-			    const char *message, void *user_data);
+typedef bool(
+	*PandaLogger) (
+	PandaCode code,
+	panda_seq_identifier *id,
+	const char *message,
+	void *user_data);
 
 /**
  * Create a module given sequence checking parameters.
@@ -321,73 +355,76 @@ typedef bool(*PandaLogger) (PandaCode code, panda_seq_identifier *id,
  * @param cleanup an optional function to be called when this module is garbage collected
  * The user is responsible for managing the memory associated with user_data, but the cleanup function will always be called.
  */
-/*@notnull@*/ PandaModule panda_module_new( /*@notnull@ */ char *name,
-					   /*@notnull@ */ PandaCheck check,
-					   /*@null@ */ PandaPreCheck precheck,
-					   /*@null@ */ void *user_data,
-					   /*@null@ */ PandaDestroy cleanup);
+/*@notnull@*/ PandaModule panda_module_new(
+	/*@notnull@ */ char *name,
+	/*@null@ */ PandaCheck check,
+	/*@null@ */ PandaPreCheck precheck,
+	/*@null@ */ void *user_data,
+	/*@null@ */ PandaDestroy cleanup);
 /**
  * Load a module from a string containg the module name and arguments.
  *
  * @param path the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
  */
-/*@null@*/ PandaModule panda_module_load( /*@notnull@ */ char *path);
+/*@null@*/ PandaModule panda_module_load(
+	/*@notnull@ */ char *path);
 
 /**
  * Increase the reference count on a module.
  */
-/*@notnull@*/ PandaModule panda_module_ref( /*@notnull@ */ PandaModule module);
+/*@notnull@*/ PandaModule panda_module_ref(
+	/*@notnull@ */ PandaModule module);
 /**
  * Decrease the reference count on a module.
  */
-void panda_module_unref( /*@notnull@ */ PandaModule module);
+void panda_module_unref(
+	/*@notnull@ */ PandaModule module);
 /**
  * Get the name of a module.
  *
  * The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_name( /*@notnull@ */ PandaModule
-						  module);
+/*@dependent@*/ const char *panda_module_get_name(
+	/*@notnull@ */ PandaModule module);
 /**
  * Get the description of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-								/*@dependent@*/ const char *panda_module_get_description(
-								/*@notnull@ */
-																PandaModule
-																module);
+/*@dependent@*/ const char *panda_module_get_description(
+	/*@notnull@ */ PandaModule module);
 /**
  * Get the usage information (i.e., help text) of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_usage( /*@notnull@ */ PandaModule
-						   module);
+/*@dependent@*/ const char *panda_module_get_usage(
+	/*@notnull@ */ PandaModule module);
 /**
  * Get the version of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_version( /*@notnull@ */ PandaModule
-						     module);
+/*@dependent@*/ const char *panda_module_get_version(
+	/*@notnull@ */ PandaModule module);
 /**
  * Get the arguments passed on loading of a module of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_args( /*@notnull@ */ PandaModule
-						  module);
+/*@dependent@*/ const char *panda_module_get_args(
+	/*@notnull@ */ PandaModule module);
 /**
  * Get the version of a module.
  *
  * This is only appropriate for loaded modules. Modules constructed by panda_module_new will always return PANDA_API.
  */
-int panda_module_get_api( /*@notnull@ */ PandaModule module);
+int panda_module_get_api(
+	/*@notnull@ */ PandaModule module);
 
 /**
  * The manager for an assembly
@@ -398,35 +435,36 @@ typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-/*@null@*/ PandaAssembler panda_assembler_open_gz( /*@notnull@ */ char *forward,
-						  /*@notnull@ */ char *reverse,
-						  /*@notnull@ */
-						  PandaLogger logger,
-						  /*@null@ */ void *logger_data,
-						  /*@null@ */
-						  PandaDestroy logger_destroy,
-						  unsigned char qualmin, PandaTagging policy);
+/*@null@*/ PandaAssembler panda_assembler_open_gz(
+	/*@notnull@ */ char *forward,
+	/*@notnull@ */ char *reverse,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy);
 /**
  * Open a pair of bzipped for assembly.
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-/*@null@*/ PandaAssembler panda_assembler_open_bz2( /*@notnull@ */ char
-						   *forward,	/*@notnull@ */
-						   char *reverse,	/*@notnull@ */
-						   PandaLogger logger,
-						   /*@null@ */
-						   void *logger_data,
-						   /*@null@ */
-						   PandaDestroy logger_destroy,
-						   unsigned char qualmin, PandaTagging policy);
+/*@null@*/ PandaAssembler panda_assembler_open_bz2(
+	/*@notnull@ */ char *forward,
+	/*@notnull@ */ char *reverse,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy);
 
 /**
  * Get the next character from a FASTQ file or EOF.
  *
  * For assembly from an alternate source of data, this function returns the next character in the stream.
  */
-typedef int (*PandaNextChar) ( /*@null@ */ void *user_data);
+typedef int (
+	*PandaNextChar) (
+	/*@null@ */ void *user_data);
 /**
  * Get the next sequence pair.
  *
@@ -437,12 +475,14 @@ typedef int (*PandaNextChar) ( /*@null@ */ void *user_data);
  * @param reverse the location of the parsed sequence data of the reverse read. This memory is not managed by the assembler.
  * @param reverse_length the number of nucleotides in the reverse read
  */
-typedef bool(*PandaNextSeq) ( /*@notnull@@out@ */ panda_seq_identifier *id,
-			     /*@notnull@@out@ */ panda_qual **forward,
-			     /*@notnull@@out@ */ size_t *forward_length,
-			     /*@notnull@@out@ */ panda_qual **reverse,
-			     /*@notnull@@out@ */ size_t *reverse_length,
-			     /*@null@ */ void *user_data);
+typedef bool(
+	*PandaNextSeq) (
+	/*@notnull@@out@ */ panda_seq_identifier *id,
+	/*@notnull@@out@ */ panda_qual **forward,
+	/*@notnull@@out@ */ size_t *forward_length,
+	/*@notnull@@out@ */ panda_qual **reverse,
+	/*@notnull@@out@ */ size_t *reverse_length,
+	/*@null@ */ void *user_data);
 /**
  * Create an object to read sequences from two character streams of FASTQ data
  *
@@ -454,55 +494,35 @@ typedef bool(*PandaNextSeq) ( /*@notnull@@out@ */ panda_seq_identifier *id,
  * @param user_data where to store the user_data for this function
  * @param destroy where to store the destroy function for the user data
  */
-PandaNextSeq panda_create_fastq_reader( /*@notnull@ */ PandaNextChar forward,
-				       /*@null@ */ void *forward_data,
-				       /*@null@ */ PandaDestroy forward_destroy,
-				       /*@notnull@ */ PandaNextChar reverse,
-				       /*@null@ */ void *reverse_data,
-				       /*@null@ */ PandaDestroy reverse_destroy,
-				       /*@notnull@ */ PandaLogger logger,
-				       /*@null@ */ void *logger_data,
-				       unsigned char qualmin,
-				       PandaTagging policy,
-				       /*@notnull@@out@ */ void **user_data,
-				       /*@notnull@@out@ */
-				       PandaDestroy * destroy);
+PandaNextSeq panda_create_fastq_reader(
+	/*@notnull@ */ PandaNextChar forward,
+	/*@null@ */ void *forward_data,
+	/*@null@ */ PandaDestroy forward_destroy,
+	/*@notnull@ */ PandaNextChar reverse,
+	/*@null@ */ void *reverse_data,
+	/*@null@ */ PandaDestroy reverse_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	unsigned char qualmin,
+	PandaTagging policy,
+	/*@notnull@@out@ */ void **user_data,
+	/*@notnull@@out@ */ PandaDestroy *destroy);
 /**
  * Create a new assembler for given to FASTQ streams.
  * @see panda_create_fastq_reader
  */
 /*@notnull@*/ PandaAssembler panda_assembler_new_fastq_reader(
-								     /*@notnull@ */
-								     PandaNextChar
-								     forward,
-								     /*@null@ */
-								     void
-								     *forward_data,
-								     /*@null@ */
-								     PandaDestroy
-								     forward_destroy,
-								     /*@notnull@ */
-								     PandaNextChar
-								     reverse,
-								     /*@null@ */
-								     void
-								     *reverse_data,
-								     /*@null@ */
-								     PandaDestroy
-								     reverse_destroy,
-								     /*@notnull@ */
-								     PandaLogger
-								     logger,
-								     /*@null@ */
-								     void
-								     *logger_data,
-								     /*@null@ */
-								     PandaDestroy
-								     logger_destroy,
-								     unsigned
-								     char
-								     qualmin,
-								     PandaTagging policy);
+	/*@notnull@ */ PandaNextChar forward,
+	/*@null@ */ void *forward_data,
+	/*@null@ */ PandaDestroy forward_destroy,
+	/*@notnull@ */ PandaNextChar reverse,
+	/*@null@ */ void *reverse_data,
+	/*@null@ */ PandaDestroy reverse_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy);
 /**
  * Create a new assembler from a sequence source.
  *
@@ -510,39 +530,34 @@ PandaNextSeq panda_create_fastq_reader( /*@notnull@ */ PandaNextChar forward,
  * @param logger, logger_data, logger_destroy the function to call to report information to the user
  */
 /*@notnull@*/ PandaAssembler panda_assembler_new(
-							/*@notnull@ */
-							PandaNextSeq next,
-							/*@null@ */
-							void *next_data,
-							/*@null@ */
-							PandaDestroy
-							next_destroy,
-							/*@notnull@ */
-							PandaLogger logger,
-							/*@null@ */
-							void *logger_data,
-							/*@null@ */
-							PandaDestroy
-							logger_destroy);
+	/*@notnull@ */ PandaNextSeq next,
+	/*@null@ */ void *next_data,
+	/*@null@ */ PandaDestroy next_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy);
 /**
  * Clone the configuration of one assembler to another.
  *
  * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.
  */
-void panda_assembler_copy_configuration( /*@notnull@ */ PandaAssembler dest,
-					/*@notnull@ */ PandaAssembler src);
+void panda_assembler_copy_configuration(
+	/*@notnull@ */ PandaAssembler dest,
+	/*@notnull@ */ PandaAssembler src);
 /**
  * Increase the reference count on an assembler.
  *
  * This is thread-safe.
  */
-PandaAssembler panda_assembler_ref( /*@notnull@ */ PandaAssembler assembler);
+PandaAssembler panda_assembler_ref(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * Decrease the reference count on an assembler.
  *
  * This is thread-safe.
  */
-void panda_assembler_unref( /*@notnull@ */ PandaAssembler assembler);
+void panda_assembler_unref(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * Add a module to this assembly process.
  *
@@ -550,121 +565,130 @@ void panda_assembler_unref( /*@notnull@ */ PandaAssembler assembler);
  * Returns true if the module was successfully initialised and added. If the
  * module's command line arguments are not processed correctly, this will fail.
  */
-bool panda_assembler_add_module( /*@notnull@ */ PandaAssembler assembler,
-				/*@notnull@ */ PandaModule module);
+bool panda_assembler_add_module(
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@notnull@ */ PandaModule module);
 
 /**
  * The minimum error estimation in the sequence data (epsilon)
  */
-double panda_assembler_get_error_estimation( /*@notnull@ */ PandaAssembler
-					    assembler);
-void panda_assembler_set_error_estimation( /*@notnull@ */ PandaAssembler
-					  assembler, double q);
+double panda_assembler_get_error_estimation(
+	/*@notnull@ */ PandaAssembler assembler);
+void panda_assembler_set_error_estimation(
+	/*@notnull@ */ PandaAssembler assembler,
+	double q);
 
 /**
  * The minimum overlap two sequences must have to be accepted. It must be greater than one.
  */
-int panda_assembler_get_minimum_overlap( /*@notnull@ */ PandaAssembler
-					assembler);
-void panda_assembler_set_minimum_overlap( /*@notnull@ */ PandaAssembler
-					 assembler, int overlap);
+int panda_assembler_get_minimum_overlap(
+	/*@notnull@ */ PandaAssembler assembler);
+void panda_assembler_set_minimum_overlap(
+	/*@notnull@ */ PandaAssembler assembler,
+	int overlap);
 
 /**
  * The minimum quality threshold to have an assembly accepted. Must be between 0 and 1, exclusive.
  */
-double panda_assembler_get_threshold( /*@notnull@ */ PandaAssembler assembler);
-void panda_assembler_set_threshold( /*@notnull@ */ PandaAssembler assembler,
-				   double threshold);
+double panda_assembler_get_threshold(
+	/*@notnull@ */ PandaAssembler assembler);
+void panda_assembler_set_threshold(
+	/*@notnull@ */ PandaAssembler assembler,
+	double threshold);
 
 /**
  * The number of sequences rejected because the forward primer could not be aligned.
  */
-long panda_assembler_get_no_forward_primer_count( /*@notnull@ */ PandaAssembler
-						 assembler);
+long panda_assembler_get_no_forward_primer_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences rejected because the reverse primer could not be aligned.
  */
-long panda_assembler_get_no_reverse_primer_count( /*@notnull@ */ PandaAssembler
-						 assembler);
+long panda_assembler_get_no_reverse_primer_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences accepted.
  */
-long panda_assembler_get_ok_count( /*@notnull@ */ PandaAssembler assembler);
+long panda_assembler_get_ok_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences rejected because the quality score is too low.
  */
-long panda_assembler_get_low_quality_count( /*@notnull@ */ PandaAssembler
-					   assembler);
+long panda_assembler_get_low_quality_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences rejected because they contain degenerate (N) bases.
  */
-long panda_assembler_get_degenerate_count( /*@notnull@ */ PandaAssembler
-					  assembler);
+long panda_assembler_get_degenerate_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences rejected because the overlap could not be determined.
  */
-long panda_assembler_get_failed_alignment_count( /*@notnull@ */ PandaAssembler
-						assembler);
+long panda_assembler_get_failed_alignment_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences processed so far.
  */
-long panda_assembler_get_count( /*@notnull@ */ PandaAssembler assembler);
+long panda_assembler_get_count(
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * Reject sequences with degenerate (N) bases.
  */
-bool panda_assembler_get_disallow_degenerates( /*@notnull@ */ PandaAssembler
-					      assembler);
-void panda_assembler_set_disallow_degenerates( /*@notnull@ */ PandaAssembler
-					      assembler, bool allow);
+bool panda_assembler_get_disallow_degenerates(
+	/*@notnull@ */ PandaAssembler assembler);
+void panda_assembler_set_disallow_degenerates(
+	/*@notnull@ */ PandaAssembler assembler,
+	bool allow);
 /**
  * The forward primer sequence to be stripped
  * 
  * This is mutually exclusive with forward_trim
  */
-								/*@null@*/ panda_nt *panda_assembler_get_forward_primer(
-								/*@notnull@ */
-															       PandaAssembler
-															       assembler,
-															       /*@notnull@ */
-															       size_t
-															       *length);
-void panda_assembler_set_forward_primer( /*@notnull@ */ PandaAssembler
-					assembler, panda_nt *sequence,
-					size_t length);
+/*@null@*/ panda_nt *panda_assembler_get_forward_primer(
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@notnull@@out@ */ size_t *length);
+void panda_assembler_set_forward_primer(
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@null@ */ panda_nt *sequence,
+	size_t length);
 /**
  * The reverse primer sequence to be stripped
  * 
  * This is mutually exclusive with reverse_trim
  */
 /*@null@*/ panda_nt *panda_assembler_get_reverse_primer(
-							       /*@notnull@ */
-							       PandaAssembler
-							       assembler,
-							       /*@notnull@ */
-							       size_t
-							       *length);
-void panda_assembler_set_reverse_primer( /*@notnull@ */ PandaAssembler
-					assembler, panda_nt *sequence,
-					size_t length);
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@notnull@@out@ */ size_t *length);
+void panda_assembler_set_reverse_primer(
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@null@ */ panda_nt *sequence,
+	size_t length);
 /**
  * The amount of forward sequence to strip
  * 
  * This is mutually exclusive with forward_primer
  */
-size_t panda_assembler_get_forward_trim(PandaAssembler assembler);
-void panda_assembler_set_forward_trim(PandaAssembler assembler, size_t trim);
+size_t panda_assembler_get_forward_trim(
+	PandaAssembler assembler);
+void panda_assembler_set_forward_trim(
+	PandaAssembler assembler,
+	size_t trim);
 /**
  * The amount of reverse sequence to strip
  * 
  * This is mutually exclusive with reverse_primer
  */
-size_t panda_assembler_get_reverse_trim(PandaAssembler assembler);
-void panda_assembler_set_reverse_trim(PandaAssembler assembler, size_t trim);
+size_t panda_assembler_get_reverse_trim(
+	PandaAssembler assembler);
+void panda_assembler_set_reverse_trim(
+	PandaAssembler assembler,
+	size_t trim);
 
 /**
  * Log the number of sequences rejected by each module.
  */
-void panda_assembler_module_stats( /*@notnull@ */ PandaAssembler assembler);
+void panda_assembler_module_stats(
+	/*@notnull@ */ PandaAssembler assembler);
 
 /**
  * A callback for iterating over the current modules.
@@ -674,12 +698,20 @@ void panda_assembler_module_stats( /*@notnull@ */ PandaAssembler assembler);
  * @param data some user context data provided
  * @return true to continue iterating, false to stop
  */
-typedef bool (*PandaModuleCallback)(PandaAssembler assembler, PandaModule module, size_t rejected, void *data);
+typedef bool(
+	*PandaModuleCallback) (
+	PandaAssembler assembler,
+	PandaModule module,
+	size_t rejected,
+	void *data);
 /**
  * Review all the modules associated with an assembler.
  * @return true if callback has seen each module
  */
-bool panda_assembler_foreach_module(PandaAssembler assembler, PandaModuleCallback callback, void *data);
+bool panda_assembler_foreach_module(
+	PandaAssembler assembler,
+	PandaModuleCallback callback,
+	void *data);
 /**
  * Assemble the next sequence from the input
  *
@@ -687,46 +719,40 @@ bool panda_assembler_foreach_module(PandaAssembler assembler, PandaModuleCallbac
  * The returned sequence becomes invalid after the next call or after calling panda_assembler_unref.
  */
 /*@null@*/ const panda_result_seq *panda_assembler_next(
-							       /*@notnull@ */
-							       PandaAssembler
-							       assembler);
+	/*@notnull@ */ PandaAssembler assembler);
 /**
  * Assemble a single sequence pair not drawn from the sequence stream.
  *
  * This works exactly like panda_assembler_next, but instead of asking the PandaSeqNext for the data, it expects this information to be provided.
  */
 /*@null@*/ const panda_result_seq *panda_assembler_assemble(
-								   /*@notnull@ */
-								   PandaAssembler
-								   assembler,
-								   /*@notnull@ */
-								   panda_seq_identifier *id,	/*@notnull@ */
-								   const
-								   panda_qual
-								   *forward,
-								   size_t
-								   forward_length,
-								   /*@notnull@ */
-								   const
-								   panda_qual
-								   *reverse,
-								   size_t
-								   reverse_length);
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@notnull@ */ panda_seq_identifier *id,
+	/*@notnull@ */ const panda_qual *forward,
+	size_t forward_length,
+	/*@notnull@ */ const panda_qual *reverse,
+	size_t reverse_length);
+
 /**
  * Write an assembly to a FASTA file.
  */
-bool panda_output_fasta( /*@notnull@ */ const panda_result_seq *sequence,
-			/*@notnull@ */ FILE *file);
+bool panda_output_fasta(
+	/*@notnull@ */ const panda_result_seq *sequence,
+	/*@notnull@ */ FILE *file);
 /**
  * Write an assembly to a FASTQ file.
  */
-bool panda_output_fastq( /*@notnull@ */ const panda_result_seq *sequence,
-			/*@notnull@ */ FILE *file);
+bool panda_output_fastq(
+	/*@notnull@ */ const panda_result_seq *sequence,
+	/*@notnull@ */ FILE *file);
 /**
  * Write errors and information to a file.
  */
-bool panda_logger_file(PandaCode code, panda_seq_identifier *id,
-		       const char *message, /*@notnull@ */ FILE *file);
+bool panda_logger_file(
+	PandaCode code,
+	panda_seq_identifier *id,
+	const char *message,
+	/*@notnull@ */ FILE *file);
 
 /**
  * A threading-safe wrapper to allow multiple assemblers to share a single data source.
@@ -737,89 +763,89 @@ typedef /*@refcounted@ */ struct panda_mux *PandaMux;
  *
  * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
  */
-/*@notnull@*/ PandaMux panda_mux_new( /*@notnull@ */ PandaNextSeq next,
-				     /*@null@ */ void *next_data,
-				     /*@null@ */
-				     PandaDestroy next_destroy,	/*@notnull@ */
-				     PandaLogger logger,	/*@null@ */
-				     void *logger_data,	/*@null@ */
-				     PandaDestroy logger_destroy);
+/*@notnull@*/ PandaMux panda_mux_new(
+	/*@notnull@ */ PandaNextSeq next,
+	/*@null@ */ void *next_data,
+	/*@null@ */ PandaDestroy next_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy);
 /**
  * Increase the reference count on a multiplexer.
  */
-/*@notnull@*/ PandaMux panda_mux_ref( /*@notnull@ */ PandaMux mux);
+/*@notnull@*/ PandaMux panda_mux_ref(
+	/*@notnull@ */ PandaMux mux);
 /**
  * Decrease the reference count on a multiplexer.
  */
-void panda_mux_unref( /*@notnull@ */ PandaMux mux);
+void panda_mux_unref(
+	/*@notnull@ */ PandaMux mux);
 /**
  * Create a new assembler using the multiplexer as it sequence source.
  *
  * The new assembler will draw sequences from the original source in a thread-safe way. Each assembler is not thread-safe. This means that, to use the interface correctly, one creates a sequence source, wraps it in a multiplexer, then creates an assembler for every thread. Each assembler should be accessed in only one thread. It may be advisable to create a single assembler and set its configuration, then copy the settings to subsequently created assemblers.
  * @see panda_assembler_copy_configuration
  */
-/*@notnull@*/ PandaAssembler panda_mux_create_assembler( /*@notnull@ */ PandaMux
-							mux);
+/*@notnull@*/ PandaAssembler panda_mux_create_assembler(
+	/*@notnull@ */ PandaMux mux);
 /**
  * Open a pair of gzipped files for multi-threaded assembled.
  * @see panda_assembler_open_gz
  */
-/*@null@*/ PandaMux panda_mux_open_gz( /*@notnull@ */ char *forward,
-				      /*@notnull@ */ char *reverse,
-				      /*@notnull@ */ PandaLogger logger,
-				      /*@null@ */ void *logger_data,
-				      /*@null@ */
-				      PandaDestroy logger_destroy,
-				      unsigned char qualmin, PandaTagging policy);
+/*@null@*/ PandaMux panda_mux_open_gz(
+	/*@notnull@ */ char *forward,
+	/*@notnull@ */ char *reverse,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy);
 /**
  * Open a pair of bzipped for multi-threaded assembly.
  *
  * @see panda_assembler_open_bz2
  */
-/*@null@*/ PandaMux panda_mux_open_bz2( /*@notnull@ */ char *forward,
-				       /*@notnull@ */ char *reverse,
-				       /*@notnull@ */ PandaLogger logger,
-				       /*@null@ */ void *logger_data,
-				       /*@null@ */ PandaDestroy logger_destroy,
-				       unsigned char qualmin, PandaTagging policy);
+/*@null@*/ PandaMux panda_mux_open_bz2(
+	/*@notnull@ */ char *forward,
+	/*@notnull@ */ char *reverse,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy);
 /**
  * Create a new multiplexed reader for given to FASTQ streams.
  * @see panda_create_fastq_reader
  */
-/*@notnull@*/ PandaMux panda_mux_new_fastq_reader( /*@notnull@ */ PandaNextChar
-						  forward,	/*@null@ */
-						  void *forward_data,
-						  /*@null@ */
-						  PandaDestroy forward_destroy,
-						  /*@notnull@ */
-						  PandaNextChar reverse,
-						  /*@null@ */
-						  void *reverse_data,
-						  /*@null@ */
-						  PandaDestroy reverse_destroy,
-						  /*@notnull@ */
-						  PandaLogger logger,
-						  /*@null@ */ void *logger_data,
-						  /*@null@ */
-						  PandaDestroy logger_destroy,
-						  unsigned char qualmin, PandaTagging policy);
+/*@notnull@*/ PandaMux panda_mux_new_fastq_reader(
+	/*@notnull@ */ PandaNextChar forward,
+	/*@null@ */ void *forward_data,
+	/*@null@ */ PandaDestroy forward_destroy,
+	/*@notnull@ */ PandaNextChar reverse,
+	/*@null@ */ void *reverse_data,
+	/*@null@ */ PandaDestroy reverse_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	unsigned char qualmin,
+	PandaTagging policy);
 
 /*
  * Convenience macro is for Vala
  */
-#define PANDA_LOGGER(file, user_data, destroy) (*user_data = file, *destroy = NULL, (PandaLogger) panda_logger_file)
+#        define PANDA_LOGGER(file, user_data, destroy) (*(user_data) = (file), *(destroy) = NULL, (PandaLogger) panda_logger_file)
 
-#define PANDA_API 2
-#define PANDACONCATE(x,y) x ## y
-#define PANDACONCAT(x,y) PANDACONCATE(x, y)
+#        define PANDA_API 2
+#        define PANDACONCATE(x,y) x ## y
+#        define PANDACONCAT(x,y) PANDACONCATE(x, y)
 
 /* Convenience macros for creating modules */
-#ifdef PANDASEQ_MODULE
-#define PRECHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_precheck) (const panda_seq_identifier *id, panda_qual *forward, size_t forward_length, panda_qual *reverse, size_t reverse_length)
-#define CHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_check) (const panda_result_seq *sequence)
-#define INIT bool PANDACONCAT(PANDASEQ_MODULE,_LTX_init)(const char *args)
-#define CLEANUP void PANDACONCAT(PANDASEQ_MODULE,_LTX_destroy)(void)
-#define HELP(desc, usage) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_desc) = desc; const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_usage) = usage
-#define VER_INFO(version) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_version) = version
-#endif
+#        ifdef PANDASEQ_MODULE
+#                define PRECHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_precheck) (const panda_seq_identifier *id, panda_qual *forward, size_t forward_length, panda_qual *reverse, size_t reverse_length)
+#                define CHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_check) (const panda_result_seq *sequence)
+#                define INIT bool PANDACONCAT(PANDASEQ_MODULE,_LTX_init)(const char *args)
+#                define CLEANUP void PANDACONCAT(PANDASEQ_MODULE,_LTX_destroy)(void)
+#                define HELP(desc, usage) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_desc) = desc; const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_usage) = usage
+#                define VER_INFO(version) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_version) = version
+#        endif
 #endif

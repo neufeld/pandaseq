@@ -21,23 +21,26 @@
 #include "pandaseq.h"
 #include "buffer.h"
 
-void panda_seqid_print(const panda_seq_identifier *id, FILE *file)
-{
+void
+panda_seqid_print(
+	const panda_seq_identifier *id,
+	FILE *file) {
 	panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
 }
 
-void panda_seqid_xprint(const panda_seq_identifier *id, PandaPrintf xprintf,
-			void *x)
-{
+void
+panda_seqid_xprint(
+	const panda_seq_identifier *id,
+	PandaPrintf xprintf,
+	void *x) {
 	if (id == NULL)
 		return;
-	xprintf(x, "%s:%d:%s:%d:%d:%d:%d:%s", id->instrument,
-		id->run, id->flowcell, id->lane, id->tile, id->x, id->y,
-		id->tag);
+	xprintf(x, "%s:%d:%s:%d:%d:%d:%d:%s", id->instrument, id->run, id->flowcell, id->lane, id->tile, id->x, id->y, id->tag);
 }
 
-const char *panda_seqid_str(const panda_seq_identifier *id)
-{
+const char *
+panda_seqid_str(
+	const panda_seq_identifier *id) {
 	char *buffer = static_buffer();
 	if (id == NULL)
 		return NULL;
@@ -45,14 +48,11 @@ const char *panda_seqid_str(const panda_seq_identifier *id)
 	return buffer;
 }
 
-bool panda_seqid_equal(const panda_seq_identifier *one,
-		       const panda_seq_identifier *two)
-{
-	return one->run == two->run && one->lane == two->lane
-	    && one->tile == two->tile && one->x == two->x && one->y == two->y
-	    && strcmp(one->instrument, two->instrument) == 0
-	    && strcmp(one->flowcell, two->flowcell) == 0
-	    && strcmp(one->tag, two->tag) == 0;
+bool
+panda_seqid_equal(
+	const panda_seq_identifier *one,
+	const panda_seq_identifier *two) {
+	return one->run == two->run && one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
 	;
 }
 
@@ -60,8 +60,11 @@ bool panda_seqid_equal(const panda_seq_identifier *one,
 #define PARSE_CHUNK if (*input == '\0') return 0; PARSE_CHUNK_MAYBE
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (*input >= '0' && *input <= '9') { value = 10*value + (*input - '0'); } else { return 0; } } } while(0)
 
-int panda_seqid_parse(panda_seq_identifier *id, char *input, PandaTagging policy)
-{
+int
+panda_seqid_parse(
+	panda_seq_identifier *id,
+	char *input,
+	PandaTagging policy) {
 	char *dest;
 	int value;
 	bool has_tag;

@@ -552,7 +552,7 @@ namespace Panda {
 		 * @param precheck an optional check to be done before the module
 		 */
 		[CCode(cname = "panda_module_new", simple_generics = true)]
-		public static Module create<T>(string name, Check<T> check, PreCheck<T> precheck, owned T user);
+		public static Module create<T>(string name, Check<T>? check, PreCheck<T>? precheck, owned T user);
 
 		/**
 		 * Load a module from a string containg the module name and arguments.
@@ -621,7 +621,7 @@ namespace Panda {
 		 * Decrease the reference count on a multiplexer.
 		 */
 		[CCode(cname = "panda_mux_unref")]
-		public void mux_unref();
+		public void unref();
 	}
 
 	/**

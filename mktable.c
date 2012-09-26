@@ -20,9 +20,13 @@
 #include <math.h>
 #include "prob.h"
 
-static void buildmatrix(FILE *header, FILE *source, char *name,
-			double (*formula) (double, double))
-{
+static void
+buildmatrix(
+	FILE *header,
+	FILE *source,
+	char *name,
+	double (*formula) (double,
+		double)) {
 	int i, j;
 	fprintf(header, "extern double %s[][%d];\n", name, PHREDMAX + 1);
 	fprintf(source, "double %s[][%d] = {\n", name, PHREDMAX + 1);
@@ -36,8 +40,7 @@ static void buildmatrix(FILE *header, FILE *source, char *name,
 				fprintf(source, ",");
 			}
 
-			fprintf(source, " %g",
-				log(formula(PROBABILITY(i), PROBABILITY(j))));
+			fprintf(source, " %g", log(formula(PROBABILITY(i), PROBABILITY(j))));
 
 		}
 		fprintf(source, "}");
@@ -46,9 +49,12 @@ static void buildmatrix(FILE *header, FILE *source, char *name,
 
 }
 
-static void buildlist(FILE *header, FILE *source, char *name,
-		      double (*formula) (double))
-{
+static void
+buildlist(
+	FILE *header,
+	FILE *source,
+	char *name,
+	double (*formula) (double)) {
 	int i;
 	fprintf(header, "extern double %s[%d];\n", name, PHREDMAX + 1);
 	fprintf(source, "double %s[%d] = {\n", name, PHREDMAX + 1);
@@ -56,39 +62,47 @@ static void buildlist(FILE *header, FILE *source, char *name,
 		if (i > 0) {
 			fprintf(source, ",");
 		}
-		fprintf(source, " %g", (double)formula(PROBABILITY(i)));
+		fprintf(source, " %g", (double) formula(PROBABILITY(i)));
 	}
 	fprintf(source, "};\n");
 }
 
-static double match(double p, double q)
-{
+static double
+match(
+	double p,
+	double q) {
 	return (1 - p) * (1 - q) + p * q / 3;
 }
 
-static double mismatch(double p, double q)
-{
+static double
+mismatch(
+	double p,
+	double q) {
 	return (1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9;
 }
 
-static double nmatch(double p)
-{
+static double
+nmatch(
+	double p) {
 	if (p == 1) {
 		return -2;
 	}
 	return log(p / 2 + 0.25);
 }
 
-static double score(double p)
-{
+static double
+score(
+	double p) {
 	if (p == 1) {
 		return -2;
 	}
 	return log(1.0 - p);
 }
 
-int main(int argc, char **argv)
-{
+int
+main(
+	int argc,
+	char **argv) {
 	FILE *header;
 	FILE *source = fopen("table.c", "w");
 	if (source == NULL) {
@@ -101,9 +115,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	fprintf(header,
-		"#ifndef _TABLE_H\n#define _TABLE_H\n#define qual_nn %f\n#define ln_10 %f\n",
-		log(0.25), log(10));
+	fprintf(header, "#ifndef _TABLE_H\n#define _TABLE_H\n#define qual_nn %f\n#define ln_10 %f\n", log(0.25), log(10));
 	buildmatrix(header, source, "qual_match", match);
 	buildmatrix(header, source, "qual_mismatch", mismatch);
 	buildlist(header, source, "qual_nmatch", nmatch);
