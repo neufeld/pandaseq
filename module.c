@@ -141,7 +141,7 @@ module_destroy(
 static volatile int ltdl_count = 0;
 static bool
 ref_ltdl(
-	) {
+	void) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
 #endif
@@ -170,7 +170,7 @@ ref_ltdl(
 
 static void
 unref_ltdl(
-	) {
+	void) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
 #endif
