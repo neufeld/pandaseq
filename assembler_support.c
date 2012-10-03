@@ -229,7 +229,6 @@ panda_assembler_unref(
 		module_destroy(assembler);
 		DESTROY_MEMBER(assembler, next);
 		DESTROY_MEMBER(assembler, logger);
-		DESTROY_MEMBER(assembler, noalgn);
 		free(assembler);
 	}
 }

@@ -27,16 +27,12 @@ struct panda_mux {
 	pthread_mutex_t mutex;
 	pthread_mutex_t next_mutex;
 	pthread_mutex_t logger_mutex;
-	pthread_mutex_t noalgn_mutex;
 	 MANAGED_MEMBER(
 		PandaNextSeq,
 		next);
 	 MANAGED_MEMBER(
 		PandaLogger,
 		logger);
-	 MANAGED_MEMBER(
-		PandaFailAlign,
-		noalgn);
 	volatile size_t refcnt;
 };
 
@@ -167,10 +163,6 @@ panda_mux_create_assembler(
 	mux->refcnt += 2;
 	pthread_mutex_unlock(&mux->mutex);
 	assembler = panda_assembler_new((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, (PandaLogger) mux_logger, mux, (PandaDestroy) panda_mux_unref);
-	if (assembler != NULL) {
-		panda_assembler_set_fail_alignment(assembler, (PandaFailAlign)
-			mux_fail_algn, mux, NULL);
-	}
 	return assembler;
 }
 #endif
