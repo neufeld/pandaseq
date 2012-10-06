@@ -358,6 +358,11 @@ assemble_seq(
 		LOGV(PANDA_DEBUG_STAT, PANDA_CODE_LOW_QUALITY_REJECT, "%f < %f", exp(assembler->result.quality), exp(assembler->threshold));
 		return false;
 	}
+	if (assembler->no_n && assembler->result.degenerates > 0) {
+		assembler->degencount++;
+		LOGV(PANDA_DEBUG_STAT, PANDA_CODE_LOW_QUALITY_REJECT, "%zd Ns", assembler->result.degenerates);
+		return false;
+	}
 	if (module_checkseq(assembler, &assembler->result)) {
 		assembler->okcount++;
 		return true;
