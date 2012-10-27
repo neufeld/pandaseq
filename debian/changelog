@@ -1,3 +1,17 @@
+pandaseq (2.3~ppa0) lucid; urgency=low
+
+  * Fixed bug causing the -N flag to be ignored.
+  * Add option not to include tag in parsing Illumina headers.
+  * Add panda_assembler_foreach_module callback interface to library.
+  * Changed PANDA_MAX_LEN handling in library.
+  * Added module documentation in man page
+  * Fixed up k-mer bit array handling (causing wasted time).
+  * Added a sanity check to throw out unusably short reads.
+  * Fixed default minimum overlap.
+  * Ensure quality score are in the valid range.
+
+ -- Andre Masella <andre@masella.name>  Fri, 26 Oct 2012 13:48:45 -0700
+
 pandaseq (2.2~ppa0) precise; urgency=low
 
   * Created a debug package for Debian
