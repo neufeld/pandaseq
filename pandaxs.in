@@ -26,8 +26,8 @@ fi
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 @MOD_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@PACKAGE@ -I. @CPPFLAGS@ @CFLAGS@ -c -o "${MOD}.lo" @includedir@/@PACKAGE@/panda_api.c $SRC $PT
-@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@ -o "${MOD}.la" "${MOD}.lo" $PT @NO_UNDEFINED@
-if [ -d "@libdir@/@PACKAGE@" -a -w "@libdir@/@PACKAGE@" ]
+@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" "${MOD}.lo" $PT @NO_UNDEFINED@
+if [ -d "@libdir@/@PACKAGE@@LIB_MAJOR@" -a -w "@libdir@/@PACKAGE@@LIB_MAJOR@" ]
 then
-	@MOD_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@/${MOD}.la"
+	@MOD_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@@LIB_MAJOR@/${MOD}.la"
 fi

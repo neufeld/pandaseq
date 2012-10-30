@@ -1,3 +1,9 @@
+pandaseq (2.3~ppa1) precise; urgency=low
+
+  * Fixed packaging problem causing libpandaseq[01] to collide
+
+ -- Andre Masella <andre@masella.name>  Tue, 30 Oct 2012 10:42:40 -0700
+
 pandaseq (2.3~ppa0) lucid; urgency=low
 
   * Fixed bug causing the -N flag to be ignored.
