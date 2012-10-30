@@ -101,15 +101,15 @@ computeoffset(
 
 	for (index = 0; index < seq_length; index++) {
 		ssize_t x;
-		for (x = (ssize_t) (primerlen > index ? index : primerlen - 1); x >= 0; x--) {
-			probabilities[CIRC(index - x, primerlen)] += qualscore(seq[index].nt, seq[index].qual, primer[x], (char) PHREDMAX);
-		}
 		/* The last bucket in the buffer holds the probability of a complete alignment. If it so better than we have seen previously, store it. */
 		if (probabilities[CIRC(index, primerlen)] > bestpr) {
 			bestpr = probabilities[CIRC(index, primerlen)];
 			bestindex = index + 1;
 		}
 		probabilities[CIRC(index, primerlen)] = 0;
+		for (x = (ssize_t) (primerlen > index ? index : primerlen - 1); x >= 0; x--) {
+			probabilities[CIRC(index - x, primerlen)] += qualscore(seq[index].nt, seq[index].qual, primer[x], (char) PHREDMAX);
+		}
 	}
 	return bestindex;
 }
