@@ -41,6 +41,9 @@ panda_logger_file(
 		fputs(message, file);
 	}
 	fputc('\n', file);
+	if (code == PANDA_CODE_PHRED_OFFSET) {
+		fprintf(file, "* * * * * Using the default PHRED+33 offset, but no sequences had quality data under PHRED+64.\n* * * * * This is probably not what you want. Consult the manual about the -6 option.\n");
+	}
 	return true;
 }
 
@@ -121,6 +124,9 @@ panda_code_str(
 		break;
 	case PANDA_CODE_MISMATCHED_BASE:
 		return "INFO\tMISM";
+		break;
+	case PANDA_CODE_PHRED_OFFSET:
+		return "INFO\tPHRED OFFSET";
 		break;
 	default:
 		return "ERR\tUNKNOWN ERROR";

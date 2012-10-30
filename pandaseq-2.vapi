@@ -116,7 +116,11 @@ namespace Panda {
 		/**
 		 * The reconsructed sequence will exceed the memory buffer
 		 */
-		SEQUENCE_TOO_LONG;
+		SEQUENCE_TOO_LONG,
+		/**
+		 * The PHRED offset should probably be 64, not 33.
+		 */
+		PHRED_OFFSET;
 		[CCode(cname = "panda_code_str")]
 		public unowned string to_string();
 	}

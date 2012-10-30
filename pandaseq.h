@@ -76,6 +76,7 @@ typedef enum {
 	PANDA_CODE_REJECT_STAT,
 	PANDA_CODE_REVERSE_KMER,
 	PANDA_CODE_SEQUENCE_TOO_LONG,
+	PANDA_CODE_PHRED_OFFSET,
 } PandaCode;
 
 const char const *panda_code_str(
