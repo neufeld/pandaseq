@@ -23,7 +23,7 @@ pandaseq_SOURCES = main.c
 libpandaseq_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
-	-DPKGLIBDIR=$(pkglibdir) \
+	-DPKGLIBDIR=$(pkglibdir)$(LIB_MAJOR) \
 	-g \
 	$(NULL)
 libpandaseq_la_LDFLAGS = \
@@ -46,7 +46,8 @@ libpandaseq_la_SOURCES = \
 	seqid.c \
 	table.c \
 	$(NULL)
-pkglib_LTLIBRARIES = \
+pkglibxdir = $(pkglibdir)$(LIB_MAJOR)
+pkglibx_LTLIBRARIES = \
 	completely_miss_the_point.la \
 	validtag.la \
 	$(NULL)
