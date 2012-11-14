@@ -74,6 +74,8 @@ panda_seqid_parse(
 		id->flowcell[0] = '\0';
 		dest = id->instrument;
 		PARSE_CHUNK {
+			if (dest - id->instrument > sizeof(id->instrument))
+				return 0;
 			*dest++ = (*input);
 		}
 		input++;
@@ -111,6 +113,8 @@ panda_seqid_parse(
 		int mate;
 		dest = id->instrument;
 		PARSE_CHUNK {
+			if (dest - id->instrument > sizeof(id->instrument))
+				return 0;
 			*dest++ = (*input);
 		}
 		input++;
@@ -120,6 +124,8 @@ panda_seqid_parse(
 		id->run = value;
 		dest = id->flowcell;
 		PARSE_CHUNK {
+			if (dest - id->flowcell > sizeof(id->flowcell))
+				return 0;
 			*dest++ = (*input);
 		}
 		input++;
