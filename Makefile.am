@@ -1,6 +1,6 @@
 NULL =
 ACLOCAL_AMFLAGS = -I m4
-bin_PROGRAMS = pandaseq
+bin_PROGRAMS = pandaseq pandaseq-checkid
 lib_LTLIBRARIES = libpandaseq.la
 noinst_PROGRAMS = mktable
 bin_SCRIPTS = pandaxs
@@ -10,7 +10,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(LIB_NAME).pc
 vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = $(LIB_NAME).vapi
-man1_MANS = pandaseq.1 pandaxs.1
+man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugins/sample.c
 mktable_CPPFLAGS = -std=gnu99 -pedantic $(PANDA_CPPFLAGS)
@@ -20,6 +20,10 @@ pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_CFLAGS = $(MAIN_CFLAGS)
 pandaseq_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
 pandaseq_SOURCES = main.c
+pandaseq_checkid_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
+pandaseq_checkid_CFLAGS = $(MAIN_CFLAGS)
+pandaseq_checkid_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
+pandaseq_checkid_SOURCES = main-parse.c
 libpandaseq_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
