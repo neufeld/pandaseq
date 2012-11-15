@@ -651,6 +651,14 @@ namespace Panda {
 		[CCode(cname = "panda_seqid_parse")]
 		public static int parse(out identifier id, string input, Tagging policy);
 		/**
+		 * Parse an Illumina header with failure information
+		 *
+		 * @param end the remainder of the string if parsing failed.
+		 * @see parse
+		 */
+		[CCode(cname = "panda_seqid_parse_fail")]
+		public static int parse_fail(out identifier id, string input, Tagging policy, out unowned string end);
+		/**
 		 * Compare two Illumina headers
 		 */
 		[CCode(cname = "panda_seqid_equal")]

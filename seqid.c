@@ -56,9 +56,9 @@ panda_seqid_equal(
 	;
 }
 
-#define PARSE_CHUNK_MAYBE for(;*input != '\0' && *input != ':' && *input != '#' && *input != '/' && *input != ' '; input++)
-#define PARSE_CHUNK if (*input == '\0') return 0; PARSE_CHUNK_MAYBE
-#define PARSE_INT do { value = 0; PARSE_CHUNK { if (*input >= '0' && *input <= '9') { value = 10*value + (*input - '0'); } else { return 0; } } } while(0)
+#define PARSE_CHUNK_MAYBE for(;**endptr != '\0' && **endptr != ':' && **endptr != '#' && **endptr != '/' && **endptr != ' '; (*endptr)++)
+#define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
+#define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (**endptr - '0'); } else { return 0; } } } while(0)
 
 void
 panda_seqid_clear(
@@ -78,9 +78,25 @@ panda_seqid_parse(
 	panda_seq_identifier *id,
 	char *input,
 	PandaTagging policy) {
+	char *endptr;
+	return panda_seqid_parse_fail(id, input, policy, &endptr);
+}
+
+int
+panda_seqid_parse_fail(
+	panda_seq_identifier *id,
+	char *input,
+	PandaTagging policy,
+	char **endptr) {
 	char *dest;
-	int value;
 	bool has_tag;
+	char *temp;
+	int value;
+
+	if (endptr == NULL)
+		endptr = &temp;
+
+	*endptr = input;
 	if (strchr(input, '#') != NULL) {
 		/* Old CASAVA 1.4-1.6 format */
 		id->run = 0;
@@ -89,37 +105,37 @@ panda_seqid_parse(
 		PARSE_CHUNK {
 			if (dest - id->instrument > sizeof(id->instrument))
 				return 0;
-			*dest++ = (*input);
+			*dest++ = (**endptr);
 		}
-		input++;
+		(*endptr)++;
 		*dest = '\0';
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->lane = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->tile = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->x = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->y = value;
 		dest = id->tag;
 		*dest = '\0';
 		PARSE_CHUNK_MAYBE {
 			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;
-			*dest++ = (*input);
+			*dest++ = (**endptr);
 			*dest = '\0';
 		}
 		has_tag = id->tag[0] != '\0';
 		if (!has_tag && policy == PANDA_TAG_PRESENT || has_tag && policy == PANDA_TAG_ABSENT) {
 			return 0;
 		}
-		input++;
+		(*endptr)++;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		return value;
 	} else {
 		/* New CASAVA 1.7+ format */
@@ -128,48 +144,48 @@ panda_seqid_parse(
 		PARSE_CHUNK {
 			if (dest - id->instrument > sizeof(id->instrument))
 				return 0;
-			*dest++ = (*input);
+			*dest++ = (**endptr);
 		}
-		input++;
+		(*endptr)++;
 		*dest = '\0';
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->run = value;
 		dest = id->flowcell;
 		PARSE_CHUNK {
 			if (dest - id->flowcell > sizeof(id->flowcell))
 				return 0;
-			*dest++ = (*input);
+			*dest++ = (**endptr);
 		}
-		input++;
+		(*endptr)++;
 		*dest = '\0';
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->lane = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->tile = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->x = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		id->y = value;
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		mate = value;
 		PARSE_CHUNK;
-		input++;
+		(*endptr)++;
 		/* filtered */
 		PARSE_INT;
-		input++;
+		(*endptr)++;
 		/* control bits */
 		dest = id->tag;
 		*dest = '\0';
 		PARSE_CHUNK_MAYBE {
 			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;
-			*dest++ = (*input);
+			*dest++ = (**endptr);
 			*dest = '\0';
 		}
 		has_tag = id->tag[0] != '\0';

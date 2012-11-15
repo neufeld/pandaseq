@@ -264,6 +264,18 @@ int panda_seqid_parse(
 	PandaTagging policy);
 
 /**
+ * Parse the Illumina header
+ *
+ * Includes the address where parsing stopped.
+ * @see panda_seqid_parse
+ */
+int panda_seqid_parse_fail(
+	panda_seq_identifier *id,
+	char *input,
+	PandaTagging policy,
+	char **end_ptr);
+
+/**
  * A reconstructed sequence with meta information
  */
 typedef struct {
