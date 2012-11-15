@@ -72,13 +72,22 @@ main(
 	}
 
 	for (it = 1; it < argc; it++) {
-		int dir = panda_seqid_parse(&id, argv[it] + (argv[it][0] == '@' ? 1 : 0), PANDA_TAG_OPTIONAL);
+		char *endptr;
+		int dir;
+		panda_seqid_clear(&id);
+		dir = panda_seqid_parse_fail(&id, argv[it] + (argv[it][0] == '@' ? 1 : 0), PANDA_TAG_OPTIONAL, &endptr);
 		if (dir == 0) {
-			printf("%s: BAD\n", argv[it]);
+			int count;
+			printf("%s\n", argv[it]);
+			for (count = endptr - argv[it] - 2; count > 0; count--) {
+				putchar(' ');
+			}
+			printf("^\n\tBAD\n");
 		} else {
 			panda_seqid_print(&id, stdout);
-			printf(": GOOD %s; TAG %s\n", dir == 1 ? "FORWARD" : "REVERSE", id.tag[0] == '\0' ? "ABSENT" : "PRESENT");
+			printf("\n\tGOOD\n\tdirection = %s\n\thastag = %s\n", dir == 1 ? "forward" : "reverse", id.tag[0] == '\0' ? "no" : "yes");
 		}
+		printf("\tinstrument = \"%s\"\n\trun = %d\n\tflowcell = \"%s\"\n\tlane = %d\n\ttile = %d\n\tx = %d\n\ty = %d\n\ttag = \"%s\"\n", id.instrument, id.run, id.flowcell, id.lane, id.tile, id.x, id.y, id.tag);
 	}
 	return 0;
 }
