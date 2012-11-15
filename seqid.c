@@ -60,6 +60,19 @@ panda_seqid_equal(
 #define PARSE_CHUNK if (*input == '\0') return 0; PARSE_CHUNK_MAYBE
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (*input >= '0' && *input <= '9') { value = 10*value + (*input - '0'); } else { return 0; } } } while(0)
 
+void
+panda_seqid_clear(
+	panda_seq_identifier *id) {
+	id->instrument[0] = '\0';
+	id->run = 0;
+	id->flowcell[0] = '\0';
+	id->lane = 0;
+	id->tile = 0;
+	id->x = 0;
+	id->y = 0;
+	id->tag[0] = '\0';
+}
+
 int
 panda_seqid_parse(
 	panda_seq_identifier *id,

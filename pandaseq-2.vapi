@@ -641,6 +641,8 @@ namespace Panda {
 		int tile;
 		int x;
 		int y;
+		[CCode(cname = "panda_seqid_clear")]
+		public identifier();
 		/**
 		 * Parse an Illumina header
 		 *

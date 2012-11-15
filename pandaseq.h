@@ -245,6 +245,14 @@ void panda_seqid_print(
 bool panda_seqid_equal(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two);
+
+/**
+ * Reset a sequnce identifier.
+ */
+void
+ panda_seqid_clear(
+	panda_seq_identifier *id);
+
 /**
  * Parse an Illumina header
  *
