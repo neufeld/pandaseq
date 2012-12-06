@@ -1,5 +1,5 @@
 /**
- * PANDAseq Illumina assembler
+ * PANDAseq @VERSION@ Illumina assembler
  *
  * Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
  */
@@ -462,6 +462,13 @@ namespace Panda {
 		[CCode(cname = "panda_assembler_ref")]
 		public unowned Assembler @ref();
 		/**
+		 * Attached a callback for every sequence that fails to have an overlap.
+		 *
+		 * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
+		 */
+		[CCode(cname = "panda_assembler_set_fail_alignment")]
+		public void set_fail_alignment(owned FailAlign? handler);
+		/**
 		 * Decrement reference count.
 		 */
 		[CCode(cname = "panda_assembler_unref")]
@@ -621,6 +628,15 @@ namespace Panda {
 		 */
 		[CCode(cname = "panda_mux_ref")]
 		public void @ref();
+		/**
+		 * Attached a callback for every sequence that fails to have an overlap.
+		 *
+		 * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
+		 *
+		 * Concurrency will be handled by the mulitplexer; all calls to this function will be serialised.
+		 */
+		[CCode(cname = "panda_mux_set_fail_alignment")]
+		public void set_fail_alignment(owned FailAlign? handler);
 		/**
 		 * Decrease the reference count on a multiplexer.
 		 */
@@ -818,6 +834,18 @@ file);
 	public const int MAX_LEN;
 
 	/**
+	 * Handle a failed alignment
+	 *
+	 * This is called when an assembler fails to align a sequence because it can't compute a reasonable overlap.
+	 * @param assembler The assembler that made the attempt
+	 * @param id the sequence id of the failed pair
+	 * @param forward the forward read
+	 * @param reverse the reverse read
+	 */
+	[CCode(cname = "PandaFailAlign", has_type_id = false)]
+	public delegate void FailAlign(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
+
+	/**
 	 * Log an error/event
 	 *
 	 * If the function returns false, assembly will be halted.
@@ -906,6 +934,13 @@ Posix.FILE
 GLib.FileStream
 #endif
 file);
+
+	/**
+	 * Create a file logger
+	 */
+	[CCode(cname = "PANDA_FAIL")]
+	public FailAlign? create_fail_writer(string file, bool append);
+
 
 	/**
 	 * The current flags used be the assember to report errors. Some errors are always reported.

@@ -1,4 +1,5 @@
 AC_INIT([pandaseq], [2.3], [andre@masella.name])
+AC_PREREQ([2.60])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
@@ -75,7 +76,7 @@ CPPFLAGS="$MODULE_CPPFLAGS"
 CFLAGS="$MODULE_CFLAGS"
 LIBS="$MODULE_LIBS"
 
-LIB_NAME=pandaseq-2
+LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
 AC_SUBST(LIB_NAME)
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 LIB_MAJOR=1
@@ -83,6 +84,7 @@ LIB_VER=${LIB_MAJOR}:0:0
 AC_SUBST(LIB_MAJOR)
 AC_SUBST(LIB_VER)
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([${LIB_NAME}.pc:${LIB_NAME}.pc.in], , [LIB_NAME=$LIB_NAME])
+AC_CONFIG_FILES(${LIB_NAME}.pc:pc.in, [], [LIB_NAME=$LIB_NAME])
+AC_CONFIG_FILES(${LIB_NAME}.vapi:vapi.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES([pandaxs:pandaxs.in], [chmod +x pandaxs])
 AC_OUTPUT

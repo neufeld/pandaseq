@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.pc
+*.vapi
 *~
 .deps
 .libs
