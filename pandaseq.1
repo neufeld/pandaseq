@@ -88,7 +88,7 @@ will only be decompressed with the
 option.
 .TP
 \-F
-Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this flag will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33. The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application.
+Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this flag will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33 (even if the input scores are PHRED + 64). The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application.
 .TP
 \-j
 Input files specified be
