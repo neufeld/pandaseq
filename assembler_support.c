@@ -33,8 +33,15 @@ panda_assembler_new(
 	void *logger_data,
 	PandaDestroy logger_destroy) {
 	PandaAssembler assembler = malloc(sizeof(struct panda_assembler));
-	if (assembler == NULL)
+	if (assembler == NULL) {
+		if (next_destroy != NULL) {
+			next_destroy(next_data);
+		}
+		if (logger_destroy != NULL) {
+			logger_destroy(logger_data);
+		}
 		return NULL;
+	}
 	assembler->refcnt = 1;
 	assembler->next = next;
 	assembler->next_data = next_data;
