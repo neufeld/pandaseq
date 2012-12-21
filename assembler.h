@@ -26,9 +26,8 @@
 #        endif
 
 typedef unsigned char seqindex;
-#        define NUM_KMERS 2
 #        define KMER_LEN 8
-#        define KMERSEEN_SIZE (sizeof(seqindex) * NUM_KMERS * (1 << (2 * KMER_LEN)))
+#        define KMERSEEN_SIZE(num_kmers) (sizeof(seqindex) * (num_kmers) * (1 << (2 * KMER_LEN)))
 
 struct panda_assembler {
 	volatile size_t refcnt;
@@ -52,6 +51,7 @@ struct panda_assembler {
 	double pmismatch;
 
 	seqindex *kmerseen;
+	size_t num_kmers;
 
 	panda_result_seq result;
 

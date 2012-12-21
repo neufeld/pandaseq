@@ -558,6 +558,26 @@ PandaNextSeq panda_create_fastq_reader(
 	/*@null@ */ void *logger_data,
 	/*@null@ */ PandaDestroy logger_destroy);
 /**
+ * The default number of locations in the k-mer look up table.
+ *
+ * When attempting to align the sequences, the assembler will store the location of every k-mer in a table. If the same k-mer is present multiple times, only the first ones will be store until the table is full. If the sequences are highly repetitive, lost positions can prevent good alignments.
+ */
+#        define PANDA_DEFAULT_NUM_KMERS 2
+/**
+ * Create a new assembler from a sequence source with a custom k-mer table size.
+ *
+ * @param num_kmers the number of sequence locations for a particular k-mer. The default is PANDA_DEFAULT_NUM_KMERS. This should be small (no more than 10), or the k-mer table will be extremely large.
+ * @see panda_assembler_new
+ */
+/*@notnull@*/ PandaAssembler panda_assembler_new_kmer(
+	/*@notnull@ */ PandaNextSeq next,
+	/*@null@ */ void *next_data,
+	/*@null@ */ PandaDestroy next_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	/*@null@ */ PandaDestroy logger_destroy,
+	size_t num_kmers);
+/**
  * Clone the configuration of one assembler to another.
  *
  * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.
@@ -810,6 +830,13 @@ void panda_mux_unref(
 /*@notnull@*/ PandaAssembler panda_mux_create_assembler(
 	/*@notnull@ */ PandaMux mux);
 /**
+ * Create a new assembler using the multiplexer as it sequence source with a custom k-mer table size.
+ * @see panda_assembler_new_kmer
+ */
+/*@notnull@*/ PandaAssembler panda_mux_create_assembler_kmer(
+	/*@notnull@ */ PandaMux mux,
+	size_t num_kmers);
+/**
  * Open a pair of gzipped files for multi-threaded assembled.
  * @see panda_assembler_open_gz
  */
@@ -822,7 +849,7 @@ void panda_mux_unref(
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
- * Open a pair of bzipped for multi-threaded assembly.
+ * Open a pair of bzipped files for multi-threaded assembly.
  *
  * @see panda_assembler_open_bz2
  */

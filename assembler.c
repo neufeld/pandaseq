@@ -144,8 +144,8 @@ align(
 	/* Scan forward sequence building k-mers and appending the position to kmerseen[k] */
 	FOREACH_KMER(it, result->forward) {
 		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
-		for (j = 0; j < NUM_KMERS && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
-		if (j == NUM_KMERS) {
+		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
+		if (j == assembler->num_kmers) {
 			/* If we run out of storage, we lose k-mers. */
 			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
 		} else {
@@ -156,7 +156,7 @@ align(
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
 	FOREACH_KMER_REVERSE(it, result->reverse) {
 		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
-		for (j = 0; j < NUM_KMERS && assembler->kmerseen[(KMER(it) << 1) + j] != (seqindex) 0; j++) {
+		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != (seqindex) 0; j++) {
 			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) << 1) + j] - assembler->minoverlap - 1;
 
 			if (index >= 0) {
@@ -167,7 +167,7 @@ align(
 
 	/* Reset kmerseen */
 	FOREACH_KMER(it, result->forward) {
-		for (j = 0; j < NUM_KMERS; j++)
+		for (j = 0; j < assembler->num_kmers; j++)
 			assembler->kmerseen[(KMER(it) << 1) + j] = 0;
 	}
 

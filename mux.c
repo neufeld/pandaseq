@@ -158,11 +158,18 @@ mux_next(
 PandaAssembler
 panda_mux_create_assembler(
 	PandaMux mux) {
+	return panda_mux_create_assembler_kmer(mux, PANDA_DEFAULT_NUM_KMERS);
+}
+
+PandaAssembler
+panda_mux_create_assembler_kmer(
+	PandaMux mux,
+	size_t num_kmers) {
 	PandaAssembler assembler;
 	pthread_mutex_lock(&mux->mutex);
 	mux->refcnt += 2;
 	pthread_mutex_unlock(&mux->mutex);
-	assembler = panda_assembler_new((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, (PandaLogger) mux_logger, mux, (PandaDestroy) panda_mux_unref);
+	assembler = panda_assembler_new_kmer((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, (PandaLogger) mux_logger, mux, (PandaDestroy) panda_mux_unref, num_kmers);
 	return assembler;
 }
 #endif

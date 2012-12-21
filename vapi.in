@@ -403,6 +403,15 @@ namespace Panda {
 		public Assembler(owned NextSeq? next, owned Logger logger);
 
 		/**
+		 * Create a new assembler from a sequence source with a custom //k//-mer table size.
+		 *
+		 * @param num_kmers the number of sequence locations for a particular //k//-mer. This should be small (no more than 10), or the //k//-mer table will be extremely large.
+		 * @see Assembler
+		 */
+		[CCode(cname = "panda_assembler_new_kmer")]
+		public Assembler.kmer(owned NextSeq? next, owned Logger logger, size_t num_kmers = 2);
+
+		/**
 		 * Create a new assembler for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
@@ -624,6 +633,12 @@ namespace Panda {
 		[CCode(cname = "panda_mux_create_assembler")]
 		public Assembler create_assembler();
 		/**
+		 * Create a new assembler using the multiplexer as it sequence source with a custom //k//-mer table size.
+		 * @see Assembler.kmer
+		 */
+		[CCode(cname = "panda_mux_create_assembler_kmer")]
+		public Assembler create_assembler_kmer(size_t num_kmers);
+		/**
 		 * Increase the reference count on a multiplexer.
 		 */
 		[CCode(cname = "panda_mux_ref")]
@@ -826,6 +841,14 @@ GLib.FileStream
 #endif
 file);
 	}
+
+	/**
+	 * The default number of locations in the k-mer look up table.
+	 *
+	 * When attempting to align the sequences, the {@link Assembler} will store the location of every //k//-mer in a table. If the same //k//-mer is present multiple times, only the first ones will be store until the table is full. If the sequences are highly repetitive, lost positions can prevent good alignments.
+	 */
+	[CCode(cname = "PANDA_DEFAULT_NUM_KMERS")]
+	public const size_t DEFAULT_NUM_KMERS;
 
 	/**
 	 * Maximum length of a sequence

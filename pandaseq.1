@@ -23,6 +23,9 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 ] [
 .B \-j 
 ] [ 
+.B \-k
+.I kmers
+] [ 
 .B \-l
 .I minlen
 ] [
@@ -97,6 +100,9 @@ and
 .B -r
 are compressed by
 .BR bzip2 (1).
+.TP
+\-k kmers
+Sets the number of sequence locations for a particular \fIk\fR-mer. When attempting to align the sequences, the assembler will store the location of every \fIk\fR-mer in a table. If the same \fIk\fR-mer is present multiple times, only the first ones will be store until the table is full; when this occurs, an \fBFML\fR error is emitted. If the sequences are highly repetitive, lost positions can prevent good alignments; this can be alleviated by increasing this amount. This should be small (no more than 10), or the \fIk\fR-mer table will be extremely large, using a large amount of RAM per thread. Try increasing the value until \fBFML\fR errors go away.
 .TP
 \-l minlen
 Sets the minimum length for a sequence. By default, all sequences are kept. With this option, sequences shorter than theoretically possible can be discarded.

@@ -146,10 +146,13 @@ main(
 	int minoverlap = 1;
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
+#ifdef HAVE_PTHREAD
+	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
+#endif
 	bool okay;
 	const char *optlist = "6BC:d:f:Fhjl:L:No:p:q:Q:r:t:v"
 #ifdef HAVE_PTHREAD
-		"T:"
+		"k:T:"
 #endif
 		;
 	PandaTagging policy = PANDA_TAG_PRESENT;
@@ -321,6 +324,16 @@ main(
 			version = true;
 			break;
 #ifdef HAVE_PTHREAD
+		case 'k':
+			errno = 0;
+			num_kmers = (size_t) strtol(optarg, NULL, 10);
+			if (errno != 0 || num_kmers < 0 || num_kmers > PANDA_MAX_LEN) {
+				fprintf(stderr, "Bad k-mer list length.\n");
+				for (it = 0; it < modules_length; it++)
+					panda_module_unref(modules[it]);
+				return 1;
+			}
+			break;
 		case 'T':
 			errno = 0;
 			threads = (size_t) strtol(optarg, NULL, 10);
@@ -423,7 +436,7 @@ main(
 			panda_module_unref(modules[it]);
 		return 1;
 	}
-	assembler = panda_mux_create_assembler(mux);
+	assembler = panda_mux_create_assembler_kmer(mux, num_kmers);
 
 #else
 	assembler = bzip ? panda_assembler_open_bz2(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy) : panda_assembler_open_gz(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy);

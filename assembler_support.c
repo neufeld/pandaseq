@@ -32,6 +32,18 @@ panda_assembler_new(
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy) {
+	return panda_assembler_new_kmer(next, next_data, next_destroy, logger, logger_data, logger_destroy, PANDA_DEFAULT_NUM_KMERS);
+}
+
+PandaAssembler
+panda_assembler_new_kmer(
+	PandaNextSeq next,
+	void *next_data,
+	PandaDestroy next_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
+	size_t num_kmers) {
 	PandaAssembler assembler = malloc(sizeof(struct panda_assembler));
 	if (assembler == NULL) {
 		if (next_destroy != NULL) {
@@ -67,12 +79,23 @@ panda_assembler_new(
 	assembler->noalgncount = 0;
 	assembler->count = 0;
 	assembler->no_n = false;
+	assembler->num_kmers = num_kmers;
 	assert(1 << (8 * sizeof(seqindex)) > PANDA_MAX_LEN);
-	assembler->kmerseen = malloc(KMERSEEN_SIZE);
+	assembler->kmerseen = malloc(KMERSEEN_SIZE(num_kmers));
+	if (assembler->kmerseen == NULL) {
+		if (next_destroy != NULL) {
+			next_destroy(next_data);
+		}
+		if (logger_destroy != NULL) {
+			logger_destroy(logger_data);
+		}
+		free(assembler);
+		return NULL;
+	}
 #ifdef HAVE_PTHREAD
 	pthread_mutex_init(&assembler->mutex, NULL);
 #endif
-	memset(assembler->kmerseen, 0, KMERSEEN_SIZE);
+	memset(assembler->kmerseen, 0, KMERSEEN_SIZE(num_kmers));
 	panda_assembler_set_error_estimation(assembler, 0.36);
 	panda_assembler_set_threshold(assembler, 0.6);
 	panda_assembler_set_minimum_overlap(assembler, 2);
