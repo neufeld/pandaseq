@@ -27,12 +27,16 @@ struct panda_mux {
 	pthread_mutex_t mutex;
 	pthread_mutex_t next_mutex;
 	pthread_mutex_t logger_mutex;
+	pthread_mutex_t noalgn_mutex;
 	 MANAGED_MEMBER(
 		PandaNextSeq,
 		next);
 	 MANAGED_MEMBER(
 		PandaLogger,
 		logger);
+	 MANAGED_MEMBER(
+		PandaFailAlign,
+		noalgn);
 	volatile size_t refcnt;
 };
 
@@ -52,9 +56,13 @@ panda_mux_new(
 	mux->logger = logger;
 	mux->logger_data = logger_data;
 	mux->logger_destroy = logger_destroy;
+	mux->noalgn = NULL;
+	mux->noalgn_data = NULL;
+	mux->noalgn_destroy = NULL;
 	pthread_mutex_init(&mux->mutex, NULL);
 	pthread_mutex_init(&mux->next_mutex, NULL);
 	pthread_mutex_init(&mux->logger_mutex, NULL);
+	pthread_mutex_init(&mux->noalgn_mutex, NULL);
 	return mux;
 }
 
@@ -106,6 +114,11 @@ panda_mux_unref(
 		DESTROY_MEMBER(mux, logger);
 		pthread_mutex_unlock(&mux->logger_mutex);
 		pthread_mutex_destroy(&mux->logger_mutex);
+
+		pthread_mutex_lock(&mux->noalgn_mutex);
+		DESTROY_MEMBER(mux, noalgn);
+		pthread_mutex_unlock(&mux->noalgn_mutex);
+		pthread_mutex_destroy(&mux->noalgn_mutex);
 		free(mux);
 	}
 }
@@ -155,6 +168,25 @@ mux_next(
 	return result;
 }
 
+void
+mux_fail_algn(
+	PandaAssembler assembler,
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length,
+	PandaMux mux) {
+	if (mux->noalgn == NULL)
+		return;
+	pthread_mutex_lock(&mux->noalgn_mutex);
+	/* We repeat this check to solve a potential race condition. Locking the mutex is expensive, so if the handler is not set, we bail out. However, it is possible that someone is concurrently setting the handler via panda_mux_set_fail_alignment, so we have to check again once we have an exclusive lock. */
+	if (mux->noalgn != NULL) {
+		mux->noalgn(assembler, id, forward, forward_length, reverse, reverse_length, mux->noalgn_data);
+	}
+	pthread_mutex_unlock(&mux->noalgn_mutex);
+}
+
 PandaAssembler
 panda_mux_create_assembler(
 	PandaMux mux) {
@@ -170,6 +202,24 @@ panda_mux_create_assembler_kmer(
 	mux->refcnt += 2;
 	pthread_mutex_unlock(&mux->mutex);
 	assembler = panda_assembler_new_kmer((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, (PandaLogger) mux_logger, mux, (PandaDestroy) panda_mux_unref, num_kmers);
+	if (assembler != NULL) {
+		panda_assembler_set_fail_alignment(assembler, (PandaFailAlign)
+			mux_fail_algn, mux, NULL);
+	}
 	return assembler;
+}
+
+void
+panda_mux_set_fail_alignment(
+	PandaMux mux,
+	PandaFailAlign handler,
+	void *handler_data,
+	PandaDestroy handler_destroy) {
+	pthread_mutex_lock(&mux->noalgn_mutex);
+	DESTROY_MEMBER(mux, noalgn);
+	mux->noalgn_data = handler_data;
+	mux->noalgn_destroy = handler_destroy;
+	mux->noalgn = handler;
+	pthread_mutex_unlock(&mux->noalgn_mutex);
 }
 #endif

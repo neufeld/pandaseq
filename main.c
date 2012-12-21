@@ -146,11 +146,12 @@ main(
 	int minoverlap = 1;
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
+	const char *no_algn_file_name = NULL;
 #ifdef HAVE_PTHREAD
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
 #endif
 	bool okay;
-	const char *optlist = "6BC:d:f:Fhjl:L:No:p:q:Q:r:t:v"
+	const char *optlist = "6BC:d:f:Fhjl:L:No:p:q:Q:r:t:u:v"
 #ifdef HAVE_PTHREAD
 		"k:T:"
 #endif
@@ -320,6 +321,9 @@ main(
 				return 1;
 			}
 			break;
+		case 'u':
+			no_algn_file_name = optarg;
+			break;
 		case 'v':
 			version = true;
 			break;
@@ -449,6 +453,18 @@ main(
 		panda_mux_unref(mux);
 #endif
 		return 1;
+	}
+	if (no_algn_file_name != NULL) {
+		FILE *no_algn_file = fopen(no_algn_file_name, "w");
+		if (no_algn_file != NULL) {
+#if HAVE_PTHREAD
+			panda_mux_set_fail_alignment(mux, (PandaFailAlign) panda_output_fail, no_algn_file, (PandaDestroy) fclose);
+#else
+			panda_assembler_set_fail_alignment(assembler, (PandaFailAlign) panda_output_fail, no_algn_file, (PandaDestroy) fclose);
+#endif
+		} else {
+			perror(no_algn_file_name);
+		}
 	}
 	okay = true;
 	for (it = 0; it < modules_length; it++) {

@@ -48,6 +48,9 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 ] [
 .B \-T
 .I threads
+] [
+.B \-u
+.I unpaired.fasta
 ]
 .SH DESCRIPTION
 PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The assembler reads two files in FASTQ format with quality information. If amplification primers were used (e.g., to isolate a variable region of the 16S gene, or the constant regions around zinc finger binding residues), they can be removed from the sequence. The final sequence will correct any uncalled bases in the overlapping region using the complementary strand. When mismatches occur in the overlapping region, the base with the better quality score is chosen.
@@ -136,6 +139,9 @@ The number of threads to spawn. This will only be avilable if PANDAseq was compi
 In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with 
 .BR top (1);
 watch the CPU% for the PANDAseq process and the overall system CPU waiting time (\fI%wa\fR in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
+.TP
+\-u unpaired.fasta
+Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs.
 .SH OUTPUT STATISTICS
 At the end of reconstruction, several statistics are output on lines beginning with \fBSTAT\fR.
 .TP

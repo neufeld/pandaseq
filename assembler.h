@@ -38,6 +38,9 @@ struct panda_assembler {
 	 MANAGED_MEMBER(
 		PandaLogger,
 		logger);
+	 MANAGED_MEMBER(
+		PandaFailAlign,
+		noalgn);
 
 	size_t *rejected;
 	PandaModule *modules;

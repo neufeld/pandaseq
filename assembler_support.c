@@ -61,6 +61,9 @@ panda_assembler_new_kmer(
 	assembler->logger = logger;
 	assembler->logger_data = logger_data;
 	assembler->logger_destroy = logger_destroy;
+	assembler->noalgn = NULL;
+	assembler->noalgn_data = NULL;
+	assembler->noalgn_destroy = NULL;
 	assembler->rejected = NULL;
 	assembler->modules = NULL;
 	assembler->modules_length = 0;
@@ -259,6 +262,7 @@ panda_assembler_unref(
 		module_destroy(assembler);
 		DESTROY_MEMBER(assembler, next);
 		DESTROY_MEMBER(assembler, logger);
+		DESTROY_MEMBER(assembler, noalgn);
 		free(assembler);
 	}
 }
@@ -355,4 +359,16 @@ panda_assembler_set_reverse_trim(
 	size_t trim) {
 	assembler->reverse_trim = trim;
 	assembler->reverse_primer_length = 0;
+}
+
+void
+panda_assembler_set_fail_alignment(
+	PandaAssembler assembler,
+	PandaFailAlign handler,
+	void *handler_data,
+	PandaDestroy handler_destroy) {
+	DESTROY_MEMBER(assembler, noalgn);
+	assembler->noalgn = handler;
+	assembler->noalgn_data = handler_data;
+	assembler->noalgn_destroy = handler_destroy;
 }

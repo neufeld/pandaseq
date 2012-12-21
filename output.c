@@ -169,3 +169,26 @@ panda_output_fastq(
 	(void) fputc('\n', file);
 	return true;
 }
+
+void
+panda_output_fail(
+	PandaAssembler assembler,
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length,
+	FILE *file) {
+	size_t it;
+	(void) fputc('>', file);
+	panda_seqid_print(id, file);
+	(void) fputc('\n', file);
+	for (it = 0; it < forward_length; it++) {
+		(void) fputc(panda_nt_to_ascii(forward[it].nt), file);
+	}
+	(void) fputc('-', file);
+	for (it = reverse_length; it > 0; it--) {
+		(void) fputc(panda_nt_to_ascii(reverse[it - 1].nt), file);
+	}
+	(void) fputc('\n', file);
+}

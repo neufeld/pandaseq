@@ -351,6 +351,9 @@ assemble_seq(
 		assembler->result.reverse_offset = assembler->reverse_trim;
 	}
 	if (!align(assembler, &assembler->result)) {
+		if (assembler->noalgn != NULL) {
+			assembler->noalgn(assembler, &assembler->result.name, assembler->result.forward, assembler->result.forward_length, assembler->result.reverse, assembler->result.reverse_length, assembler->noalgn_data);
+		}
 		return false;
 	}
 	if (assembler->result.quality < assembler->threshold) {

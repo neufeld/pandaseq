@@ -773,6 +773,38 @@ bool panda_assembler_foreach_module(
 	size_t forward_length,
 	/*@notnull@ */ const panda_qual *reverse,
 	size_t reverse_length);
+/**
+ * Handle a failed alignment
+ *
+ * This is called when an assembler fails to align a sequence because it can't compute a reasonable overlap.
+ * @param assembler The assembler that made the attempt
+ * @param id the sequence id of the failed pair
+ * @param forward the forward read
+ * @param reverse the reverse read
+ * @param user_data context data
+ */
+typedef void (
+	*PandaFailAlign) (
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@notnull@ */ const panda_seq_identifier *id,
+	/*@notnull@ */ const panda_qual *forward,
+	size_t forward_length,
+	/*@notnull@ */ const panda_qual *reverse,
+	size_t reverse_length,
+	void *user_data);
+
+/**
+ * Attached a callback for every sequence that fails to have an overlap.
+ *
+ * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
+ *
+ * Memory management will be handled by the assembler. When the assembler is finished, the destroy function will be called on the user data, if provided.
+ */
+void panda_assembler_set_fail_alignment(
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@null@ */ PandaFailAlign handler,
+	void *handler_data,
+	PandaDestroy handler_destroy);
 
 /**
  * Write an assembly to a FASTA file.
@@ -793,6 +825,18 @@ bool panda_logger_file(
 	PandaCode code,
 	panda_seq_identifier *id,
 	const char *message,
+	/*@notnull@ */ FILE *file);
+
+/**
+ * Write an unassembled sequence to a FASTA file as a concatenated pair.
+ */
+void panda_output_fail(
+	/*@notnull@ */ PandaAssembler assembler,
+	/*@notnull@ */ const panda_seq_identifier *id,
+	/*@notnull@ */ const panda_qual *forward,
+	size_t forward_length,
+	/*@notnull@ */ const panda_qual *reverse,
+	size_t reverse_length,
 	/*@notnull@ */ FILE *file);
 
 /**
@@ -878,10 +922,27 @@ void panda_mux_unref(
 	unsigned char qualmin,
 	PandaTagging policy);
 
+/**
+ * Attached a callback for every sequence that fails to have an overlap.
+ *
+ * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
+ *
+ * Concurrency will be handled by the mulitplexer; all calls to this function will be serialised.
+ *
+ * Memory management will be handled by the assembler. When the assembler is finished, the destroy function will be called on the user data, if provided.
+ */
+
+void panda_mux_set_fail_alignment(
+	/*@notnull@ */ PandaMux mux,
+	/*@null@ */ PandaFailAlign handler,
+	void *handler_data,
+	PandaDestroy handler_destroy);
+
 /*
  * Convenience macro is for Vala
  */
 #        define PANDA_LOGGER(file, user_data, destroy) (*(user_data) = (file), *(destroy) = NULL, (PandaLogger) panda_logger_file)
+#        define PANDA_FAIL(file, append, user_data, destroy) (*(user_data) = fopen(file, append ? "a" : "w"), *(destroy) = fclose, *(user_data) == NULL ? NULL : (PandaLogger) panda_output_fail)
 
 #        define PANDA_API 2
 #        define PANDACONCATE(x,y) x ## y
