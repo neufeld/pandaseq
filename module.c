@@ -130,7 +130,8 @@ void
 module_destroy(
 	PandaAssembler assembler) {
 	int it;
-	free(assembler->rejected);
+	if (assembler->rejected)
+		free(assembler->rejected);
 	for (it = 0; it < assembler->modules_length; it++) {
 		panda_module_unref(assembler->modules[it]);
 	}
