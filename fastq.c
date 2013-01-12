@@ -42,6 +42,7 @@ struct fastq_data {
 	size_t reverse_seq_length;
 	PandaTagging policy;
 	bool seen_under_64;
+	bool non_empty;
 };
 
 static bool
@@ -155,6 +156,7 @@ read_seq(
 		return false;
 	}
 	*length = pos;
+	data->non_empty = true;
 	return true;
 }
 
@@ -216,7 +218,7 @@ stream_next_seq(
 static void
 stream_destroy(
 	struct fastq_data *data) {
-	if (!data->seen_under_64 && data->qualmin < 64) {
+	if (data->non_empty && !data->seen_under_64 && data->qualmin < 64) {
 		/* Used in the LOG macro. */
 		panda_seq_identifier *id = NULL;
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PHRED_OFFSET);
@@ -253,6 +255,7 @@ panda_create_fastq_reader(
 	data->qualmin = qualmin;
 	data->policy = policy;
 	data->seen_under_64 = false;
+	data->non_empty = false;
 	*user_data = data;
 	*destroy = (PandaDestroy) stream_destroy;
 	return (PandaNextSeq) stream_next_seq;
