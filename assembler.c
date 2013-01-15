@@ -284,7 +284,7 @@ align(
 		if (ismatch) {
 			nt = (result->reverse[rindex].nt & result->forward[findex].nt);
 		} else {
-			if (result->forward[rindex].qual < result->reverse[rindex].qual) {
+			if (result->forward[findex].qual < result->reverse[rindex].qual) {
 				nt = result->reverse[rindex].nt;
 			} else {
 				nt = result->forward[findex].nt;
