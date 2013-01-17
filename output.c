@@ -164,7 +164,7 @@ panda_output_fastq(
 	}
 	fprintf(file, "\n+\n");
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void) fputc(33 - (int) (10 * log(1 - exp(sequence->sequence[it].p)) / ln_10), file);
+		(void) fputc(33 - (int) (10 * log10(1 - exp(sequence->sequence[it].p)) - 0.5), file);
 	}
 	(void) fputc('\n', file);
 	return true;
