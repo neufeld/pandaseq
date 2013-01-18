@@ -80,6 +80,7 @@ panda_assembler_new_kmer(
 	assembler->lowqcount = 0;
 	assembler->degencount = 0;
 	assembler->noalgncount = 0;
+	assembler->badreadcount = 0;
 	assembler->count = 0;
 	assembler->no_n = false;
 	assembler->num_kmers = num_kmers;
@@ -197,6 +198,12 @@ long
 panda_assembler_get_low_quality_count(
 	PandaAssembler assembler) {
 	return assembler->lowqcount;
+}
+
+long
+panda_assembler_get_bad_read_count(
+	PandaAssembler assembler) {
+	return assembler->badreadcount;
 }
 
 long

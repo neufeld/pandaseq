@@ -69,6 +69,7 @@ struct panda_assembler {
 	long lowqcount;
 	long degencount;
 	long noalgncount;
+	long badreadcount;
 	long count;
 	bool no_n;
 #        ifdef HAVE_PTHREAD

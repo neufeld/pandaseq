@@ -234,6 +234,14 @@ namespace Panda {
 	[CCode(cname = "struct panda_assembler", has_type_id = false, ref_func = "panda_assembler_ref", unref_func = "panda_assembler_unref")]
 	public class Assembler {
 		/**
+		 * The number of sequences rejected because the reads are unsatisfactory in some way.
+		 */
+		public long bad_read_count {
+			[CCode(cname = "panda_assembler_get_bad_read_count")]
+			get;
+		}
+
+		/**
 		 * The number of sequences processed so far.
 		 */
 		public long count {
