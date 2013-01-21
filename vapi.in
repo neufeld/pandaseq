@@ -967,11 +967,26 @@ GLib.FileStream
 file);
 
 	/**
-	 * Create a file logger
+	 * Write an unassembled sequence to a FASTA file as a concatenated pair.
 	 */
 	[CCode(cname = "PANDA_FAIL")]
 	public FailAlign? create_fail_writer(string file, bool append);
 
+	/**
+	 * Open a pair of gzipped (or uncompressed files).
+	 *
+	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+	 */
+	[CCode(cname = "panda_open_gz")]
+	public NextSeq? open_gz(string forward, string reverse, Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+
+	/**
+	 * Open a pair of bzipped files.
+	 *
+	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+	 */
+	[CCode(cname = "panda_open_bz2")]
+	public NextSeq? open_bz2(string forward, string reverse, Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * The current flags used be the assember to report errors. Some errors are always reported.

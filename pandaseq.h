@@ -465,7 +465,7 @@ typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
- * Open a pair of bzipped for assembly.
+ * Open a pair of bzipped files for assembly.
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
@@ -522,6 +522,34 @@ PandaNextSeq panda_create_fastq_reader(
 	/*@notnull@ */ PandaNextChar reverse,
 	/*@null@ */ void *reverse_data,
 	/*@null@ */ PandaDestroy reverse_destroy,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	unsigned char qualmin,
+	PandaTagging policy,
+	/*@notnull@@out@ */ void **user_data,
+	/*@notnull@@out@ */ PandaDestroy *destroy);
+/**
+ * Open a pair of gzipped (or uncompressed files).
+ *
+ * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ */
+/*@null@*/ PandaNextSeq panda_open_gz(
+	/*@notnull@ */ char *forward,
+	/*@notnull@ */ char *reverse,
+	/*@notnull@ */ PandaLogger logger,
+	/*@null@ */ void *logger_data,
+	unsigned char qualmin,
+	PandaTagging policy,
+	/*@notnull@@out@ */ void **user_data,
+	/*@notnull@@out@ */ PandaDestroy *destroy);
+/**
+ * Open a pair of bzipped files.
+ *
+ * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ */
+/*@null@*/ PandaNextSeq panda_open_bz2(
+	/*@notnull@ */ char *forward,
+	/*@notnull@ */ char *reverse,
 	/*@notnull@ */ PandaLogger logger,
 	/*@null@ */ void *logger_data,
 	unsigned char qualmin,
