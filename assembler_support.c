@@ -83,6 +83,7 @@ panda_assembler_new_kmer(
 	assembler->badreadcount = 0;
 	assembler->count = 0;
 	assembler->no_n = false;
+	assembler->post_primers = false;
 	assembler->num_kmers = num_kmers;
 	assert(1 << (8 * sizeof(seqindex)) > PANDA_MAX_LEN);
 	assembler->kmerseen = malloc(KMERSEEN_SIZE(num_kmers));
@@ -121,6 +122,7 @@ panda_assembler_copy_configuration(
 	dest->threshold = src->threshold;
 	dest->minoverlap = src->minoverlap;
 	dest->no_n = src->no_n;
+	dest->post_primers = src->post_primers;
 }
 
 int
@@ -352,6 +354,19 @@ panda_assembler_set_forward_trim(
 	size_t trim) {
 	assembler->forward_trim = trim;
 	assembler->forward_primer_length = 0;
+}
+
+bool
+panda_assembler_get_primers_after(
+	PandaAssembler assembler) {
+	return assembler->post_primers;
+}
+
+void
+panda_assembler_set_primers_after(
+	PandaAssembler assembler,
+	bool after) {
+	assembler->post_primers = after;
 }
 
 size_t

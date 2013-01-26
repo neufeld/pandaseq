@@ -137,6 +137,7 @@ main(
 	int argc,
 	char **argv) {
 	PandaAssembler assembler;
+	bool primers_after = false;
 	bool bzip = false;
 	int c;
 	size_t foffset = 1;
@@ -151,7 +152,7 @@ main(
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
 #endif
 	bool okay;
-	const char *optlist = "6BC:d:f:Fhjl:L:No:p:q:Q:r:t:u:v"
+	const char *optlist = "6aBC:d:f:Fhjl:L:No:p:q:Q:r:t:u:v"
 #ifdef HAVE_PTHREAD
 		"k:T:"
 #endif
@@ -177,6 +178,9 @@ main(
 		switch (c) {
 		case '6':
 			qualmin = 64;
+			break;
+		case 'a':
+			primers_after = true;
 			break;
 		case 'B':
 			policy = PANDA_TAG_OPTIONAL;
@@ -376,6 +380,8 @@ main(
 		fprintf(stderr, "-f forward.fastq ");
 		fprintf(stderr, "-r reverse.fastq ");
 		fprintf(stderr, "[-6] ");
+		fprintf(stderr, "[-a] ");
+		fprintf(stderr, "[-B] ");
 		fprintf(stderr, "[-C module1 -C module2 ...] ");
 		fprintf(stderr, "[-d flags] ");
 		fprintf(stderr, "[-F] ");
@@ -392,6 +398,7 @@ main(
 		fprintf(stderr, "[-t threshold] ");
 		fprintf(stderr, "\n");
 		fprintf(stderr, "\t-6\tUse PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+).\n");
+		fprintf(stderr, "\t-a\tStrip the primers after assembly, rather than before.\n");
 		fprintf(stderr, "\t-B\tAllow unbarcoded sequences (try this for BADID errors).\n");
 		fprintf(stderr, "\t-C module\tLoad a sequence validation module.\n");
 		fprintf(stderr, "\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n");
@@ -486,6 +493,7 @@ main(
 	panda_assembler_set_threshold(assembler, threshold);
 	panda_assembler_set_minimum_overlap(assembler, minoverlap);
 	panda_assembler_set_disallow_degenerates(assembler, no_n);
+	panda_assembler_set_primers_after(assembler, primers_after);
 
 	if (forward_primer != NULL) {
 		if (!set_primer(assembler, panda_assembler_set_forward_primer, forward_primer, panda_nt_from_ascii)) {

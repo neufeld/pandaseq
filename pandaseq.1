@@ -11,6 +11,8 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 [
 .B \-6 
 ] [
+.B \-a 
+] [
 .B \-B 
 ] [
 .B \-C
@@ -70,6 +72,9 @@ Check for various constraints, including quality, length, uncalled bases, and us
 .TP
 \-6
 Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
+.TP
+\-a
+Strip the primers after assembly, rather than before. Stripping the primers first saves time, but if the overlap region is very large compared to the read, the read may have sequence from the other primer (i.e., the forward read ends with reverse primer, and/or the reverse read ends with forward primer). If the primers are stripped first, the reads will fail to assemble. This option attempts assembly first, then tries to strip the primers, so the heavily overlapping case is not a concern.
 .TP
 \-B
 Allow input sequences to lack a barcode/tag. Normally, Illumina sequences have barcodes attached to the sequence. This allows the barcode to be missing. The tool

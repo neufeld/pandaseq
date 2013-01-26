@@ -99,6 +99,12 @@ score(
 	return log(1.0 - p);
 }
 
+static double
+score_err(
+	double p) {
+	return log(p);
+}
+
 int
 main(
 	int argc,
@@ -120,6 +126,7 @@ main(
 	buildmatrix(header, source, "qual_mismatch", mismatch);
 	buildlist(header, source, "qual_nmatch", nmatch);
 	buildlist(header, source, "qual_score", score);
+	buildlist(header, source, "qual_score_err", score_err);
 	fprintf(header, "#endif\n");
 
 	fclose(source);

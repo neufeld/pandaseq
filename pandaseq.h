@@ -759,6 +759,17 @@ void panda_assembler_set_reverse_trim(
 	size_t trim);
 
 /**
+ * Whether to strip the primers before or after assembly.
+ *
+ * Stripping before is faster, but means that there can be no primer sequence in the opposite read.
+ */
+bool panda_assembler_get_primers_after(
+	PandaAssembler assembler);
+void panda_assembler_set_primers_after(
+	PandaAssembler assembler,
+	bool after);
+
+/**
  * Log the number of sequences rejected by each module.
  */
 void panda_assembler_module_stats(
@@ -970,6 +981,42 @@ void panda_mux_set_fail_alignment(
 	/*@null@ */ PandaFailAlign handler,
 	void *handler_data,
 	PandaDestroy handler_destroy);
+
+/**
+ * Find the best offset of a small sequence in a large sequence.
+ * @param threshold the minimum log probability to match
+ * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
+ * @return 0 if the sequence is not found, or one more than the offset.
+ */
+size_t panda_compute_offset_qual(
+	double threshold,
+	bool reverse,
+	/*@notnull@ */ panda_qual *haystack,
+	size_t haystack_length,
+	/*@notnull@ */ panda_nt *needle,
+	size_t needle_length);
+
+/**
+ * Find the best offset of a small sequence in a large sequence.
+ * @param threshold the minimum log probability to match
+ * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
+ * @return 0 if the sequence is not found, or one more than the offset.
+ */
+size_t panda_compute_offset_result(
+	double threshold,
+	bool reverse,
+	/*@notnull@ */ panda_result *haystack,
+	size_t haystack_length,
+	/*@notnull@ */ panda_nt *needle,
+	size_t needle_length);
+
+/**
+ * Compute 1 - exp(p) efficiently.
+ *
+ * See [[http://cran.r-project.org/web/packages/Rmpfr/vignettes/log1mexp-note.pdf|Mächler, 2012]].
+ */
+double panda_log1mexp(
+	double p);
 
 /*
  * Convenience macro is for Vala

@@ -59,38 +59,40 @@ typedef struct {
 #define WEDGEZ(x) ((x) > 0 ? 0 : (x))
 #define CIRC(index, len) (((index) + (len)) % (len))
 #define PHREDCLAMP(x) ((x) > PHREDMAX ? PHREDMAX : ((x) < 0 ? 0 : (x)))
-static double
-qualscore(
-	panda_nt nt1,
-	char qual1,
-	panda_nt nt2,
-	char qual2) {
-	if (PANDA_NT_IS_N(nt1)) {
-		if (PANDA_NT_IS_N(nt2)) {
-			return qual_nn;
-		}
-		return qual_nmatch[PHREDCLAMP(qual2)];
-	}
-	if (PANDA_NT_IS_N(nt2)) {
-		return qual_nmatch[PHREDCLAMP(qual1)];
-	}
-	return (nt1 == nt2 ? qual_match : qual_mismatch)[PHREDCLAMP(qual1)][PHREDCLAMP(qual2)];
+
+#ifndef M_LN2
+#        define M_LN2 0.69314718055994530942
+#endif
+
+/* Compute 1-exp(p) See <http://cran.r-project.org/web/packages/Rmpfr/vignettes/log1mexp-note.pdf> */
+double
+panda_log1mexp(
+	double p) {
+	return (p > M_LN2) ? log1p(-exp(-p)) : log(-expm1(-p));
 }
 
-/* Find the offset of a primer in a sequence and return the offset (i.e., the start of the useful sequence. */
+typedef void (
+	*base_score) (
+	void *data,
+	panda_nt *base,
+	double *prob,
+	double *notprob);
+
 static size_t
 computeoffset(
-	PandaAssembler assembler,
-	panda_qual *seq,
+	double threshold,
+	bool reverse,
+	unsigned char *seq,
 	size_t seq_length,
+	size_t size,
+	base_score score,
 	panda_nt *primer,
 	size_t primerlen) {
 	/* Circular buffer of probabilities of primer alignment indexed by the offset. */
 	double probabilities[primerlen];
-	double bestpr = primerlen * assembler->threshold;
+	double bestpr = primerlen * threshold;
 	size_t bestindex = 0;
 	size_t index;
-
 	if (primerlen > seq_length) {
 		return 0;
 	}
@@ -102,16 +104,67 @@ computeoffset(
 	for (index = 0; index < seq_length; index++) {
 		ssize_t x;
 		/* The last bucket in the buffer holds the probability of a complete alignment. If it so better than we have seen previously, store it. */
-		if (probabilities[CIRC(index, primerlen)] < bestpr) {
+		if (probabilities[CIRC(index, primerlen)] > bestpr) {
 			bestpr = probabilities[CIRC(index, primerlen)];
 			bestindex = index + 1;
 		}
 		probabilities[CIRC(index, primerlen)] = 0;
 		for (x = (ssize_t) (primerlen > index ? index : primerlen - 1); x >= 0; x--) {
-			probabilities[CIRC(index - x, primerlen)] += qualscore(seq[index].nt, seq[index].qual, primer[x], (char) PHREDMAX);
+			if (!PANDA_NT_IS_N(primer[x])) {
+				panda_nt nt;
+				double p;
+				double notp;
+				score(&seq[size * (reverse ? (seq_length - index - 1) : index)], &nt, &p, &notp);
+				probabilities[CIRC(index - x, primerlen)] += ((nt & primer[x]) != 0) ? p : notp;
+			}
 		}
 	}
 	return bestindex;
+}
+
+void
+qual_base_score(
+	void *data,
+	panda_nt *base,
+	double *prob,
+	double *notprob) {
+	int phred = PHREDCLAMP(((panda_qual *) data)->qual);
+	*base = ((panda_qual *) data)->nt;
+	*prob = qual_score[phred];
+	*notprob = qual_score_err[phred];
+}
+
+size_t
+panda_compute_offset_qual(
+	double threshold,
+	bool reverse,
+	panda_qual *haystack,
+	size_t haystack_length,
+	panda_nt *needle,
+	size_t needle_length) {
+	return computeoffset(threshold, reverse, (unsigned char *) haystack, haystack_length, sizeof(panda_qual), qual_base_score, needle, needle_length);
+}
+
+void
+result_base_score(
+	void *data,
+	panda_nt *base,
+	double *prob,
+	double *notprob) {
+	*base = ((panda_result *) data)->nt;
+	*prob = ((panda_result *) data)->p;
+	*notprob = panda_log1mexp(*prob);
+}
+
+size_t
+panda_compute_offset_result(
+	double threshold,
+	bool reverse,
+	panda_result *haystack,
+	size_t haystack_length,
+	panda_nt *needle,
+	size_t needle_length) {
+	return computeoffset(threshold, reverse, (unsigned char *) haystack, haystack_length, sizeof(panda_result), result_base_score, needle, needle_length);
 }
 
 /* Try to align forward and reverse reads and return the quality of the aligned sequence and the sequence itself. */
@@ -329,27 +382,32 @@ assemble_seq(
 	if (!module_precheckseq(assembler, &assembler->result.name, assembler->result.forward, assembler->result.forward_length, assembler->result.reverse, assembler->result.reverse_length)) {
 		return false;
 	}
-	if (assembler->forward_primer_length > 0) {
-		assembler->result.forward_offset = computeoffset(assembler, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
-		if (assembler->result.forward_offset == 0) {
-			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
-			assembler->nofpcount++;
-			return false;
+	if (!assembler->post_primers) {
+		if (assembler->forward_primer_length > 0) {
+			assembler->result.forward_offset = panda_compute_offset_qual(assembler->threshold, false, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
+			if (assembler->result.forward_offset == 0) {
+				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
+				assembler->nofpcount++;
+				return false;
+			}
+			assembler->result.forward_offset--;
+		} else {
+			assembler->result.forward_offset = assembler->forward_trim;
 		}
-		assembler->result.forward_offset--;
-	} else {
-		assembler->result.forward_offset = assembler->forward_trim;
-	}
-	if (assembler->reverse_primer_length > 0) {
-		assembler->result.reverse_offset = computeoffset(assembler, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
-		if (assembler->result.reverse_offset == 0) {
-			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
-			assembler->norpcount++;
-			return false;
+		if (assembler->reverse_primer_length > 0) {
+			assembler->result.reverse_offset = panda_compute_offset_qual(assembler->threshold, false, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
+			if (assembler->result.reverse_offset == 0) {
+				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
+				assembler->norpcount++;
+				return false;
+			}
+			assembler->result.reverse_offset--;
+		} else {
+			assembler->result.reverse_offset = assembler->reverse_trim;
 		}
-		assembler->result.reverse_offset--;
 	} else {
-		assembler->result.reverse_offset = assembler->reverse_trim;
+		assembler->result.forward_offset = 0;
+		assembler->result.reverse_offset = 0;
 	}
 	if (!align(assembler, &assembler->result)) {
 		if (assembler->noalgn != NULL) {
@@ -357,6 +415,35 @@ assemble_seq(
 		}
 		assembler->noalgncount++;
 		return false;
+	}
+	if (assembler->post_primers) {
+		size_t it;
+		if (assembler->forward_primer_length > 0) {
+			assembler->result.forward_offset = panda_compute_offset_result(assembler->threshold, false, assembler->result.sequence, assembler->result.sequence_length, assembler->forward_primer, assembler->forward_primer_length);
+			if (assembler->result.forward_offset == 0) {
+				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
+				assembler->nofpcount++;
+				return false;
+			}
+			assembler->result.forward_offset--;
+		} else {
+			assembler->result.forward_offset = assembler->forward_trim;
+		}
+		if (assembler->reverse_primer_length > 0) {
+			assembler->result.reverse_offset = panda_compute_offset_result(assembler->threshold, true, assembler->result.sequence, assembler->result.sequence_length, assembler->reverse_primer, assembler->reverse_primer_length);
+			if (assembler->result.reverse_offset == 0) {
+				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
+				assembler->norpcount++;
+				return false;
+			}
+			assembler->result.reverse_offset--;
+		} else {
+			assembler->result.reverse_offset = assembler->reverse_trim;
+		}
+		assembler->result.sequence_length -= assembler->result.forward_offset + assembler->result.reverse_offset;
+		for (it = 0; it < assembler->result.sequence_length; it++) {
+			assembler->result.sequence[it] = assembler->result.sequence[it + assembler->result.forward_offset];
+		}
 	}
 	if (assembler->result.quality < assembler->threshold) {
 		assembler->lowqcount++;

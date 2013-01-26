@@ -352,6 +352,18 @@ namespace Panda {
 		}
 
 		/**
+		 * Whether to strip the primers before or after assembly.
+		 *
+		 * Stripping before is faster, but means that there can be no primer sequence in the opposite read.
+		 */
+		public bool primers_after {
+			[CCode(cname = "panda_assembler_get_primers_after")]
+			get;
+			[CCode(cname = "panda_assembler_set_primers_after")]
+			set;
+		}
+
+		/**
 		 * The reverse primer sequence to be stripped
 		 *
 		 * This is mutually exclusive with {@link reverse_trim}
@@ -741,6 +753,14 @@ file);
 		 */
 		char qual;
 		/**
+		 * Find the best offset of a small sequence in a large sequence.
+		 * @param threshold the minimum log probability to match
+		 * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
+		 * @return 0 if the sequence is not found, or one more than the offset.
+		 */
+		[CCode(cname = "panda_compute_offset_qual")]
+		public static size_t compute_offset(double threshold, bool reverse, [CCode(array_length_type = "size_t")] qual[] haystack, [CCode(array_length_type = "size_t")] Nt[] needle);
+		/**
 		 * Convert the PHRED quality score to a log probability.
 		 */
 		public double log_probability {
@@ -769,6 +789,14 @@ file);
 		 * The quality score as a log probability
 		 */
 		double p;
+		/**
+		 * Find the best offset of a small sequence in a large sequence.
+		 * @param threshold the minimum log probability to match
+		 * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
+		 * @return 0 if the sequence is not found, or one more than the offset.
+		 */
+		[CCode(cname = "panda_compute_offset_result")]
+		public static size_t compute_offset(double threshold, bool reverse, [CCode(array_length_type = "size_t")] result[] haystack, [CCode(array_length_type = "size_t")] Nt[] needle);
 	}
 
 	/**
@@ -971,6 +999,14 @@ file);
 	 */
 	[CCode(cname = "PANDA_FAIL")]
 	public FailAlign? create_fail_writer(string file, bool append);
+
+	/**
+	 * Compute 1 - exp(p) efficiently.
+	 *
+	 * See [[http://cran.r-project.org/web/packages/Rmpfr/vignettes/log1mexp-note.pdf|Mächler, 2012]].
+	 */
+	[CCode(cname = "panda_log1mexp")]
+	public double log1mexp(double p);
 
 	/**
 	 * Open a pair of gzipped (or uncompressed files).
