@@ -654,7 +654,7 @@ namespace Panda {
 		public Assembler create_assembler();
 		/**
 		 * Create a new assembler using the multiplexer as it sequence source with a custom //k//-mer table size.
-		 * @see Assembler.kmer
+		 * @see Assembler.Assembler.kmer
 		 */
 		[CCode(cname = "panda_mux_create_assembler_kmer")]
 		public Assembler create_assembler_kmer(size_t num_kmers);
