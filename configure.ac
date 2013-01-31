@@ -1,4 +1,4 @@
-AC_INIT([pandaseq], [2.3], [andre@masella.name])
+AC_INIT([pandaseq], [2.4], [andre@masella.name])
 AC_PREREQ([2.60])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_MACRO_DIR([m4])

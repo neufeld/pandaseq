@@ -1,3 +1,14 @@
+pandaseq (2.4~ppa0) lucid; urgency=low
+
+  * Allow stripping primers after assembly
+  * Round more in generously in FASTQ output
+  * Fix bug causing incorrect selection of bases based on quality score
+  * Avoid spurious warning about PHRED scores
+  * Added a feature to dump unaligned sequences
+  * Added a command-line sequence ID checker
+
+ -- Andre Masella <andre@masella.name>  Wed, 30 Jan 2013 19:17:02 -0800
+
 pandaseq (2.3~ppa1) precise; urgency=low
 
   * Fixed packaging problem causing libpandaseq[01] to collide
