@@ -159,6 +159,9 @@ The number of sequences where there exists no overlap with a probability above t
 BADR
 The number of sequences where the reads are unsatisfactory (likely too short to assemble).
 .TP
+SLOW
+The number of sequences where the fast hashing algorithm could not figure out the optimal overlap, and so every possible overlap had to be considered. Nothing is necessarily wrong with these sequences, but very repetitive patterns can cause PANDAseq to spend more time investigating overlaps that are likely wrong, resulting the processing time of the file to be quite long if there are many sequences in this category. Try increasing the size of the \fIk\fR-mer table, using the \fB-k\fR switch; this will cause PANDAseq to use more memory, but it may be faster.
+.TP
 NOFP
 The number of sequences where the forward primer could not be aligned. This is only done when \fB-p\fR is supplied and a nucleotide sequence.
 .TP

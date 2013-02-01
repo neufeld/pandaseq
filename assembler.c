@@ -226,6 +226,7 @@ align(
 
 	ALL_BITS_IF_NONE(posn);
 
+	result->overlaps_examined = 0;
 	/* Compute the quality of the overlapping region for the various overlaps and pick the best one. */
 	FOR_BITS_IN_LIST(posn, counter) {
 		size_t matches = 0;
@@ -255,6 +256,11 @@ align(
 			bestprobability = probability;
 			bestoverlap = overlap;
 		}
+		result->overlaps_examined++;
+	}
+
+	if (result->overlaps_examined == maxoverlap - assembler->minoverlap + 1) {
+		assembler->slowcount++;
 	}
 
 	LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_BEST_OVERLAP, "%d", (int) bestoverlap);

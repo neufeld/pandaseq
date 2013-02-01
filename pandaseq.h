@@ -321,6 +321,10 @@ typedef struct {
 	 * The number of mismatches in the overlap region.
 	 */
 	size_t overlap_mismatches;
+	/**
+	 * The number of overlaps that were examined to determine the one finally used.
+	 */
+	size_t overlaps_examined;
 } panda_result_seq;
 
 /**
@@ -689,6 +693,12 @@ long panda_assembler_get_low_quality_count(
  * The number of sequences rejected because the reads are unsatisfactory in some way.
  */
 long panda_assembler_get_bad_read_count(
+	/*@notnull@ */ PandaAssembler assembler);
+/**
+ * The numer of sequences where all possible overlaps had to be examined, instead of a quick hashing.
+ */
+long
+panda_assembler_get_slow_count(
 	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences rejected because they contain degenerate (N) bases.

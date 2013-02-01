@@ -70,6 +70,7 @@ struct panda_assembler {
 	long degencount;
 	long noalgncount;
 	long badreadcount;
+	long slowcount;
 	long count;
 	bool no_n;
 	bool post_primers;

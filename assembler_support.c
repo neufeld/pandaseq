@@ -81,6 +81,7 @@ panda_assembler_new_kmer(
 	assembler->degencount = 0;
 	assembler->noalgncount = 0;
 	assembler->badreadcount = 0;
+	assembler->slowcount = 0;
 	assembler->count = 0;
 	assembler->no_n = false;
 	assembler->post_primers = false;
@@ -206,6 +207,12 @@ long
 panda_assembler_get_bad_read_count(
 	PandaAssembler assembler) {
 	return assembler->badreadcount;
+}
+
+long
+panda_assembler_get_slow_count(
+	PandaAssembler assembler) {
+	return assembler->slowcount;
 }
 
 long

@@ -96,7 +96,7 @@ do_assembly(
 		fprintf(stderr, "STAT\tNOFP\t%ld\n", panda_assembler_get_no_forward_primer_count(assembler));
 	if (reverse_primer != NULL)
 		fprintf(stderr, "STAT\tNORP\t%ld\n", panda_assembler_get_no_reverse_primer_count(assembler));
-	fprintf(stderr, "STAT\tNOALGN\t%ld\nSTAT\tLOWQ\t%ld\nSTAT\tBADR\t%ld\n", panda_assembler_get_failed_alignment_count(assembler), panda_assembler_get_low_quality_count(assembler), panda_assembler_get_bad_read_count(assembler));
+	fprintf(stderr, "STAT\tNOALGN\t%ld\nSTAT\tLOWQ\t%ld\nSTAT\tBADR\t%ld\nSTAT\tSLOW\t%ld\n", panda_assembler_get_failed_alignment_count(assembler), panda_assembler_get_low_quality_count(assembler), panda_assembler_get_bad_read_count(assembler), panda_assembler_get_slow_count(assembler));
 	if (no_n)
 		fprintf(stderr, "STAT\tDEGENERATE\t%ld\n", panda_assembler_get_degenerate_count(assembler));
 	if (minlen > 0)

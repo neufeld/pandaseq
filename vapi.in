@@ -388,6 +388,13 @@ namespace Panda {
 		}
 
 		/**
+		 * The numer of sequences where all possible overlaps had to be examined, instead of a quick hashing.
+		 */
+		public long slow_count {
+			[CCode(cname = "panda_assembler_get_slow_count")]
+			get;
+		}
+		/**
 		* The minimum quality threshold to have an assembly accepted. Must be between 0 and 1, exclusive.
 		*/
 		public double threshold {
@@ -855,6 +862,11 @@ file);
 		size_t overlap_mismatches;
 
 		/**
+		 * The number of overlaps that were examined to determine the one finally used.
+		 */
+		size_t overlaps_examined;
+
+		/**
 		 * Write an assembly to a FASTA file.
 		 */
 		[CCode(cname = "panda_output_fasta")]
@@ -879,7 +891,7 @@ file);
 	}
 
 	/**
-	 * The default number of locations in the k-mer look up table.
+	 * The default number of locations in the //k//-mer look up table.
 	 *
 	 * When attempting to align the sequences, the {@link Assembler} will store the location of every //k//-mer in a table. If the same //k//-mer is present multiple times, only the first ones will be store until the table is full. If the sequences are highly repetitive, lost positions can prevent good alignments.
 	 */
