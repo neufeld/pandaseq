@@ -374,6 +374,8 @@ align(
 	}
 	result->quality = (fquality + rquality + oquality) / len;
 
+	result->overlap = overlap;
+
 	return true;
 }
 
@@ -463,8 +465,13 @@ assemble_seq(
 	}
 	if (module_checkseq(assembler, &assembler->result)) {
 		assembler->okcount++;
+		assembler->overlapcount[assembler->result.overlap]++;
+		if (assembler->longest_overlap < assembler->result.overlap) {
+			assembler->longest_overlap = assembler->result.overlap;
+		}
 		return true;
 	}
+	return false;
 }
 
 const panda_result_seq *

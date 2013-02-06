@@ -85,6 +85,8 @@ panda_assembler_new_kmer(
 	assembler->count = 0;
 	assembler->no_n = false;
 	assembler->post_primers = false;
+	memset(assembler->overlapcount, 0, PANDA_MAX_LEN * sizeof(long));
+	assembler->longest_overlap = 0;
 	assembler->num_kmers = num_kmers;
 	assert(1 << (8 * sizeof(seqindex)) > PANDA_MAX_LEN);
 	assembler->kmerseen = malloc(KMERSEEN_SIZE(num_kmers));
@@ -400,4 +402,17 @@ panda_assembler_set_fail_alignment(
 	assembler->noalgn = handler;
 	assembler->noalgn_data = handler_data;
 	assembler->noalgn_destroy = handler_destroy;
+}
+
+long
+panda_assembler_get_overlap_count(
+	PandaAssembler assembler,
+	size_t length) {
+	return (length < PANDA_MAX_LEN) ? assembler->overlapcount[length] : -1;
+}
+
+size_t
+panda_assembler_get_longest_overlap(
+	PandaAssembler assembler) {
+	return assembler->longest_overlap;
 }

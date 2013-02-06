@@ -352,6 +352,14 @@ namespace Panda {
 		}
 
 		/**
+		 * The distribution of overlaps produced so far.
+		 */
+		public Overlaps overlaps {
+			[CCode(cname = "")]
+			get;
+		}
+
+		/**
 		 * Whether to strip the primers before or after assembly.
 		 *
 		 * Stripping before is faster, but means that there can be no primer sequence in the opposite read.
@@ -686,6 +694,23 @@ namespace Panda {
 		public void unref();
 	}
 
+	[CCode(cname = "struct panda_assembler", has_type_id = false, ref_func = "panda_assembler_ref", unref_func = "panda_assembler_unref")]
+	public class Overlaps {
+		/**
+		 * The longest overlap assembled so far.
+		 */
+		public size_t max {
+			[CCode(cname = "panda_assembler_get_longest_overlap")]
+			get;
+		}
+
+		/**
+		 * Report the number of sequences that have been assembled with the overlap specified.
+		 */
+		[CCode(cname = "panda_assembler_get_overlap_count")]
+		long get(size_t overlap);
+	}
+
 	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
@@ -855,6 +880,11 @@ file);
 		 * The number of nucleotides clipped from the reverse sequence
 		 */
 		public size_t reverse_offset;
+
+		/**
+		 * The overlap chosen.
+		 */
+		public size_t overlap;
 
 		/**
 		 * The number of mismatches in the overlap region.

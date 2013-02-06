@@ -56,7 +56,9 @@ static void *
 do_assembly(
 	PandaAssembler assembler) {
 	long count;
+	size_t it;
 	long longcount = 0;
+	size_t max;
 	const panda_result_seq *result;
 	long shortcount = 0;
 
@@ -105,6 +107,13 @@ do_assembly(
 		fprintf(stderr, "STAT\tLONG\t%ld\n", longcount);
 	panda_assembler_module_stats(assembler);
 	fprintf(stderr, "STAT\tOK\t%ld\n", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
+
+	fprintf(stderr, "STAT\tOVERLAPS\t%ld", panda_assembler_get_overlap_count(assembler, it));
+	max = panda_assembler_get_longest_overlap(assembler);
+	for (it = 1; it < max; it++) {
+		fprintf(stderr, " %ld", panda_assembler_get_overlap_count(assembler, it));
+	}
+	fprintf(stderr, "\n");
 #ifdef HAVE_PTHREAD
 	pthread_mutex_unlock(&output_mutex);
 #endif

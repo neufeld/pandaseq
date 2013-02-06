@@ -325,6 +325,10 @@ typedef struct {
 	 * The number of overlaps that were examined to determine the one finally used.
 	 */
 	size_t overlaps_examined;
+	/**
+	 * The overlap chosen.
+	 */
+	size_t overlap;
 } panda_result_seq;
 
 /**
@@ -698,7 +702,7 @@ long panda_assembler_get_bad_read_count(
  * The numer of sequences where all possible overlaps had to be examined, instead of a quick hashing.
  */
 long
-panda_assembler_get_slow_count(
+ panda_assembler_get_slow_count(
 	/*@notnull@ */ PandaAssembler assembler);
 /**
  * The number of sequences rejected because they contain degenerate (N) bases.
@@ -859,6 +863,19 @@ void panda_assembler_set_fail_alignment(
 	/*@null@ */ PandaFailAlign handler,
 	void *handler_data,
 	PandaDestroy handler_destroy);
+
+/**
+ * Report the number of sequences that have been assembled with the overlap specified.
+ */
+long panda_assembler_get_overlap_count(
+	PandaAssembler assembler,
+	size_t overlap);
+
+/**
+ * Report the longest overlap assembled so far.
+ */
+size_t panda_assembler_get_longest_overlap(
+	PandaAssembler assembler);
 
 /**
  * Write an assembly to a FASTA file.

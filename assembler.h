@@ -79,6 +79,8 @@ struct panda_assembler {
 #        endif
 	panda_nt forward_primer[PANDA_MAX_LEN];
 	panda_nt reverse_primer[PANDA_MAX_LEN];
+	long overlapcount[PANDA_MAX_LEN];
+	size_t longest_overlap;
 };
 
 #endif
