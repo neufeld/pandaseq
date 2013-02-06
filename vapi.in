@@ -791,11 +791,11 @@ file);
 		/**
 		 * The nucleotide
 		 */
-		Nt nt;
+		public Nt nt;
 		/**
 		 * The quality score as a log probability
 		 */
-		double p;
+		public double p;
 		/**
 		 * Find the best offset of a small sequence in a large sequence.
 		 * @param threshold the minimum log probability to match
@@ -814,57 +814,57 @@ file);
 		/**
 		 * Number of uncalled bases in the sequence.
 		 */
-		size_t degenerates;
+		public size_t degenerates;
 
 		/**
 		 * The original forward sequence
 		 */
 		[CCode(array_length_cname = "forward_length")]
-		qual[] forward;
+		public qual[] forward;
 
 		/**
 		 * The number of nucleotides clipped from the forward sequence
 		 */
-		size_t forward_offset;
+		public size_t forward_offset;
 
 		/**
 		 * The sequence identification information
 		 */
-		identifier name;
+		public identifier name;
 
 		/**
 		 * Calculated quality score as the geometric mean of the product of the Illumina quality scores of the included bases.
 		 *
 		 * It will always be between 0 and 1.
 		 */
-		double quality;
+		public double quality;
 
 		/**
 		 * The reconstructed sequence with quality information
 		 */
 		[CCode(array_length_cname = "sequence_length")]
-		result[] sequence;
+		public result[] sequence;
 
 		/**
 		 * The original reverse sequence
 		 */
 		[CCode(array_length_cname = "reverse_length")]
-		qual[] reverse;
+		public qual[] reverse;
 
 		/**
 		 * The number of nucleotides clipped from the reverse sequence
 		 */
-		size_t reverse_offset;
+		public size_t reverse_offset;
 
 		/**
 		 * The number of mismatches in the overlap region.
 		 */
-		size_t overlap_mismatches;
+		public size_t overlap_mismatches;
 
 		/**
 		 * The number of overlaps that were examined to determine the one finally used.
 		 */
-		size_t overlaps_examined;
+		public size_t overlaps_examined;
 
 		/**
 		 * Write an assembly to a FASTA file.
