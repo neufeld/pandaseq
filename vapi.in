@@ -708,7 +708,7 @@ namespace Panda {
 		 * Report the number of sequences that have been assembled with the overlap specified.
 		 */
 		[CCode(cname = "panda_assembler_get_overlap_count")]
-		long get(size_t overlap);
+		public long get(size_t overlap);
 	}
 
 	/**
