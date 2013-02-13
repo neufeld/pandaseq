@@ -448,6 +448,11 @@ assemble_seq(
 		} else {
 			assembler->result.reverse_offset = assembler->reverse_trim;
 		}
+		if (assembler->result.sequence_length <= assembler->result.forward_offset + assembler->result.reverse_offset) {
+			LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
+			assembler->nofpcount++;
+			return false;
+		}
 		assembler->result.sequence_length -= assembler->result.forward_offset + assembler->result.reverse_offset;
 		for (it = 0; it < assembler->result.sequence_length; it++) {
 			assembler->result.sequence[it] = assembler->result.sequence[it + assembler->result.forward_offset];
