@@ -273,6 +273,7 @@ int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	char *input,
 	PandaTagging policy,
+	bool * old,
 	char **end_ptr);
 
 /**

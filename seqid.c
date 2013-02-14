@@ -79,7 +79,8 @@ panda_seqid_parse(
 	char *input,
 	PandaTagging policy) {
 	char *endptr;
-	return panda_seqid_parse_fail(id, input, policy, &endptr);
+	bool old;
+	return panda_seqid_parse_fail(id, input, policy, &old, &endptr);
 }
 
 int
@@ -87,6 +88,7 @@ panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	char *input,
 	PandaTagging policy,
+	bool * old,
 	char **endptr) {
 	char *dest;
 	bool has_tag;
@@ -99,6 +101,7 @@ panda_seqid_parse_fail(
 	*endptr = input;
 	if (strchr(input, '#') != NULL) {
 		/* Old CASAVA 1.4-1.6 format */
+		*old = true;
 		id->run = 0;
 		id->flowcell[0] = '\0';
 		dest = id->instrument;
@@ -138,6 +141,7 @@ panda_seqid_parse_fail(
 		(*endptr)++;
 		return value;
 	} else {
+		*old = false;
 		/* New CASAVA 1.7+ format */
 		int mate;
 		dest = id->instrument;

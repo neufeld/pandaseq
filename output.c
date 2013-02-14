@@ -42,7 +42,7 @@ panda_logger_file(
 	}
 	fputc('\n', file);
 	if (code == PANDA_CODE_ID_PARSE_FAILURE) {
-		fprintf(file, "* * * * * Something is wrong with this ID. If tags are absent, try passing the -B option.\n* * * * * Consult pandaseq-checkid.\n");
+		fprintf(file, "* * * * * Something is wrong with this ID. If tags are absent, try passing the -B option.\n* * * * * Consult `pandaseq-checkid \"%s\"` to get an idea of the problem..\n", message);
 	} else if (code == PANDA_CODE_PHRED_OFFSET) {
 		fprintf(file, "* * * * * Using the default PHRED+33 offset, but no sequences had quality data under PHRED+64.\n* * * * * This is probably not what you want. Consult the manual about the -6 option.\n");
 	}
