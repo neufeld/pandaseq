@@ -18,15 +18,21 @@
 
 #ifndef _PANDASEQ_H
 #        define _PANDASEQ_H
+#        ifdef __cplusplus
+#                define EXTERN_C_BEGIN  extern "C" {
+#                define EXTERN_C_END    }
+#        else
+#                define EXTERN_C_BEGIN
+#                define EXTERN_C_END
+#        endif
 #        include <stdarg.h>
 #        include <stdio.h>
 #        include <stdbool.h>
-
+EXTERN_C_BEGIN
 /**
  * Maximum length of a sequence
  */
 #        define PANDA_MAX_LEN 255
-
 typedef void (
 	*PandaPrintf) (
 	void *data,
@@ -79,7 +85,7 @@ typedef enum {
 	PANDA_CODE_PHRED_OFFSET,
 } PandaCode;
 
-const char const *panda_code_str(
+char const *const panda_code_str(
 	PandaCode code);
 
 /**
@@ -1065,4 +1071,5 @@ double panda_log1mexp(
 #                define HELP(desc, usage) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_desc) = desc; const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_usage) = usage
 #                define VER_INFO(version) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_version) = version
 #        endif
+EXTERN_C_END
 #endif

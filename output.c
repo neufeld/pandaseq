@@ -49,7 +49,7 @@ panda_logger_file(
 	return true;
 }
 
-const char const *
+const char *const
 panda_code_str(
 	PandaCode code) {
 	switch (code) {
