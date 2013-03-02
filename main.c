@@ -420,6 +420,7 @@ main(
 		fprintf(stderr, "\t-f\tInput FASTQ file containing forward reads.\n");
 		fprintf(stderr, "\t-F\tOutput FASTQ instead of FASTA.\n");
 		fprintf(stderr, "\t-j\tInput files are bzipped.\n");
+		fprintf(stderr, "\t-k kmers\tThe number of k-mers in the table.\n");
 		fprintf(stderr, "\t-L maxlen\tMaximum length for a sequence\n");
 		fprintf(stderr, "\t-l minlen\tMinimum length for a sequence\n");
 		fprintf(stderr, "\t-N\tEliminate all sequences with unknown nucleotides in the output.\n");
