@@ -230,6 +230,9 @@ Sequences from FASTQ files are not pairing correctly given their sequence names.
 ERR OOM
 An out of memory condition has occurred. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a bug.
 .TP
+INFO ARG[\fIn\fR]
+The \fIn\fRth command line argument that generated this output, for posterity.
+.TP
 INFO BESTOLP
 The best overlap parameter for a sequence.
 .TP
@@ -247,6 +250,9 @@ An overlap possibility, with probability, as been identified.
 .TP
 INFO RECR
 The proposed reconstruction parameters.
+.TP
+INFO VER
+The version of PANDAseq that generated this output, for posterity.
 .TP
 STAT
 Some statistical information about the assembly process.
