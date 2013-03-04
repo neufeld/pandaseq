@@ -29,6 +29,26 @@ or visiting http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_man1.html
 The short version is
 	pandaseq -f forward.fastq -r reverse.fastq
 
+REPORTING BUGS
+--------------
+
+Before filing a bug, consult: https://github.com/neufeld/pandaseq/wiki/Filing-Bugs
+
+Please run:
+
+	curl https://raw.github.com/neufeld/pandaseq/master/pandabug | sh
+
+or
+
+	wget -O- https://raw.github.com/neufeld/pandaseq/master/pandabug | sh
+
+to create a header with basic details about your system. Please include:
+
+1. The output of the above script.
+2. The exact error message. If this is a compilation error, do not truncate the output. If this is a problem when assembling, keep the INFO ARG lines, and the last few lines, but you may truncate the middle.
+3. If you have tried multiple different things, please list them all.
+4. Your sequencing data may be requested. This usually does not necessitate all the reads.
+
 BINDING
 -------
 

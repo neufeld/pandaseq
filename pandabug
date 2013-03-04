@@ -1,0 +1,9 @@
+#!/bin/sh
+
+uname -a
+test -x "$(which lsb_release)" && lsb_release -a
+test -x "$(which dpkg)" && dpkg -l '*pandaseq*'
+test -x "$(which rpm)" && rpm -q '*pandaseq*'
+test -d .git && git rev-parse HEAD
+which pandaseq
+test -x pandaseq && pandaseq -v
