@@ -39,6 +39,7 @@ ssize_t maxlen = 2 * PANDA_MAX_LEN + 1;
 size_t minlen = 0;
 bool no_n = false;
 char *reverse_primer = NULL;
+volatile bool some_seqs = false;
 time_t starttime;
 #ifdef HAVE_PTHREAD
 pthread_mutex_t output_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -93,6 +94,9 @@ do_assembly(
 	pthread_mutex_lock(&output_mutex);
 #endif
 	count = panda_assembler_get_count(assembler);
+	if (count > 0) {
+		some_seqs = true;
+	}
 	printtime(count, starttime);
 	if (forward_primer != NULL)
 		fprintf(stderr, "STAT\tNOFP\t%ld\n", panda_assembler_get_no_forward_primer_count(assembler));
@@ -559,5 +563,5 @@ main(
 		free(thread_list);
 	}
 #endif
-	return 0;
+	return some_seqs ? 0 : 1;
 }
