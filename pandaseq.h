@@ -279,7 +279,7 @@ int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,
-	bool * old,
+	bool *old,
 	const char **end_ptr);
 
 /**
@@ -346,14 +346,14 @@ typedef /*@refcounted@ */ struct panda_module *PandaModule;
 /**
  * Check a sequence after reconstruction for validity.
  */
-typedef bool(
+typedef bool (
 	*PandaCheck) (
 	const panda_result_seq *sequence,
 	void *user_data);
 /**
  * Check a sequence before reconstruction for validity.
  */
-typedef bool(
+typedef bool (
 	*PandaPreCheck) (
 	const panda_seq_identifier *id,
 	const panda_qual *forward,
@@ -375,7 +375,7 @@ typedef void (
  * If the function returns false, assembly will be halted.
  * @see PandaCode
  */
-typedef bool(
+typedef bool (
 	*PandaLogger) (
 	PandaCode code,
 	panda_seq_identifier *id,
@@ -511,7 +511,7 @@ typedef int (
  * @param reverse the location of the parsed sequence data of the reverse read. This memory is not managed by the assembler.
  * @param reverse_length the number of nucleotides in the reverse read
  */
-typedef bool(
+typedef bool (
 	*PandaNextSeq) (
 	/*@notnull@@out@ */ panda_seq_identifier *id,
 	/*@notnull@@out@ */ panda_qual **forward,
@@ -804,7 +804,7 @@ void panda_assembler_module_stats(
  * @param data some user context data provided
  * @return true to continue iterating, false to stop
  */
-typedef bool(
+typedef bool (
 	*PandaModuleCallback) (
 	PandaAssembler assembler,
 	PandaModule module,

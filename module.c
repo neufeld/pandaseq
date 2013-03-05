@@ -39,7 +39,7 @@ static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
 struct panda_module {
 	volatile size_t refcnt;
 
-	 bool(
+	bool (
 		*init) (
 		char *args);
 	PandaCheck check;

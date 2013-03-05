@@ -37,7 +37,7 @@ panda_open_gz(
 	gzFile *forward_file;
 	gzFile *reverse_file;
 	*user_data = NULL;
-  *destroy = NULL;
+	*destroy = NULL;
 
 	forward_file = gzopen(forward, "r");
 	if (forward_file == NULL) {
@@ -108,7 +108,8 @@ bzgetc(
 	return c;
 }
 
-PandaNextSeq panda_open_bz2(
+PandaNextSeq
+panda_open_bz2(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,
