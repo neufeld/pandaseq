@@ -291,6 +291,11 @@ Modules can be compiled using
 .SH INCLUDED MODULES
 There are some included modules:
 .TP
+after:\fIidentifer\fR
+Assemble only the sequences after (and including) the sequence specified. This is done in file order.
+.TP
+before:\fIidentifer\fR
+Assemble only the sequences before (and excluding) the sequence specified. This is done in file order.
 .TP
 completely_miss_the_point
 This can be used to only include sequences with perfect overlap regions. You shouldn't want to do it. The whole point is to fix sequences which are probably good. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.

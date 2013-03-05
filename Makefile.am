@@ -52,15 +52,23 @@ libpandaseq_la_SOURCES = \
 	$(NULL)
 pkglibxdir = $(pkglibdir)$(LIB_MAJOR)
 pkglibx_LTLIBRARIES = \
+	after.la \
+	before.la \
 	completely_miss_the_point.la \
 	validtag.la \
 	$(NULL)
-validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
-validtag_la_SOURCES = plugins/validtag.c panda_api.c
-validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+after_la_CFLAGS = -DPANDASEQ_MODULE=after -g
+after_la_SOURCES = plugins/after.c panda_api.c
+after_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+before_la_CFLAGS = -DPANDASEQ_MODULE=before -g
+before_la_SOURCES = plugins/before.c panda_api.c
+before_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point -g
 completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c panda_api.c
 completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
+validtag_la_SOURCES = plugins/validtag.c panda_api.c
+validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 BUILT_SOURCES = table.c table.h
 CLEANFILES = table.c table.h $(bin_SCRIPTS)
 
