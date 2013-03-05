@@ -253,6 +253,13 @@ bool panda_seqid_equal(
 	const panda_seq_identifier *two);
 
 /**
+ * Order two Illumina headers
+ */
+int panda_seqid_compare(
+	const panda_seq_identifier *one,
+	const panda_seq_identifier *two);
+
+/**
  * Reset a sequnce identifier.
  */
 void
@@ -1051,6 +1058,61 @@ size_t panda_compute_offset_result(
  */
 double panda_log1mexp(
 	double p);
+
+/**
+ * A set of sequence identifiers against which to match.
+ */
+typedef struct panda_idset PandaSet;
+
+/**
+ * Create a new, empty set.
+ */
+PandaSet *
+panda_idset_new(
+	void);
+/**
+ * Increase the reference count on a set.
+ *
+ * This is thread-safe.
+ */
+PandaSet *
+panda_idset_ref(
+	PandaSet * set);
+/**
+ * Decrease the reference count on a set.
+ *
+ * This is thread-safe.
+ */
+void
+panda_idset_unref(
+	PandaSet * set);
+
+/**
+ * Add a sequence identifier to a set.
+ */
+void
+panda_idset_add(
+	PandaSet * set,
+	const panda_seq_identifier *id);
+/**
+ * Parse a sequence identifier and add it to the set.
+ * @return true on success
+ * @see panda_seqid_parse_fail
+ */
+bool
+panda_idset_add_str(
+	PandaSet * set,
+	const char *id,
+	PandaTagging policy,
+	bool *old,
+	const char **end_ptr);
+/**
+ * Check if a sequence identifier has been added to the set.
+ */
+bool
+panda_idset_contains(
+	PandaSet * set,
+	const panda_seq_identifier *id);
 
 /*
  * Convenience macro is for Vala

@@ -300,6 +300,9 @@ Assemble only the sequences before (and excluding) the sequence specified. This 
 completely_miss_the_point
 This can be used to only include sequences with perfect overlap regions. You shouldn't want to do it. The whole point is to fix sequences which are probably good. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
 .TP
+filter:\fIfile\fR
+Output only the sequences who identifiers match those in the file specified, one per line. If the file is missing, sequences are read from standard input.
+.TP
 validtag:\fItag1\fR:\fItag2\fR:...
 This can be used to demultiplex sequences. It will only include sequences in the output with the tags specified.
 .SH SEE ALSO

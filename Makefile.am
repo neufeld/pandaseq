@@ -42,6 +42,7 @@ libpandaseq_la_SOURCES = \
 	buffer.c \
 	fastq.c \
 	fileio.c \
+	idset.c \
 	misc.c \
 	module.c \
 	mux.c \
@@ -55,6 +56,7 @@ pkglibx_LTLIBRARIES = \
 	after.la \
 	before.la \
 	completely_miss_the_point.la \
+	filter.la \
 	validtag.la \
 	$(NULL)
 after_la_CFLAGS = -DPANDASEQ_MODULE=after -g
@@ -66,6 +68,9 @@ before_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS
 completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point -g
 completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c panda_api.c
 completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+filter_la_CFLAGS = -DPANDASEQ_MODULE=filter -g
+filter_la_SOURCES = plugins/filter.c panda_api.c
+filter_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
 validtag_la_SOURCES = plugins/validtag.c panda_api.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)

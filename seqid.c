@@ -55,6 +55,28 @@ panda_seqid_equal(
 	return one->run == two->run && one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
 	;
 }
+int
+panda_seqid_compare(
+	const panda_seq_identifier *one,
+	const panda_seq_identifier *two) {
+	int result;
+	result = strcmp(one->instrument, two->instrument);
+	if (result == 0)
+		result = one->run - two->run;
+	if (result == 0)
+		result = strcmp(one->flowcell, two->flowcell);
+	if (result == 0)
+		result = one->lane - two->lane;
+	if (result == 0)
+		result = one->tile - two->tile;
+	if (result == 0)
+		result = one->x - two->x;
+	if (result == 0)
+		result = one->y - two->y;
+	if (result == 0)
+		result = strcmp(one->tag, two->tag);
+	return result;
+}
 
 #define PARSE_CHUNK_MAYBE for(;**endptr != '\0' && **endptr != ':' && **endptr != '#' && **endptr != '/' && **endptr != ' '; (*endptr)++)
 #define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
@@ -99,9 +121,10 @@ panda_seqid_parse_fail(
 		endptr = &temp;
 
 	*endptr = input;
-	if (strchr(input, '#') != NULL) {
+	if (strchr(input, '/') != NULL) {
 		/* Old CASAVA 1.4-1.6 format */
-		*old = true;
+		if (old != NULL)
+			*old = true;
 		id->run = 0;
 		id->flowcell[0] = '\0';
 		dest = id->instrument;
@@ -126,22 +149,25 @@ panda_seqid_parse_fail(
 		id->y = value;
 		dest = id->tag;
 		*dest = '\0';
-		PARSE_CHUNK_MAYBE {
-			if (dest >= &id->tag[PANDA_TAG_LEN])
-				return 0;
-			*dest++ = (**endptr);
-			*dest = '\0';
+		if (*(*endptr - 1) == '#') {
+			PARSE_CHUNK_MAYBE {
+				if (dest >= &id->tag[PANDA_TAG_LEN])
+					return 0;
+				*dest++ = (**endptr);
+				*dest = '\0';
+			}
+			(*endptr)++;
 		}
 		has_tag = id->tag[0] != '\0';
 		if (!has_tag && policy == PANDA_TAG_PRESENT || has_tag && policy == PANDA_TAG_ABSENT) {
 			return 0;
 		}
-		(*endptr)++;
 		PARSE_INT;
 		(*endptr)++;
 		return value;
 	} else {
-		*old = false;
+		if (old != NULL)
+			*old = false;
 		/* New CASAVA 1.7+ format */
 		int mate;
 		dest = id->instrument;

@@ -677,7 +677,7 @@ namespace Panda {
 		 * Increase the reference count on a multiplexer.
 		 */
 		[CCode(cname = "panda_mux_ref")]
-		public void @ref();
+		public unowned Mux @ref();
 		/**
 		 * Attached a callback for every sequence that fails to have an overlap.
 		 *
@@ -709,6 +709,54 @@ namespace Panda {
 		 */
 		[CCode(cname = "panda_assembler_get_overlap_count")]
 		public long get(size_t overlap);
+	}
+
+	/**
+	 * A set of sequence identifiers against which to match.
+	 */
+	[CCode(cname = "struct panda_idset", has_type_id = false, ref_func = "panda_idset_ref", unref_func = "panda_idset_unref")]
+	public class Set {
+
+		/**
+		 * Create a new, empty set.
+		 */
+		[CCode(cname = "panda_idset_new")]
+		public Set();
+
+		/**
+		 * Add a sequence identifier to a set.
+		 */
+		[CCode(cname = "panda_idset_add")]
+		public void add(identifier id);
+		/**
+		 * Parse a sequence identifier and add it to the set.
+		 * @return true on success
+		 * @see identifier.parse_fail
+		 */
+		[CCode(cname = "panda_idset_add_str")]
+		public bool add_str(string id, Tagging policy = Tagging.OPTIONAL, out bool old = null, out unowned string end = null);
+
+		/**
+		 * Check if a sequence identifier has been added to the set.
+		 */
+		[CCode(cname = "panda_idset_contains")]
+		public bool contains(identifier id);
+
+		/**
+		 * Increase the reference count on a set.
+		 *
+		 * This is thread-safe.
+		 */
+		[CCode(cname = "panda_idset_ref")]
+		public unowned Set @ref();
+
+		/**
+		 * Decrease the reference count on a set.
+		 *
+		 * This is thread-safe.
+		 */
+		[CCode(cname = "panda_idset_unref")]
+		public void unref();
 	}
 
 	/**
