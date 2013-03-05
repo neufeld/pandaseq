@@ -72,7 +72,7 @@ main(
 	}
 
 	for (it = 1; it < argc; it++) {
-		char *endptr;
+		const char *endptr;
 		int dir;
 		bool old;
 		panda_seqid_clear(&id);

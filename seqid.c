@@ -76,9 +76,9 @@ panda_seqid_clear(
 int
 panda_seqid_parse(
 	panda_seq_identifier *id,
-	char *input,
+	const char *input,
 	PandaTagging policy) {
-	char *endptr;
+	const char *endptr;
 	bool old;
 	return panda_seqid_parse_fail(id, input, policy, &old, &endptr);
 }
@@ -86,13 +86,13 @@ panda_seqid_parse(
 int
 panda_seqid_parse_fail(
 	panda_seq_identifier *id,
-	char *input,
+	const char *input,
 	PandaTagging policy,
 	bool * old,
-	char **endptr) {
+	const char **endptr) {
 	char *dest;
 	bool has_tag;
-	char *temp;
+	const char *temp;
 	int value;
 
 	if (endptr == NULL)

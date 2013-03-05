@@ -266,7 +266,7 @@ void
  */
 int panda_seqid_parse(
 	panda_seq_identifier *id,
-	char *input,
+	const char *input,
 	PandaTagging policy);
 
 /**
@@ -277,10 +277,10 @@ int panda_seqid_parse(
  */
 int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
-	char *input,
+	const char *input,
 	PandaTagging policy,
 	bool * old,
-	char **end_ptr);
+	const char **end_ptr);
 
 /**
  * A reconstructed sequence with meta information
