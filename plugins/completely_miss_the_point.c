@@ -4,8 +4,7 @@
 #include<stdlib.h>
 #include<pandaseq.h>
 
-HELP("Filter out sequences that have mismatches in the overlap region.",
-     "completely_miss_the_point:mismatches");
+HELP("Filter out sequences that have mismatches in the overlap region.", "completely_miss_the_point:mismatches");
 
 VER_INFO("1.0");
 
@@ -17,12 +16,11 @@ CHECK {
 
 INIT {
 	if (args == NULL || *args == '\0') {
-		fprintf(stderr,
-			"Please supply the maximum allowed mismatches.\n");
+		fprintf(stderr, "Please supply the maximum allowed mismatches.\n");
 		return false;
 	}
 	errno = 0;
-	mismatches = (size_t)strtol(args, NULL, 10);
+	mismatches = (size_t) strtol(args, NULL, 10);
 	if (errno != 0 || mismatches < 0 || mismatches > PANDA_MAX_LEN) {
 		fprintf(stderr, "Bad maximum allowed mismatches.\n");
 		return false;

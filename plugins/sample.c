@@ -18,7 +18,7 @@
  * Provide a description and usage information
  */
 
-HELP("This is a sample module that does nothing", "No configurable options.");
+HELP("This is a sample module that does nothing", "sample:args");
 
 /*
  * Provide version information
@@ -29,9 +29,9 @@ VER_INFO("1.0");
  * Arguments: resultseq* sequence
  *                       View pandaseq.h for more information about resultseq.
  * Return true if the sequence should be kept.
- * This function is required. */
-CHECK
-{
+ * At least one of this function or PRECHECK is required.
+ */
+CHECK {
 	fprintf(stderr, "INFO\tSAMPLE\tCHECK\n");
 	return true;
 }
@@ -44,9 +44,9 @@ CHECK
  *            char* reverse
  *                       The reverse sequence.
  * Return true if the reads should be assembled.
- * This function is optional. */
-PRECHECK
-{
+ * At least one of this function or CHECK is required.
+ */
+PRECHECK {
 	fprintf(stderr, "INFO\tSAMPLE\tPRECHECK\n");
 	return true;
 }
@@ -56,17 +56,17 @@ PRECHECK
  * (e.g., "-C /usr/lib/pandaseq/mynewmodule.so:foo=bar", then args = "foo=bar")
  * Arguments: char* args
  * Returns false if there is a failure to initialise.
- * This function is optional. */
-INIT
-{
+ * This function is optional.
+ */
+INIT {
 	fprintf(stderr, "INFO\tSAMPLE\tINIT\t%s\n", args);
 	return false;
 }
 
 /* Called once upon completion to perform any needed cleanup.
- * This function is optional. */
-CLEANUP
-{
+ * This function is optional.
+ */
+CLEANUP {
 	fprintf(stderr, "INFO\tSAMPLE\tDESTROY\n");
 	return;
 }

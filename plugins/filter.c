@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<pandaseq.h>
 
-HELP("Filters sequences based on the contents of a file", "A single file, with one sequence ID per line.");
+HELP("Filters sequences based on the contents of a file of ids, one sequence ID per line.", "filter[:file]");
 
 VER_INFO("1.0");
 
