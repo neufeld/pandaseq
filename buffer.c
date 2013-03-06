@@ -41,7 +41,7 @@ lib_init(
 #        undef BUFFER
 }
 
-__attribute__ (())
+__attribute__ ((destructor))
 void
 lib_destroy(
 	void) {
