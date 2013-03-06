@@ -399,7 +399,7 @@ typedef bool (
  * The user is responsible for managing the memory associated with user_data, but the cleanup function will always be called.
  */
 /*@notnull@*/ PandaModule panda_module_new(
-	/*@notnull@ */ char *name,
+	/*@notnull@ */ const char *name,
 	/*@null@ */ PandaCheck check,
 	/*@null@ */ PandaPreCheck precheck,
 	/*@null@ */ void *user_data,
@@ -410,7 +410,7 @@ typedef bool (
  * @param path the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
  */
 /*@null@*/ PandaModule panda_module_load(
-	/*@notnull@ */ char *path);
+	/*@notnull@ */ const char *path);
 
 /**
  * Increase the reference count on a module.

@@ -187,7 +187,7 @@ static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0'};
 
 PandaModule
 panda_module_load(
-	char *path) {
+	const char *path) {
 	PandaModule m;
 	lt_dlhandle handle;
 	PandaCheck check;
@@ -261,7 +261,7 @@ panda_module_load(
 
 PandaModule
 panda_module_new(
-	char *name,
+	const char *name,
 	PandaCheck check,
 	PandaPreCheck precheck,
 	void *user_data,
