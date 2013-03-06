@@ -211,9 +211,6 @@ panda_module_load(
 	if (handle == NULL) {
 		fprintf(stderr, "Could not open module %s: %s\n", name, lt_dlerror());
 		free(name);
-#ifdef HAVE_PTHREAD
-		pthread_mutex_unlock(&ref_lock);
-#endif
 		unref_ltdl();
 		return NULL;
 	}
