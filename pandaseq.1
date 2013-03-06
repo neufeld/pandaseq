@@ -55,15 +55,15 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .I unpaired.fasta
 ]
 .SH DESCRIPTION
-PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The assembler reads two files in FASTQ format with quality information. If amplification primers were used (e.g., to isolate a variable region of the 16S gene, or the constant regions around zinc finger binding residues), they can be removed from the sequence. The final sequence will correct any uncalled bases in the overlapping region using the complementary strand. When mismatches occur in the overlapping region, the base with the better quality score is chosen.
+PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The assembler reads two files in FASTQ format with quality information. If amplification primers were used (e.g., to isolate a variable region of the 16S gene, or the constant regions around zinc finger binding residues), they can be removed from the sequence during assembly. The final sequence will correct any uncalled bases in the overlapping region using the complementary strand. When mismatches occur in the overlapping region, the base with the better quality score is chosen.
 
 The algorithm is as follows:
 .IP 1.
-Find the positions of the forward and reverse primers over threshold.
+Find the positions where the forward and reverse primers match best above the threshold and discard the ends of the sequence, including the primer.
 .IP 2.
 Pick and overlap to maximise the probability of the forward and reverse reads having come from a single piece of DNA.
 .IP 3.
-Identify the masking of the end of the read with the quality score \fBB\fR.
+Identify the masking of the end of the read with the quality score \fBB\fR or \fB#\fR as done by CASAVA and adjust the probabilities in this region.
 .IP 4.
 Construct an assembled sequence between the primers and calculate the quality.
 .IP 5.
@@ -74,7 +74,7 @@ Check for various constraints, including quality, length, uncalled bases, and us
 Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
 .TP
 \-a
-Strip the primers after assembly, rather than before. Stripping the primers first saves time, but if the overlap region is very large compared to the read, the read may have sequence from the other primer (i.e., the forward read ends with reverse primer, and/or the reverse read ends with forward primer). If the primers are stripped first, the reads will fail to assemble. This option attempts assembly first, then tries to strip the primers, so the heavily overlapping case is not a concern.
+Strip the primers after assembly, rather than before. Stripping the primers first saves time, but if the overlap region is very large compared to the read, the read may have sequence from the other primer (i.e., the forward read ends with reverse primer, and/or the reverse read ends with forward primer). If the primers are stripped first, the reads will fail to assemble. This option attempts assembly first, then tries to strip the primers, so the heavily overlapping case will assemble. You should only need this if the region of interest is smaller than the whole read. It is undesirable, unless necessary, as it slows assembly down.
 .TP
 \-B
 Allow input sequences to lack a barcode/tag. Normally, Illumina sequences have barcodes attached to the sequence. This allows the barcode to be missing. The tool
@@ -82,10 +82,10 @@ Allow input sequences to lack a barcode/tag. Normally, Illumina sequences have b
 will determine if an Illumina identifier is undestood by PANDAseq and if the tag is included.
 .TP
 \-C module
-Loads an optional validation module to verify sequences are valid before emitting them. See below for more information.
+Loads an optional validation module to verify sequences are valid before emitting them. See below for more information. You may repeat this option to use multiple validation modules.
 .TP
 \-d flags
-Set debugging/output flags. To enable a flag, capitalise it; to disable, include a uncapitalise it. Provide information about the \fBb\fRuilding of a sequence. Show excruciating detail about \fBr\fReconstruction. Show some optional \fBs\fRtatistics. Show information about building the \fBk\fR-mer table. Provide error about the \fBf\fRile parsing. Show every \fBm\fRismatch. The default is \fBBFSrk\fR.
+Set debugging/output flags to provide more details about what PANDAseq is doing. To enable a flag, capitalise it; to disable, include a uncapitalise it. Provide information about the \fBb\fRuilding of a sequence. Show excruciating detail about \fBr\fReconstruction. Show some optional \fBs\fRtatistics. Show information about building the \fBk\fR-mer table. Provide error about the \fBf\fRile parsing. Show every \fBm\fRismatch. The default is \fBBFSrk\fR.
 .TP
 \-f forward.fastq
 The location of the forward reads in FASTQ format. The file may be plain FASTQ, or compressed with
@@ -99,7 +99,7 @@ will only be decompressed with the
 option.
 .TP
 \-F
-Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this flag will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33 (even if the input scores are PHRED + 64). The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application.
+Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this option will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33 (even if the input scores are PHRED + 64). The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application. If you intend to use this information for further quality filtering, especially by a program expecting Illumina reads, you are not using this data correctly.
 .TP
 \-j
 Input files specified be
@@ -110,25 +110,25 @@ are compressed by
 .BR bzip2 (1).
 .TP
 \-k kmers
-Sets the number of sequence locations for a particular \fIk\fR-mer. When attempting to align the sequences, the assembler will store the location of every \fIk\fR-mer in a table. If the same \fIk\fR-mer is present multiple times, only the first ones will be store until the table is full; when this occurs, an \fBFML\fR error is emitted. If the sequences are highly repetitive, lost positions can prevent good alignments; this can be alleviated by increasing this amount. This should be small (no more than 10), or the \fIk\fR-mer table will be extremely large, using a large amount of RAM per thread. Try increasing the value until \fBFML\fR errors go away.
+Sets the number of sequence locations for a particular \fIk\fR-mer. When attempting to align the sequences, the assembler will store the location of every \fIk\fR-mer in a table. If the same \fIk\fR-mer is present multiple times, only the first ones will be stored until the table is full; when this occurs, an \fBFML\fR error is emitted. If the sequences are highly repetitive, lost positions can prevent good alignments; this can be alleviated by increasing this amount. This should be small (no more than 10), or the \fIk\fR-mer table will be extremely large, using a large amount of RAM per thread. Try increasing the value until \fBFML\fR errors go away.
 .TP
 \-l minlen
-Sets the minimum length for a sequence. By default, all sequences are kept. With this option, sequences shorter than theoretically possible can be discarded.
+Sets the minimum length for a sequence, after primers are removed. By default, all sequences are kept. With this option, sequences shorter than desired can be discarded.
 .TP
 \-L maxlen 
-Sets maximum length for a sequence. Any sequences longer, after primers are removed, will be discarded.
+Sets maximum length for a sequence, after primers are removed.  By default, all sequences are kept. With this option, sequences longer than desired can be discarded.
 .TP
 \-N
 Eliminate all sequences with uncalled nucleotides in the output. Otherwise, during assembly, uncalled bases\ (Ns) from unpaired regions may be emitted.
 .TP
 \-o minoverlap
-Sets the minimum overlap between forward and reverse reads. By default, this is at least one nucleotide of overlap, but this alignment tends to score poorly.
+Sets the minimum overlap between forward and reverse reads. By default, this is at least one nucleotide of overlap. Raising this number does not generally increase the quality of the output as alignments with small overlaps tend to score poorly and are discarded anyway.
 .TP
 \-p forwardprimer
-Strip out primers from the start of the sequence. If the data contains a forward primer (e.g., a conserved region to amplify a 16S variable region), specifying it here will cause the primer to be located in the read and the primer, and any sequence before it, will be discarded. It is also possible to specify a number and the same number of leading bases will be stripped from the sequence. This is useful if the sequence has many uncalled bases in the primer region.
+Strip out primers from the start of the sequence. If the data contains a forward primer (e.g., a conserved region to amplify a 16S variable region), specifying it here will cause the primer to be located in the read and the primer, and any sequence before it, will be discarded. It is also possible to specify a number and the same number of leading bases will be stripped from the sequence. It may be useful to user a number if the sequence has many uncalled bases in the primer region, preventing a nucleotide primer from matching.
 .TP
 \-q reverseprimer
-Strip out primers from the end of the sequence. The primer is specified as it appears in the reverse read.
+Strip out primers from the end of the sequence. The primer is specified as it appears in the reverse read (i.e., it is a reverse complement of what it would be in the alignment).
 .TP
 \-r reverse.fastq
 FASTQ file containing the reverse reads. See
@@ -136,7 +136,7 @@ FASTQ file containing the reverse reads. See
 for more information.
 .TP
 \-t threshold
-The score, between zero and one, that a sequence must meet to be kept in the output. This score is the geometric mean of the bases emitted.
+The score, between zero and one, that a sequence must meet to be kept in the output. Any alignments lower than this will be discarded as low quality. Increasing this number will not necessarily prevent uncalled bases\ (Ns) from appearing in the final sequence.
 .TP
 \-T threads
 The number of threads to spawn. This will only be avilable if PANDAseq was compiled with 
@@ -146,7 +146,7 @@ In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU c
 watch the CPU% for the PANDAseq process and the overall system CPU waiting time (\fI%wa\fR in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
 .TP
 \-u unpaired.fasta
-Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs.
+Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs. For downstream processing or to stare at wistfully.
 .SH OUTPUT STATISTICS
 At the end of reconstruction, several statistics are output on lines beginning with \fBSTAT\fR.
 .TP
@@ -157,10 +157,10 @@ NOALGN
 The number of sequences where there exists no overlap with a probability above the threshold.
 .TP
 BADR
-The number of sequences where the reads are unsatisfactory (likely too short to assemble).
+The number of sequences where the reads are unsatisfactory (too short to assemble).
 .TP
 SLOW
-The number of sequences where the fast hashing algorithm could not figure out the optimal overlap, and so every possible overlap had to be considered. Nothing is necessarily wrong with these sequences, but very repetitive patterns can cause PANDAseq to spend more time investigating overlaps that are likely wrong, resulting the processing time of the file to be quite long if there are many sequences in this category. Try increasing the size of the \fIk\fR-mer table, using the \fB-k\fR switch; this will cause PANDAseq to use more memory, but it may be faster.
+The number of sequences where the fast hashing algorithm could not figure out the optimal overlap, and so every possible overlap had to be considered. Nothing is necessarily wrong with these sequences; they just take longer to assemble. Very repetitive patterns can cause PANDAseq to spend more time investigating overlaps that are likely wrong, resulting the processing time of the file to be quite long if there are many sequences in this category. If they are a significant percentage of the input data, try increasing the size of the \fIk\fR-mer table, using the \fB-k\fR option; this will cause PANDAseq to use more memory, but it may be faster.
 .TP
 NOFP
 The number of sequences where the forward primer could not be aligned. This is only done when \fB-p\fR is supplied and a nucleotide sequence.
@@ -189,7 +189,7 @@ The number of sequences assembled for each possible overlapping length. The firs
 During output, the assembler may output any of the following errors.
 .TP
 ERR BADID
-The name of the input read did not follow the know Illumina standard formats. Older versions of CASAVA produce sequences with IDs that look like \fBHWUSI-EAS1661_9323_FC619KG:7:1:1190:15190#ATCACG/1\fR, where the fields are \fIinstrument:lane:tile:x:y#tag/direction\fR. Newer version of CASAVA produce IDs that look like \fB@HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR, where the fields are \fIinstrument:run:flowcell:lane:tile:x:y direction:filtered:flags:tag\fR. If your sequence headers do not look like either of these, either Illumina has created yet-another header format or, more likely, your sequence headers have been manipulated by some upstream processing. PANDAseq needs the original Illumina probabilities; not ones manipulated by other programs. We're very picky about that. Sometimes, for mysterious reasons, the sequences lack the barcoding tag. The \fB-B\fR option will cause the lack of barcode to be ignored. This will obviously invalidate the use of modules that depend on the barcode.
+The name of the input read did not follow the known Illumina standard formats. Older versions of CASAVA produce sequences with IDs that look like \fBHWUSI-EAS1661_9323_FC619KG:7:1:1190:15190#ATCACG/1\fR, where the fields are \fIinstrument:lane:tile:x:y#tag/direction\fR. Newer version of CASAVA produce IDs that look like \fBHWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR, where the fields are \fIinstrument:run:flowcell:lane:tile:x:y direction:filtered:flags:tag\fR. If your sequence headers do not look like either of these, either Illumina has created yet-another header format or, more likely, your sequence headers have been manipulated by some upstream processing, possibly at your sequencing centre. PANDAseq needs the original Illumina probabilities; not ones manipulated by other programs. We're very picky about that. Sometimes, for mysterious reasons, the sequences lack the barcoding tag. The \fB-B\fR option will cause the lack of barcode to be ignored. This will obviously invalidate the use of validation modules that depend on the barcode.
 .TP
 ERR BADNT
 An invalid letter was found in a nucleotide read. Likely caused by incorrect or corrupt input files.
@@ -207,28 +207,28 @@ ERR LOWQ
 The sequence is discarded because the quality is too low given the supplied threshold.
 .TP
 ERR NEGS
-The reconstruction parameters do not produce a valid sequence. Instead, they produce a negative-length sequence.
+The reconstruction parameters do not produce a valid sequence. Instead, they produce a negative-length sequence. This read pair is discarded.
 .TP
 ERR NODATA
-A FASTQ record has no sequence data.
+A FASTQ record has no sequence data. Likely caused by incorrect or corrupt input files.
 .TP
 ERR NOFILE
-The input file was not found.
+The input file was not found or could not be read.
 .TP
 ERR NOFP
-The forward primer could not be matched to the forward read. Either the primer is incorrect or the read is low quality or not the correct original molecule.
+The forward primer could not be matched to the forward read. Either the primer is incorrect or the read is low quality or the sequence provided is not the correct original molecule.
 .TP
 ERR NOQUAL
 Quality information is missing from the FASTQ file. This data is required to reconstruct the sequence.
 .TP
 ERR NORP
-The reverse primer could not be matched to the reverse read. Either the primer is incorrect or the read is low quality or not the correct original molecule.
+The reverse primer could not be matched to the reverse read. See \fBNOFP\fR.
 .TP
 ERR NOTPAIRED
 Sequences from FASTQ files are not pairing correctly given their sequence names. Likely, the files are mismatched.
 .TP
 ERR OOM
-An out of memory condition has occurred. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a bug.
+An out of memory condition has occurred. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a ticket.
 .TP
 INFO ARG[\fIn\fR]
 The \fIn\fRth command line argument that generated this output, for posterity.
@@ -255,19 +255,19 @@ INFO VER
 The version of PANDAseq that generated this output, for posterity.
 .TP
 STAT
-Some statistical information about the assembly process.
+Some information about the assembly process. See above.
 .TP
 DBG FMER
 A \fIk\fR-mer has been identified in the forward read.
 .TP
 DBG FML
-A duplicate \fIk\fR-mer has been identified in the forward read and discarded. This might cause failure to assemble a sequence if repeated too often.
+A duplicate \fIk\fR-mer has been identified in the forward read and discarded. This might cause failure to assemble a sequence if repeated too often. See the \fB-k\fR option to correct this.
 .TP
 DBG RMER
 A \fIk\fR-mer has been identified in the reverse read.
 .TP
 ERR UNKNOWN ERROR
-Something truly unexpected has happened. This probably involves an external module.
+Something truly unexpected has happened. This probably involves an validation module.
 .SH EXAMPLES
 This will assemble a data from a run in lane 7:
 
@@ -280,33 +280,32 @@ and store the logging output
 
 .B (pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG | bzip2 > s_7.fasta.bz2) 2>&1 | bzip2 -c > s_7.log.bz2
 .SH VALIDATON MODULES
-Validation modules are capable of verifying sequences. For example, one could write a module to check secondary structure of a RNA, or that a coding sequence contains no stop codons. To create a module, please read the source distribution. Invoking a module can be done using the
-.B -C
-switch on the command line. As many modules as desired may be added. The path to the module may be followed by a colon (on Windows, a semicolon) and arguments. For example, the following will pass the data through a hypothetical compensatory checker:
-
-.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C compensatory.so:1=12,13=15 > s_7.fasta
-
-Modules can be compiled using
+Validation modules are capable of making decisions about whether or not to keep output sequences. For example, one could write a module to check secondary structure of a RNA, or that a coding sequence contains no stop codons. To create a module, please see
 .BR pandaxs (1).
+Invoking a module can be done using the
+.B -C
+option on the command line. As many modules as desired may be added. The path to the module may be followed by a colon (on Windows, a semicolon) and arguments. For example, the following will include all sequences after \fBHWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR in the input file:
+
+.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C "after:HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA" > s_7.fasta
 .SH INCLUDED MODULES
 There are some included modules:
 .TP
-after:\fIidentifer\fR
+"after:\fIidentifer\fR"
 Assemble only the sequences after (and including) the sequence specified. This is done in file order.
 .TP
-before:\fIidentifer\fR
+"before:\fIidentifer\fR"
 Assemble only the sequences before (and excluding) the sequence specified. This is done in file order.
 .TP
 completely_miss_the_point
-This can be used to only include sequences with perfect overlap regions. You shouldn't want to do it. The whole point is to fix sequences which are probably good. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
+This can be used to only include sequences with perfect overlap regions. You shouldn't want to do it. The whole point is to fix sequences which are probably good. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics. My dislike has been appropriately embodied in the name of this validation module.
 .TP
 filter:\fIfile\fR
-Output only the sequences who identifiers match those in the file specified, one per line. If the file is missing, sequences are read from standard input.
+Output only the sequences whose identifiers match those in the file specified, one per line. If the file is missing, sequences are read from standard input.
 .TP
 validtag:\fItag1\fR:\fItag2\fR:...
-This can be used to demultiplex sequences. It will only include sequences in the output with the tags specified.
+Only include sequences in the output with one of the tags specified. This can be used to demultiplex sequences. This will not work well with \fB-B\fR option.
 .SH SEE ALSO
-.BR panda-checkid (1),
+.BR pandaseq-checkid (1),
 .BR pandaxs (1),
 .BR gzip (1),
 .BR bzip2 (1).

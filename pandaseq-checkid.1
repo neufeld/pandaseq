@@ -5,7 +5,7 @@ pandaseq-checkid \- Illumina tag checker
 .SH SYNOPSIS
 \fBpandaseq-checkid\fR "\fIsequenceid\fR" ...
 .SH DESCRIPTION
-PANDASEQ is rather picky about the names of the paired-end Illumina reads. It attempts to validate that the have correct tags and flow cell information. Naturally, this causes a number of problems. This program shows the information as PANDAseq gathers it out of the FASTQ header.
+PANDASEQ is rather picky about the names of the paired-end Illumina reads. This is for your protection. It attempts to validate that the have correct tags and flow cell information. Naturally, this causes a number of problems, especially as some sequencing centres manipulate the tags. This program shows the information as PANDAseq gathers it out of the FASTQ header.
 
 If the output shows \fBhastag\fR to be false, then the \fB-B\fR flag should be passed to
 .BR pandaseq (1).

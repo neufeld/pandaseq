@@ -19,20 +19,29 @@ A C program source, with the structure defined below, to be compiled.
 .TP
 FLAGS
 If the module requires libraries or other C files, they may be included. In fact, any typical CFLAGS or LDFLAGS may be included.
-.SH FILES
-A required header file
-.B pandaseq.h
-should be available and a sample module is included in the documentation directory.
-.SH EXAMPLES
-A typical module will include three functions \fBCHECK\fR, \fBINIT\fR, and \fBCLEANUP\fR and can define \fBHELP\fR.
+.SH UNDERSTANDING VALIDATION
+Essentially, PANDAseq will assemble a sequence and then send the output to each validation module the user has specified with the \fB-C\fR option. Each module can then analyse the reconstruction and elect to keep or discard the sequence. Modules are given two options: \fBCHECK\fR and \fBPRECHECK\fR, which are done after and before sequence reconstruction, respectively. If a sequence can be discarded using only the information from the FASTQ file (i.e., the header and the reads), then a discard from a \fBPRECHECK\fR will be much faster as PANDAseq need not go to the time of assembling the sequence.
 
-\fBCHECK\fR is called for each sequence. The sequence is available in a variable called \fBsequence\fR which is a pointer to a \fBresultseq\fR. Consult \fBpandaseq.h\fR for more information about the structure; though it includes the raw sequence and statistics about the sequence. If the sequence is to be kept, a non-zero value should be returned.
+Validation modules are not permitted to modify the sequence.
+.SH STRUCTURE
+Writing a module requires familiarity with the C programming language. Various macros are available to assist in creating correct output. Generally:
 
-\fBINIT\fR is called once to initialise the module upon loading. Arguments can be provided to the module upon loading and will be available as a string called \fBargs\fR (e.g., "-C /usr/lib/pandaseq/mynewmodule.so:foo=bar", then args will be "foo=bar"). If a module returns zero, it has indicated that it has failed to intialise properly and the assembler will abort. If a module fails to load, the \fBCLEANUP\fR of any modules already loaded will be called. This function is optional.
+.IP 1.
+Copy the \fBsample.c\fR included in the \fBshare/doc/pandaseq\fR directory.
+.IP 2.
+Modify it to do your desired validation. You may included any needed libraries.
+.IP 3.
+Use \fBpandaxs\fR to compile and install your module, linking against any needed libraries.
 
-\fBCLEANUP\fR is called once upon completion to perform any needed cleanup. This function is optional.
+.P
+In multi-threaded situations, \fIno\fR guarantees are made about multiple entries into your functions, the module must be re-entrant or do any locking. Memory management is not handled, though \fBCLEANUP\fR will be called if \fBINIT\fR has been called. It is possible that \fBINIT\fR will be called again.
 
-\fBHELP\fR defines a short description of the plugin and usage information. This is optional.
+Sequences will not necessarily be presented in order in multi-threaded conditions and the sequences of multiple files can be intermingled. In this way, both \fBafter\fR and \fBbefore\fR are broken.
+
+Modules are checked for ABI compatibility. A module will fail to load if the PANDAseq ABI has changed since it was compiled.
+
+There is no standard for the format of arguments to modules, but spaces are best avoided.
+
 .SH SEE ALSO
 .BR libtool (1),
 .BR pandaseq (1).
