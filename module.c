@@ -183,6 +183,8 @@ unref_ltdl(
 #endif
 }
 
+static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0'};
+
 PandaModule
 panda_module_load(
 	char *path) {
@@ -190,25 +192,18 @@ panda_module_load(
 	lt_dlhandle handle;
 	PandaCheck check;
 	PandaPreCheck precheck;
+	size_t name_length;
 	int *api;
 	char **version;
 	char *name;
-	char *args;
 
-	name = malloc(strlen(path) + 1);
-	memcpy(name, path, strlen(path) + 1);
-	args = name;
-	while (*args != '\0' && *args != LT_PATHSEP_CHAR) {
-		args++;
-	}
-	if (*args == '\0') {
-		args = NULL;
-	} else {
-		*args = '\0';
-		args++;
-	}
+	name_length = strcspn(path, path_sep_string);
+	name = malloc(name_length + 1);
+	memcpy(name, path, name_length);
+	name[name_length] = '\0';
 
 	if (!ref_ltdl()) {
+		free(name);
 		return NULL;
 	}
 
@@ -244,11 +239,12 @@ panda_module_load(
 
 	m = malloc(sizeof(struct panda_module));
 	m->api = *api;
-	if (args == NULL || *args == '\0') {
-		m->args = NULL;
+	if (path[name_length] == LT_PATHSEP_CHAR) {
+		size_t len = strlen(path + name_length) + 1;
+		m->args = malloc(len);
+		memcpy(m->args, path + name_length, len);
 	} else {
-		m->args = malloc(strlen(args) + 1);
-		memcpy(m->args, args, strlen(args) + 1);
+		m->args = NULL;
 	}
 	m->check = check;
 	m->precheck = precheck;
