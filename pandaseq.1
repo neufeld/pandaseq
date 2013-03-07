@@ -286,14 +286,14 @@ Invoking a module can be done using the
 .B -C
 option on the command line. As many modules as desired may be added. The path to the module may be followed by a colon (on Windows, a semicolon) and arguments. For example, the following will include all sequences after \fBHWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR in the input file:
 
-.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C "after:HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA" > s_7.fasta
+.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C \(dqafter:HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\(dq > s_7.fasta
 .SH INCLUDED MODULES
 There are some included modules:
 .TP
-"after:\fIidentifer\fR"
+\(dqafter:\fIidentifer\fR\(dq
 Assemble only the sequences after (and including) the sequence specified. This is done in file order.
 .TP
-"before:\fIidentifer\fR"
+\(dqbefore:\fIidentifer\fR\(dq
 Assemble only the sequences before (and excluding) the sequence specified. This is done in file order.
 .TP
 completely_miss_the_point
