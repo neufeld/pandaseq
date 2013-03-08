@@ -144,6 +144,8 @@ The number of threads to spawn. This will only be avilable if PANDAseq was compi
 In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with 
 .BR top (1);
 watch the CPU% for the PANDAseq process and the overall system CPU waiting time (\fI%wa\fR in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
+
+Note that using multiple threads prevents sequences from being output in the same order as the original file. If you a filtering reads downstream, consider using the \fBfilter\fR validation module as matching them up may be difficult.
 .TP
 \-u unpaired.fasta
 Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs. For downstream processing or to stare at wistfully.
