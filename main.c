@@ -53,6 +53,21 @@ printtime(
 	fprintf(stderr, "STAT\tTIME\t%s\nSTAT\tELAPSED\t%d\nSTAT\tREADS\t%ld\n", ctime(&now), (int) (now - starttime), count);
 }
 
+bool
+short_check(
+	const panda_result_seq *sequence,
+	void *user_data) {
+	return sequence->sequence_length >= minlen;
+}
+
+bool
+long_check(
+	const panda_result_seq *sequence,
+	void *user_data) {
+	size_t length = (size_t) user_data;
+	return sequence->sequence_length <= maxlen;
+}
+
 static void *
 do_assembly(
 	PandaAssembler assembler) {
@@ -71,17 +86,7 @@ do_assembly(
 		if (count % 1000 == 0) {
 			printtime(count, starttime);
 		}
-		if (result->sequence_length < minlen) {
-			fputs("ERR\tSHORT\t", stderr);
-			panda_seqid_print(&result->name, stderr);
-			fputc('\n', stderr);
-			shortcount++;
-		} else if (result->sequence_length > maxlen) {
-			fputs("ERR\tLONG\t", stderr);
-			panda_seqid_print(&result->name, stderr);
-			fputc('\n', stderr);
-			shortcount++;
-		} else if (fastq) {
+		if (fastq) {
 			panda_output_fastq(result, stdout);
 		} else {
 			panda_output_fasta(result, stdout);
@@ -105,10 +110,6 @@ do_assembly(
 	fprintf(stderr, "STAT\tNOALGN\t%ld\nSTAT\tLOWQ\t%ld\nSTAT\tBADR\t%ld\nSTAT\tSLOW\t%ld\n", panda_assembler_get_failed_alignment_count(assembler), panda_assembler_get_low_quality_count(assembler), panda_assembler_get_bad_read_count(assembler), panda_assembler_get_slow_count(assembler));
 	if (no_n)
 		fprintf(stderr, "STAT\tDEGENERATE\t%ld\n", panda_assembler_get_degenerate_count(assembler));
-	if (minlen > 0)
-		fprintf(stderr, "STAT\tSHORT\t%ld\n", shortcount);
-	if (maxlen <= 2 * PANDA_MAX_LEN)
-		fprintf(stderr, "STAT\tLONG\t%ld\n", longcount);
 	panda_assembler_module_stats(assembler);
 	fprintf(stderr, "STAT\tOK\t%ld\n", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
 
@@ -159,7 +160,7 @@ main(
 	size_t it;
 	int minoverlap = 1;
 	size_t modules_length = 0;
-	PandaModule modules[MAX_MODULES];
+	PandaModule modules[MAX_MODULES + 2];	// For LONG and SHORT
 	const char *no_algn_file_name = NULL;
 #ifdef HAVE_PTHREAD
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
@@ -453,6 +454,10 @@ main(
 	for (it = 0; it < argc; it++) {
 		fprintf(stderr, "INFO\tARG[%d]\t%s\n", (int) it, argv[it]);
 	}
+
+	modules[modules_length++] = panda_module_new("SHORT", short_check, NULL, NULL, NULL);
+	modules[modules_length++] = panda_module_new("LONG", long_check, NULL, NULL, NULL);
+
 #ifdef HAVE_PTHREAD
 	mux = bzip ? panda_mux_open_bz2(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy) : panda_mux_open_gz(forward_filename, reverse_filename, (PandaLogger) panda_logger_file, stderr, NULL, qualmin, policy);
 	if (mux == NULL) {
