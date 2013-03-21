@@ -237,9 +237,9 @@ panda_module_load(
 	m = malloc(sizeof(struct panda_module));
 	m->api = *api;
 	if (path[name_length] == LT_PATHSEP_CHAR) {
-		size_t len = strlen(path + name_length) + 1;
+		size_t len = strlen(path + name_length + 1) + 1;
 		m->args = malloc(len);
-		memcpy(m->args, path + name_length, len);
+		memcpy(m->args, path + name_length + 1, len);
 	} else {
 		m->args = NULL;
 	}
