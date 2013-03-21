@@ -83,10 +83,8 @@ do_assembly(
 	PandaAssembler assembler) {
 	long count;
 	size_t it = 0;
-	long longcount = 0;
 	size_t max;
 	const panda_result_seq *result;
-	long shortcount = 0;
 
 	while ((result = panda_assembler_next(assembler)) != NULL) {
 		count = panda_assembler_get_count(assembler);
@@ -124,7 +122,7 @@ do_assembly(
 	if (no_n)
 		STAT("DEGENERATE\t%ld", panda_assembler_get_degenerate_count(assembler));
 	panda_assembler_module_stats(assembler);
-	STAT("OK\t%ld", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
+	STAT("OK\t%ld", panda_assembler_get_ok_count(assembler));
 
 #ifdef HAVE_PTHREAD
 	fprintf(stderr, "%p\t", (void *) assembler);
