@@ -273,6 +273,7 @@ panda_module_new(
 	m->check = check;
 	m->destroy = cleanup;
 	m->handle = NULL;
+	m->init = NULL;
 	m->name = malloc(strlen(name) + 1);
 	memcpy(m->name, name, strlen(name) + 1);
 	m->precheck = precheck;
