@@ -57,7 +57,7 @@ static void *
 do_assembly(
 	PandaAssembler assembler) {
 	long count;
-	size_t it;
+	size_t it = 0;
 	long longcount = 0;
 	size_t max;
 	const panda_result_seq *result;
