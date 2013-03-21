@@ -108,7 +108,8 @@ panda_assembler_module_stats(
 	PandaAssembler assembler) {
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
-		LOGV(PANDA_CODE_REJECT_STAT, "%s\t%ld", assembler->modules[it]->name, assembler->rejected[it]);
+		if (assembler->rejected[it] > 0)
+			LOGV(PANDA_CODE_REJECT_STAT, "%s\t%ld", assembler->modules[it]->name, assembler->rejected[it]);
 	}
 }
 
