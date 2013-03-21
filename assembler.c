@@ -374,7 +374,7 @@ align(
 	}
 	result->quality = (fquality + rquality + oquality) / len;
 
-	result->overlap = overlap;
+	result->overlap = bestoverlap;
 
 	return true;
 }
