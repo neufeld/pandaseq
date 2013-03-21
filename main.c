@@ -44,13 +44,23 @@ time_t starttime;
 #ifdef HAVE_PTHREAD
 pthread_mutex_t output_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
+
+#ifdef HAVE_PTHREAD
+#        	define STAT(str, val)	fprintf(stderr, "%p\tSTAT\t" str "\n", (void*) assembler, (val))
+#else
+#        	define STAT(str, val)	fprintf(stderr, "STAT\t" str "\n", (val))
+#endif
+
 static void
 printtime(
+	PandaAssembler assembler,
 	long count,
 	time_t starttime) {
 	time_t now;
 	(void) time(&now);
-	fprintf(stderr, "STAT\tTIME\t%s\nSTAT\tELAPSED\t%d\nSTAT\tREADS\t%ld\n", ctime(&now), (int) (now - starttime), count);
+	STAT("TIME\t%s", ctime(&now));
+	STAT("ELAPSED\t%d", (int) (now - starttime));
+	STAT("READS\t%ld", count);
 }
 
 bool
@@ -84,7 +94,7 @@ do_assembly(
 		pthread_mutex_lock(&output_mutex);
 #endif
 		if (count % 1000 == 0) {
-			printtime(count, starttime);
+			printtime(assembler, count, starttime);
 		}
 		if (fastq) {
 			panda_output_fastq(result, stdout);
@@ -102,17 +112,23 @@ do_assembly(
 	if (count > 0) {
 		some_seqs = true;
 	}
-	printtime(count, starttime);
+	printtime(assembler, count, starttime);
 	if (forward_primer != NULL)
-		fprintf(stderr, "STAT\tNOFP\t%ld\n", panda_assembler_get_no_forward_primer_count(assembler));
+		STAT("NOFP\t%ld", panda_assembler_get_no_forward_primer_count(assembler));
 	if (reverse_primer != NULL)
-		fprintf(stderr, "STAT\tNORP\t%ld\n", panda_assembler_get_no_reverse_primer_count(assembler));
-	fprintf(stderr, "STAT\tNOALGN\t%ld\nSTAT\tLOWQ\t%ld\nSTAT\tBADR\t%ld\nSTAT\tSLOW\t%ld\n", panda_assembler_get_failed_alignment_count(assembler), panda_assembler_get_low_quality_count(assembler), panda_assembler_get_bad_read_count(assembler), panda_assembler_get_slow_count(assembler));
+		STAT("NORP\t%ld", panda_assembler_get_no_reverse_primer_count(assembler));
+	STAT("NOALGN\t%ld", panda_assembler_get_failed_alignment_count(assembler));
+	STAT("LOWQ\t%ld", panda_assembler_get_low_quality_count(assembler));
+	STAT("BADR\t%ld", panda_assembler_get_bad_read_count(assembler));
+	STAT("SLOW\t%ld", panda_assembler_get_slow_count(assembler));
 	if (no_n)
-		fprintf(stderr, "STAT\tDEGENERATE\t%ld\n", panda_assembler_get_degenerate_count(assembler));
+		STAT("DEGENERATE\t%ld", panda_assembler_get_degenerate_count(assembler));
 	panda_assembler_module_stats(assembler);
-	fprintf(stderr, "STAT\tOK\t%ld\n", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
+	STAT("OK\t%ld", panda_assembler_get_ok_count(assembler) - shortcount - longcount);
 
+#ifdef HAVE_PTHREAD
+	fprintf(stderr, "%p\t", (void *) assembler);
+#endif
 	fprintf(stderr, "STAT\tOVERLAPS\t%ld", panda_assembler_get_overlap_count(assembler, it));
 	max = panda_assembler_get_longest_overlap(assembler);
 	for (it = 1; it < max; it++) {
