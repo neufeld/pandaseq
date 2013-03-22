@@ -252,7 +252,7 @@ align(
 		probability = (qual_nn * (result->forward_length + result->reverse_length - 2 * overlap + unknowns) + matches * assembler->pmatch + mismatches * assembler->pmismatch);
 
 		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %d, matches = %d, mismatches = %d, unknowns = %d, probability = %f", (int) overlap, (int) matches, (int) mismatches, (int) unknowns, (float) probability);
-		if (probability > bestprobability) {
+		if (probability > bestprobability && overlap >= assembler->minoverlap) {
 			bestprobability = probability;
 			bestoverlap = overlap;
 		}
