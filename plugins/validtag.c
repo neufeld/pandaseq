@@ -61,8 +61,8 @@ INIT {
 	}
 
 	tags = malloc(sizeof(char *) * numtags);
-	tag_data = malloc(strlen(args));
-	memcpy(tag_data, args, strlen(args));
+	tag_data = malloc(strlen(args) + 1);
+	memcpy(tag_data, args, strlen(args) + 1);
 	currtag = tags;
 	wit = tag_data;
 	*currtag++ = wit;
