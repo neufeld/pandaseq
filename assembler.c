@@ -417,6 +417,10 @@ assemble_seq(
 		assembler->result.forward_offset = 0;
 		assembler->result.reverse_offset = 0;
 	}
+	if (((assembler->result.forward_length < assembler->result.reverse_length) ? assembler->result.forward_length : assembler->result.reverse_length) < assembler->minoverlap) {
+		assembler->badreadcount++;
+		return false;
+	}
 	if (!align(assembler, &assembler->result)) {
 		if (assembler->noalgn != NULL) {
 			assembler->noalgn(assembler, &assembler->result.name, assembler->result.forward, assembler->result.forward_length, assembler->result.reverse, assembler->result.reverse_length, assembler->noalgn_data);
