@@ -45,6 +45,8 @@ panda_logger_file(
 		fprintf(file, "* * * * * Something is wrong with this ID. If tags are absent, try passing the -B option.\n* * * * * Consult `pandaseq-checkid \"%s\"` to get an idea of the problem..\n", message);
 	} else if (code == PANDA_CODE_PHRED_OFFSET) {
 		fprintf(file, "* * * * * Using the default PHRED+33 offset, but no sequences had quality data under PHRED+64.\n* * * * * This is probably not what you want. Consult the manual about the -6 option.\n");
+	} else if (code == PANDA_CODE_READ_TOO_LONG) {
+		fprintf(file, "* * * * * The input reads are longer than this version of PANDAseq can handle. Currently %d nucleotides.\n", PANDA_MAX_LEN);
 	}
 	return true;
 }
@@ -76,6 +78,9 @@ panda_code_str(
 		break;
 	case PANDA_CODE_PARSE_FAILURE:
 		return "ERR\tBADSEQ";
+		break;
+	case PANDA_CODE_READ_TOO_LONG:
+		return "ERR\tREADLEN";
 		break;
 	case PANDA_CODE_PREMATURE_EOF:
 		return "ERR\tEOF";

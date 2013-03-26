@@ -232,6 +232,9 @@ Sequences from FASTQ files are not pairing correctly given their sequence names.
 ERR OOM
 An out of memory condition has occurred. Given the memory available, assembly of this sequence is not possible. As Illumina sequencing gets longer, the amount of memory needed can be adjusted. Please file a ticket.
 .TP
+ERR READLEN
+The read length is too long for this version of PANDAseq. PANDAseq needs to be recompiled with a longer allowable seqeuence length; this length is kept short to improve performance.
+.TP
 INFO ARG[\fIn\fR]
 The \fIn\fRth command line argument that generated this output, for posterity.
 .TP

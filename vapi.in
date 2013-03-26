@@ -101,6 +101,10 @@ namespace Panda {
 		 */
 		PREMATURE_EOF,
 		/**
+		 * The input read is longer than {@link MAX_LEN}
+		 */
+		READ_TOO_LONG,
+		/**
 		 * Reconstruction will commence with provided parameters
 		 */
 		RECONSTRUCTION_PARAM,

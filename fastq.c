@@ -117,7 +117,13 @@ read_seq(
 		}
 	}
 	if (v != '+') {
-		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
+		/* Check if we have more sequence... */
+		if ((table[v & 0x1F]) != '\0') {
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_READ_TOO_LONG);
+		} else {
+			/* Or just junk... */
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
+		}
 		DESTROY_MEMBER(stream, next);
 		return false;
 	}
