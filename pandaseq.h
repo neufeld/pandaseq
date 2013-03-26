@@ -32,7 +32,7 @@ EXTERN_C_BEGIN
 /**
  * Maximum length of a sequence
  */
-#        define PANDA_MAX_LEN 255
+#        define PANDA_MAX_LEN 450
 typedef void (
 	*PandaPrintf) (
 	void *data,

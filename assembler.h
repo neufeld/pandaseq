@@ -25,7 +25,7 @@
 #                include <pthread.h>
 #        endif
 
-typedef unsigned char seqindex;
+typedef unsigned short seqindex;
 #        define KMER_LEN 8
 #        define KMERSEEN_SIZE(num_kmers) (sizeof(seqindex) * (num_kmers) * (1 << (2 * KMER_LEN)))
 
