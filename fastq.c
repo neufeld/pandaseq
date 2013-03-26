@@ -201,13 +201,11 @@ stream_next_seq(
 	if (!read_seq(id, data->forward_seq, PANDA_MAX_LEN, &data->forward, iupac_forward, data, forward_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
-		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 		return false;
 	}
 	if (!read_seq(id, data->reverse_seq, PANDA_MAX_LEN, &data->reverse, iupac_reverse, data, reverse_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
-		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PARSE_FAILURE);
 		return false;
 	}
 	*forward = data->forward_seq;
