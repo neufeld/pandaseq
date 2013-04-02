@@ -21,7 +21,7 @@ INIT {
 		fprintf(stderr, "ERR\tBEFORE\tNO ID\n");
 		return false;
 	}
-		
+
 	if (panda_seqid_parse(&marker_id, args[0] == '@' ? (args + 1) : args, PANDA_TAG_OPTIONAL) == 0) {
 		fprintf(stderr, "ERR\tBEFORE\tBAD\t%s\n", args);
 		return false;
