@@ -15,6 +15,7 @@
 -T panda_nt
 -T PandaPreCheck
 -T PandaPrintf
+-T PandaSet
 -T panda_qual
 -T panda_result
 -T panda_result_seq
