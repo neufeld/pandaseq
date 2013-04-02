@@ -16,6 +16,7 @@ m4_pattern_allow([AM_PROG_AR])
 AM_PROG_AR
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
+LT_INIT
 AX_CHECK_CFLAGS([-std=c99 -pedantic])
 AC_HEADER_STDC
 
