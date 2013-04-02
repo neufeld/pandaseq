@@ -71,6 +71,7 @@ panda_assembler_new_kmer(
 	assembler->result.forward = NULL;
 	assembler->forward_primer_length = 0;
 	assembler->result.reverse = NULL;
+	assembler->result.sequence = assembler->result_seq;
 	assembler->reverse_primer_length = 0;
 	assembler->forward_trim = 0;
 	assembler->reverse_trim = 0;

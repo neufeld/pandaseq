@@ -36,9 +36,9 @@ struct fastq_data {
 	PandaLogger logger;
 	void *logger_data;
 	unsigned char qualmin;
-	panda_qual forward_seq[PANDA_MAX_LEN];
+	panda_qual forward_seq[MAX_LEN];
 	size_t forward_seq_length;
-	panda_qual reverse_seq[PANDA_MAX_LEN];
+	panda_qual reverse_seq[MAX_LEN];
 	size_t reverse_seq_length;
 	PandaTagging policy;
 	bool seen_under_64;
@@ -204,12 +204,12 @@ stream_next_seq(
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
 		return false;
 	}
-	if (!read_seq(id, data->forward_seq, PANDA_MAX_LEN, &data->forward, iupac_forward, data, forward_length)) {
+	if (!read_seq(id, data->forward_seq, MAX_LEN, &data->forward, iupac_forward, data, forward_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
 		return false;
 	}
-	if (!read_seq(id, data->reverse_seq, PANDA_MAX_LEN, &data->reverse, iupac_reverse, data, reverse_length)) {
+	if (!read_seq(id, data->reverse_seq, MAX_LEN, &data->reverse, iupac_reverse, data, reverse_length)) {
 		*forward_length = 0;
 		*reverse_length = 0;
 		return false;

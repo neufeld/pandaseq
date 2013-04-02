@@ -35,7 +35,7 @@
 #define MAX_MODULES 100
 bool fastq = false;
 char *forward_primer = NULL;
-ssize_t maxlen = 2 * PANDA_MAX_LEN + 1;
+ssize_t maxlen;
 size_t minlen = 0;
 bool no_n = false;
 char *reverse_primer = NULL;
@@ -199,6 +199,7 @@ main(
 #endif
 	(void) time(&starttime);
 	threshold = 0.6;
+	maxlen = 2 * PANDA_MAX_LEN + 1;
 
 	/* Process command line arguments. */
 	while ((c = getopt(argc, argv, optlist)) != -1) {

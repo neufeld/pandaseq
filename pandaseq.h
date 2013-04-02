@@ -32,7 +32,9 @@ EXTERN_C_BEGIN
 /**
  * Maximum length of a sequence
  */
-#        define PANDA_MAX_LEN 450
+#        define PANDA_MAX_LEN (panda_max_len())
+extern size_t panda_max_len(
+	void);
 typedef void (
 	*PandaPrintf) (
 	void *data,
@@ -311,7 +313,7 @@ typedef struct {
 	/**
 	 * The reconstructed sequence with quality information
 	 */
-	panda_result sequence[2 * PANDA_MAX_LEN];
+	panda_result *sequence;
 	size_t sequence_length;
 	/**
 	 * The original forward sequence

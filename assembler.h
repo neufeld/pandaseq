@@ -77,9 +77,10 @@ struct panda_assembler {
 #        ifdef HAVE_PTHREAD
 	pthread_mutex_t mutex;
 #        endif
-	panda_nt forward_primer[PANDA_MAX_LEN];
-	panda_nt reverse_primer[PANDA_MAX_LEN];
-	long overlapcount[PANDA_MAX_LEN];
+	panda_nt forward_primer[MAX_LEN];
+	panda_nt reverse_primer[MAX_LEN];
+	panda_result result_seq[2 * MAX_LEN];
+	long overlapcount[MAX_LEN];
 	size_t longest_overlap;
 };
 

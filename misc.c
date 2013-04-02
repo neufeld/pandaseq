@@ -29,3 +29,9 @@ panda_api_version(
 	void) {
 	return PANDA_API;
 }
+
+size_t
+panda_max_len(
+	void) {
+	return MAX_LEN;
+}

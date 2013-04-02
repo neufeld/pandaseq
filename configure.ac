@@ -4,6 +4,14 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_ARG_ENABLE(debug, [  --enable-debug          build with debugging output [default=no].], [DEBUG="$enableval"], [DEBUG="no"])
+AC_ARG_WITH(max-len, [  --with-max-len=LEN      sets the maximum read length], [MAX_LEN="$withval"], [MAX_LEN="450"])
+
+if ! test "$MAX_LEN" -eq "$MAX_LEN" 2> /dev/null
+then
+	AC_MSG_ERROR([Bad read length $MAX_LEN])
+fi
+AC_DEFINE_UNQUOTED([MAX_LEN], $MAX_LEN, [Maximum read length])
+
 m4_pattern_allow([AM_PROG_AR])
 AM_PROG_AR
 AM_PROG_CC_C_O
