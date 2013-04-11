@@ -26,9 +26,12 @@ if test "x$enable_debug" = xyes; then
 	AC_DEFINE(DEBUG, 1, [Enable debugging code])
 fi
 
+ORIG_CPPFLAGS="$CPPFLAGS"
+ORIG_CFLAGS="$CFLAGS"
+ORIG_LIBS="$LIBS"
 MODULE_CPPFLAGS="$CPPFLAGS"
 MODULE_CFLAGS="$CFLAGS"
-MODULE_LIBS="$LIBS"
+MODULE_LIBS="$LIBS libpandaseq.la"
 AC_MSG_CHECKING([for module flags])
 case "$host" in
 *-mingw*)
@@ -42,7 +45,7 @@ case "$host" in
 	;;
 *darwin*|*Darwin*)
 	os_win32=no
-	NO_UNDEFINED='-no-undefined'
+	NO_UNDEFINED='-no-undefined -flat_namespace'
 	MOD_LIBTOOL=glibtool
 	;;
 *)
@@ -82,9 +85,9 @@ PANDA_LIBS="$LIBS"
 AC_SUBST(PANDA_CPPFLAGS)
 AC_SUBST(PANDA_CFLAGS)
 AC_SUBST(PANDA_LIBS)
-CPPFLAGS="$MODULE_CPPFLAGS"
-CFLAGS="$MODULE_CFLAGS"
-LIBS="$MODULE_LIBS"
+CPPFLAGS="$ORIG_CPPFLAGS"
+CFLAGS="$ORIG_CFLAGS"
+LIBS="$ORIG_LIBS"
 
 LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
 AC_SUBST(LIB_NAME)
