@@ -25,10 +25,6 @@
 #                include <pthread.h>
 #        endif
 
-typedef unsigned short seqindex;
-#        define KMER_LEN 8
-#        define KMERSEEN_SIZE(num_kmers) (sizeof(seqindex) * (num_kmers) * (1 << (2 * KMER_LEN)))
-
 struct panda_assembler {
 	volatile size_t refcnt;
 

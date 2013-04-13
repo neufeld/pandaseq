@@ -31,6 +31,7 @@
 #include "pandaseq.h"
 #include "assembler.h"
 #include "buffer.h"
+#include "misc.h"
 #include "module.h"
 #include "prob.h"
 #include "table.h"
@@ -45,16 +46,6 @@ typedef unsigned int bitstype;
 #define BITS_INIT(bits,size) bitstype bits[(size) / 8 / sizeof(bitstype) + 1]; size_t bits##_size = (size); memset(&bits, 0, ((size) / 8 / sizeof(bitstype) + 1) * sizeof(bitstype))
 #define ALL_BITS_IF_NONE(bits) do { bitstype _all = 0; size_t _bitctr; for (_bitctr = 0; _bitctr < ((bits##_size) / 8 / sizeof(bitstype) + 1); _bitctr++) { _all |= (bits)[_bitctr]; } if (_all == 0) { memset(&bits, 0xFF, (bits##_size / 8 / sizeof(bitstype) + 1) * sizeof(bitstype)); }} while (0)
 
-typedef struct {
-	unsigned int kmer;
-	ssize_t posn;
-	ssize_t bad;
-} kmer_it;
-#define _FOREACH_KMER(iterator,sequence,start,check,step) for ((iterator).posn = (start), (iterator).bad = KMER_LEN; (iterator).posn check; (iterator).posn step) if ((iterator).kmer = (((iterator).kmer << 2) | ((sequence)[(iterator).posn].nt == PANDA_NT_T ? 3 : (sequence)[(iterator).posn].nt == PANDA_NT_G ? 2 : (sequence)[(iterator).posn].nt == PANDA_NT_C ? 1 : 0)) & ((1 << (2 * KMER_LEN)) - 1), PANDA_NT_IS_N((sequence)[(iterator).posn].nt)) { (iterator).bad = KMER_LEN; } else if ((iterator).bad > 0) { (iterator).bad--; } else
-#define FOREACH_KMER(iterator,sequence) _FOREACH_KMER(iterator,sequence, 0, < sequence ## _length, ++)
-#define FOREACH_KMER_REVERSE(iterator,sequence) _FOREACH_KMER(iterator,sequence, sequence ## _length - 1, >= 0, --)
-#define KMER(kmerit) ((kmerit).kmer)
-#define KMER_POSITION(kmerit) ((kmerit).posn)
 #define VEEZ(x) ((x) < 0 ? 0 : (x))
 #define WEDGEZ(x) ((x) > 0 ? 0 : (x))
 #define CIRC(index, len) (((index) + (len)) % (len))
@@ -195,7 +186,7 @@ align(
 	}
 
 	/* Scan forward sequence building k-mers and appending the position to kmerseen[k] */
-	FOREACH_KMER(it, result->forward) {
+	FOREACH_KMER(it, result->forward,.nt) {
 		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
 		if (j == assembler->num_kmers) {
@@ -207,7 +198,7 @@ align(
 	}
 
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
-	FOREACH_KMER_REVERSE(it, result->reverse) {
+	FOREACH_KMER_REVERSE(it, result->reverse,.nt) {
 		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != (seqindex) 0; j++) {
 			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) << 1) + j] - assembler->minoverlap - 1;
@@ -219,7 +210,7 @@ align(
 	}
 
 	/* Reset kmerseen */
-	FOREACH_KMER(it, result->forward) {
+	FOREACH_KMER(it, result->forward,.nt) {
 		for (j = 0; j < assembler->num_kmers; j++)
 			assembler->kmerseen[(KMER(it) << 1) + j] = 0;
 	}

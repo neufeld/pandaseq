@@ -28,6 +28,7 @@
 #        include <stdarg.h>
 #        include <stdio.h>
 #        include <stdbool.h>
+#        include <unistd.h>
 EXTERN_C_BEGIN
 /**
  * Maximum length of a sequence
@@ -1114,6 +1115,80 @@ bool
  panda_idset_contains(
 	PandaSet *set,
 	const panda_seq_identifier *id);
+
+/**
+ * A k-mer and its position in the original sequence.
+ */ 
+typedef struct {
+	size_t kmer;
+	ssize_t posn;
+} panda_kmer;
+/**
+ * Iterate over a sequence presenting all k-mers without Ns or other denegerate bases.
+ */
+typedef struct panda_iter *PandaIter;
+/**
+ * Destroy an iterator.
+ */
+void panda_iter_free(
+	PandaIter iter);
+/**
+ * Copy an iterator to a new one, preserving its current state.
+ */
+PandaIter panda_iter_dup(
+	PandaIter iter);
+/**
+ * Set an iterator back to the beginning of the sequence.
+ */
+void panda_iter_reset(
+	PandaIter iter);
+/**
+ * Get the k-mer length for the iterator.
+ */
+int
+ panda_iter_k(
+	PandaIter iter);
+/**
+ * Get the number of useful bits in the output.
+ */
+size_t
+ panda_iter_bits(
+	PandaIter iter);
+/**
+ * Advance to the next position in the sequence.
+ * @return if null, there are no more k-mers in the sequence
+ */
+const panda_kmer *panda_iter_next(
+	PandaIter iter);
+/**
+ * Create an iterator over a sequence of nucleotides.
+ * @param seq, seq_length the sequence to iterate over, and its length. This sequence must not be freed during the life of the iterator.
+ * @param reverse true to iterate from the end of the sequence rather than the beginning
+ * @param k the length of the output words. This must range between 1 and 4 * sizeof(size_t). Any other values will be converted to the standard k-mer length of 8.
+ */
+PandaIter panda_iterate_nt(
+	panda_nt *seq,
+	size_t seq_length,
+	bool reverse,
+	int k);
+/**
+ * Iterate over quality-annotated sequence.
+ * @see panda_iterate_nt
+ */
+PandaIter panda_iterate_qual(
+	panda_qual *seq,
+	size_t seq_length,
+	bool reverse,
+	int k);
+/**
+ * Iterate over probability-annotated sequence.
+ * @see panda_iterate_nt
+ */
+PandaIter panda_iterate_result(
+	panda_result *seq,
+	size_t seq_length,
+	bool reverse,
+	int k);
 
 /*
  * Convenience macro is for Vala

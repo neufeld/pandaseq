@@ -524,6 +524,66 @@ namespace Panda {
 	}
 
 	/**
+	 * Iterate over a sequence presenting all //k//-mers without ''N''s or other denegerate bases.
+	 */
+	[CCode(cname = "struct panda_iter", free_function = "panda_iter_free")]
+	[Compact]
+	public class Iterator {
+		/**
+		 * The number of useful bits in the output.
+		 */
+		public size_t bits {
+			[CCode(cname = "panda_iter_bits")]
+			get;
+		}
+		/**
+		 * The //k//-mer length.
+		 */
+		public int k {
+			[CCode(cname = "panda_iter_k")]
+			get;
+		}
+
+		/**
+		 * Create an iterator over a sequence of nucleotides.
+		 * @param seq the sequence to iterate over. This sequence must not be freed during the life of the iterator.
+		 * @param reverse true to iterate from the end of the sequence rather than the beginning
+		 * @param k the length of the output words. This must range between 1 and 4 * sizeof(size_t). Any other values will be converted to the standard //k//-mer length of 8.
+		 */
+		[CCode(cname = "panda_iterate_nt")]
+		public Iterator.nt([CCode(array_length_type = "size_t")] Nt[] seq, bool reverse = false, int k = 0);
+		/**
+		 * Iterate over probability-annotated sequence.
+		 * @see Iterator.Iterator.nt
+		 */
+		[CCode(cname = "panda_iterate_qual")]
+		public Iterator.qual([CCode(array_length_type = "size_t")] qual[] seq, bool reverse = false, int k = 0);
+		/**
+		 * Iterate over probability-annotated sequence.
+		 * @see Iterator.Iterator.nt
+		 */
+		[CCode(cname = "panda_iterate_result")]
+		public Iterator.result([CCode(array_length_type = "size_t")] result[] seq, bool reverse = false, int k = 0);
+
+		/**
+		 * Copy an iterator to a new one, preserving its current state.
+		 */
+		[CCode(cname = "panda_iter_dup")]
+		public Iterator iterator();
+		/**
+		 * Advance to the next position in the sequence.
+		 * @return if null, there are no more //k//-mers in the sequence
+		 */
+		[CCode(cname = "panda_iter_next")]
+		public unowned kmer? next();
+		/**
+		 * Set an iterator back to the beginning of the sequence.
+		 */
+		[CCode(cname = "panda_iter_reset")]
+		public void reset();
+	}
+
+	/**
 	 * Sequence validity checker
 	 */
 	[CCode(cname = "struct panda_module", ref_function = "panda_module_ref", unref_function = "panda_module_unref")]
@@ -822,6 +882,16 @@ file);
 		 */
 		[CCode(cname = "panda_seqid_str")]
 		 public unowned string to_string();
+	}
+
+	/**
+	 * A //k//-mer and its position in the original sequence.
+	 */ 
+	[CCode(cname = "panda_kmer", has_type_id = false)]
+	[SimpleType]
+	public struct kmer {
+		public size_t kmer;
+		public ssize_t posn;
 	}
 
 	/**
