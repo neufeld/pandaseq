@@ -703,7 +703,7 @@ namespace Panda {
 		/**
 		 * The longest overlap assembled so far.
 		 */
-		public size_t max {
+		public size_t size {
 			[CCode(cname = "panda_assembler_get_longest_overlap")]
 			get;
 		}
