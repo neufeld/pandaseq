@@ -1056,7 +1056,7 @@ size_t panda_compute_offset_result(
 	size_t needle_length);
 
 /**
- * Compute 1 - exp(p) efficiently.
+ * Compute log(1 - exp(p)) efficiently.
  *
  * See [[http://cran.r-project.org/web/packages/Rmpfr/vignettes/log1mexp-note.pdf|Mächler, 2012]].
  */
