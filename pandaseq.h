@@ -1066,55 +1066,51 @@ double panda_log1mexp(
 /**
  * A set of sequence identifiers against which to match.
  */
-typedef struct panda_idset PandaSet;
+typedef /*@refcounted@ */ struct panda_idset *PandaSet;
 
 /**
  * Create a new, empty set.
  */
-PandaSet *panda_idset_new(
+/*@notnull@*/ PandaSet panda_idset_new(
 	void);
 /**
  * Increase the reference count on a set.
  *
  * This is thread-safe.
  */
-PandaSet *panda_idset_ref(
-	PandaSet *set);
+/*@notnull@*/ PandaSet panda_idset_ref(
+	/*@notnull@ */ PandaSet set);
 /**
  * Decrease the reference count on a set.
  *
  * This is thread-safe.
  */
-void
- panda_idset_unref(
-	PandaSet *set);
+void panda_idset_unref(
+	/*@notnull@@killref@ */ PandaSet set);
 
 /**
  * Add a sequence identifier to a set.
  */
-void
- panda_idset_add(
-	PandaSet *set,
-	const panda_seq_identifier *id);
+void panda_idset_add(
+	/*@notnull@ */ PandaSet set,
+	/*@notnull@ */ const panda_seq_identifier *id);
 /**
  * Parse a sequence identifier and add it to the set.
  * @return true on success
  * @see panda_seqid_parse_fail
  */
-bool
- panda_idset_add_str(
-	PandaSet *set,
-	const char *id,
+bool panda_idset_add_str(
+	/*@notnull@ */ PandaSet set,
+	/*@notnull@ */ const char *id,
 	PandaTagging policy,
-	bool *old,
-	const char **end_ptr);
+	/*@null@@out@ */ bool *old,
+	/*@null@@out@ */ const char **end_ptr);
 /**
  * Check if a sequence identifier has been added to the set.
  */
-bool
- panda_idset_contains(
-	PandaSet *set,
-	const panda_seq_identifier *id);
+bool panda_idset_contains(
+	/*@notnull@ */ PandaSet set,
+	/*@notnull@ */ const panda_seq_identifier *id);
 
 /**
  * A k-mer and its position in the original sequence.

@@ -8,7 +8,7 @@ VER_INFO("1.0");
 
 #define BUFF_SIZE 1024
 char buffer[BUFF_SIZE];
-PandaSet *set;
+PandaSet set;
 
 PRECHECK {
 	return panda_idset_contains(set, id);

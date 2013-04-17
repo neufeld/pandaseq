@@ -37,19 +37,19 @@ struct panda_idset {
 
 };
 
-PandaSet *
+PandaSet
 panda_idset_new(
 	void) {
-	PandaSet *set = malloc(sizeof(struct panda_idset));
+	PandaSet set = malloc(sizeof(struct panda_idset));
 	set->refcnt = 1;
 	set->root = NULL;
 
 	return set;
 }
 
-PandaSet *
+PandaSet
 panda_idset_ref(
-	PandaSet *set) {
+	PandaSet set) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
 #endif
@@ -72,7 +72,7 @@ node_free(
 
 void
 panda_idset_unref(
-	PandaSet *set) {
+	PandaSet set) {
 	int count;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
@@ -121,14 +121,14 @@ insert(
 
 void
 panda_idset_add(
-	PandaSet *set,
+	PandaSet set,
 	const panda_seq_identifier *id) {
 	insert(&set->root, id);
 }
 
 bool
 panda_idset_add_str(
-	PandaSet *set,
+	PandaSet set,
 	const char *id,
 	PandaTagging policy,
 	bool *old,
@@ -144,7 +144,7 @@ panda_idset_add_str(
 
 bool
 panda_idset_contains(
-	PandaSet *set,
+	PandaSet set,
 	const panda_seq_identifier *id) {
 	struct node *curr = set->root;
 	while (curr != NULL) {
