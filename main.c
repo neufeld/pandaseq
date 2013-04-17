@@ -35,7 +35,7 @@
 #define MAX_MODULES 100
 bool fastq = false;
 char *forward_primer = NULL;
-ssize_t maxlen;
+size_t maxlen;
 size_t minlen = 0;
 bool no_n = false;
 char *reverse_primer = NULL;
