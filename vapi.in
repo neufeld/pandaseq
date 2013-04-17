@@ -235,7 +235,8 @@ namespace Panda {
 	/**
 	 * The manager for an assembly
 	 */
-	[CCode(cname = "struct panda_assembler", has_type_id = false, ref_func = "panda_assembler_ref", unref_func = "panda_assembler_unref")]
+	[CCode(cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
+	[Compact]
 	public class Assembler {
 		/**
 		 * The number of sequences rejected because the reads are unsatisfactory in some way.
@@ -696,7 +697,8 @@ namespace Panda {
 	/**
 	 * A threading-safe wrapper to allow multiple assemblers to share a single data source.
 	 */
-	[CCode(cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref", has_type_id = false)]
+	[CCode(cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref")]
+	[Compact]
 	public class Mux {
 		/**
 		 * Open a pair of gzipped files for multi-threaded assembled.
@@ -758,7 +760,8 @@ namespace Panda {
 		public void unref();
 	}
 
-	[CCode(cname = "struct panda_assembler", has_type_id = false, ref_func = "panda_assembler_ref", unref_func = "panda_assembler_unref")]
+	[CCode(cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
+	[Compact]
 	public class Overlaps {
 		/**
 		 * The longest overlap assembled so far.
@@ -778,7 +781,8 @@ namespace Panda {
 	/**
 	 * A set of sequence identifiers against which to match.
 	 */
-	[CCode(cname = "struct panda_idset", has_type_id = false, ref_func = "panda_idset_ref", unref_func = "panda_idset_unref")]
+	[CCode(cname = "struct panda_idset", ref_function = "panda_idset_ref", unref_function = "panda_idset_unref")]
+	[Compact]
 	public class Set {
 
 		/**
