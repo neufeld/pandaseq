@@ -59,6 +59,8 @@ struct panda_iter {
 
 	panda_result *result;
 	size_t result_length;
+
+	panda_kmer output;
 };
 
 void
@@ -108,6 +110,7 @@ panda_iter_bits(
 	return iter->k * 2;
 }
 
+# define RETURN_KMER return iter->output.kmer = iter->it.kmer, iter->output.posn = iter->it.posn, &iter->output
 const panda_kmer *
 panda_iter_next(
 	PandaIter iter) {
@@ -116,12 +119,12 @@ panda_iter_next(
 		if (iter->reverse) {
 			iter->it.posn--;
 			_FOREACH_KMER(iter->it, iter->qual,.nt, iter->it.posn, iter->it.bad, >=0, --, iter->k) {
-				return (panda_kmer *) &iter->it;
+				RETURN_KMER;
 			}
 		} else {
 			iter->it.posn++;
 			_FOREACH_KMER(iter->it, iter->qual,.nt, iter->it.posn, iter->it.bad, <iter->qual_length, ++, iter->k) {
-				return (panda_kmer *) &iter->it;
+				RETURN_KMER;
 			}
 		}
 		return NULL;
@@ -129,12 +132,12 @@ panda_iter_next(
 		if (iter->reverse) {
 			iter->it.posn--;
 			_FOREACH_KMER(iter->it, iter->nt,, iter->it.posn, iter->it.bad, >=0, --, iter->k) {
-				return (panda_kmer *) &iter->it;
+				RETURN_KMER;
 			}
 		} else {
 			iter->it.posn++;
 			_FOREACH_KMER(iter->it, iter->nt,, iter->it.posn, iter->it.bad, <iter->nt_length, ++, iter->k) {
-				return (panda_kmer *) &iter->it;
+				RETURN_KMER;
 			}
 		}
 		return NULL;
@@ -142,12 +145,12 @@ panda_iter_next(
 		if (iter->reverse) {
 			iter->it.posn--;
 			_FOREACH_KMER(iter->it, iter->result,.nt, iter->it.posn, iter->it.bad, >=0, --, iter->k) {
-				return (panda_kmer *) &iter->it;
+				RETURN_KMER;
 			}
 		} else {
 			iter->it.posn++;
 			_FOREACH_KMER(iter->it, iter->result,.nt, iter->it.posn, iter->it.bad, <iter->result_length, ++, iter->k) {
-				return (panda_kmer *) &iter->it;
+				RETURN_KMER;
 			}
 		}
 		return NULL;

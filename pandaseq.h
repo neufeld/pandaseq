@@ -28,7 +28,6 @@
 #        include <stdarg.h>
 #        include <stdio.h>
 #        include <stdbool.h>
-#        include <unistd.h>
 EXTERN_C_BEGIN
 /**
  * Maximum length of a sequence
@@ -1114,10 +1113,10 @@ bool panda_idset_contains(
 
 /**
  * A k-mer and its position in the original sequence.
- */ 
+ */
 typedef struct {
 	size_t kmer;
-	ssize_t posn;
+	size_t posn;
 } panda_kmer;
 /**
  * Iterate over a sequence presenting all k-mers without Ns or other denegerate bases.
