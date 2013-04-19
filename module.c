@@ -255,7 +255,7 @@ PandaModule panda_module_new(
 	void *user_data,
 	PandaDestroy cleanup) {
 	PandaModule m;
-	if (check == NULL)
+	if (check == NULL && precheck == NULL)
 		return NULL;
 	m = malloc(sizeof(struct panda_module));
 	m->api = PANDA_API;
