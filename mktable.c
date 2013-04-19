@@ -20,8 +20,7 @@
 #include <math.h>
 #include "prob.h"
 
-static void
-buildmatrix(
+static void buildmatrix(
 	FILE *header,
 	FILE *source,
 	char *name,
@@ -49,8 +48,7 @@ buildmatrix(
 
 }
 
-static void
-buildlist(
+static void buildlist(
 	FILE *header,
 	FILE *source,
 	char *name,
@@ -67,22 +65,19 @@ buildlist(
 	fprintf(source, "};\n");
 }
 
-static double
-match(
+static double match(
 	double p,
 	double q) {
 	return (1 - p) * (1 - q) + p * q / 3;
 }
 
-static double
-mismatch(
+static double mismatch(
 	double p,
 	double q) {
 	return (1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9;
 }
 
-static double
-nmatch(
+static double nmatch(
 	double p) {
 	if (p == 1) {
 		return -2;
@@ -90,8 +85,7 @@ nmatch(
 	return log(p / 2 + 0.25);
 }
 
-static double
-score(
+static double score(
 	double p) {
 	if (p == 1) {
 		return -2;
@@ -99,14 +93,12 @@ score(
 	return log(1.0 - p);
 }
 
-static double
-score_err(
+static double score_err(
 	double p) {
 	return log(p);
 }
 
-int
-main(
+int main(
 	int argc,
 	char **argv) {
 	FILE *header;

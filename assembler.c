@@ -56,8 +56,7 @@ typedef unsigned int bitstype;
 #endif
 
 /* Compute 1-exp(p) See <http://cran.r-project.org/web/packages/Rmpfr/vignettes/log1mexp-note.pdf> */
-double
-panda_log1mexp(
+double panda_log1mexp(
 	double p) {
 	return (p > M_LN2) ? log1p(-exp(-p)) : log(-expm1(-p));
 }
@@ -69,8 +68,7 @@ typedef void (
 	double *prob,
 	double *notprob);
 
-static size_t
-computeoffset(
+static size_t computeoffset(
 	double threshold,
 	bool reverse,
 	unsigned char *seq,
@@ -113,8 +111,7 @@ computeoffset(
 	return bestindex;
 }
 
-void
-qual_base_score(
+void qual_base_score(
 	void *data,
 	panda_nt *base,
 	double *prob,
@@ -125,8 +122,7 @@ qual_base_score(
 	*notprob = qual_score_err[phred];
 }
 
-size_t
-panda_compute_offset_qual(
+size_t panda_compute_offset_qual(
 	double threshold,
 	bool reverse,
 	panda_qual *haystack,
@@ -136,8 +132,7 @@ panda_compute_offset_qual(
 	return computeoffset(threshold, reverse, (unsigned char *) haystack, haystack_length, sizeof(panda_qual), qual_base_score, needle, needle_length);
 }
 
-void
-result_base_score(
+void result_base_score(
 	void *data,
 	panda_nt *base,
 	double *prob,
@@ -147,8 +142,7 @@ result_base_score(
 	*notprob = panda_log1mexp(*prob);
 }
 
-size_t
-panda_compute_offset_result(
+size_t panda_compute_offset_result(
 	double threshold,
 	bool reverse,
 	panda_result *haystack,
@@ -159,8 +153,7 @@ panda_compute_offset_result(
 }
 
 /* Try to align forward and reverse reads and return the quality of the aligned sequence and the sequence itself. */
-static bool
-align(
+static bool align(
 	PandaAssembler assembler,
 	panda_result_seq *result) {
 	ssize_t i, j;
@@ -370,8 +363,7 @@ align(
 	return true;
 }
 
-bool
-assemble_seq(
+bool assemble_seq(
 	PandaAssembler assembler) {
 	assembler->count++;
 	if (assembler->result.forward_length < 2 || assembler->result.reverse_length < 2) {
@@ -474,8 +466,7 @@ assemble_seq(
 	return false;
 }
 
-const panda_result_seq *
-panda_assembler_next(
+const panda_result_seq *panda_assembler_next(
 	PandaAssembler assembler) {
 	if (assembler->next == NULL) {
 		return NULL;
@@ -493,8 +484,7 @@ panda_assembler_next(
 	return NULL;
 }
 
-const panda_result_seq *
-panda_assembler_assemble(
+const panda_result_seq *panda_assembler_assemble(
 	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const panda_qual *forward,

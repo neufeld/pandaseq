@@ -97,17 +97,17 @@ char const *const panda_code_str(
 typedef unsigned int PandaDebug;
 
 /** Usual output about assembly. */
-#        define PANDA_DEBUG_BUILD 1
+#        define PANDA_DEBUG_BUILD ((PandaDebug) 1)
 /** Input processing-related errors. */
-#        define PANDA_DEBUG_FILE 2
+#        define PANDA_DEBUG_FILE ((PandaDebug) 2)
 /** Extra statistics. */
-#        define PANDA_DEBUG_STAT 4
+#        define PANDA_DEBUG_STAT ((PandaDebug) 4)
 /** Information about building the k-mer table (long and boring). */
-#        define PANDA_DEBUG_KMER 8
+#        define PANDA_DEBUG_KMER ((PandaDebug) 8)
 /** Excruciating detail about the reconstruction. */
-#        define PANDA_DEBUG_RECON 16
+#        define PANDA_DEBUG_RECON ((PandaDebug) 16)
 /** Bucket loads of data about mistatches. */
-#        define PANDA_DEBUG_MISMATCH 32
+#        define PANDA_DEBUG_MISMATCH ((PandaDebug) 32)
 
 #        define PANDA_DEBUG_DEFAULT (PANDA_DEBUG_BUILD | PANDA_DEBUG_FILE | PANDA_DEBUG_STAT)
 
@@ -250,7 +250,7 @@ void panda_seqid_print(
  *
  * The return string must not be freed and subsequent calls will obliterate the previously returned string.
  */
-/*@dependent@*/ const char *panda_seqid_str(
+const char *panda_seqid_str(
 	const panda_seq_identifier *id);
 /**
  * Compare two Illumina headers
@@ -269,8 +269,7 @@ int panda_seqid_compare(
 /**
  * Reset a sequnce identifier.
  */
-void
- panda_seqid_clear(
+void panda_seqid_clear(
 	panda_seq_identifier *id);
 
 /**
@@ -279,7 +278,7 @@ void
  * Fills `id` with the parse result. The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
  */
 int panda_seqid_parse(
-	panda_seq_identifier *id,
+	/*@out@@notnull@ */ panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy);
 
@@ -290,7 +289,7 @@ int panda_seqid_parse(
  * @see panda_seqid_parse
  */
 int panda_seqid_parse_fail(
-	panda_seq_identifier *id,
+	/*@out@@notnull@ */ panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,
 	bool *old,
@@ -355,7 +354,7 @@ typedef struct {
 /**
  * Sequence validity checker
  */
-typedef /*@refcounted@ */ struct panda_module *PandaModule;
+typedef struct panda_module *PandaModule;
 
 /**
  * Check a sequence after reconstruction for validity.
@@ -405,92 +404,92 @@ typedef bool (
  * @param cleanup an optional function to be called when this module is garbage collected
  * The user is responsible for managing the memory associated with user_data, but the cleanup function will always be called.
  */
-/*@notnull@*/ PandaModule panda_module_new(
-	/*@notnull@ */ const char *name,
-	/*@null@ */ PandaCheck check,
-	/*@null@ */ PandaPreCheck precheck,
-	/*@null@ */ void *user_data,
-	/*@null@ */ PandaDestroy cleanup);
+PandaModule panda_module_new(
+	const char *name,
+	PandaCheck check,
+	PandaPreCheck precheck,
+	void *user_data,
+	PandaDestroy cleanup);
 /**
  * Load a module from a string containg the module name and arguments.
  *
  * @param path the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
  */
-/*@null@*/ PandaModule panda_module_load(
-	/*@notnull@ */ const char *path);
+PandaModule panda_module_load(
+	const char *path);
 
 /**
  * Increase the reference count on a module.
  */
-/*@notnull@*/ PandaModule panda_module_ref(
-	/*@notnull@ */ PandaModule module);
+PandaModule panda_module_ref(
+	PandaModule module);
 /**
  * Decrease the reference count on a module.
  */
 void panda_module_unref(
-	/*@notnull@ */ PandaModule module);
+	/*@notnull@@killref@ */ PandaModule module);
 /**
  * Get the name of a module.
  *
  * The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_name(
-	/*@notnull@ */ PandaModule module);
+const char *panda_module_get_name(
+	PandaModule module);
 /**
  * Get the description of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_description(
-	/*@notnull@ */ PandaModule module);
+const char *panda_module_get_description(
+	PandaModule module);
 /**
  * Get the usage information (i.e., help text) of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_usage(
-	/*@notnull@ */ PandaModule module);
+const char *panda_module_get_usage(
+	PandaModule module);
 /**
  * Get the version of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_version(
-	/*@notnull@ */ PandaModule module);
+const char *panda_module_get_version(
+	PandaModule module);
 /**
  * Get the arguments passed on loading of a module of a module.
  *
  * This is only appropriate for loaded modules.
  * Possibly null. The string returned must NOT be freed.
  */
-/*@dependent@*/ const char *panda_module_get_args(
-	/*@notnull@ */ PandaModule module);
+const char *panda_module_get_args(
+	PandaModule module);
 /**
  * Get the version of a module.
  *
  * This is only appropriate for loaded modules. Modules constructed by panda_module_new will always return PANDA_API.
  */
 int panda_module_get_api(
-	/*@notnull@ */ PandaModule module);
+	PandaModule module);
 
 /**
  * The manager for an assembly
  */
-typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
+typedef struct panda_assembler *PandaAssembler;
 /**
  * Open a pair of gzipped (or uncompressed files) for assembly.
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-/*@null@*/ PandaAssembler panda_assembler_open_gz(
-	/*@notnull@ */ char *forward,
-	/*@notnull@ */ char *reverse,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaAssembler panda_assembler_open_gz(
+	char *forward,
+	char *reverse,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
@@ -498,12 +497,12 @@ typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-/*@null@*/ PandaAssembler panda_assembler_open_bz2(
-	/*@notnull@ */ char *forward,
-	/*@notnull@ */ char *reverse,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaAssembler panda_assembler_open_bz2(
+	char *forward,
+	char *reverse,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	unsigned char qualmin,
 	PandaTagging policy);
 
@@ -514,7 +513,7 @@ typedef /*@refcounted@ */ struct panda_assembler *PandaAssembler;
  */
 typedef int (
 	*PandaNextChar) (
-	/*@null@ */ void *user_data);
+	void *user_data);
 /**
  * Get the next sequence pair.
  *
@@ -527,12 +526,12 @@ typedef int (
  */
 typedef bool (
 	*PandaNextSeq) (
-	/*@notnull@@out@ */ panda_seq_identifier *id,
-	/*@notnull@@out@ */ panda_qual **forward,
-	/*@notnull@@out@ */ size_t *forward_length,
-	/*@notnull@@out@ */ panda_qual **reverse,
-	/*@notnull@@out@ */ size_t *reverse_length,
-	/*@null@ */ void *user_data);
+	/*@out@@notnull@ */ panda_seq_identifier *id,
+	/*@out@@notnull@ */ panda_qual **forward,
+	/*@out@@notnull@ */ size_t *forward_length,
+	/*@out@@notnull@ */ panda_qual **reverse,
+	/*@out@@notnull@ */ size_t *reverse_length,
+	void *user_data);
 /**
  * Create an object to read sequences from two character streams of FASTQ data
  *
@@ -545,60 +544,60 @@ typedef bool (
  * @param destroy where to store the destroy function for the user data
  */
 PandaNextSeq panda_create_fastq_reader(
-	/*@notnull@ */ PandaNextChar forward,
-	/*@null@ */ void *forward_data,
-	/*@null@ */ PandaDestroy forward_destroy,
-	/*@notnull@ */ PandaNextChar reverse,
-	/*@null@ */ void *reverse_data,
-	/*@null@ */ PandaDestroy reverse_destroy,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
+	PandaNextChar forward,
+	void *forward_data,
+	PandaDestroy forward_destroy,
+	PandaNextChar reverse,
+	void *reverse_data,
+	PandaDestroy reverse_destroy,
+	PandaLogger logger,
+	void *logger_data,
 	unsigned char qualmin,
 	PandaTagging policy,
-	/*@notnull@@out@ */ void **user_data,
-	/*@notnull@@out@ */ PandaDestroy *destroy);
+	/*@out@@notnull@ */ void **user_data,
+	/*@out@@notnull@ */ PandaDestroy *destroy);
 /**
  * Open a pair of gzipped (or uncompressed files).
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-/*@null@*/ PandaNextSeq panda_open_gz(
-	/*@notnull@ */ char *forward,
-	/*@notnull@ */ char *reverse,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
+PandaNextSeq panda_open_gz(
+	char *forward,
+	char *reverse,
+	PandaLogger logger,
+	void *logger_data,
 	unsigned char qualmin,
 	PandaTagging policy,
-	/*@notnull@@out@ */ void **user_data,
-	/*@notnull@@out@ */ PandaDestroy *destroy);
+	/*@out@@notnull@ */ void **user_data,
+	/*@out@@notnull@ */ PandaDestroy *destroy);
 /**
  * Open a pair of bzipped files.
  *
  * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-/*@null@*/ PandaNextSeq panda_open_bz2(
-	/*@notnull@ */ char *forward,
-	/*@notnull@ */ char *reverse,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
+PandaNextSeq panda_open_bz2(
+	char *forward,
+	char *reverse,
+	PandaLogger logger,
+	void *logger_data,
 	unsigned char qualmin,
 	PandaTagging policy,
-	/*@notnull@@out@ */ void **user_data,
-	/*@notnull@@out@ */ PandaDestroy *destroy);
+	/*@out@@notnull@ */ void **user_data,
+	/*@out@@notnull@ */ PandaDestroy *destroy);
 /**
  * Create a new assembler for given to FASTQ streams.
  * @see panda_create_fastq_reader
  */
-/*@notnull@*/ PandaAssembler panda_assembler_new_fastq_reader(
-	/*@notnull@ */ PandaNextChar forward,
-	/*@null@ */ void *forward_data,
-	/*@null@ */ PandaDestroy forward_destroy,
-	/*@notnull@ */ PandaNextChar reverse,
-	/*@null@ */ void *reverse_data,
-	/*@null@ */ PandaDestroy reverse_destroy,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaAssembler panda_assembler_new_fastq_reader(
+	PandaNextChar forward,
+	void *forward_data,
+	PandaDestroy forward_destroy,
+	PandaNextChar reverse,
+	void *reverse_data,
+	PandaDestroy reverse_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
@@ -607,13 +606,13 @@ PandaNextSeq panda_create_fastq_reader(
  * @param next, next_data, next_destroy the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroy, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
  * @param logger, logger_data, logger_destroy the function to call to report information to the user
  */
-/*@notnull@*/ PandaAssembler panda_assembler_new(
-	/*@notnull@ */ PandaNextSeq next,
-	/*@null@ */ void *next_data,
-	/*@null@ */ PandaDestroy next_destroy,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy);
+PandaAssembler panda_assembler_new(
+	PandaNextSeq next,
+	void *next_data,
+	PandaDestroy next_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy);
 /**
  * The default number of locations in the k-mer look up table.
  *
@@ -626,13 +625,13 @@ PandaNextSeq panda_create_fastq_reader(
  * @param num_kmers the number of sequence locations for a particular k-mer. The default is PANDA_DEFAULT_NUM_KMERS. This should be small (no more than 10), or the k-mer table will be extremely large.
  * @see panda_assembler_new
  */
-/*@notnull@*/ PandaAssembler panda_assembler_new_kmer(
-	/*@notnull@ */ PandaNextSeq next,
-	/*@null@ */ void *next_data,
-	/*@null@ */ PandaDestroy next_destroy,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaAssembler panda_assembler_new_kmer(
+	PandaNextSeq next,
+	void *next_data,
+	PandaDestroy next_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	size_t num_kmers);
 /**
  * Clone the configuration of one assembler to another.
@@ -640,22 +639,22 @@ PandaNextSeq panda_create_fastq_reader(
  * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.
  */
 void panda_assembler_copy_configuration(
-	/*@notnull@ */ PandaAssembler dest,
-	/*@notnull@ */ PandaAssembler src);
+	PandaAssembler dest,
+	PandaAssembler src);
 /**
  * Increase the reference count on an assembler.
  *
  * This is thread-safe.
  */
 PandaAssembler panda_assembler_ref(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * Decrease the reference count on an assembler.
  *
  * This is thread-safe.
  */
 void panda_assembler_unref(
-	/*@notnull@ */ PandaAssembler assembler);
+	/*@notnull@@killref@ */ PandaAssembler assembler);
 /**
  * Add a module to this assembly process.
  *
@@ -664,113 +663,112 @@ void panda_assembler_unref(
  * module's command line arguments are not processed correctly, this will fail.
  */
 bool panda_assembler_add_module(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@notnull@ */ PandaModule module);
+	PandaAssembler assembler,
+	PandaModule module);
 
 /**
  * The minimum error estimation in the sequence data (epsilon)
  */
 double panda_assembler_get_error_estimation(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 void panda_assembler_set_error_estimation(
-	/*@notnull@ */ PandaAssembler assembler,
+	PandaAssembler assembler,
 	double q);
 
 /**
  * The minimum overlap two sequences must have to be accepted. It must be greater than one.
  */
 int panda_assembler_get_minimum_overlap(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 void panda_assembler_set_minimum_overlap(
-	/*@notnull@ */ PandaAssembler assembler,
+	PandaAssembler assembler,
 	int overlap);
 
 /**
  * The minimum quality threshold to have an assembly accepted. Must be between 0 and 1, exclusive.
  */
 double panda_assembler_get_threshold(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 void panda_assembler_set_threshold(
-	/*@notnull@ */ PandaAssembler assembler,
+	PandaAssembler assembler,
 	double threshold);
 
 /**
  * The number of sequences rejected because the forward primer could not be aligned.
  */
 long panda_assembler_get_no_forward_primer_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The number of sequences rejected because the reverse primer could not be aligned.
  */
 long panda_assembler_get_no_reverse_primer_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The number of sequences accepted.
  */
 long panda_assembler_get_ok_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The number of sequences rejected because the quality score is too low.
  */
 long panda_assembler_get_low_quality_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The number of sequences rejected because the reads are unsatisfactory in some way.
  */
 long panda_assembler_get_bad_read_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The numer of sequences where all possible overlaps had to be examined, instead of a quick hashing.
  */
-long
- panda_assembler_get_slow_count(
-	/*@notnull@ */ PandaAssembler assembler);
+long panda_assembler_get_slow_count(
+	PandaAssembler assembler);
 /**
  * The number of sequences rejected because they contain degenerate (N) bases.
  */
 long panda_assembler_get_degenerate_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The number of sequences rejected because the overlap could not be determined.
  */
 long panda_assembler_get_failed_alignment_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * The number of sequences processed so far.
  */
 long panda_assembler_get_count(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * Reject sequences with degenerate (N) bases.
  */
 bool panda_assembler_get_disallow_degenerates(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 void panda_assembler_set_disallow_degenerates(
-	/*@notnull@ */ PandaAssembler assembler,
+	PandaAssembler assembler,
 	bool allow);
 /**
  * The forward primer sequence to be stripped
  * 
  * This is mutually exclusive with forward_trim
  */
-/*@null@*/ panda_nt *panda_assembler_get_forward_primer(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@notnull@@out@ */ size_t *length);
+panda_nt *panda_assembler_get_forward_primer(
+	PandaAssembler assembler,
+	/*@out@@notnull@ */ size_t *length);
 void panda_assembler_set_forward_primer(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@null@ */ panda_nt *sequence,
+	PandaAssembler assembler,
+	panda_nt *sequence,
 	size_t length);
 /**
  * The reverse primer sequence to be stripped
  * 
  * This is mutually exclusive with reverse_trim
  */
-/*@null@*/ panda_nt *panda_assembler_get_reverse_primer(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@notnull@@out@ */ size_t *length);
+panda_nt *panda_assembler_get_reverse_primer(
+	PandaAssembler assembler,
+	/*@out@@notnull@ */ size_t *length);
 void panda_assembler_set_reverse_primer(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@null@ */ panda_nt *sequence,
+	PandaAssembler assembler,
+	panda_nt *sequence,
 	size_t length);
 /**
  * The amount of forward sequence to strip
@@ -808,7 +806,7 @@ void panda_assembler_set_primers_after(
  * Log the number of sequences rejected by each module.
  */
 void panda_assembler_module_stats(
-	/*@notnull@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 
 /**
  * A callback for iterating over the current modules.
@@ -838,19 +836,19 @@ bool panda_assembler_foreach_module(
  * This function will process sequences until one is assembled successfully or no more sequences are available from the input stream, after which it will return null.
  * The returned sequence becomes invalid after the next call or after calling panda_assembler_unref.
  */
-/*@null@*/ const panda_result_seq *panda_assembler_next(
-	/*@notnull@ */ PandaAssembler assembler);
+const panda_result_seq *panda_assembler_next(
+	/*@notnull@@killref@ */ PandaAssembler assembler);
 /**
  * Assemble a single sequence pair not drawn from the sequence stream.
  *
  * This works exactly like panda_assembler_next, but instead of asking the PandaSeqNext for the data, it expects this information to be provided.
  */
-/*@null@*/ const panda_result_seq *panda_assembler_assemble(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@notnull@ */ panda_seq_identifier *id,
-	/*@notnull@ */ const panda_qual *forward,
+const panda_result_seq *panda_assembler_assemble(
+	PandaAssembler assembler,
+	panda_seq_identifier *id,
+	const panda_qual *forward,
 	size_t forward_length,
-	/*@notnull@ */ const panda_qual *reverse,
+	const panda_qual *reverse,
 	size_t reverse_length);
 /**
  * Handle a failed alignment
@@ -864,11 +862,11 @@ bool panda_assembler_foreach_module(
  */
 typedef void (
 	*PandaFailAlign) (
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@notnull@ */ const panda_seq_identifier *id,
-	/*@notnull@ */ const panda_qual *forward,
+	PandaAssembler assembler,
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
 	size_t forward_length,
-	/*@notnull@ */ const panda_qual *reverse,
+	const panda_qual *reverse,
 	size_t reverse_length,
 	void *user_data);
 
@@ -880,8 +878,8 @@ typedef void (
  * Memory management will be handled by the assembler. When the assembler is finished, the destroy function will be called on the user data, if provided.
  */
 void panda_assembler_set_fail_alignment(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@null@ */ PandaFailAlign handler,
+	PandaAssembler assembler,
+	PandaFailAlign handler,
 	void *handler_data,
 	PandaDestroy handler_destroy);
 
@@ -902,14 +900,14 @@ size_t panda_assembler_get_longest_overlap(
  * Write an assembly to a FASTA file.
  */
 bool panda_output_fasta(
-	/*@notnull@ */ const panda_result_seq *sequence,
-	/*@notnull@ */ FILE *file);
+	const panda_result_seq *sequence,
+	FILE *file);
 /**
  * Write an assembly to a FASTQ file.
  */
 bool panda_output_fastq(
-	/*@notnull@ */ const panda_result_seq *sequence,
-	/*@notnull@ */ FILE *file);
+	const panda_result_seq *sequence,
+	FILE *file);
 /**
  * Write errors and information to a file.
  */
@@ -917,71 +915,71 @@ bool panda_logger_file(
 	PandaCode code,
 	panda_seq_identifier *id,
 	const char *message,
-	/*@notnull@ */ FILE *file);
+	FILE *file);
 
 /**
  * Write an unassembled sequence to a FASTA file as a concatenated pair.
  */
 void panda_output_fail(
-	/*@notnull@ */ PandaAssembler assembler,
-	/*@notnull@ */ const panda_seq_identifier *id,
-	/*@notnull@ */ const panda_qual *forward,
+	PandaAssembler assembler,
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
 	size_t forward_length,
-	/*@notnull@ */ const panda_qual *reverse,
+	const panda_qual *reverse,
 	size_t reverse_length,
-	/*@notnull@ */ FILE *file);
+	FILE *file);
 
 /**
  * A threading-safe wrapper to allow multiple assemblers to share a single data source.
  */
-typedef /*@refcounted@ */ struct panda_mux *PandaMux;
+typedef struct panda_mux *PandaMux;
 /**
  * Create a new multiplexed data source from a sequence callback.
  *
  * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
  */
-/*@notnull@*/ PandaMux panda_mux_new(
-	/*@notnull@ */ PandaNextSeq next,
-	/*@null@ */ void *next_data,
-	/*@null@ */ PandaDestroy next_destroy,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy);
+PandaMux panda_mux_new(
+	PandaNextSeq next,
+	void *next_data,
+	PandaDestroy next_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy);
 /**
  * Increase the reference count on a multiplexer.
  */
-/*@notnull@*/ PandaMux panda_mux_ref(
-	/*@notnull@ */ PandaMux mux);
+PandaMux panda_mux_ref(
+	PandaMux mux);
 /**
  * Decrease the reference count on a multiplexer.
  */
 void panda_mux_unref(
-	/*@notnull@ */ PandaMux mux);
+	/*@notnull@@killref@ */ PandaMux mux);
 /**
  * Create a new assembler using the multiplexer as it sequence source.
  *
  * The new assembler will draw sequences from the original source in a thread-safe way. Each assembler is not thread-safe. This means that, to use the interface correctly, one creates a sequence source, wraps it in a multiplexer, then creates an assembler for every thread. Each assembler should be accessed in only one thread. It may be advisable to create a single assembler and set its configuration, then copy the settings to subsequently created assemblers.
  * @see panda_assembler_copy_configuration
  */
-/*@notnull@*/ PandaAssembler panda_mux_create_assembler(
-	/*@notnull@ */ PandaMux mux);
+PandaAssembler panda_mux_create_assembler(
+	PandaMux mux);
 /**
  * Create a new assembler using the multiplexer as it sequence source with a custom k-mer table size.
  * @see panda_assembler_new_kmer
  */
-/*@notnull@*/ PandaAssembler panda_mux_create_assembler_kmer(
-	/*@notnull@ */ PandaMux mux,
+PandaAssembler panda_mux_create_assembler_kmer(
+	PandaMux mux,
 	size_t num_kmers);
 /**
  * Open a pair of gzipped files for multi-threaded assembled.
  * @see panda_assembler_open_gz
  */
-/*@null@*/ PandaMux panda_mux_open_gz(
-	/*@notnull@ */ char *forward,
-	/*@notnull@ */ char *reverse,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaMux panda_mux_open_gz(
+	char *forward,
+	char *reverse,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
@@ -989,28 +987,28 @@ void panda_mux_unref(
  *
  * @see panda_assembler_open_bz2
  */
-/*@null@*/ PandaMux panda_mux_open_bz2(
-	/*@notnull@ */ char *forward,
-	/*@notnull@ */ char *reverse,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaMux panda_mux_open_bz2(
+	char *forward,
+	char *reverse,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
  * Create a new multiplexed reader for given to FASTQ streams.
  * @see panda_create_fastq_reader
  */
-/*@notnull@*/ PandaMux panda_mux_new_fastq_reader(
-	/*@notnull@ */ PandaNextChar forward,
-	/*@null@ */ void *forward_data,
-	/*@null@ */ PandaDestroy forward_destroy,
-	/*@notnull@ */ PandaNextChar reverse,
-	/*@null@ */ void *reverse_data,
-	/*@null@ */ PandaDestroy reverse_destroy,
-	/*@notnull@ */ PandaLogger logger,
-	/*@null@ */ void *logger_data,
-	/*@null@ */ PandaDestroy logger_destroy,
+PandaMux panda_mux_new_fastq_reader(
+	PandaNextChar forward,
+	void *forward_data,
+	PandaDestroy forward_destroy,
+	PandaNextChar reverse,
+	void *reverse_data,
+	PandaDestroy reverse_destroy,
+	PandaLogger logger,
+	void *logger_data,
+	PandaDestroy logger_destroy,
 	unsigned char qualmin,
 	PandaTagging policy);
 
@@ -1025,8 +1023,8 @@ void panda_mux_unref(
  */
 
 void panda_mux_set_fail_alignment(
-	/*@notnull@ */ PandaMux mux,
-	/*@null@ */ PandaFailAlign handler,
+	PandaMux mux,
+	PandaFailAlign handler,
 	void *handler_data,
 	PandaDestroy handler_destroy);
 
@@ -1039,9 +1037,9 @@ void panda_mux_set_fail_alignment(
 size_t panda_compute_offset_qual(
 	double threshold,
 	bool reverse,
-	/*@notnull@ */ panda_qual *haystack,
+	panda_qual *haystack,
 	size_t haystack_length,
-	/*@notnull@ */ panda_nt *needle,
+	panda_nt *needle,
 	size_t needle_length);
 
 /**
@@ -1053,9 +1051,9 @@ size_t panda_compute_offset_qual(
 size_t panda_compute_offset_result(
 	double threshold,
 	bool reverse,
-	/*@notnull@ */ panda_result *haystack,
+	panda_result *haystack,
 	size_t haystack_length,
-	/*@notnull@ */ panda_nt *needle,
+	panda_nt *needle,
 	size_t needle_length);
 
 /**
@@ -1069,51 +1067,51 @@ double panda_log1mexp(
 /**
  * A set of sequence identifiers against which to match.
  */
-typedef /*@refcounted@ */ struct panda_idset *PandaSet;
+typedef struct panda_idset *PandaSet;
 
 /**
  * Create a new, empty set.
  */
-/*@notnull@*/ PandaSet panda_idset_new(
+PandaSet panda_idset_new(
 	void);
 /**
  * Increase the reference count on a set.
  *
  * This is thread-safe.
  */
-/*@notnull@*/ PandaSet panda_idset_ref(
-	/*@notnull@ */ PandaSet set);
+PandaSet panda_idset_ref(
+	PandaSet set);
 /**
  * Decrease the reference count on a set.
  *
  * This is thread-safe.
  */
 void panda_idset_unref(
-	/*@notnull@@killref@ */ PandaSet set);
+	/*@killref@@notnull@ */ PandaSet set);
 
 /**
  * Add a sequence identifier to a set.
  */
 void panda_idset_add(
-	/*@notnull@ */ PandaSet set,
-	/*@notnull@ */ const panda_seq_identifier *id);
+	PandaSet set,
+	const panda_seq_identifier *id);
 /**
  * Parse a sequence identifier and add it to the set.
  * @return true on success
  * @see panda_seqid_parse_fail
  */
 bool panda_idset_add_str(
-	/*@notnull@ */ PandaSet set,
-	/*@notnull@ */ const char *id,
+	PandaSet set,
+	const char *id,
 	PandaTagging policy,
-	/*@null@@out@ */ bool *old,
-	/*@null@@out@ */ const char **end_ptr);
+	/*@out@@null@ */ bool *old,
+	/*@out@@null@ */ const char **end_ptr);
 /**
  * Check if a sequence identifier has been added to the set.
  */
 bool panda_idset_contains(
-	/*@notnull@ */ PandaSet set,
-	/*@notnull@ */ const panda_seq_identifier *id);
+	PandaSet set,
+	const panda_seq_identifier *id);
 
 /**
  * A k-mer and its position in the original sequence.
@@ -1144,20 +1142,18 @@ void panda_iter_reset(
 /**
  * Get the k-mer length for the iterator.
  */
-int
- panda_iter_k(
+int panda_iter_k(
 	PandaIter iter);
 /**
  * Get the number of useful bits in the output.
  */
-size_t
- panda_iter_bits(
+size_t panda_iter_bits(
 	PandaIter iter);
 /**
  * Advance to the next position in the sequence.
  * @return if null, there are no more k-mers in the sequence
  */
-const panda_kmer *panda_iter_next(
+/*@null@@dependent@*/ const panda_kmer *panda_iter_next(
 	PandaIter iter);
 /**
  * Create an iterator over a sequence of nucleotides.

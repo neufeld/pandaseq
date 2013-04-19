@@ -40,8 +40,7 @@ struct panda_mux {
 	volatile size_t refcnt;
 };
 
-PandaMux
-panda_mux_new(
+PandaMux panda_mux_new(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
@@ -66,8 +65,7 @@ panda_mux_new(
 	return mux;
 }
 
-PandaMux
-panda_mux_new_fastq_reader(
+PandaMux panda_mux_new_fastq_reader(
 	PandaNextChar forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,
@@ -86,8 +84,7 @@ panda_mux_new_fastq_reader(
 	return panda_mux_new(next, user_data, destroy, logger, logger_data, logger_destroy);
 }
 
-PandaMux
-panda_mux_ref(
+PandaMux panda_mux_ref(
 	PandaMux mux) {
 	pthread_mutex_lock(&mux->mutex);
 	mux->refcnt++;
@@ -95,8 +92,7 @@ panda_mux_ref(
 	return mux;
 }
 
-void
-panda_mux_unref(
+void panda_mux_unref(
 	PandaMux mux) {
 	int count;
 	pthread_mutex_lock(&mux->mutex);
@@ -123,8 +119,7 @@ panda_mux_unref(
 	}
 }
 
-static bool
-mux_logger(
+static bool mux_logger(
 	PandaCode code,
 	panda_seq_identifier *id,
 	char *msg,
@@ -136,8 +131,7 @@ mux_logger(
 	return ret;
 }
 
-static bool
-mux_next(
+static bool mux_next(
 	panda_seq_identifier *id,
 	panda_qual **forward,
 	size_t *forward_length,
@@ -168,8 +162,7 @@ mux_next(
 	return result;
 }
 
-void
-mux_fail_algn(
+void mux_fail_algn(
 	PandaAssembler assembler,
 	const panda_seq_identifier *id,
 	const panda_qual *forward,
@@ -187,14 +180,12 @@ mux_fail_algn(
 	pthread_mutex_unlock(&mux->noalgn_mutex);
 }
 
-PandaAssembler
-panda_mux_create_assembler(
+PandaAssembler panda_mux_create_assembler(
 	PandaMux mux) {
 	return panda_mux_create_assembler_kmer(mux, PANDA_DEFAULT_NUM_KMERS);
 }
 
-PandaAssembler
-panda_mux_create_assembler_kmer(
+PandaAssembler panda_mux_create_assembler_kmer(
 	PandaMux mux,
 	size_t num_kmers) {
 	PandaAssembler assembler;
@@ -209,8 +200,7 @@ panda_mux_create_assembler_kmer(
 	return assembler;
 }
 
-void
-panda_mux_set_fail_alignment(
+void panda_mux_set_fail_alignment(
 	PandaMux mux,
 	PandaFailAlign handler,
 	void *handler_data,

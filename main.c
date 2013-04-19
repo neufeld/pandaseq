@@ -51,8 +51,7 @@ pthread_mutex_t output_mutex = PTHREAD_MUTEX_INITIALIZER;
 #        	define STAT(str, val)	fprintf(stderr, "STAT\t" str "\n", (val))
 #endif
 
-static void
-printtime(
+static void printtime(
 	PandaAssembler assembler,
 	long count,
 	time_t starttime) {
@@ -63,23 +62,20 @@ printtime(
 	STAT("READS\t%ld", count);
 }
 
-bool
-short_check(
+bool short_check(
 	const panda_result_seq *sequence,
 	void *user_data) {
 	return sequence->sequence_length >= minlen;
 }
 
-bool
-long_check(
+bool long_check(
 	const panda_result_seq *sequence,
 	void *user_data) {
 	size_t length = (size_t) user_data;
 	return sequence->sequence_length <= maxlen;
 }
 
-static void *
-do_assembly(
+static void *do_assembly(
 	PandaAssembler assembler) {
 	long count;
 	size_t it = 0;
@@ -141,8 +137,7 @@ do_assembly(
 	return NULL;
 }
 
-bool
-set_primer(
+bool set_primer(
 	PandaAssembler assembler,
 	void (*set_func) (PandaAssembler,
 		panda_nt *,
@@ -160,8 +155,7 @@ set_primer(
 	return true;
 }
 
-int
-main(
+int main(
 	int argc,
 	char **argv) {
 	PandaAssembler assembler;

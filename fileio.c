@@ -24,8 +24,7 @@
 #endif
 #include "pandaseq.h"
 
-PandaNextSeq
-panda_open_gz(
+PandaNextSeq panda_open_gz(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,
@@ -53,8 +52,7 @@ panda_open_gz(
 	return panda_create_fastq_reader(gzgetc, forward_file, (PandaDestroy) gzclose, gzgetc, reverse_file, (PandaDestroy) gzclose, logger, logger_data, qualmin, policy, user_data, destroy);
 }
 
-PandaAssembler
-panda_assembler_open_gz(
+PandaAssembler panda_assembler_open_gz(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,
@@ -75,8 +73,7 @@ panda_assembler_open_gz(
 }
 
 #ifdef HAVE_PTHREAD
-PandaMux
-panda_mux_open_gz(
+PandaMux panda_mux_open_gz(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,
@@ -98,8 +95,7 @@ panda_mux_open_gz(
 }
 #endif
 
-static int
-bzgetc(
+static int bzgetc(
 	BZFILE * file) {
 	char c;
 	if (BZ2_bzread(file, &c, 1) != 1) {
@@ -108,8 +104,7 @@ bzgetc(
 	return c;
 }
 
-PandaNextSeq
-panda_open_bz2(
+PandaNextSeq panda_open_bz2(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,
@@ -134,8 +129,7 @@ panda_open_bz2(
 	return panda_create_fastq_reader(bzgetc, forward_file, BZ2_bzclose, bzgetc, reverse_file, BZ2_bzclose, logger, logger_data, qualmin, policy, user_data, destroy);
 }
 
-PandaAssembler
-panda_assembler_open_bz2(
+PandaAssembler panda_assembler_open_bz2(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,
@@ -157,8 +151,7 @@ panda_assembler_open_bz2(
 }
 
 #ifdef HAVE_PTHREAD
-PandaMux
-panda_mux_open_bz2(
+PandaMux panda_mux_open_bz2(
 	char *forward,
 	char *reverse,
 	PandaLogger logger,

@@ -55,8 +55,7 @@ struct panda_module {
 	char **version;
 };
 
-bool
-module_checkseq(
+bool module_checkseq(
 	PandaAssembler assembler,
 	panda_result_seq *sequence) {
 	int it;
@@ -70,8 +69,7 @@ module_checkseq(
 	return true;
 }
 
-bool
-module_precheckseq(
+bool module_precheckseq(
 	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const panda_qual *forward,
@@ -89,8 +87,7 @@ module_precheckseq(
 	return true;
 }
 
-void
-module_init(
+void module_init(
 	PandaAssembler assembler) {
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
@@ -103,8 +100,7 @@ module_init(
 	}
 }
 
-void
-panda_assembler_module_stats(
+void panda_assembler_module_stats(
 	PandaAssembler assembler) {
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
@@ -113,8 +109,7 @@ panda_assembler_module_stats(
 	}
 }
 
-bool
-panda_assembler_foreach_module(
+bool panda_assembler_foreach_module(
 	PandaAssembler assembler,
 	PandaModuleCallback callback,
 	void *data) {
@@ -127,8 +122,7 @@ panda_assembler_foreach_module(
 	return true;
 }
 
-void
-module_destroy(
+void module_destroy(
 	PandaAssembler assembler) {
 	int it;
 	if (assembler->rejected)
@@ -141,8 +135,7 @@ module_destroy(
 }
 
 static volatile int ltdl_count = 0;
-static bool
-ref_ltdl(
+static bool ref_ltdl(
 	void) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
@@ -170,8 +163,7 @@ ref_ltdl(
 	return true;
 }
 
-static void
-unref_ltdl(
+static void unref_ltdl(
 	void) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
@@ -184,10 +176,9 @@ unref_ltdl(
 #endif
 }
 
-static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0'};
+static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0' };
 
-PandaModule
-panda_module_load(
+PandaModule panda_module_load(
 	const char *path) {
 	PandaModule m;
 	lt_dlhandle handle;
@@ -257,8 +248,7 @@ panda_module_load(
 	return m;
 }
 
-PandaModule
-panda_module_new(
+PandaModule panda_module_new(
 	const char *name,
 	PandaCheck check,
 	PandaPreCheck precheck,
@@ -283,8 +273,7 @@ panda_module_new(
 	return m;
 }
 
-PandaModule
-panda_module_ref(
+PandaModule panda_module_ref(
 	PandaModule module) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
@@ -296,8 +285,7 @@ panda_module_ref(
 	return module;
 }
 
-void
-panda_module_unref(
+void panda_module_unref(
 	PandaModule module) {
 	int count;
 #ifdef HAVE_PTHREAD
@@ -321,32 +309,27 @@ panda_module_unref(
 	}
 }
 
-const char *
-panda_module_get_name(
+const char *panda_module_get_name(
 	PandaModule module) {
 	return module->name;
 }
 
-const char *
-panda_module_get_args(
+const char *panda_module_get_args(
 	PandaModule module) {
 	return module->args;
 }
 
-int
-panda_module_get_api(
+int panda_module_get_api(
 	PandaModule module) {
 	return module->api;
 }
 
-const char *
-panda_module_get_version(
+const char *panda_module_get_version(
 	PandaModule module) {
 	return module->version == NULL ? NULL : *module->version;
 }
 
-const char *
-panda_module_get_description(
+const char *panda_module_get_description(
 	PandaModule module) {
 	char **val;
 	const lt_dlinfo *info;
@@ -357,8 +340,7 @@ panda_module_get_description(
 	return val == NULL ? NULL : *val;
 }
 
-const char *
-panda_module_get_usage(
+const char *panda_module_get_usage(
 	PandaModule module) {
 	char **val;
 	const lt_dlinfo *info;
@@ -369,8 +351,7 @@ panda_module_get_usage(
 	return val == NULL ? NULL : *val;
 }
 
-bool
-panda_assembler_add_module(
+bool panda_assembler_add_module(
 	PandaAssembler assembler,
 	PandaModule module) {
 	bool init = true;

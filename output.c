@@ -21,8 +21,7 @@
 #include "buffer.h"
 #include "table.h"
 
-bool
-panda_logger_file(
+bool panda_logger_file(
 	PandaCode code,
 	panda_seq_identifier *id,
 	const char *message,
@@ -50,8 +49,7 @@ panda_logger_file(
 	return true;
 }
 
-const char *const
-panda_code_str(
+const char *const panda_code_str(
 	PandaCode code) {
 	switch (code) {
 	case PANDA_CODE_BAD_NT:
@@ -113,8 +111,7 @@ panda_code_str(
 	}
 }
 
-bool
-panda_output_fasta(
+bool panda_output_fasta(
 	const panda_result_seq *sequence,
 	FILE *file) {
 	size_t it;
@@ -128,8 +125,7 @@ panda_output_fasta(
 	return true;
 }
 
-bool
-panda_output_fastq(
+bool panda_output_fastq(
 	const panda_result_seq *sequence,
 	FILE *file) {
 	size_t it;
@@ -147,8 +143,7 @@ panda_output_fastq(
 	return true;
 }
 
-void
-panda_output_fail(
+void panda_output_fail(
 	PandaAssembler assembler,
 	const panda_seq_identifier *id,
 	const panda_qual *forward,

@@ -45,8 +45,7 @@ struct fastq_data {
 	bool non_empty;
 };
 
-static bool
-read_line(
+static bool read_line(
 	char *buffer,
 	size_t max_len,
 	struct stream_data *stream,
@@ -77,8 +76,7 @@ read_line(
 #define LOG(flag, code) do { if(panda_debug_flags & flag) data->logger((code), id, NULL, data->logger_data); } while(0)
 #define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); data->logger((code), id, static_buffer(), data->logger_data); }} while(0)
 #define TOINDEX(val) (((int)(val)) < data->qualmin ? 0 : ((((int)(val)) > data->qualmin + PHREDMAX ? PHREDMAX : (int)(val)) - data->qualmin))
-static bool
-read_seq(
+static bool read_seq(
 	panda_seq_identifier *id,
 	panda_qual *buffer,
 	size_t max_len,
@@ -168,8 +166,7 @@ read_seq(
 
 #undef TOINDEX
 
-static bool
-stream_next_seq(
+static bool stream_next_seq(
 	panda_seq_identifier *id,
 	panda_qual **forward,
 	size_t *forward_length,
@@ -219,8 +216,7 @@ stream_next_seq(
 	return true;
 }
 
-static void
-stream_destroy(
+static void stream_destroy(
 	struct fastq_data *data) {
 	if (data->non_empty && !data->seen_under_64 && data->qualmin < 64) {
 		/* Used in the LOG macro. */
@@ -232,8 +228,7 @@ stream_destroy(
 	free(data);
 }
 
-PandaNextSeq
-panda_create_fastq_reader(
+PandaNextSeq panda_create_fastq_reader(
 	PandaNextChar forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,

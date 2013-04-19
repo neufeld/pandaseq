@@ -28,8 +28,7 @@
 #include<unistd.h>
 #include "config.h"
 #include "pandaseq.h"
-int
-main(
+int main(
 	int argc,
 	char **argv) {
 	int c;

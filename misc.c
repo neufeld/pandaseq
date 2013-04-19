@@ -21,20 +21,17 @@
 #include "pandaseq.h"
 #include "misc.h"
 
-const char const *
-panda_version(
+const char const *panda_version(
 	void) {
 	return PACKAGE_STRING;
 }
 
-int
-panda_api_version(
+int panda_api_version(
 	void) {
 	return PANDA_API;
 }
 
-size_t
-panda_max_len(
+size_t panda_max_len(
 	void) {
 	return MAX_LEN;
 }
@@ -63,22 +60,19 @@ struct panda_iter {
 	panda_kmer output;
 };
 
-void
-panda_iter_free(
+void panda_iter_free(
 	PandaIter iter) {
 	free(iter);
 }
 
-PandaIter
-panda_iter_dup(
+PandaIter panda_iter_dup(
 	PandaIter iter) {
 	PandaIter new_iter = malloc(sizeof(struct panda_iter));
 	memcpy(new_iter, iter, sizeof(struct panda_iter));
 	return new_iter;
 }
 
-void
-panda_iter_reset(
+void panda_iter_reset(
 	PandaIter iter) {
 	if (iter->reverse) {
 		switch (iter->type) {
@@ -98,21 +92,18 @@ panda_iter_reset(
 	iter->it.bad = iter->k;
 }
 
-int
-panda_iter_k(
+int panda_iter_k(
 	PandaIter iter) {
 	return iter->k;
 }
 
-size_t
-panda_iter_bits(
+size_t panda_iter_bits(
 	PandaIter iter) {
 	return iter->k * 2;
 }
 
-# define RETURN_KMER return iter->output.kmer = iter->it.kmer, iter->output.posn = iter->it.posn, &iter->output
-const panda_kmer *
-panda_iter_next(
+#define RETURN_KMER return iter->output.kmer = iter->it.kmer, iter->output.posn = iter->it.posn, &iter->output
+const panda_kmer *panda_iter_next(
 	PandaIter iter) {
 	switch (iter->type) {
 	case ITER_QUAL:
@@ -157,8 +148,7 @@ panda_iter_next(
 	}
 }
 
-static PandaIter
-iter_new(
+static PandaIter iter_new(
 	enum iter_type type,
 	bool reverse,
 	int k) {
@@ -173,8 +163,7 @@ iter_new(
 	return iter;
 }
 
-PandaIter
-panda_iterate_qual(
+PandaIter panda_iterate_qual(
 	panda_qual *seq,
 	size_t seq_length,
 	bool reverse,
@@ -186,8 +175,7 @@ panda_iterate_qual(
 	return iter;
 }
 
-PandaIter
-panda_iterate_nt(
+PandaIter panda_iterate_nt(
 	panda_nt *seq,
 	size_t seq_length,
 	bool reverse,
@@ -199,8 +187,7 @@ panda_iterate_nt(
 	return iter;
 }
 
-PandaIter
-panda_iterate_result(
+PandaIter panda_iterate_result(
 	panda_result *seq,
 	size_t seq_length,
 	bool reverse,

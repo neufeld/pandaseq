@@ -24,8 +24,7 @@
 #include "assembler.h"
 #include "module.h"
 
-PandaAssembler
-panda_assembler_new(
+PandaAssembler panda_assembler_new(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
@@ -35,8 +34,7 @@ panda_assembler_new(
 	return panda_assembler_new_kmer(next, next_data, next_destroy, logger, logger_data, logger_destroy, PANDA_DEFAULT_NUM_KMERS);
 }
 
-PandaAssembler
-panda_assembler_new_kmer(
+PandaAssembler panda_assembler_new_kmer(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
@@ -111,8 +109,7 @@ panda_assembler_new_kmer(
 	return assembler;
 }
 
-void
-panda_assembler_copy_configuration(
+void panda_assembler_copy_configuration(
 	PandaAssembler dest,
 	PandaAssembler src) {
 	int it;
@@ -129,14 +126,12 @@ panda_assembler_copy_configuration(
 	dest->post_primers = src->post_primers;
 }
 
-int
-panda_assembler_get_minimum_overlap(
+int panda_assembler_get_minimum_overlap(
 	PandaAssembler assembler) {
 	return assembler->minoverlap;
 }
 
-void
-panda_assembler_set_minimum_overlap(
+void panda_assembler_set_minimum_overlap(
 	PandaAssembler assembler,
 	int overlap) {
 	if (overlap > 1 && overlap < PANDA_MAX_LEN) {
@@ -144,14 +139,12 @@ panda_assembler_set_minimum_overlap(
 	}
 }
 
-double
-panda_assembler_get_threshold(
+double panda_assembler_get_threshold(
 	PandaAssembler assembler) {
 	return exp(assembler->threshold);
 }
 
-void
-panda_assembler_set_threshold(
+void panda_assembler_set_threshold(
 	PandaAssembler assembler,
 	double threshold) {
 	if (threshold > 0 && threshold < 1) {
@@ -159,14 +152,12 @@ panda_assembler_set_threshold(
 	}
 }
 
-double
-panda_assembler_get_error_estimation(
+double panda_assembler_get_error_estimation(
 	PandaAssembler assembler) {
 	return assembler->q;
 }
 
-void
-panda_assembler_set_error_estimation(
+void panda_assembler_set_error_estimation(
 	PandaAssembler assembler,
 	double q) {
 	if (q > 0 && q < 1) {
@@ -182,75 +173,63 @@ panda_assembler_set_error_estimation(
 	}
 }
 
-long
-panda_assembler_get_no_forward_primer_count(
+long panda_assembler_get_no_forward_primer_count(
 	PandaAssembler assembler) {
 	return assembler->nofpcount;
 }
 
-long
-panda_assembler_get_no_reverse_primer_count(
+long panda_assembler_get_no_reverse_primer_count(
 	PandaAssembler assembler) {
 	return assembler->norpcount;
 }
 
-long
-panda_assembler_get_ok_count(
+long panda_assembler_get_ok_count(
 	PandaAssembler assembler) {
 	return assembler->okcount;
 }
 
-long
-panda_assembler_get_low_quality_count(
+long panda_assembler_get_low_quality_count(
 	PandaAssembler assembler) {
 	return assembler->lowqcount;
 }
 
-long
-panda_assembler_get_bad_read_count(
+long panda_assembler_get_bad_read_count(
 	PandaAssembler assembler) {
 	return assembler->badreadcount;
 }
 
-long
-panda_assembler_get_slow_count(
+long panda_assembler_get_slow_count(
 	PandaAssembler assembler) {
 	return assembler->slowcount;
 }
 
-long
-panda_assembler_get_degenerate_count(
+long panda_assembler_get_degenerate_count(
 	PandaAssembler assembler) {
 	return assembler->degencount;
 }
 
-long
-panda_assembler_get_failed_alignment_count(
+long panda_assembler_get_failed_alignment_count(
 	PandaAssembler assembler) {
 	return assembler->noalgncount;
 }
 
-long
-panda_assembler_get_count(
+long panda_assembler_get_count(
 	PandaAssembler assembler) {
 	return assembler->count;
 }
 
-bool
-panda_assembler_get_disallow_degenerates(
+bool panda_assembler_get_disallow_degenerates(
 	PandaAssembler assembler) {
 	return assembler->no_n;
 }
 
-void
-panda_assembler_set_disallow_degenerates(
+void panda_assembler_set_disallow_degenerates(
 	PandaAssembler assembler,
 	bool allow) {
 	assembler->no_n = allow;
 }
 
-PandaAssembler
-panda_assembler_ref(
+PandaAssembler panda_assembler_ref(
 	PandaAssembler assembler) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&assembler->mutex);
@@ -262,8 +241,7 @@ panda_assembler_ref(
 	return assembler;
 }
 
-void
-panda_assembler_unref(
+void panda_assembler_unref(
 	PandaAssembler assembler) {
 	int count;
 #ifdef HAVE_PTHREAD
@@ -286,8 +264,7 @@ panda_assembler_unref(
 	}
 }
 
-PandaAssembler
-panda_assembler_new_fastq_reader(
+PandaAssembler panda_assembler_new_fastq_reader(
 	PandaNextChar forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,
@@ -306,8 +283,7 @@ panda_assembler_new_fastq_reader(
 	return panda_assembler_new(next, user_data, destroy, logger, logger_data, logger_destroy);
 }
 
-void
-panda_assembler_set_forward_primer(
+void panda_assembler_set_forward_primer(
 	PandaAssembler assembler,
 	panda_nt *sequence,
 	size_t length) {
@@ -321,8 +297,7 @@ panda_assembler_set_forward_primer(
 	}
 }
 
-void
-panda_assembler_set_reverse_primer(
+void panda_assembler_set_reverse_primer(
 	PandaAssembler assembler,
 	panda_nt *sequence,
 	size_t length) {
@@ -336,65 +311,56 @@ panda_assembler_set_reverse_primer(
 	}
 }
 
-panda_nt *
-panda_assembler_get_reverse_primer(
+panda_nt *panda_assembler_get_reverse_primer(
 	PandaAssembler assembler,
 	size_t *length) {
 	*length = assembler->reverse_primer_length;
 	return *length == 0 ? NULL : assembler->reverse_primer;
 }
 
-panda_nt *
-panda_assembler_get_forward_primer(
+panda_nt *panda_assembler_get_forward_primer(
 	PandaAssembler assembler,
 	size_t *length) {
 	*length = assembler->forward_primer_length;
 	return *length == 0 ? NULL : assembler->forward_primer;
 }
 
-size_t
-panda_assembler_get_forward_trim(
+size_t panda_assembler_get_forward_trim(
 	PandaAssembler assembler) {
 	return assembler->forward_trim;
 }
 
-void
-panda_assembler_set_forward_trim(
+void panda_assembler_set_forward_trim(
 	PandaAssembler assembler,
 	size_t trim) {
 	assembler->forward_trim = trim;
 	assembler->forward_primer_length = 0;
 }
 
-bool
-panda_assembler_get_primers_after(
+bool panda_assembler_get_primers_after(
 	PandaAssembler assembler) {
 	return assembler->post_primers;
 }
 
-void
-panda_assembler_set_primers_after(
+void panda_assembler_set_primers_after(
 	PandaAssembler assembler,
 	bool after) {
 	assembler->post_primers = after;
 }
 
-size_t
-panda_assembler_get_reverse_trim(
+size_t panda_assembler_get_reverse_trim(
 	PandaAssembler assembler) {
 	return assembler->reverse_trim;
 }
 
-void
-panda_assembler_set_reverse_trim(
+void panda_assembler_set_reverse_trim(
 	PandaAssembler assembler,
 	size_t trim) {
 	assembler->reverse_trim = trim;
 	assembler->reverse_primer_length = 0;
 }
 
-void
-panda_assembler_set_fail_alignment(
+void panda_assembler_set_fail_alignment(
 	PandaAssembler assembler,
 	PandaFailAlign handler,
 	void *handler_data,
@@ -405,15 +371,13 @@ panda_assembler_set_fail_alignment(
 	assembler->noalgn_destroy = handler_destroy;
 }
 
-long
-panda_assembler_get_overlap_count(
+long panda_assembler_get_overlap_count(
 	PandaAssembler assembler,
 	size_t length) {
 	return (length < PANDA_MAX_LEN) ? assembler->overlapcount[length] : -1;
 }
 
-size_t
-panda_assembler_get_longest_overlap(
+size_t panda_assembler_get_longest_overlap(
 	PandaAssembler assembler) {
 	return assembler->longest_overlap;
 }

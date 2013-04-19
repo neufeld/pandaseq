@@ -21,15 +21,13 @@
 #include "pandaseq.h"
 #include "buffer.h"
 
-void
-panda_seqid_print(
+void panda_seqid_print(
 	const panda_seq_identifier *id,
 	FILE *file) {
 	panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
 }
 
-void
-panda_seqid_xprint(
+void panda_seqid_xprint(
 	const panda_seq_identifier *id,
 	PandaPrintf xprintf,
 	void *x) {
@@ -38,8 +36,7 @@ panda_seqid_xprint(
 	xprintf(x, "%s:%d:%s:%d:%d:%d:%d:%s", id->instrument, id->run, id->flowcell, id->lane, id->tile, id->x, id->y, id->tag);
 }
 
-const char *
-panda_seqid_str(
+const char *panda_seqid_str(
 	const panda_seq_identifier *id) {
 	char *buffer = static_buffer();
 	if (id == NULL)
@@ -48,15 +45,14 @@ panda_seqid_str(
 	return buffer;
 }
 
-bool
-panda_seqid_equal(
+bool panda_seqid_equal(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two) {
 	return one->run == two->run && one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
 	;
 }
-int
-panda_seqid_compare(
+
+int panda_seqid_compare(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two) {
 	int result;
@@ -82,8 +78,7 @@ panda_seqid_compare(
 #define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 
-void
-panda_seqid_clear(
+void panda_seqid_clear(
 	panda_seq_identifier *id) {
 	id->instrument[0] = '\0';
 	id->run = 0;
@@ -95,8 +90,7 @@ panda_seqid_clear(
 	id->tag[0] = '\0';
 }
 
-int
-panda_seqid_parse(
+int panda_seqid_parse(
 	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy) {
@@ -105,8 +99,7 @@ panda_seqid_parse(
 	return panda_seqid_parse_fail(id, input, policy, &old, &endptr);
 }
 
-int
-panda_seqid_parse_fail(
+int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,

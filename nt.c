@@ -94,14 +94,12 @@ panda_nt iupac_reverse[32] = {
 	/*_*/ PANDA_NT_Z
 };
 
-double
-panda_quality_probability(
+double panda_quality_probability(
 	const panda_qual *q) {
 	return exp(panda_quality_log_probability(q));
 }
 
-double
-panda_quality_log_probability(
+double panda_quality_log_probability(
 	const panda_qual *q) {
 	int index = (int) q->qual;
 	if (index < 0) {
