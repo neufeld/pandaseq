@@ -78,6 +78,6 @@ bufferprintf(
 	...) {
 	va_list va;
 	va_start(va, fmt);
-	vsnprintf(buffer, BUFFER_SIZE, fmt, va);
+	(void) vsnprintf(buffer, BUFFER_SIZE, fmt, va);
 	va_end(va);
 }

@@ -25,15 +25,16 @@
 static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
+typedef struct node *node_p;
 struct node {
 	panda_seq_identifier id;
-	struct node *left;
-	struct node *right;
+	node_p left;
+	node_p right;
 };
 
 struct panda_idset {
 	volatile size_t refcnt;
-	struct node *root;
+	node_p root;
 
 };
 
@@ -41,6 +42,8 @@ PandaSet
 panda_idset_new(
 	void) {
 	PandaSet set = malloc(sizeof(struct panda_idset));
+	if (set == NULL)
+		return NULL;
 	set->refcnt = 1;
 	set->root = NULL;
 
@@ -60,9 +63,8 @@ panda_idset_ref(
 	return set;
 }
 
-void
-node_free(
-	struct node *node) {
+static void node_free(
+	node_p node) {
 	if (node != NULL) {
 		node_free(node->left);
 		node_free(node->right);
@@ -73,7 +75,7 @@ node_free(
 void
 panda_idset_unref(
 	PandaSet set) {
-	int count;
+	size_t count;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
 #endif
@@ -87,12 +89,13 @@ panda_idset_unref(
 	}
 }
 
-void
-insert(
-	struct node **node,
+static void insert(
+	node_p * node,
 	const panda_seq_identifier *id) {
 	if (*node == NULL) {
 		(*node) = malloc(sizeof(struct node));
+		if (*node == NULL)
+			return;
 		(*node)->left = NULL;
 		(*node)->right = NULL;
 		panda_seqid_clear(&(*node)->id);
@@ -102,7 +105,7 @@ insert(
 		if (comparison < 0) {
 			insert(&(*node)->left, id);
 			if ((*node)->left->id.x < (*node)->id.x) {
-				struct node *temp = (*node)->left;
+				node_p temp = (*node)->left;
 				(*node)->left = temp->right;
 				temp->right = *node;
 				*node = temp;
@@ -110,7 +113,7 @@ insert(
 		} else if (comparison > 0) {
 			insert(&(*node)->right, id);
 			if ((*node)->right->id.x < (*node)->id.x) {
-				struct node *temp = (*node)->right;
+				node_p temp = (*node)->right;
 				(*node)->right = temp->left;
 				temp->left = *node;
 				*node = temp;
@@ -146,7 +149,7 @@ bool
 panda_idset_contains(
 	PandaSet set,
 	const panda_seq_identifier *id) {
-	struct node *curr = set->root;
+	node_p curr = set->root;
 	while (curr != NULL) {
 		int comp = panda_seqid_compare(id, &curr->id);
 		if (comp == 0)

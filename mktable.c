@@ -129,7 +129,7 @@ main(
 	buildlist(header, source, "qual_score_err", score_err);
 	fprintf(header, "#endif\n");
 
-	fclose(source);
-	fclose(header);
+	(void) fclose(source);
+	(void) fclose(header);
 	return 0;
 }

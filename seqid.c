@@ -80,7 +80,7 @@ panda_seqid_compare(
 
 #define PARSE_CHUNK_MAYBE for(;**endptr != '\0' && **endptr != ':' && **endptr != '#' && **endptr != '/' && **endptr != ' '; (*endptr)++)
 #define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
-#define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (**endptr - '0'); } else { return 0; } } } while(0)
+#define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 
 void
 panda_seqid_clear(
@@ -148,7 +148,7 @@ panda_seqid_parse_fail(
 		(*endptr)++;
 		id->y = value;
 		dest = id->tag;
-		*dest = '\0';
+		id->tag[0] = '\0';
 		if (*(*endptr - 1) == '#') {
 			PARSE_CHUNK_MAYBE {
 				if (dest >= &id->tag[PANDA_TAG_LEN])
@@ -166,10 +166,10 @@ panda_seqid_parse_fail(
 		(*endptr)++;
 		return value;
 	} else {
-		if (old != NULL)
-			*old = false;
 		/* New CASAVA 1.7+ format */
 		int mate;
+		if (old != NULL)
+			*old = false;
 		dest = id->instrument;
 		PARSE_CHUNK {
 			if (dest - id->instrument > sizeof(id->instrument))
@@ -211,7 +211,7 @@ panda_seqid_parse_fail(
 		(*endptr)++;
 		/* control bits */
 		dest = id->tag;
-		*dest = '\0';
+		id->tag[0] = '\0';
 		PARSE_CHUNK_MAYBE {
 			if (dest >= &id->tag[PANDA_TAG_LEN])
 				return 0;

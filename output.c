@@ -17,7 +17,6 @@
  */
 #include "config.h"
 #include <math.h>
-#include <sys/types.h>
 #include "pandaseq.h"
 #include "buffer.h"
 #include "table.h"
@@ -31,22 +30,22 @@ panda_logger_file(
 #if HAVE_PTHREAD
 	fprintf(file, "%p\t", static_buffer());
 #endif
-	fputs(panda_code_str(code), file);
+	(void) fputs(panda_code_str(code), file);
 	if (id != NULL) {
-		fputc('\t', file);
+		(void) fputc('\t', file);
 		panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
 	}
 	if (message != NULL) {
-		fputc('\t', file);
-		fputs(message, file);
+		(void) fputc('\t', file);
+		(void) fputs(message, file);
 	}
-	fputc('\n', file);
-	if (code == PANDA_CODE_ID_PARSE_FAILURE) {
-		fprintf(file, "* * * * * Something is wrong with this ID. If tags are absent, try passing the -B option.\n* * * * * Consult `pandaseq-checkid \"%s\"` to get an idea of the problem..\n", message);
+	(void) fputc('\n', file);
+	if (code == PANDA_CODE_ID_PARSE_FAILURE && message != NULL) {
+		(void) fprintf(file, "* * * * * Something is wrong with this ID. If tags are absent, try passing the -B option.\n* * * * * Consult `pandaseq-checkid \"%s\"` to get an idea of the problem..\n", message);
 	} else if (code == PANDA_CODE_PHRED_OFFSET) {
-		fprintf(file, "* * * * * Using the default PHRED+33 offset, but no sequences had quality data under PHRED+64.\n* * * * * This is probably not what you want. Consult the manual about the -6 option.\n");
+		(void) fprintf(file, "* * * * * Using the default PHRED+33 offset, but no sequences had quality data under PHRED+64.\n* * * * * This is probably not what you want. Consult the manual about the -6 option.\n");
 	} else if (code == PANDA_CODE_READ_TOO_LONG) {
-		fprintf(file, "* * * * * The input reads are longer than this version of PANDAseq can handle. Currently %zd nucleotides.\n", PANDA_MAX_LEN);
+		(void) fprintf(file, "* * * * * The input reads are longer than this version of PANDAseq can handle. Currently %zd nucleotides.\n", PANDA_MAX_LEN);
 	}
 	return true;
 }
@@ -57,87 +56,60 @@ panda_code_str(
 	switch (code) {
 	case PANDA_CODE_BAD_NT:
 		return "ERR\tBADNT";
-		break;
 	case PANDA_CODE_ID_PARSE_FAILURE:
 		return "ERR\tBADID";
-		break;
 	case PANDA_CODE_MOD_INFO:
 		return "INFO\tMOD";
-		break;
 	case PANDA_CODE_NO_DATA:
 		return "ERR\tNODATA";
-		break;
 	case PANDA_CODE_NO_FILE:
 		return "ERR\tNOFILE";
-		break;
 	case PANDA_CODE_NO_QUALITY_INFO:
 		return "ERR\tNOQUAL";
-		break;
 	case PANDA_CODE_NOT_PAIRED:
 		return "ERR\tNOTPAIRED";
-		break;
 	case PANDA_CODE_PARSE_FAILURE:
 		return "ERR\tBADSEQ";
-		break;
 	case PANDA_CODE_READ_TOO_LONG:
 		return "ERR\tREADLEN";
-		break;
 	case PANDA_CODE_PREMATURE_EOF:
 		return "ERR\tEOF";
-		break;
 	case PANDA_CODE_REJECT_STAT:
 		return "STAT";
-		break;
 	case PANDA_CODE_INSUFFICIENT_KMER_TABLE:
 		return "ERR\tKLNG";
-		break;
 	case PANDA_CODE_FORWARD_KMER:
 		return "DBG\tFMER";
-		break;
 	case PANDA_CODE_REVERSE_KMER:
 		return "DBG\tRMER";
-		break;
 	case PANDA_CODE_LOST_KMER:
 		return "DBG\tFML";
-		break;
 	case PANDA_CODE_OVERLAP_POSSIBILITY:
 		return "INFO\tOLD";
-		break;
 	case PANDA_CODE_BEST_OVERLAP:
 		return "INFO\tBESTOLP";
-		break;
 	case PANDA_CODE_NO_FORWARD_PRIMER:
 		return "ERR\tNOFP";
-		break;
 	case PANDA_CODE_NO_REVERSE_PRIMER:
 		return "ERR\tNORP";
-		break;
 	case PANDA_CODE_LOW_QUALITY_REJECT:
 		return "ERR\tLOWQ";
-		break;
 	case PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH:
 		return "ERR\tNEGS";
-		break;
 	case PANDA_CODE_SEQUENCE_TOO_LONG:
 		return "ERR\tOOM";
-		break;
 	case PANDA_CODE_BUILD_FORWARD:
 	case PANDA_CODE_BUILD_REVERSE:
 	case PANDA_CODE_BUILD_OVERLAP:
 		return "INFO\tBUILD";
-		break;
 	case PANDA_CODE_RECONSTRUCTION_PARAM:
 		return "INFO\tRECR";
-		break;
 	case PANDA_CODE_MISMATCHED_BASE:
 		return "INFO\tMISM";
-		break;
 	case PANDA_CODE_PHRED_OFFSET:
 		return "INFO\tPHRED OFFSET";
-		break;
 	default:
 		return "ERR\tUNKNOWN ERROR";
-		break;
 	}
 }
 
