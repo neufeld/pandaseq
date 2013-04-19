@@ -661,12 +661,12 @@ namespace Panda {
 		 * Check a sequence after reconstruction for validity.
 		 */
 		[CCode(cname = "PandaCheck", has_target = false, simple_generics = true)]
-		public delegate bool Check<T>(T data, result_seq sequence);
+		public delegate bool Check<T>(result_seq sequence, T data);
 		/**
 		 * Check a sequence before reconstruction for validity.
 		 */
 		[CCode(cname = "PandaPreCheck", has_target = false, simple_generics = true)]
-		public delegate bool PreCheck<T>(T data, identifier id, qual[] forward, qual[] reverse);
+		public delegate bool PreCheck<T>(identifier id, qual[] forward, qual[] reverse, T data);
 
 		/**
 		 * Create a module given sequence checking parameters.
