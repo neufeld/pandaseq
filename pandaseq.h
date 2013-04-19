@@ -121,6 +121,10 @@ extern PandaDebug panda_debug_flags;
  */
 typedef char panda_nt;
 /**
+ * Nothing
+ */
+#        define PANDA_NT_Z ((panda_nt)0)
+/**
  * Adenine
  */
 #        define PANDA_NT_A ((panda_nt)1)

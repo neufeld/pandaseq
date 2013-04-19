@@ -172,6 +172,10 @@ namespace Panda {
 	[Flags]
 	public enum Nt {
 		/**
+		 * Nothing
+		 */
+		Z,
+		/**
 		 * Adenine
 		 */
 		A,
