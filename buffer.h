@@ -21,7 +21,7 @@
 #        include "pandaseq.h"
 #        define BUFFER_SIZE 1024
 
-#        define BUFFER(name, type, length) /*@only@ @notnull@*/ type *PANDACONCAT(name, _buffer)(void);
+#        define BUFFER(name, type, length) type *PANDACONCAT(name, _buffer)(void);
 #        include "buffer.list"
 #        undef BUFFER
 

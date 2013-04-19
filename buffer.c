@@ -66,7 +66,7 @@ get_buffer(
 #        include "buffer.list"
 #        undef BUFFER
 #else
-#        define BUFFER(name, type, size) static type PANDACONCAT(name, buffer)[size]; type *PANDACONCAT(name, buffer)(void) { return PANDACONCAT(name, buffer); }
+#        define BUFFER(name, type, size) static type PANDACONCAT(name, buffer)[size]; type *PANDACONCAT(name, _buffer)(void) { return PANDACONCAT(name, buffer); }
 #        include "buffer.list"
 #        undef BUFFER
 #endif
