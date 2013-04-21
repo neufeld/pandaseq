@@ -29,12 +29,51 @@
 #        include <stdio.h>
 #        include <stdbool.h>
 EXTERN_C_BEGIN
+
+/*
+ * While this is not a GLib-based file, it generally follows GLib-style
+ * conventions, particularly in the documentation.
+ * 
+ * Every pointer is assumed to be not-null unless specified otherwise by
+ * (allow-none).
+ *
+ * All return types and pointers are must be freed or unreferenced by the
+ * caller unless marked as (transfer none).
+ *
+ * Arrays are generally followed by a length. If the array is being returned,
+ * the array length is an out parameter.
+ *
+ * The major library interfaces are refence counted. When all copies are
+ * unreferenced, using the appropriate function, it will be garbage collected.
+ * If it needs to be stored in multiple places, it can simply be referenced.
+ *
+ * PANDAseq makes heavy use of closures which involve a function pointer and a
+ * void pointer containing opaque data passed to the function pointer. If the
+ * opaque data must persist beyond the life of the call, another function
+ * pointer is required to clean up the data. If neither the closure nor the
+ * clean up is necessary, these may be null.
+ *
+ * If compiled against pthreads, PANDAseq is relatively thread-safe. All
+ * functions that change reference counts are may be called at any time from
+ * any thread. All other functions are have no guaranteeds unless explicity
+ * stated.
+ *
+ * See https://live.gnome.org/GObjectIntrospection/Annotations for more
+ * information.
+ */
+
 /**
  * Maximum length of a sequence
  */
 #        define PANDA_MAX_LEN (panda_max_len())
 extern size_t panda_max_len(
 	void);
+/**
+ * Printf-like function for output.
+ *
+ * @data: (closure): The context for the error logging.
+ * @format: (printf-like): The format string for use by printf.
+ */
 typedef void (
 	*PandaPrintf) (
 	void *data,
@@ -88,6 +127,10 @@ typedef enum {
 	PANDA_CODE_PHRED_OFFSET,
 } PandaCode;
 
+/**
+ * The output-file representation of an error code.
+ * Returns: (transfer none): The string representation
+ */
 char const *const panda_code_str(
 	PandaCode code);
 
@@ -121,7 +164,7 @@ extern PandaDebug panda_debug_flags;
  */
 typedef char panda_nt;
 /**
- * Nothing
+ * Nothing (invalid nucleotide)
  */
 #        define PANDA_NT_Z ((panda_nt)0)
 /**
@@ -234,6 +277,7 @@ typedef struct {
 } panda_seq_identifier;
 /**
  * Write the Illumina header to a printf-like function
+ * @xprintf: (closure x): The callback to accept the input.
  */
 void panda_seqid_xprint(
 	const panda_seq_identifier *id,
@@ -247,8 +291,8 @@ void panda_seqid_print(
 	FILE *file);
 /**
  * Create an Illumina header for a sequence identifier
- *
- * The return string must not be freed and subsequent calls will obliterate the previously returned string.
+ * @id: (allow-none): The identifer to be formatted
+ * Returns: (transfer none): Subsequent calls will obliterate the previously returned string.
  */
 const char *panda_seqid_str(
 	const panda_seq_identifier *id);
@@ -268,6 +312,7 @@ int panda_seqid_compare(
 
 /**
  * Reset a sequnce identifier.
+ * @id: (out caller-allocates): The structure to clear.
  */
 void panda_seqid_clear(
 	panda_seq_identifier *id);
@@ -275,21 +320,25 @@ void panda_seqid_clear(
 /**
  * Parse an Illumina header
  *
- * Fills `id` with the parse result. The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
+ * @id: (out caller-allocates): The structure to fill with the parse result.
+ * Returns: The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
  */
 int panda_seqid_parse(
-	/*@out@@notnull@ */ panda_seq_identifier *id,
+	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy);
 
 /**
  * Parse the Illumina header
  *
- * Includes the address where parsing stopped.
+ * @id: (out caller-allocates): The structure to fill with the parse result.
+ * Returns: The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
+ * @old: (out): Whether the sequence is from CASAVA 1.3-1.5 or not.
+ * @end_ptr: (out) (transfer none): The point in the input where parsing stopped. If parsing was successful, this will be the end of the string.
  * @see panda_seqid_parse
  */
 int panda_seqid_parse_fail(
-	/*@out@@notnull@ */ panda_seq_identifier *id,
+	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,
 	bool *old,
@@ -365,6 +414,8 @@ typedef bool (
 	void *user_data);
 /**
  * Check a sequence before reconstruction for validity.
+ * @forward: (array length=forward_length): The forward read.
+ * @reverse: (array length=reverse_length): The reverse read.
  */
 typedef bool (
 	*PandaPreCheck) (
@@ -385,7 +436,8 @@ typedef void (
 /**
  * Log an error/event
  *
- * If the function returns false, assembly will be halted.
+ * @message: (allow-none): The error message, for the user.
+ * Returns: If the function returns false, assembly will be halted.
  * @see PandaCode
  */
 typedef bool (
@@ -398,11 +450,11 @@ typedef bool (
 /**
  * Create a module given sequence checking parameters.
  *
- * @param name the name of the module, for user interaction
- * @param check the check function, which must not be null
- * @param precheck an optional check to be done before the module
- * @param cleanup an optional function to be called when this module is garbage collected
- * The user is responsible for managing the memory associated with user_data, but the cleanup function will always be called.
+ * @name: the name of the module, for user interaction
+ * @check: (closure user_data): the function to be run after assembly
+ * @precheck: (closure user_data): a function to be run before assembly
+ * @user_data: (transfer full): the context data for the functions. The user is responsible for managing the memory associated with user_data, but the cleanup function will always be called to do so.
+ * @cleanup: (closure user_data): a function to be called when this module is garbage collected
  */
 PandaModule panda_module_new(
 	const char *name,
@@ -413,7 +465,7 @@ PandaModule panda_module_new(
 /**
  * Load a module from a string containg the module name and arguments.
  *
- * @param path the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
+ * @path: the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
  */
 PandaModule panda_module_load(
 	const char *path);
@@ -425,13 +477,14 @@ PandaModule panda_module_ref(
 	PandaModule module);
 /**
  * Decrease the reference count on a module.
+ * @module: (transfer full): the module to release.
  */
 void panda_module_unref(
-	/*@notnull@@killref@ */ PandaModule module);
+	PandaModule module);
 /**
  * Get the name of a module.
  *
- * The string returned must NOT be freed.
+ * Returns: (transfer none): the module's name
  */
 const char *panda_module_get_name(
 	PandaModule module);
@@ -439,7 +492,7 @@ const char *panda_module_get_name(
  * Get the description of a module.
  *
  * This is only appropriate for loaded modules.
- * Possibly null. The string returned must NOT be freed.
+ * Returns: (transfer none) (allow-none): The description help text.
  */
 const char *panda_module_get_description(
 	PandaModule module);
@@ -447,7 +500,7 @@ const char *panda_module_get_description(
  * Get the usage information (i.e., help text) of a module.
  *
  * This is only appropriate for loaded modules.
- * Possibly null. The string returned must NOT be freed.
+ * Returns: (transfer none) (allow-none): The usage help text.
  */
 const char *panda_module_get_usage(
 	PandaModule module);
@@ -455,7 +508,7 @@ const char *panda_module_get_usage(
  * Get the version of a module.
  *
  * This is only appropriate for loaded modules.
- * Possibly null. The string returned must NOT be freed.
+ * Returns: (transfer none) (allow-none): The usage help text.
  */
 const char *panda_module_get_version(
 	PandaModule module);
@@ -463,7 +516,7 @@ const char *panda_module_get_version(
  * Get the arguments passed on loading of a module of a module.
  *
  * This is only appropriate for loaded modules.
- * Possibly null. The string returned must NOT be freed.
+ * Returns: (transfer none) (allow-none): The usage help text.
  */
 const char *panda_module_get_args(
 	PandaModule module);
@@ -481,8 +534,8 @@ int panda_module_get_api(
 typedef struct panda_assembler *PandaAssembler;
 /**
  * Open a pair of gzipped (or uncompressed files) for assembly.
- *
- * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * @logger: (closure logger_data): The callback for error logging.
+ * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
 PandaAssembler panda_assembler_open_gz(
 	char *forward,
@@ -495,7 +548,7 @@ PandaAssembler panda_assembler_open_gz(
 /**
  * Open a pair of bzipped files for assembly.
  *
- * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
 PandaAssembler panda_assembler_open_bz2(
 	char *forward,
@@ -518,30 +571,28 @@ typedef int (
  * Get the next sequence pair.
  *
  * For assembly from a non-FASTQ text source, this function can provide the next sequence. The function must provide the sequences and metadata for assembly by modifing the values of its parameters.
- * @param id the identifier information for the sequence pair
- * @param forward the location of the parsed sequence data of the forward read. This memory is not managed by the assembler.
- * @param forward_length the number of nucleotides in the forward read
- * @param reverse the location of the parsed sequence data of the reverse read. This memory is not managed by the assembler.
- * @param reverse_length the number of nucleotides in the reverse read
+ * @id: (out caller-allocates): the identifier information for the sequence pair
+ * @forward: (array length=forward_length) (allow-none): the location of the parsed sequence data of the forward read. This memory is not managed by the assembler.
+ * @reverse: (array length=reverse_length) (allow-none): the location of the parsed sequence data of the reverse read. This memory is not managed by the assembler.
+ * Returns: true if there is a sequence available. All the parameters must be set correctly. If false, no more sequences will be read and the values in the parameters are ignored.
  */
 typedef bool (
 	*PandaNextSeq) (
-	/*@out@@notnull@ */ panda_seq_identifier *id,
-	/*@out@@notnull@ */ panda_qual **forward,
-	/*@out@@notnull@ */ size_t *forward_length,
-	/*@out@@notnull@ */ panda_qual **reverse,
-	/*@out@@notnull@ */ size_t *reverse_length,
+	panda_seq_identifier *id,
+	panda_qual **forward,
+	size_t *forward_length,
+	panda_qual **reverse,
+	size_t *reverse_length,
 	void *user_data);
 /**
  * Create an object to read sequences from two character streams of FASTQ data
  *
- * @param forward, forward_data, forward_destroy the functions to provide the stream of forward characters. Every time a new character is required, forward(forward_data) is called. When the stream has returned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
- * @param reverse, reverse_data, reverse_destroy the same for the reverse sequence.
- * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
- * @param policy method to handle unbarcoded sequences
- * @param logger, logger_data the logging function to use during assembly. The logging function will not be memory managed.
- * @param user_data where to store the user_data for this function
- * @param destroy where to store the destroy function for the user data
+ * @forward: (closure forward_data) (scope notified): the functions to provide the stream of forward characters. Every time a new character is required, forward(forward_data) is called. When the stream has returned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
+ * @reverse: (closure reverse_data) (scope notified): the same for the reverse sequence.
+ * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
+ * @policy: method to handle unbarcoded sequences
+ * @logger: (closure logger_data) (scope floating): the logging function to use during assembly. The logging function will not be memory managed. It should be owned by the caller. THIS IS BAD.
+ * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_create_fastq_reader(
 	PandaNextChar forward,
@@ -554,12 +605,16 @@ PandaNextSeq panda_create_fastq_reader(
 	void *logger_data,
 	unsigned char qualmin,
 	PandaTagging policy,
-	/*@out@@notnull@ */ void **user_data,
-	/*@out@@notnull@ */ PandaDestroy *destroy);
+	void **user_data,
+	PandaDestroy *destroy);
 /**
  * Open a pair of gzipped (or uncompressed files).
  *
- * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * @forward: the forward filename
+ * @reverse: the reverse filename
+ * @logger: (closure logger_data) (scope floating): the logging function to use during assembly. The logging function will not be memory managed. It should be owned by the caller. THIS IS BAD.
+ * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_gz(
 	char *forward,
@@ -568,12 +623,16 @@ PandaNextSeq panda_open_gz(
 	void *logger_data,
 	unsigned char qualmin,
 	PandaTagging policy,
-	/*@out@@notnull@ */ void **user_data,
-	/*@out@@notnull@ */ PandaDestroy *destroy);
+	void **user_data,
+	PandaDestroy *destroy);
 /**
  * Open a pair of bzipped files.
  *
- * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * @forward: the forward filename
+ * @reverse: the reverse filename
+ * @logger: (closure logger_data) (scope floating): the logging function to use during assembly. The logging function will not be memory managed. It should be owned by the caller. THIS IS BAD.
+ * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_bz2(
 	char *forward,
@@ -582,10 +641,15 @@ PandaNextSeq panda_open_bz2(
 	void *logger_data,
 	unsigned char qualmin,
 	PandaTagging policy,
-	/*@out@@notnull@ */ void **user_data,
-	/*@out@@notnull@ */ PandaDestroy *destroy);
+	void **user_data,
+	PandaDestroy *destroy);
 /**
  * Create a new assembler for given to FASTQ streams.
+ * @forward: (closure forward_data) (scope notified): the functions to provide the stream of forward characters. Every time a new character is required, forward(forward_data) is called. When the stream has returned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
+ * @reverse: (closure reverse_data) (scope notified): the same for the reverse sequence.
+ * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
+ * @policy: method to handle unbarcoded sequences
+ * @logger: (closure logger_data) (scope floating): the logging function to use during assembly.
  * @see panda_create_fastq_reader
  */
 PandaAssembler panda_assembler_new_fastq_reader(
@@ -603,8 +667,8 @@ PandaAssembler panda_assembler_new_fastq_reader(
 /**
  * Create a new assembler from a sequence source.
  *
- * @param next, next_data, next_destroy the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroy, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
- * @param logger, logger_data, logger_destroy the function to call to report information to the user
+ * @next: (closure next_data) (scope notified) (allow-none): the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroyed, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
+ * @logger: (closure logger_data) (scope notified): the function to call to report information to the user
  */
 PandaAssembler panda_assembler_new(
 	PandaNextSeq next,
@@ -622,7 +686,9 @@ PandaAssembler panda_assembler_new(
 /**
  * Create a new assembler from a sequence source with a custom k-mer table size.
  *
- * @param num_kmers the number of sequence locations for a particular k-mer. The default is PANDA_DEFAULT_NUM_KMERS. This should be small (no more than 10), or the k-mer table will be extremely large.
+ * @next: (closure next_data) (scope notified) (allow-none): the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroyed, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
+ * @logger: (closure logger_data) (scope notified): the function to call to report information to the user
+ * @num_kmers: the number of sequence locations for a particular k-mer. The default is PANDA_DEFAULT_NUM_KMERS. This should be small (no more than 10), or the k-mer table will be extremely large.
  * @see panda_assembler_new
  */
 PandaAssembler panda_assembler_new_kmer(
@@ -652,9 +718,10 @@ PandaAssembler panda_assembler_ref(
  * Decrease the reference count on an assembler.
  *
  * This is thread-safe.
+ * @assembler: (transfer full): The assembler to destroy.
  */
 void panda_assembler_unref(
-	/*@notnull@@killref@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * Add a module to this assembly process.
  *
@@ -750,10 +817,15 @@ void panda_assembler_set_disallow_degenerates(
  * The forward primer sequence to be stripped
  * 
  * This is mutually exclusive with forward_trim
+ * Returns: (array length=length) (transfer none) (allow-none): If no primer sequence is set, this will return null and set length to 0.
  */
 panda_nt *panda_assembler_get_forward_primer(
 	PandaAssembler assembler,
-	/*@out@@notnull@ */ size_t *length);
+	size_t *length);
+/**
+ * The forward primer sequence to be stripped
+ * @sequence: (array length_length) (allow-none): The primer sequene.
+ */
 void panda_assembler_set_forward_primer(
 	PandaAssembler assembler,
 	panda_nt *sequence,
@@ -762,10 +834,15 @@ void panda_assembler_set_forward_primer(
  * The reverse primer sequence to be stripped
  * 
  * This is mutually exclusive with reverse_trim
+ * Returns: (array length=length) (transfer none) (allow-none): If no primer sequence is set, this will return null and set length to 0.
  */
 panda_nt *panda_assembler_get_reverse_primer(
 	PandaAssembler assembler,
-	/*@out@@notnull@ */ size_t *length);
+	size_t *length);
+/**
+ * The reverse primer sequence to be stripped
+ * @sequence: (array length_length) (allow-none): The primer sequene.
+ */
 void panda_assembler_set_reverse_primer(
 	PandaAssembler assembler,
 	panda_nt *sequence,
@@ -810,11 +887,11 @@ void panda_assembler_module_stats(
 
 /**
  * A callback for iterating over the current modules.
- * @param assembler the assembler which is being queried
- * @param module the module selected
- * @param rejected the number of sequences rejected by this module in the context of the current assembler.
- * @param data some user context data provided
- * @return true to continue iterating, false to stop
+ * @assembler: the assembler which is being queried
+ * @module: the module selected
+ * @rejected: the number of sequences rejected by this module in the context of the current assembler.
+ * @data: (closure): some user context data provided
+ * Returns: true to continue iterating, false to stop
  */
 typedef bool (
 	*PandaModuleCallback) (
@@ -824,24 +901,30 @@ typedef bool (
 	void *data);
 /**
  * Review all the modules associated with an assembler.
- * @return true if callback has seen each module
+ *
+ * @assembler: the assembler who owns the modules.
+ * @callback: (closure callback_data): the callback to invoke for each module.
+ * Returns: true if callback has seen each module
  */
 bool panda_assembler_foreach_module(
 	PandaAssembler assembler,
 	PandaModuleCallback callback,
-	void *data);
+	void *callback_data);
 /**
  * Assemble the next sequence from the input
  *
- * This function will process sequences until one is assembled successfully or no more sequences are available from the input stream, after which it will return null.
+ * Returns: (transfer none) (allow-none): The next successfully assembled sequence sequences until one is assembled successfully or no more sequences are available from the input stream, after which it will return null.
  * The returned sequence becomes invalid after the next call or after calling panda_assembler_unref.
  */
 const panda_result_seq *panda_assembler_next(
-	/*@notnull@@killref@ */ PandaAssembler assembler);
+	PandaAssembler assembler);
 /**
  * Assemble a single sequence pair not drawn from the sequence stream.
  *
  * This works exactly like panda_assembler_next, but instead of asking the PandaSeqNext for the data, it expects this information to be provided.
+ * @id: the sequence identifier for this read pair
+ * @forward: (array length=forward_length): the forward read
+ * @reverse: (array length=reverse_length): the reverse read
  */
 const panda_result_seq *panda_assembler_assemble(
 	PandaAssembler assembler,
@@ -854,11 +937,11 @@ const panda_result_seq *panda_assembler_assemble(
  * Handle a failed alignment
  *
  * This is called when an assembler fails to align a sequence because it can't compute a reasonable overlap.
- * @param assembler The assembler that made the attempt
- * @param id the sequence id of the failed pair
- * @param forward the forward read
- * @param reverse the reverse read
- * @param user_data context data
+ * @assembler: The assembler that made the attempt
+ * @id: the sequence id of the failed pair
+ * @forward: (array length=forward_length): the forward read
+ * @reverse: (array length=reverse_length): the reverse read
+ * @user_data: (closure): context data
  */
 typedef void (
 	*PandaFailAlign) (
@@ -875,7 +958,7 @@ typedef void (
  *
  * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
  *
- * Memory management will be handled by the assembler. When the assembler is finished, the destroy function will be called on the user data, if provided.
+ * @handler: (closure handler_data) (scope notified): the callback for a failed pair
  */
 void panda_assembler_set_fail_alignment(
 	PandaAssembler assembler,
@@ -937,6 +1020,8 @@ typedef struct panda_mux *PandaMux;
  * Create a new multiplexed data source from a sequence callback.
  *
  * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
+ * @next: (closure next_data) (scope notified): the next sequence handler
+ * @logger: (closure logger_data) (scope notified): the logger callback
  */
 PandaMux panda_mux_new(
 	PandaNextSeq next,
@@ -952,9 +1037,10 @@ PandaMux panda_mux_ref(
 	PandaMux mux);
 /**
  * Decrease the reference count on a multiplexer.
+ * @mux: (transfer full): the mux to be released.
  */
 void panda_mux_unref(
-	/*@notnull@@killref@ */ PandaMux mux);
+	PandaMux mux);
 /**
  * Create a new assembler using the multiplexer as it sequence source.
  *
@@ -965,6 +1051,7 @@ PandaAssembler panda_mux_create_assembler(
 	PandaMux mux);
 /**
  * Create a new assembler using the multiplexer as it sequence source with a custom k-mer table size.
+ * @see panda_mux_create_assembler
  * @see panda_assembler_new_kmer
  */
 PandaAssembler panda_mux_create_assembler_kmer(
@@ -1019,7 +1106,7 @@ PandaMux panda_mux_new_fastq_reader(
  *
  * Concurrency will be handled by the mulitplexer; all calls to this function will be serialised.
  *
- * Memory management will be handled by the assembler. When the assembler is finished, the destroy function will be called on the user data, if provided.
+ * @handler: (closure handler_data) (scope notified): the callback for a failed pair
  */
 
 void panda_mux_set_fail_alignment(
@@ -1030,9 +1117,11 @@ void panda_mux_set_fail_alignment(
 
 /**
  * Find the best offset of a small sequence in a large sequence.
- * @param threshold the minimum log probability to match
- * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
- * @return 0 if the sequence is not found, or one more than the offset.
+ * @threshold: the minimum log probability to match
+ * @reverse: if false, scan the sequence from start to finish, else, scan in the opposite direction
+ * @haystack: (array length=haystack_length): the sequence to be searched
+ * @needle: (array length=needle_length): the sequence for which to look
+ * Returns: 0 if the sequence is not found, or one more than the offset
  */
 size_t panda_compute_offset_qual(
 	double threshold,
@@ -1044,9 +1133,11 @@ size_t panda_compute_offset_qual(
 
 /**
  * Find the best offset of a small sequence in a large sequence.
- * @param threshold the minimum log probability to match
- * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
- * @return 0 if the sequence is not found, or one more than the offset.
+ * @threshold: the minimum log probability to match
+ * @reverse: if false, scan the sequence from start to finish, else, scan in the opposite direction
+ * @haystack: (array length=haystack_length): the sequence to be searched
+ * @needle: (array length=needle_length): the sequence for which to look
+ * Returns: 0 if the sequence is not found, or one more than the offset
  */
 size_t panda_compute_offset_result(
 	double threshold,
@@ -1085,9 +1176,10 @@ PandaSet panda_idset_ref(
  * Decrease the reference count on a set.
  *
  * This is thread-safe.
+ * @set: (transfer full): the mux to be released.
  */
 void panda_idset_unref(
-	/*@killref@@notnull@ */ PandaSet set);
+	PandaSet set);
 
 /**
  * Add a sequence identifier to a set.
@@ -1097,15 +1189,18 @@ void panda_idset_add(
 	const panda_seq_identifier *id);
 /**
  * Parse a sequence identifier and add it to the set.
- * @return true on success
+ * @id: the text id to parse
+ * @old: (out): Whether the sequence is from CASAVA 1.3-1.5 or not.
+ * @end_ptr: (out) (transfer none): The point in the input where parsing stopped. If parsing was successful, this will be the end of the string.
+ * Returns: true on success
  * @see panda_seqid_parse_fail
  */
 bool panda_idset_add_str(
 	PandaSet set,
 	const char *id,
 	PandaTagging policy,
-	/*@out@@null@ */ bool *old,
-	/*@out@@null@ */ const char **end_ptr);
+	bool *old,
+	const char **end_ptr);
 /**
  * Check if a sequence identifier has been added to the set.
  */
@@ -1122,6 +1217,8 @@ typedef struct {
 } panda_kmer;
 /**
  * Iterate over a sequence presenting all k-mers without Ns or other denegerate bases.
+ *
+ * Iterators are not reference counted.
  */
 typedef struct panda_iter *PandaIter;
 /**
@@ -1146,20 +1243,22 @@ int panda_iter_k(
 	PandaIter iter);
 /**
  * Get the number of useful bits in the output.
+ *
+ * This is the maximum value of panda_kmer.kmer for this iterator.
  */
 size_t panda_iter_bits(
 	PandaIter iter);
 /**
  * Advance to the next position in the sequence.
- * @return if null, there are no more k-mers in the sequence
+ * Returns: (allow-none) (transfer none): if null, there are no more k-mers in the sequence
  */
-/*@null@@dependent@*/ const panda_kmer *panda_iter_next(
+const panda_kmer *panda_iter_next(
 	PandaIter iter);
 /**
  * Create an iterator over a sequence of nucleotides.
- * @param seq, seq_length the sequence to iterate over, and its length. This sequence must not be freed during the life of the iterator.
- * @param reverse true to iterate from the end of the sequence rather than the beginning
- * @param k the length of the output words. This must range between 1 and 4 * sizeof(size_t). Any other values will be converted to the standard k-mer length of 8.
+ * @seq: (array length=seq_length) (scope container): the sequence to iterate over, and its length. This sequence must not be freed during the life of the iterator.
+ * @reverse: true to iterate from the end of the sequence rather than the beginning
+ * @k: the length of the output words. This must range between 1 and 4 * sizeof(size_t). Any other values will be converted to the standard k-mer length of 8.
  */
 PandaIter panda_iterate_nt(
 	panda_nt *seq,
