@@ -480,6 +480,13 @@ namespace Panda {
 		public bool add_module(Module module);
 
 		/**
+		 * Add a collection of modules to this assembly process.
+		 * @returns the index of the last successfully added module
+		 */
+		[CCode(cname = "panda_assembler_add_modules")]
+		public size_t add_modules([CCode(array_length_type = "size_t")] Module[] modules);
+
+		/**
 		 * Clone the configuration of one assembler to another.
 		 *
 		 * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.

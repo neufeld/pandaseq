@@ -29,7 +29,6 @@
 #        include <stdio.h>
 #        include <stdbool.h>
 EXTERN_C_BEGIN
-
 /*
  * While this is not a GLib-based file, it generally follows GLib-style
  * conventions, particularly in the documentation.
@@ -61,7 +60,6 @@ EXTERN_C_BEGIN
  * See https://live.gnome.org/GObjectIntrospection/Annotations for more
  * information.
  */
-
 /**
  * Maximum length of a sequence
  */
@@ -726,12 +724,22 @@ void panda_assembler_unref(
  * Add a module to this assembly process.
  *
  * Sequences will be checked using this module.
- * Returns true if the module was successfully initialised and added. If the
+ * Returns: true if the module was successfully initialised and added. If the
  * module's command line arguments are not processed correctly, this will fail.
  */
 bool panda_assembler_add_module(
 	PandaAssembler assembler,
 	PandaModule module);
+
+/**
+ * Add a collection of modules to this assembly process.
+ * @modules: (array length=modules_length): the modules to add
+ * Returns: the index of the last successfully added module
+ */
+size_t panda_assembler_add_modules(
+	PandaAssembler assembler,
+	PandaModule *modules,
+	size_t modules_length);
 
 /**
  * The minimum error estimation in the sequence data (epsilon)

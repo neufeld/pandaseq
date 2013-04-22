@@ -390,3 +390,16 @@ bool panda_assembler_add_module(
 #endif
 	return true;
 }
+
+size_t panda_assembler_add_modules(
+	PandaAssembler assembler,
+	PandaModule *modules,
+	size_t modules_length) {
+	size_t it;
+	for (it = 0; it < modules_length; it++) {
+		if (!panda_assembler_add_module(assembler, modules[it])) {
+			return it;
+		}
+	}
+	return it;
+}
