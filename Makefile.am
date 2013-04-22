@@ -48,6 +48,7 @@ libpandaseq_la_SOURCES = \
 	mux.c \
 	nt.c \
 	output.c \
+	pool.c \
 	seqid.c \
 	table.c \
 	$(NULL)

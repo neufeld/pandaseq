@@ -1292,6 +1292,31 @@ PandaIter panda_iterate_result(
 	bool reverse,
 	int k);
 
+/**
+ * Write a finsihed sequence to an appropriate place.
+ * @sequence: the sequence from assembly
+ * @user_data: (closure): the context provided
+ */
+typedef bool (
+	*PandaOutputSeq) (
+	const panda_result_seq *sequence,
+	void *user_data);
+
+/**
+ * Spawn threads and assemble sequences.
+ * @threads: the number of threads to spawn
+ * @assembler: (transfer full): the main assembler to use. If multiple threads are to be used, the configuration of this assembler will be copied to all the slave assemblers.
+ * @mux: (transfer full) (allow-none): the multiplexer to use. If null, no threads will be created. The provided assembler must be a product of this multiplexer.
+ * @output: (closure output_data) (scope notified): the function that will write assembled sequences to where they belong.
+ */
+int panda_run_pool(
+	int threads,
+	PandaAssembler assembler,
+	PandaMux mux,
+	PandaOutputSeq output,
+	void *output_data,
+	PandaDestroy output_destroy);
+
 /*
  * Convenience macro is for Vala
  */

@@ -39,28 +39,6 @@ size_t maxlen;
 size_t minlen = 0;
 bool no_n = false;
 char *reverse_primer = NULL;
-volatile bool some_seqs = false;
-time_t starttime;
-#ifdef HAVE_PTHREAD
-pthread_mutex_t output_mutex = PTHREAD_MUTEX_INITIALIZER;
-#endif
-
-#ifdef HAVE_PTHREAD
-#        	define STAT(str, val)	fprintf(stderr, "%p\tSTAT\t" str "\n", (void*) assembler, (val))
-#else
-#        	define STAT(str, val)	fprintf(stderr, "STAT\t" str "\n", (val))
-#endif
-
-static void printtime(
-	PandaAssembler assembler,
-	long count,
-	time_t starttime) {
-	time_t now;
-	(void) time(&now);
-	STAT("TIME\t%s", ctime(&now));
-	STAT("ELAPSED\t%d", (int) (now - starttime));
-	STAT("READS\t%ld", count);
-}
 
 bool short_check(
 	const panda_result_seq *sequence,
@@ -73,68 +51,6 @@ bool long_check(
 	void *user_data) {
 	size_t length = (size_t) user_data;
 	return sequence->sequence_length <= maxlen;
-}
-
-static void *do_assembly(
-	PandaAssembler assembler) {
-	long count;
-	size_t it = 0;
-	size_t max;
-	const panda_result_seq *result;
-
-	while ((result = panda_assembler_next(assembler)) != NULL) {
-		count = panda_assembler_get_count(assembler);
-#ifdef HAVE_PTHREAD
-		pthread_mutex_lock(&output_mutex);
-#endif
-		if (count % 1000 == 0) {
-			printtime(assembler, count, starttime);
-		}
-		if (fastq) {
-			panda_output_fastq(result, stdout);
-		} else {
-			panda_output_fasta(result, stdout);
-		}
-#ifdef HAVE_PTHREAD
-		pthread_mutex_unlock(&output_mutex);
-#endif
-	}
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&output_mutex);
-#endif
-	count = panda_assembler_get_count(assembler);
-	if (count > 0) {
-		some_seqs = true;
-	}
-	printtime(assembler, count, starttime);
-	if (forward_primer != NULL)
-		STAT("NOFP\t%ld", panda_assembler_get_no_forward_primer_count(assembler));
-	if (reverse_primer != NULL)
-		STAT("NORP\t%ld", panda_assembler_get_no_reverse_primer_count(assembler));
-	STAT("NOALGN\t%ld", panda_assembler_get_failed_alignment_count(assembler));
-	STAT("LOWQ\t%ld", panda_assembler_get_low_quality_count(assembler));
-	STAT("BADR\t%ld", panda_assembler_get_bad_read_count(assembler));
-	STAT("SLOW\t%ld", panda_assembler_get_slow_count(assembler));
-	if (no_n)
-		STAT("DEGENERATE\t%ld", panda_assembler_get_degenerate_count(assembler));
-	panda_assembler_module_stats(assembler);
-	STAT("OK\t%ld", panda_assembler_get_ok_count(assembler));
-
-#ifdef HAVE_PTHREAD
-	fprintf(stderr, "%p\t", (void *) assembler);
-#endif
-	fprintf(stderr, "STAT\tOVERLAPS\t%ld", panda_assembler_get_overlap_count(assembler, it));
-	max = panda_assembler_get_longest_overlap(assembler);
-	for (it = 1; it < max; it++) {
-		fprintf(stderr, " %ld", panda_assembler_get_overlap_count(assembler, it));
-	}
-	fprintf(stderr, "\n");
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&output_mutex);
-#endif
-
-	panda_assembler_unref(assembler);
-	return NULL;
 }
 
 bool set_primer(
@@ -191,7 +107,6 @@ int main(
 	int threads = 1;
 	pthread_t *thread_list;
 #endif
-	(void) time(&starttime);
 	threshold = 0.6;
 	maxlen = 2 * PANDA_MAX_LEN + 1;
 
@@ -548,34 +463,5 @@ int main(
 		panda_assembler_set_reverse_trim(assembler, roffset - 1);
 	}
 
-#if HAVE_PTHREAD
-	if (threads > 1) {
-		thread_list = malloc(sizeof(pthread_t) * (threads - 1));
-		for (it = 0; it < threads - 1; it++) {
-			PandaAssembler slave_assembler = panda_mux_create_assembler(mux);
-			if (slave_assembler == NULL) {
-				fprintf(stderr, "ERR\tMUXCREATE\t%d\n", (int) it + 1);
-				threads = it + 1;
-				break;
-			}
-			panda_assembler_copy_configuration(slave_assembler, assembler);
-			if (pthread_create(&thread_list[it], NULL, (void *(*)(void *)) do_assembly, slave_assembler) != 0) {
-				fprintf(stderr, "ERR\tPCREATE\t%d\n", (int) it + 1);
-				threads = it + 1;
-				break;
-			}
-		}
-	}
-	panda_mux_unref(mux);
-#endif
-	do_assembly(assembler);
-#if HAVE_PTHREAD
-	if (threads > 1) {
-		for (it = 0; it < threads - 1; it++) {
-			pthread_join(thread_list[it], NULL);
-		}
-		free(thread_list);
-	}
-#endif
-	return some_seqs ? 0 : 1;
+	return panda_run_pool(threads, assembler, mux, (PandaOutputSeq) (fastq ? panda_output_fastq : panda_output_fasta), stdout, NULL);
 }
