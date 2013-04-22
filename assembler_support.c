@@ -314,15 +314,17 @@ void panda_assembler_set_reverse_primer(
 panda_nt *panda_assembler_get_reverse_primer(
 	PandaAssembler assembler,
 	size_t *length) {
-	*length = assembler->reverse_primer_length;
-	return *length == 0 ? NULL : assembler->reverse_primer;
+	if (length != NULL)
+		*length = assembler->reverse_primer_length;
+	return assembler->reverse_primer_length == 0 ? NULL : assembler->reverse_primer;
 }
 
 panda_nt *panda_assembler_get_forward_primer(
 	PandaAssembler assembler,
 	size_t *length) {
-	*length = assembler->forward_primer_length;
-	return *length == 0 ? NULL : assembler->forward_primer;
+	if (length != NULL)
+		*length = assembler->forward_primer_length;
+	return assembler->forward_primer_length == 0 ? NULL : assembler->forward_primer;
 }
 
 size_t panda_assembler_get_forward_trim(
