@@ -9,9 +9,11 @@
 .libs
 Makefile
 Makefile.in
+PANDAseq-*.pkg
 aclocal.m4
 ar-lib
 autom4te.cache
+build-macos-pkg
 build-stamp
 compile
 config.*
@@ -34,6 +36,7 @@ mktable
 pandaseq
 pandaseq-checkid
 pandaxs
+pkgroot
 stamp-h1
 table.c
 table.h

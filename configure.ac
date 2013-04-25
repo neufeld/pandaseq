@@ -100,4 +100,5 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES(${LIB_NAME}.pc:pc.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES(${LIB_NAME}.vapi:vapi.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES([pandaxs:pandaxs.in], [chmod +x pandaxs])
+AC_CONFIG_FILES([build-macos-pkg:build-macos-pkg.in], [chmod +x build-macos-pkg])
 AC_OUTPUT
