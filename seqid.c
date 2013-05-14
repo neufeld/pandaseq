@@ -38,7 +38,7 @@ void panda_seqid_xprint(
 
 const char *panda_seqid_str(
 	const panda_seq_identifier *id) {
-	char *buffer = static_buffer();
+	char *buffer = seqid_buffer();
 	if (id == NULL)
 		return NULL;
 	panda_seqid_xprint(id, (PandaPrintf) bufferprintf, buffer);
