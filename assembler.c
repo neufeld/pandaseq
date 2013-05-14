@@ -171,7 +171,7 @@ static bool align(
 	double oquality = 0;
 	double rquality = 0;
 	ssize_t len;
-	BITS_INIT(posn, maxoverlap - assembler->minoverlap + 1);
+	BITS_INIT(posn, assembler->minoverlap <= maxoverlap ? (maxoverlap - assembler->minoverlap + 1) : 1);
 
 	if (result->forward_length >= (1 << (8 * sizeof(seqindex)))) {
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_INSUFFICIENT_KMER_TABLE);
