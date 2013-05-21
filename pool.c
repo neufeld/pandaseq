@@ -112,7 +112,7 @@ static void *do_assembly(
 #endif
 	fprintf(stderr, "STAT\tOVERLAPS\t%ld", panda_assembler_get_overlap_count(info->assembler, it));
 	max = panda_assembler_get_longest_overlap(info->assembler);
-	for (it = 1; it < max; it++) {
+	for (it = 1; it <= max; it++) {
 		fprintf(stderr, " %ld", panda_assembler_get_overlap_count(info->assembler, it));
 	}
 	fprintf(stderr, "\n");
