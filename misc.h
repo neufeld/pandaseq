@@ -25,6 +25,7 @@
 #        define DESTROY_STACK(name) if (name ## _destroy != NULL && name != NULL) { name ## _destroy(name ## _data); } name = NULL; name ## _data = NULL; name ## _destroy = NULL
 #        define MANAGED_MEMBER(type, name) type name; void * name ## _data; PandaDestroy name ## _destroy
 #        define MANAGED_STACK(type, name) type name = NULL; void * name ## _data = NULL; PandaDestroy name ## _destroy = NULL
+#        define MAYBE(x) if (x != NULL) *x
 #        define free0(val) if ((val) != NULL) free(val); (val) = NULL
 
 typedef unsigned short seqindex;
