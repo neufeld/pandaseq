@@ -124,7 +124,7 @@ static void *do_assembly(
 	return NULL;
 }
 
-int panda_run_pool(
+bool panda_run_pool(
 	int threads,
 	PandaAssembler assembler,
 	PandaMux mux,
@@ -135,6 +135,9 @@ int panda_run_pool(
 	struct thread_info self;
 	struct shared_info shared_info;
 	struct thread_info *thread_list;
+
+	if (assembler == NULL)
+		return false;
 
 	shared_info.some_seqs = false;
 	shared_info.output = output;
@@ -182,5 +185,5 @@ int panda_run_pool(
 	pthread_mutex_destroy(&shared_info.stderr_mutex);
 #endif
 	DESTROY_MEMBER(&shared_info, output);
-	return shared_info.some_seqs ? 0 : 1;
+	return shared_info.some_seqs;
 }

@@ -6,6 +6,7 @@
 -T PandaCode
 -T PandaDebug
 -T PandaDestroy
+-T PandaFailAlign
 -T PandaIter
 -T panda_kmer
 -T PandaLogger
@@ -16,6 +17,7 @@
 -T PandaNextChar
 -T PandaNextSeq
 -T panda_nt
+-T PandaOpener
 -T PandaPreCheck
 -T PandaPrintf
 -T panda_qual
@@ -23,5 +25,10 @@
 -T panda_result_seq
 -T panda_seq_identifier
 -T PandaSet
+-T PandaSetup
 -T PandaTagging
+-T PandaTweakAssembler
+-T panda_tweak_assembler
+-T PandaTweakGeneral
+-T panda_tweak_general
 -T size_t

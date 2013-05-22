@@ -37,6 +37,9 @@ libpandaseq_la_LDFLAGS = \
 	-version-info $(LIB_VER) \
 	$(NULL)
 libpandaseq_la_SOURCES = \
+	args.c \
+	args_assembler.c \
+	args_fastq.c \
 	assembler.c \
 	assembler_support.c \
 	buffer.c \

@@ -481,7 +481,7 @@ namespace Panda {
 
 		/**
 		 * Add a collection of modules to this assembly process.
-		 * @returns the index of the last successfully added module
+		 * @return the index of the last successfully added module
 		 */
 		[CCode(cname = "panda_assembler_add_modules")]
 		public size_t add_modules([CCode(array_length_type = "size_t")] Module[] modules);
@@ -1156,8 +1156,7 @@ file);
 
 	/**
 	 * Write a finsihed sequence to an appropriate place.
-	 * @sequence: the sequence from assembly
-	 * @user_data: (closure): the context provided
+	 * @param sequence the sequence from assembly
 	 */
 	[CCode(cname = "PandaOutputSeq")]
 	public delegate bool OutputSeq(result_seq sequence);
@@ -1240,11 +1239,201 @@ file);
 	 * @param output the delegate that will write assembled sequences to where they belong.
 	 */
 	[CCode(cname = "panda_run_pool")]
-	public int run_pool(int threads, owned Assembler assembler, owned Mux? mux, owned OutputSeq output);
+	public bool run_pool(int threads, owned Assembler assembler, owned Mux? mux, owned OutputSeq output);
 
 	/**
 	 * The current flags used be the assember to report errors. Some errors are always reported.
 	 */
 	[CCode(cname = "panda_debug_flags")]
 	public Debug debug_flags;
+
+	namespace StdArgs {
+		/**
+		 * The standard list of assembler-only arguments for PANDAseq binaries.
+		 */
+		[CCode(cname = "panda_tweak_assembler", array_length_cexpr = "panda_stdargs_length", array_length_type = "size_t")]
+		public const Tweak.assembler?[] list;
+		/**
+		 * The strip primers after switch (-a).
+		 */
+		[CCode(cname = "panda_stdargs_primers_after")]
+		public const Tweak.assembler primers_after;
+		/**
+		 * The minimum length filter switch (-l).
+		 */
+		[CCode(cname = "panda_stdargs_min_len")]
+		public const Tweak.assembler min_len;
+		/**
+		 * The maximum length filter switch (-L).
+		 */
+		[CCode(cname = "panda_stdargs_max_len")]
+		public const Tweak.assembler max_len;
+		/**
+		 * The no N's switch (-N).
+		 */
+		[CCode(cname = "panda_stdargs_degenerates")]
+		public const Tweak.assembler degenerates;
+		/**
+		 * The forward primer filter switch (-p).
+		 */
+		[CCode(cname = "panda_stdargs_forward_primer")]
+		public const Tweak.assembler forward_primer;
+		/**
+		 * The reverse primer filter switch (-q).
+		 */
+		[CCode(cname = "panda_stdargs_reverse_primer")]
+		public const Tweak.assembler reverse_primer;
+		/**
+		 * The threshold filter switch (-t).
+		 */
+		[CCode(cname = "panda_stdargs_threshold")]
+		public const Tweak.assembler threshold;
+
+		/**
+		 * The standard argument handler for a pair of FASTQ files from Illumina.
+		 */
+		[CCode(cname = "struct panda_args_fastq", free_function = "panda_args_fastq_free")]
+		[Compact]
+		public class FastqArgs {
+			/**
+			 * Command line arguments for a pair of FASTQ files from Illumina.
+			 */
+			[CCode(cname = "panda_args_fastq_args", array_length_cexpr = "panda_args_fastq_args_length", array_length_type = "size_t")]
+			public const Tweak.general?[] args;
+
+			/**
+			 * Create a new argument handler.
+			 */
+			[CCode(cname = "panda_args_fastq_new")]
+			public FastqArgs();
+
+			/**
+			 * Process the command line arguments for the FASTQ argument handler.
+			 */
+			[CCode(cname = "panda_args_fastq_tweak")]
+			public bool tweak(char flag, string argument);
+
+			/**
+			 * Initialise the sequence stream for the FASTQ argument handler.
+			 */
+			[CCode(cname = "panda_args_fastq_opener")]
+			public NextSeq? opener(LogProxy logger, out FailAlign? fail, out bool help);
+
+			/**
+			 * Do additional assembly setup for the FASTQ argument handler.
+			 */
+			[CCode(cname = "panda_args_fastq_setup")]
+			public bool setup(Assembler assembler);
+		}
+	}
+
+	namespace Tweak {
+		/**
+		 * Process a command-line flag specified by the user.
+		 * @param assembler the assembler to which to make the adjustments
+		 * @param flag the command line flag specified
+		 * @param argument the command line argument, or null if not set.
+		 * @param is_set whether the command line argument is given in the case of boolean flags.
+		 * @return whether the flag was parsed successfully
+		 */
+		[CCode(cname = "PandaTweakAssembler", has_type_id = false, has_target = false)]
+		public delegate bool AssemblerHandler(Assembler assembler, char flag, owned string? argument, bool is_set);
+
+		/**
+		 * Process a command-line flag specified by the user.
+		 * @param flag the command line flag specified
+		 * @param argument the option passed specified with the flag, if requested.
+		 * @param user_data the context
+		 * Returns: whether the flag was parsed succesfully
+		 */
+		[CCode(cname = "PandaTweakGeneral", has_type_id = false, has_target = false, simple_generics = true)]
+		public delegate bool GeneralHandler<T>(T user_data, char flag, string? argument);
+
+		/**
+		 * Create a sequence reader after argument parsing.
+		 *
+		 * This returns a sequence source and a failure handler so that assembly can proceed.
+		 * @param user_data the context
+		 * @param logger The logging proxy to use, if needed.
+		 * @param fail the handler for any sequences which do not align, if desired.
+		 * @param help if true, the help text will be displayed when the function exits.
+		 * @return the sequence source, or null to indicate a failure
+		 */
+		[CCode(cname = "PandaOpener", has_type_id = false, has_target = false, simple_generics = true)]
+		public delegate NextSeq Opener<T>(T user_data, LogProxy logger, out FailAlign? fail, out bool help);
+
+		/**
+		 * Perform any modifications to the assembler after creation.
+		 */
+		[CCode(cname = "PandaSetup", has_type_id = false, has_target = false, simple_generics = true)]
+		public delegate bool Setup<T>(T user_data, Assembler assembler);
+
+		/**
+		 * Describes a command line option that can be applied to an assembler.
+		 */
+		[CCode(cname = "panda_tweak_assembler", has_type_id = false)]
+		public struct assembler {
+			/**
+			 * The command line option.
+			 */
+			char flag;
+			/**
+			 *  The name of the argument as it appears in the help. If null, the argument is assumed to be boolean.
+			 */
+			string? takes_argument;
+			/**
+			 * The description of the option.
+			 */
+			string? help;
+			/**
+			 * The callback to make the appropriate changes to the assembler.
+			 */
+			AssemblerHandler setup;
+		}
+
+		/**
+		 * Describes a command line option.
+		 */
+		[CCode(cname = "panda_tweak_general", has_type_id = false)]
+		public struct general {
+			/**
+			 * The command line option.
+			 */
+			char flag;
+			/**
+			 * Whether the flag needs to be specified.
+			 *
+			 * This is used in the help output only.
+			 */
+			bool optional;
+			/**
+			 * The name of the argument as it appears in the help. If null, the argument is assumed to be boolean.
+			 */
+			string? takes_argument;
+			/**
+			 * The callback to record the appropriate information.
+			 */
+			string help;
+		}
+
+		/**
+		 * Parse command line arguments to in order to construct assemblers.
+		 *
+		 * This is meant to serve as a general framework for parsing command line arguments with maximum code reuse. There are two kinds of arguments: assembler-only and general. Assembler-only arguments need no context (i.e., they on modify the assembler based on their argument). General arguments might do this or they might be involved in selecting the sequence source.
+		 *
+		 * Lists of command line arguments are passed in and parsed. The opener is then called to open the data source and provide a sequence source. Then, an assembler and multiplexer will be created. All the assembler-only arguments and any additional setup are applied to the assembler. Any needed modules are loaded. Finally, the assembler and multiplexer are output, for use by the thread pool code.
+		 * @param args the strings from the command line
+		 * @param assembler_args descriptors of all the assembler-only command line arguments
+		 * @param general_args descriptors of all the command line arguments userstood by the callbacks
+		 * @param tweak a callback for every command line argument matching a general argument
+		 * @param opener a callback to open the sequence source
+		 * @param assembler_setup a callback to configure the assembler
+		 * @param assembler the assembler constructed after argument parsing
+		 * @param mux the multiplexer constructed after argument parsing
+		 * @param threads the number of threads the user wishes to use
+		 * @return whether command line parsing was successful and the output parameters have been populated
+		 */
+		[CCode(cname = "panda_parse_args", simple_generics = true)]
+		public bool parse_args<T>(string[] args, [CCode(array_length_type = "size_t")] Tweak.general?[] general_args, [CCode(array_length_type = "size_t")] Tweak.assembler?[] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? assembler, out Mux? mux, out int threads, out OutputSeq output);
+	}
 }

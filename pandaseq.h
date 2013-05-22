@@ -1325,13 +1325,237 @@ typedef bool (
  * @mux: (transfer full) (allow-none): the multiplexer to use. If null, no threads will be created. The provided assembler must be a product of this multiplexer.
  * @output: (closure output_data) (scope notified): the function that will write assembled sequences to where they belong.
  */
-int panda_run_pool(
+bool panda_run_pool(
 	int threads,
 	PandaAssembler assembler,
 	PandaMux mux,
 	PandaOutputSeq output,
 	void *output_data,
 	PandaDestroy output_destroy);
+
+/**
+ * Process a command-line flag specified by the user.
+ * @assembler: the assembler to which to make the adjustments
+ * @flag: the command line flag specified
+ * @argument: (transfer full) (allow-none): the command line argument, or null if not set.
+ * @is_set: whether the command line argument is given in the case of boolean flags.
+ * Returns: whether the flag was parsed successfully
+ */
+typedef bool (
+	*PandaTweakAssembler) (
+	PandaAssembler assembler,
+	char flag,
+	char *argument,
+	bool is_set);
+
+/**
+ * Describes a command line option that can be applied to an assembler.
+ */
+typedef struct panda_tweak_assembler {
+	/**
+	 * The command line option.
+	 */
+	char flag;
+	/**
+	 *  The name of the argument as it appears in the help. If null, the argument is assumed to be boolean.
+	 */
+	const char *takes_argument;
+	/**
+	 * The description of the option.
+	 */
+	const char *help;
+	/**
+	 * The callback to make the appropriate changes to the assembler.
+	 */
+	PandaTweakAssembler setup;
+} panda_tweak_assembler;
+
+
+/**
+ * Process a command-line flag specified by the user.
+ * @user_data: (closure): the context
+ * @flag: the command line flag specified
+ * @argument: the option passed specified with the flag, if requested.
+ * Returns: whether the flag was parsed succesfully
+ */
+typedef bool (
+	*PandaTweakGeneral) (
+	void *user_data,
+	char flag,
+	const char *argument);
+
+/**
+ * Describes a command line option.
+ */
+typedef struct panda_tweak_general {
+	/**
+	 * The command line option.
+	 */
+	char flag;
+	/**
+	 * Whether the flag needs to be specified.
+	 *
+	 * This is used in the help output only.
+	 */
+	bool optional;
+	/**
+	 * The name of the argument as it appears in the help. If null, the argument is assumed to be boolean.
+	 */
+	const char *takes_argument;
+	/**
+	 * The callback to record the appropriate information.
+	 */
+	const char *help;
+} panda_tweak_general;
+
+/**
+ * Create a sequence reader after argument parsing.
+ * 
+ * This returns a sequence source and a failure handler so that assembly can proceed.
+ * @logger: The logging proxy to use, if needed.
+ * @fail: (closure fail_data) (transfer full) (allow-none) (out callee-allocates) (scope notified): the handler for any sequences which do not align, if desired.
+ * @help:(out caller-allocates): if true, the help text will be displayed when the function exits.
+ * @user_data:(closure): the context
+ * Returns: (scope notified) (allow-none): the sequence source, or null to indicate a failure
+ */
+typedef PandaNextSeq (
+	*PandaOpener) (
+	void *user_data,
+	PandaLogProxy logger,
+	PandaFailAlign *fail,
+	void **fail_data,
+	PandaDestroy *fail_destroy,
+	bool *help,
+	void **next_data,
+	PandaDestroy *next_destroy);
+
+/**
+ * Perform any modifications to the assembler after creation.
+ */
+typedef bool (
+	*PandaSetup) (
+	void *user_data,
+	PandaAssembler assembler);
+
+/**
+ * Parse command line arguments to in order to construct assemblers.
+ *
+ * This is meant to serve as a general framework for parsing command line arguments with maximum code reuse. There are two kinds of arguments: assembler-only and general. Assembler-only arguments need no context (i.e., they on modify the assembler based on their argument). General arguments might do this or they might be involved in selecting the sequence source.
+ *
+ * Lists of command line arguments are passed in and parsed. The opener is then called to open the data source and provide a sequence source. Then, an assembler and multiplexer will be created. All the assembler-only arguments and any additional setup are applied to the assembler. Any needed modules are loaded. Finally, the assembler and multiplexer are output, for use by the thread pool code.
+ * @args:(array length=args_length): the strings from the command line
+ * @assembler_args:(array length_assembler_args_length): descriptors of all the assembler-only command line arguments
+ * @general_args:(array length=general_args_length): descriptors of all the command line arguments userstood by the callbacks
+ * @tweak:(closure user_data): a callback for every command line argument matching a general argument
+ * @opener:(closure user_data): a callback to open the sequence source
+ * @assembler_setup:(closure user_data) (allow-none): a callback to configure the assembler
+ * @out_assembler:(out callee-allocates) (transfer full): the assembler constructed after argument parsing
+ * @out_mux:(out callee-allocates) (transfer full): the multiplexer constructed after argument parsing
+ * @out_threads:(out caller-allocates): the number of threads the user wishes to use
+ * Returns: whether command line parsing was successful and the output parameters have been populated
+ */
+bool panda_parse_args(
+	char *const *args,
+	int args_length,
+	const panda_tweak_assembler *const *const assembler_args,
+	size_t assembler_args_length,
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length,
+	PandaTweakGeneral tweak,
+	PandaOpener opener,
+	PandaSetup assembler_setup,
+	void *user_data,
+	PandaAssembler *out_assembler,
+	PandaMux *out_mux,
+	int *out_threads,
+	PandaOutputSeq * output,
+	void **output_data,
+	PandaDestroy *output_destroy);
+
+/**
+ * The standard list of assembler-only arguments for PANDAseq binaries.
+ */
+extern const panda_tweak_assembler *const panda_stdargs[];
+extern const size_t panda_stdargs_length;
+/**
+ * The strip primers after switch (-a).
+ */
+extern const panda_tweak_assembler panda_stdargs_primers_after;
+/**
+ * The minimum length filter switch (-l).
+ */
+extern const panda_tweak_assembler panda_stdargs_min_len;
+/**
+ * The maximum length filter switch (-L).
+ */
+extern const panda_tweak_assembler panda_stdargs_max_len;
+/**
+ * The no N's switch (-N).
+ */
+extern const panda_tweak_assembler panda_stdargs_degenerates;
+/**
+ * The forward primer filter switch (-p).
+ */
+extern const panda_tweak_assembler panda_stdargs_forward_primer;
+/**
+ * The reverse primer filter switch (-q).
+ */
+extern const panda_tweak_assembler panda_stdargs_reverse_primer;
+/**
+ * The threshold filter switch (-t).
+ */
+extern const panda_tweak_assembler panda_stdargs_threshold;
+
+/**
+ * The standard argument handler for a pair of FASTQ files from Illumina.
+ */
+typedef struct panda_args_fastq *PandaArgsFastq;
+
+/**
+ * Command line arguments for a pair of FASTQ files from Illumina.
+ */
+extern const panda_tweak_general *const panda_args_fastq_args[];
+extern const size_t panda_args_fastq_args_length;
+
+/**
+ * Create a new argument handler.
+ */
+PandaArgsFastq panda_args_fastq_new(
+	);
+
+/**
+ * Cleanup the argument handler.
+ */
+void panda_args_fastq_free(
+	PandaArgsFastq data);
+
+/**
+ * Process the command line arguments for the FASTQ argument handler.
+ */
+bool panda_args_fastq_tweak(
+	PandaArgsFastq data,
+	char flag,
+	const char *argument);
+
+/**
+ * Initialise the sequence stream for the FASTQ argument handler.
+ */
+PandaNextSeq panda_args_fastq_opener(
+	PandaArgsFastq data,
+	PandaLogProxy logger,
+	PandaFailAlign *fail,
+	void **fail_data,
+	PandaDestroy *fail_destroy,
+	bool *help,
+	void **next_data,
+	PandaDestroy *next_destroy);
+
+/**
+ * Do additional assembly setup for the FASTQ argument handler.
+ */
+bool panda_args_fastq_setup(
+	PandaArgsFastq data,
+	PandaAssembler assembler);
 
 /*
  * Convenience macro is for Vala
