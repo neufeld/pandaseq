@@ -79,3 +79,7 @@ A: Nothing. The quality scores of the output do not have any similarity to the o
 In the overlap region where there is a mismatch, it is the probability that one base was sequenced correctly and the other was sequenced incorrectly. If both bases have high scores (i.e., are probably correct), the chance of the resulting base is low (i.e., is probably incorrect). For more information, see the paper. Also, remember that the PHRED to probability conversion is not linear, so most scores are relatively high. It's also not uncommon to see the PHRED score `!`, which is zero, but in this context, it means less than `"` (PHRED = 1, P = .20567).
 
 Again, these scores are not meant to be interpreted as regular scores and should not be processed by downstream applications expecting PHRED scores from Illumina sequences.
+
+
+Q: The scores of the non-overlapping regions are not the same as the original reads. Why?
+A: The PHRED scores from the input are not copied directly to the output when using FASTQ (-F) output. They go through a transformation from PHRED scores into probabilities, which is how PANDAseq uses them. When output as FASTQ, the probability is converted back to a PHRED scores. The rounding error involved can cause a score to jump by one.
