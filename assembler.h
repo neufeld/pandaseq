@@ -32,11 +32,9 @@ struct panda_assembler {
 		PandaNextSeq,
 		next);
 	 MANAGED_MEMBER(
-		PandaLogger,
-		logger);
-	 MANAGED_MEMBER(
 		PandaFailAlign,
 		noalgn);
+	PandaLogProxy logger;
 
 	size_t *rejected;
 	PandaModule *modules;

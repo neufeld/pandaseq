@@ -446,6 +446,43 @@ typedef bool (
 	void *user_data);
 
 /**
+ * Logging proxy object.
+ */
+typedef struct panda_log_proxy *PandaLogProxy;
+
+/**
+ * Create a new proxy with a callback.
+ */
+PandaLogProxy panda_log_proxy_new(
+	PandaLogger log,
+	void *log_data,
+	PandaDestroy log_destroy);
+
+/**
+ * Create a new proxy to standard error.
+ */
+PandaLogProxy panda_log_proxy_new_stderr(
+	);
+
+/**
+ * Increase the reference count on a proxy.
+ */
+PandaLogProxy panda_log_proxy_ref(
+	PandaLogProxy proxy);
+/**
+ * Decrease the reference count on a proxy.
+ * @module: (transfer full): the proxy to release.
+ */
+void panda_log_proxy_unref(
+	PandaLogProxy proxy);
+
+bool panda_log_proxy_write(
+	PandaLogProxy proxy,
+	PandaCode code,
+	panda_seq_identifier *id,
+	const char *message);
+
+/**
  * Create a module given sequence checking parameters.
  *
  * @name: the name of the module, for user interaction
@@ -532,15 +569,13 @@ int panda_module_get_api(
 typedef struct panda_assembler *PandaAssembler;
 /**
  * Open a pair of gzipped (or uncompressed files) for assembly.
- * @logger: (closure logger_data): The callback for error logging.
+ * @logger: The proxy for error logging.
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
 PandaAssembler panda_assembler_open_gz(
 	const char *forward,
 	const char *reverse,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
@@ -551,9 +586,7 @@ PandaAssembler panda_assembler_open_gz(
 PandaAssembler panda_assembler_open_bz2(
 	const char *forward,
 	const char *reverse,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy);
 
@@ -589,7 +622,7 @@ typedef bool (
  * @reverse: (closure reverse_data) (scope notified): the same for the reverse sequence.
  * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
  * @policy: method to handle unbarcoded sequences
- * @logger: (closure logger_data) (scope floating): the logging function to use during assembly. The logging function will not be memory managed. It should be owned by the caller. THIS IS BAD.
+ * @logger: the logging function to use during assembly.
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_create_fastq_reader(
@@ -599,8 +632,7 @@ PandaNextSeq panda_create_fastq_reader(
 	PandaNextChar reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
-	PandaLogger logger,
-	void *logger_data,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
 	void **user_data,
@@ -610,15 +642,14 @@ PandaNextSeq panda_create_fastq_reader(
  *
  * @forward: the forward filename
  * @reverse: the reverse filename
- * @logger: (closure logger_data) (scope floating): the logging function to use during assembly. The logging function will not be memory managed. It should be owned by the caller. THIS IS BAD.
+ * @logger: the logging function to use during assembly.
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_gz(
 	const char *forward,
 	const char *reverse,
-	PandaLogger logger,
-	void *logger_data,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
 	void **user_data,
@@ -628,15 +659,14 @@ PandaNextSeq panda_open_gz(
  *
  * @forward: the forward filename
  * @reverse: the reverse filename
- * @logger: (closure logger_data) (scope floating): the logging function to use during assembly. The logging function will not be memory managed. It should be owned by the caller. THIS IS BAD.
+ * @logger: the logging function to use during assembly.
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_bz2(
 	const char *forward,
 	const char *reverse,
-	PandaLogger logger,
-	void *logger_data,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
 	void **user_data,
@@ -647,7 +677,7 @@ PandaNextSeq panda_open_bz2(
  * @reverse: (closure reverse_data) (scope notified): the same for the reverse sequence.
  * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
  * @policy: method to handle unbarcoded sequences
- * @logger: (closure logger_data) (scope floating): the logging function to use during assembly.
+ * @logger: the logging function to use during assembly.
  * @see panda_create_fastq_reader
  */
 PandaAssembler panda_assembler_new_fastq_reader(
@@ -657,24 +687,20 @@ PandaAssembler panda_assembler_new_fastq_reader(
 	PandaNextChar reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
  * Create a new assembler from a sequence source.
  *
  * @next: (closure next_data) (scope notified) (allow-none): the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroyed, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
- * @logger: (closure logger_data) (scope notified): the function to call to report information to the user
+ * @logger: the function to call to report information to the user
  */
 PandaAssembler panda_assembler_new(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy);
+	PandaLogProxy logger);
 /**
  * The default number of locations in the k-mer look up table.
  *
@@ -685,7 +711,7 @@ PandaAssembler panda_assembler_new(
  * Create a new assembler from a sequence source with a custom k-mer table size.
  *
  * @next: (closure next_data) (scope notified) (allow-none): the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call of next(next_data) or next_destroy(next_data). When the assembler is destroyed, it will call next_destroy(next_data). If null, only panda_assembler_assemble may be used and not panda_assembler_next.
- * @logger: (closure logger_data) (scope notified): the function to call to report information to the user
+ * @logger: the proxy to call to report information to the user
  * @num_kmers: the number of sequence locations for a particular k-mer. The default is PANDA_DEFAULT_NUM_KMERS. This should be small (no more than 10), or the k-mer table will be extremely large.
  * @see panda_assembler_new
  */
@@ -693,9 +719,7 @@ PandaAssembler panda_assembler_new_kmer(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	size_t num_kmers);
 /**
  * Clone the configuration of one assembler to another.
@@ -1029,15 +1053,13 @@ typedef struct panda_mux *PandaMux;
  *
  * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
  * @next: (closure next_data) (scope notified): the next sequence handler
- * @logger: (closure logger_data) (scope notified): the logger callback
+ * @logger: the logger callback
  */
 PandaMux panda_mux_new(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy);
+	PandaLogProxy logger);
 /**
  * Increase the reference count on a multiplexer.
  */
@@ -1072,9 +1094,7 @@ PandaAssembler panda_mux_create_assembler_kmer(
 PandaMux panda_mux_open_gz(
 	const char *forward,
 	const char *reverse,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
@@ -1085,9 +1105,7 @@ PandaMux panda_mux_open_gz(
 PandaMux panda_mux_open_bz2(
 	const char *forward,
 	const char *reverse,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy);
 /**
@@ -1101,9 +1119,7 @@ PandaMux panda_mux_new_fastq_reader(
 	PandaNextChar reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy);
 
@@ -1320,8 +1336,7 @@ int panda_run_pool(
 /*
  * Convenience macro is for Vala
  */
-#        define PANDA_LOGGER(file, user_data, destroy) (*(user_data) = (file), *(destroy) = NULL, (PandaLogger) panda_logger_file)
-#        define PANDA_FAIL(file, append, user_data, destroy) (*(user_data) = fopen(file, append ? "a" : "w"), *(destroy) = fclose, *(user_data) == NULL ? NULL : (PandaLogger) panda_output_fail)
+#        define PANDA_FAIL(file, append, user_data, destroy) (*(user_data) = fopen(file, append ? "a" : "w"), *(destroy) = fclose, *(user_data) == NULL ? NULL : (PandaFailAlign) panda_output_fail)
 
 #        define PANDA_API 2
 #        define PANDACONCATE(x,y) x ## y

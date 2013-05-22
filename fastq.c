@@ -33,8 +33,7 @@ struct stream_data {
 struct fastq_data {
 	struct stream_data forward;
 	struct stream_data reverse;
-	PandaLogger logger;
-	void *logger_data;
+	PandaLogProxy logger;
 	unsigned char qualmin;
 	panda_qual forward_seq[MAX_LEN];
 	size_t forward_seq_length;
@@ -73,8 +72,8 @@ static bool read_line(
 	return false;
 }
 
-#define LOG(flag, code) do { if(panda_debug_flags & flag) data->logger((code), id, NULL, data->logger_data); } while(0)
-#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); data->logger((code), id, static_buffer(), data->logger_data); }} while(0)
+#define LOG(flag, code) do { if(panda_debug_flags & flag) panda_log_proxy_write(data->logger, (code), id, NULL); } while(0)
+#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(data->logger, (code), id, static_buffer()); }} while(0)
 #define TOINDEX(val) (((int)(val)) < data->qualmin ? 0 : ((((int)(val)) > data->qualmin + PHREDMAX ? PHREDMAX : (int)(val)) - data->qualmin))
 static bool read_seq(
 	panda_seq_identifier *id,
@@ -225,6 +224,7 @@ static void stream_destroy(
 	}
 	DESTROY_MEMBER(&data->forward, next);
 	DESTROY_MEMBER(&data->reverse, next);
+	panda_log_proxy_unref(data->logger);
 	free(data);
 }
 
@@ -235,8 +235,7 @@ PandaNextSeq panda_create_fastq_reader(
 	PandaNextChar reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
-	PandaLogger logger,
-	void *logger_data,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
 	void **user_data,
@@ -249,8 +248,7 @@ PandaNextSeq panda_create_fastq_reader(
 	data->reverse.next = reverse;
 	data->reverse.next_data = reverse_data;
 	data->reverse.next_destroy = reverse_destroy;
-	data->logger = logger;
-	data->logger_data = logger_data;
+	data->logger = panda_log_proxy_ref(logger);
 	data->qualmin = qualmin;
 	data->policy = policy;
 	data->seen_under_64 = false;

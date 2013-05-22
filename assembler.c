@@ -36,8 +36,8 @@
 #include "prob.h"
 #include "table.h"
 
-#define LOG(flag, code) do { if(panda_debug_flags & flag) assembler->logger((code), &assembler->result.name, NULL, assembler->logger_data); } while(0)
-#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); assembler->logger((code), &assembler->result.name, static_buffer(), assembler->logger_data); }} while(0)
+#define LOG(flag, code) do { if(panda_debug_flags & flag) panda_log_proxy_write(assembler->logger, (code), &assembler->result.name, NULL); } while(0)
+#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(assembler->logger, (code), &assembler->result.name, static_buffer()); }} while(0)
 
 typedef unsigned int bitstype;
 #define FOR_BITS_IN_LIST(bits,index) for (index = 0; index < bits##_size; index++) if ((bits)[index / sizeof(bitstype) / 8] & (1 << (index % (8 * sizeof(bitstype)))))

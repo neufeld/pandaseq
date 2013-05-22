@@ -28,27 +28,20 @@ PandaAssembler panda_assembler_new(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy) {
-	return panda_assembler_new_kmer(next, next_data, next_destroy, logger, logger_data, logger_destroy, PANDA_DEFAULT_NUM_KMERS);
+	PandaLogProxy logger) {
+	return panda_assembler_new_kmer(next, next_data, next_destroy, logger, PANDA_DEFAULT_NUM_KMERS);
 }
 
 PandaAssembler panda_assembler_new_kmer(
 	PandaNextSeq next,
 	void *next_data,
 	PandaDestroy next_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	size_t num_kmers) {
 	PandaAssembler assembler = malloc(sizeof(struct panda_assembler));
 	if (assembler == NULL) {
 		if (next_destroy != NULL) {
 			next_destroy(next_data);
-		}
-		if (logger_destroy != NULL) {
-			logger_destroy(logger_data);
 		}
 		return NULL;
 	}
@@ -56,9 +49,6 @@ PandaAssembler panda_assembler_new_kmer(
 	assembler->next = next;
 	assembler->next_data = next_data;
 	assembler->next_destroy = next_destroy;
-	assembler->logger = logger;
-	assembler->logger_data = logger_data;
-	assembler->logger_destroy = logger_destroy;
 	assembler->noalgn = NULL;
 	assembler->noalgn_data = NULL;
 	assembler->noalgn_destroy = NULL;
@@ -93,12 +83,10 @@ PandaAssembler panda_assembler_new_kmer(
 		if (next_destroy != NULL) {
 			next_destroy(next_data);
 		}
-		if (logger_destroy != NULL) {
-			logger_destroy(logger_data);
-		}
 		free(assembler);
 		return NULL;
 	}
+	assembler->logger = panda_log_proxy_ref(logger);
 #ifdef HAVE_PTHREAD
 	pthread_mutex_init(&assembler->mutex, NULL);
 #endif
@@ -258,8 +246,8 @@ void panda_assembler_unref(
 		free(assembler->kmerseen);
 		module_destroy(assembler);
 		DESTROY_MEMBER(assembler, next);
-		DESTROY_MEMBER(assembler, logger);
 		DESTROY_MEMBER(assembler, noalgn);
+		panda_log_proxy_unref(assembler->logger);
 		free(assembler);
 	}
 }
@@ -271,16 +259,14 @@ PandaAssembler panda_assembler_new_fastq_reader(
 	PandaNextChar reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
-	PandaLogger logger,
-	void *logger_data,
-	PandaDestroy logger_destroy,
+	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy) {
 	void *user_data;
 	PandaDestroy destroy;
 	PandaNextSeq next;
-	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, logger_data, qualmin, policy, &user_data, &destroy);
-	return panda_assembler_new(next, user_data, destroy, logger, logger_data, logger_destroy);
+	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, qualmin, policy, &user_data, &destroy);
+	return panda_assembler_new(next, user_data, destroy, logger);
 }
 
 void panda_assembler_set_forward_primer(

@@ -9,6 +9,7 @@
 -T PandaDestroy
 -T PandaIter
 -T PandaLogger
+-T PandaLogProxy
 -T PandaModule
 -T PandaModuleCallback
 -T PandaMux

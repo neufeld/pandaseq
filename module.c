@@ -29,7 +29,7 @@
 
 #define STR0(x) #x
 #define STR(x) STR0(x)
-#define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); assembler->logger((code), NULL, static_buffer(), assembler->logger_data);
+#define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(assembler->logger, (code), NULL, static_buffer());
 
 #ifdef HAVE_PTHREAD
 /* All modules share a single mutex to control reference counts */
