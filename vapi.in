@@ -1120,7 +1120,6 @@ file);
 	 * Log an error/event
 	 *
 	 * If the function returns false, assembly will be halted.
-	 * The variadic arguments will provide context based on the particular code passed.
 	 * @see Code
 	 */
 	[CCode(cname = "PandaLogger")]
