@@ -427,7 +427,7 @@ namespace Panda {
 		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_open_bz2")]
-		public static Assembler? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public static Assembler? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Open a pair of gzipped (or uncompressed files) for assembly.
@@ -435,7 +435,7 @@ namespace Panda {
 		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_open_gz")]
-		public static Assembler? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public static Assembler? open_gz(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Create a new assembler from a sequence source.
@@ -444,7 +444,7 @@ namespace Panda {
 		 * @param logger the function to call to report information to the user.
 		 */
 		[CCode(cname = "panda_assembler_new")]
-		public Assembler(owned NextSeq? next, owned Logger logger);
+		public Assembler(owned NextSeq? next, LogProxy logger);
 
 		/**
 		 * Create a new assembler from a sequence source with a custom //k//-mer table size.
@@ -453,14 +453,14 @@ namespace Panda {
 		 * @see Assembler
 		 */
 		[CCode(cname = "panda_assembler_new_kmer")]
-		public Assembler.kmer(owned NextSeq? next, owned Logger logger, size_t num_kmers = 2);
+		public Assembler.kmer(owned NextSeq? next, LogProxy logger, size_t num_kmers = 2);
 
 		/**
 		 * Create a new assembler for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_new_fastq_reader")]
-		public Assembler.fastq (owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public Assembler.fastq (owned NextChar forward, owned NextChar reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Assemble a single sequence pair not drawn from the sequence stream.
@@ -596,6 +596,38 @@ namespace Panda {
 	}
 
 	/**
+	 * Logging proxy
+	 */
+	[CCode(cname = "struct panda_log_proxy", ref_function = "panda_log_proxy_ref", unref_function = "panda_log_proxy_unref")]
+	[Compact]
+	public class LogProxy {
+		/**
+		 * Create a new proxy with a callback.
+		 */
+		[CCode(cname = "panda_log_proxy_new")]
+		public LogProxy(owned Logger log);
+		/**
+		 * Create a new proxy to standard error.
+		 */
+		[CCode(cname = "panda_log_proxy_new_stderr")]
+		public LogProxy.stderr();
+
+		/**
+		 * Increase the reference count on a proxy.
+		 */
+		[CCode(cname = "panda_log_proxy_ref")]
+		public void @ref();
+		/**
+		 * Decrease the reference count on a proxy.
+		 */
+		[CCode(cname = "panda_log_proxy_unref")]
+		public void unref();
+
+		[CCode(cname = "panda_log_proxy_write")]
+		public bool write(Code code, identifier id, string message);
+	}
+
+	/**
 	 * Sequence validity checker
 	 */
 	[CCode(cname = "struct panda_module", ref_function = "panda_module_ref", unref_function = "panda_module_unref")]
@@ -716,26 +748,26 @@ namespace Panda {
 		 * @see Assembler.open_gz
 		 */
 		[CCode(cname = "panda_mux_open_gz")]
-		public static Mux? open_gz(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public static Mux? open_gz(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Open a pair of zipped for multi-threaded assembly.
 		 *
 		 * @see Assembler.open_bz2
 		 */
 		[CCode(cname = "panda_mux_open_bz2")]
-		public static Mux? open_bz2(string forward, string reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public static Mux? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new multiplexed data source from a sequence callback.
 		 *
 		 * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
 		 */
 		[CCode(cname = "PandaMux")]
-		public Mux(owned NextSeq next, owned Logger logger);
+		public Mux(owned NextSeq next, LogProxy logger);
 		/**
 		 * Create a new multiplexed reader for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
-		public Mux.fastq(owned NextChar forward, owned NextChar reverse, owned Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public Mux.fastq(owned NextChar forward, owned NextChar reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new assembler using the multiplexer as it sequence source.
 		 *
@@ -1122,6 +1154,14 @@ file);
 	[CCode(cname = "PandaNextSeq")]
 	public delegate bool NextSeq(out identifier id, out unowned qual[] forward, out unowned qual[] reverse);
 
+	/**
+	 * Write a finsihed sequence to an appropriate place.
+	 * @sequence: the sequence from assembly
+	 * @user_data: (closure): the context provided
+	 */
+	[CCode(cname = "PandaOutputSeq")]
+	public delegate bool OutputSeq(result_seq sequence);
+
 	[CCode(cname = "PandaPrintf", instance_pos = 0)]
 	[PrintfFormat]
 	public delegate void PrintfFunc(string format, ...);
@@ -1131,12 +1171,12 @@ file);
 	 *
 	 * @param forward the stream of forward characters, called every time a new character is required.
 	 * @param reverse the stream of reverse characters, called every time a new character is required.
-	 * @param logger the logging function to use during assembly.
+	 * @param logger the logging proxy to use during assembly.
 	 * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
 	 * @param policy method to handle unbarcoded sequences
 	 */
 	[CCode(cname = "panda_assembler_create_fastq_reader")]
-	public static NextSeq create_fastq_reader(owned NextChar forward, owned NextChar reverse, Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	public static NextSeq create_fastq_reader(owned NextChar forward, owned NextChar reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * The current module API version of the running library
@@ -1155,18 +1195,6 @@ file);
 	 */
 	[CCode(cname = "panda_logger_file")]
 	public bool file_logger(Code code, identifier? id, string? message,
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
-
-	/**
-	 * Create a file logger
-	 */
-	[CCode(cname = "PANDA_LOGGER")]
-	public Logger create_logger(
 #if POSIX
 Posix.FILE
 #else
@@ -1194,7 +1222,7 @@ file);
 	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
 	 */
 	[CCode(cname = "panda_open_gz")]
-	public NextSeq? open_gz(string forward, string reverse, Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	public NextSeq? open_gz(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * Open a pair of bzipped files.
@@ -1202,7 +1230,17 @@ file);
 	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
 	 */
 	[CCode(cname = "panda_open_bz2")]
-	public NextSeq? open_bz2(string forward, string reverse, Logger logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	public NextSeq? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+
+	/**
+	 * Spawn threads and assemble sequences.
+	 * @param threads the number of threads to spawn
+	 * @param assembler the main assembler to use. If multiple threads are to be used, the configuration of this assembler will be copied to all the slave assemblers.
+	 * @param mux the multiplexer to use. If null, no threads will be created. The provided assembler must be a product of this multiplexer.
+	 * @param output the delegate that will write assembled sequences to where they belong.
+	 */
+	[CCode(cname = "panda_run_pool")]
+	public int run_pool(int threads, owned Assembler assembler, owned Mux? mux, owned OutputSeq output);
 
 	/**
 	 * The current flags used be the assember to report errors. Some errors are always reported.
