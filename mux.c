@@ -165,7 +165,7 @@ PandaAssembler panda_mux_create_assembler_kmer(
 	size_t num_kmers) {
 	PandaAssembler assembler;
 	pthread_mutex_lock(&mux->mutex);
-	mux->refcnt += 2;
+	mux->refcnt++;
 	pthread_mutex_unlock(&mux->mutex);
 	assembler = panda_assembler_new_kmer((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, mux->logger, num_kmers);
 	if (assembler != NULL) {
