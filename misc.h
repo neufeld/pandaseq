@@ -22,7 +22,9 @@
 #        include "pandaseq.h"
 
 #        define DESTROY_MEMBER(self, name) if ((self)->name ## _destroy != NULL && (self)->name != NULL) { (self)->name ## _destroy((self)->name ## _data); } (self)->name = NULL; (self)->name ## _data = NULL; (self)->name ## _destroy = NULL
+#        define DESTROY_STACK(name) if (name ## _destroy != NULL && name != NULL) { name ## _destroy(name ## _data); } name = NULL; name ## _data = NULL; name ## _destroy = NULL
 #        define MANAGED_MEMBER(type, name) type name; void * name ## _data; PandaDestroy name ## _destroy
+#        define MANAGED_STACK(type, name) type name = NULL; void * name ## _data = NULL; PandaDestroy name ## _destroy = NULL
 #        define free0(val) if ((val) != NULL) free(val); (val) = NULL
 
 typedef unsigned short seqindex;
