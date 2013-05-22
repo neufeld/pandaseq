@@ -84,7 +84,7 @@ PandaMux panda_mux_ref(
 
 void panda_mux_unref(
 	PandaMux mux) {
-	int count;
+	size_t count;
 	pthread_mutex_lock(&mux->mutex);
 	count = --(mux->refcnt);
 	pthread_mutex_unlock(&mux->mutex);

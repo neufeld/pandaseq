@@ -288,7 +288,7 @@ PandaModule panda_module_ref(
 
 void panda_module_unref(
 	PandaModule module) {
-	int count;
+	size_t count;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
 #endif
