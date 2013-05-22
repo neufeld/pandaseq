@@ -536,8 +536,8 @@ typedef struct panda_assembler *PandaAssembler;
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
 PandaAssembler panda_assembler_open_gz(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
@@ -549,8 +549,8 @@ PandaAssembler panda_assembler_open_gz(
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
 PandaAssembler panda_assembler_open_bz2(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
@@ -615,8 +615,8 @@ PandaNextSeq panda_create_fastq_reader(
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_gz(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	unsigned char qualmin,
@@ -633,8 +633,8 @@ PandaNextSeq panda_open_gz(
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_bz2(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	unsigned char qualmin,
@@ -1070,8 +1070,8 @@ PandaAssembler panda_mux_create_assembler_kmer(
  * @see panda_assembler_open_gz
  */
 PandaMux panda_mux_open_gz(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
@@ -1083,8 +1083,8 @@ PandaMux panda_mux_open_gz(
  * @see panda_assembler_open_bz2
  */
 PandaMux panda_mux_open_bz2(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,

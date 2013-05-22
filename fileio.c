@@ -25,8 +25,8 @@
 #include "pandaseq.h"
 
 PandaNextSeq panda_open_gz(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	unsigned char qualmin,
@@ -53,8 +53,8 @@ PandaNextSeq panda_open_gz(
 }
 
 PandaAssembler panda_assembler_open_gz(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
@@ -74,8 +74,8 @@ PandaAssembler panda_assembler_open_gz(
 
 #ifdef HAVE_PTHREAD
 PandaMux panda_mux_open_gz(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
@@ -105,8 +105,8 @@ static int bzgetc(
 }
 
 PandaNextSeq panda_open_bz2(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	unsigned char qualmin,
@@ -130,8 +130,8 @@ PandaNextSeq panda_open_bz2(
 }
 
 PandaAssembler panda_assembler_open_bz2(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
@@ -152,8 +152,8 @@ PandaAssembler panda_assembler_open_bz2(
 
 #ifdef HAVE_PTHREAD
 PandaMux panda_mux_open_bz2(
-	char *forward,
-	char *reverse,
+	const char *forward,
+	const char *reverse,
 	PandaLogger logger,
 	void *logger_data,
 	PandaDestroy logger_destroy,
