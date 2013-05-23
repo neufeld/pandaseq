@@ -337,30 +337,20 @@ bool panda_parse_args(
 		fprintf(stderr, "ERR\tLIB\tCould not create multiplexer.\n");
 		CLEANUP();
 		return false;
-	} else {
-		next = NULL;
-		next_data = NULL;
-		next_destroy = NULL;
-		fail = NULL;
-		fail_data = NULL;
-		fail_destroy = NULL;
 	}
 	assembler = panda_mux_create_assembler_kmer(mux, num_kmers);
 
 #else
 	assembler = panda_assembler_new_kmer(next, next_data, next_destroy, logger, num_kmers);
 #endif
+	next = NULL;
+	next_data = NULL;
+	next_destroy = NULL;
 	if (assembler == NULL) {
 		fprintf(stderr, "ERR\tLIB\tCould not create assembler.\n");
 		CLEANUP();
 		return false;
 	}
-	next = NULL;
-	next_data = NULL;
-	next_destroy = NULL;
-	fail = NULL;
-	fail_data = NULL;
-	fail_destroy = NULL;
 	for (it = 0; it < assembler_args_length; it++) {
 		char *arg = opt_assembler_args[it];
 		opt_assembler_args[it] = NULL;
@@ -379,6 +369,9 @@ bool panda_parse_args(
 #else
 		panda_assembler_set_fail_alignment(assembler, fail, fail_data, fail_destroy);
 #endif
+		fail = NULL;
+		fail_data = NULL;
+		fail_destroy = NULL;
 	}
 	it = panda_assembler_add_modules(assembler, modules, modules_length);
 	if (it != modules_length) {
