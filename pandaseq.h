@@ -1414,7 +1414,6 @@ typedef struct panda_tweak_general {
  * This returns a sequence source and a failure handler so that assembly can proceed.
  * @logger: The logging proxy to use, if needed.
  * @fail: (closure fail_data) (transfer full) (allow-none) (out callee-allocates) (scope notified): the handler for any sequences which do not align, if desired.
- * @help:(out caller-allocates): if true, the help text will be displayed when the function exits.
  * @user_data:(closure): the context
  * Returns: (scope notified) (allow-none): the sequence source, or null to indicate a failure
  */
@@ -1425,7 +1424,6 @@ typedef PandaNextSeq (
 	PandaFailAlign *fail,
 	void **fail_data,
 	PandaDestroy *fail_destroy,
-	bool *help,
 	void **next_data,
 	PandaDestroy *next_destroy);
 
@@ -1546,7 +1544,6 @@ PandaNextSeq panda_args_fastq_opener(
 	PandaFailAlign *fail,
 	void **fail_data,
 	PandaDestroy *fail_destroy,
-	bool *help,
 	void **next_data,
 	PandaDestroy *next_destroy);
 

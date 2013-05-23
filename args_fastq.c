@@ -107,7 +107,6 @@ PandaNextSeq panda_args_fastq_opener(
 	PandaFailAlign *fail,
 	void **fail_data,
 	PandaDestroy *fail_destroy,
-	bool *help,
 	void **next_data,
 	PandaDestroy *next_destroy) {
 

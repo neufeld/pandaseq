@@ -1316,7 +1316,7 @@ file);
 			 * Initialise the sequence stream for the FASTQ argument handler.
 			 */
 			[CCode(cname = "panda_args_fastq_opener")]
-			public NextSeq? opener(LogProxy logger, out FailAlign? fail, out bool help);
+			public NextSeq? opener(LogProxy logger, out FailAlign? fail);
 
 			/**
 			 * Do additional assembly setup for the FASTQ argument handler.
@@ -1359,7 +1359,7 @@ file);
 		 * @return the sequence source, or null to indicate a failure
 		 */
 		[CCode(cname = "PandaOpener", has_type_id = false, has_target = false, simple_generics = true)]
-		public delegate NextSeq Opener<T>(T user_data, LogProxy logger, out FailAlign? fail, out bool help);
+		public delegate NextSeq Opener<T>(T user_data, LogProxy logger, out FailAlign? fail);
 
 		/**
 		 * Perform any modifications to the assembler after creation.

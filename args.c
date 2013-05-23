@@ -248,7 +248,7 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
-	if (help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &help, &next_data, &next_destroy)) == NULL) {
+	if (help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
 		size_t general_it = 0;
 		size_t assembler_it = 0;
 
