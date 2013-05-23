@@ -181,6 +181,8 @@ static bool stream_next_seq(
 
 	*forward = NULL;
 	*reverse = NULL;
+	*forward_length = 0;
+	*reverse_length = 0;
 
 	if (!read_line(buffer, BUFFER_SIZE, &data->forward, &fsize)) {
 		return false;
