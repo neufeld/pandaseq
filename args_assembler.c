@@ -111,7 +111,7 @@ static bool set_primer_group(
 	char *argument,
 	bool is_set) {
 	if (flag == 'p') {
-		return set_primer(assembler, argument, "forward", panda_assembler_set_forward_trim, panda_assembler_set_forward_primer, panda_nt_from_ascii_complement);
+		return set_primer(assembler, argument, "forward", panda_assembler_set_forward_trim, panda_assembler_set_forward_primer, panda_nt_from_ascii);
 	} else if (flag == 'q') {
 		return set_primer(assembler, argument, "reverse", panda_assembler_set_reverse_trim, panda_assembler_set_reverse_primer, panda_nt_from_ascii_complement);
 	}
