@@ -1373,6 +1373,20 @@ file);
 		[CCode(cname = "panda_tweak_assembler", has_type_id = false)]
 		public struct assembler {
 			/**
+			 * Construct a new list by combining existing lists.
+			 * @param array The storage location of the array. If the array is null, it will be allocated. It must be in reallocable memory.
+			 * @param additions The array whose items to copy.
+			 */
+			[CCode(cname = "panda_tweak_assembler_append")]
+			public static void append([CCode(array_length_type = "size_t")] ref assembler?[]? array, [CCode(array_length_type = "size_t")] assembler?[] additions);
+
+			/**
+			 * Sort a list of arguments into flag order.
+			 */
+			[CCode(cname = "panda_tweak_assembler_sort")]
+			public static void sort([CCode(array_length_type = "size_t")] assembler?[] array);
+
+			/**
 			 * The command line option.
 			 */
 			char flag;
@@ -1395,6 +1409,20 @@ file);
 		 */
 		[CCode(cname = "panda_tweak_general", has_type_id = false)]
 		public struct general {
+			/**
+			 * Construct a new list by combining existing lists.
+			 * @param array The storage location of the array. If the array is null, it will be allocated. It must be in reallocable memory.
+			 * @param additions The array whose items to copy.
+			 */
+			[CCode(cname = "panda_tweak_general_append")]
+			public static void append([CCode(array_length_type = "size_t")] ref general?[]? array, [CCode(array_length_type = "size_t")] general?[] additions);
+
+			/**
+			 * Sort a list of arguments into flag order.
+			 */
+			[CCode(cname = "panda_tweak_general_sort")]
+			public static void sort([CCode(array_length_type = "size_t")] general?[] array);
+
 			/**
 			 * The command line option.
 			 */

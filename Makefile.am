@@ -38,6 +38,7 @@ libpandaseq_la_LDFLAGS = \
 	$(NULL)
 libpandaseq_la_SOURCES = \
 	args.c \
+	args_array.c \
 	args_assembler.c \
 	args_fastq.c \
 	assembler.c \

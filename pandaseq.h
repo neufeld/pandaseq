@@ -1370,6 +1370,23 @@ typedef struct panda_tweak_assembler {
 	PandaTweakAssembler setup;
 } panda_tweak_assembler;
 
+/**
+ * Sort a list of arguments into flag order.
+ */
+void panda_tweak_assembler_sort(
+	const panda_tweak_assembler **array,
+	size_t length);
+
+/**
+ * Construct a new list by combining existing lists.
+ * @array:(allow-none)(array length=array_length): The storage location of the array. If the array is initially empty, this may be null. This must be from reallocable storage.
+ * @additions:(array length_additions_length): The array whose items to copy.
+ */
+void panda_tweak_assembler_append(
+	const panda_tweak_assembler ***array,
+	size_t *length,
+	const panda_tweak_assembler *const *additions,
+	size_t additions_length);
 
 /**
  * Process a command-line flag specified by the user.
@@ -1407,6 +1424,24 @@ typedef struct panda_tweak_general {
 	 */
 	const char *help;
 } panda_tweak_general;
+
+/**
+ * Sort a list of arguments into flag order.
+ */
+void panda_tweak_general_sort(
+	const panda_tweak_general **array,
+	size_t length);
+
+/**
+ * Construct a new list by combining existing lists.
+ * @array:(allow-none)(array length=array_length): The storage location of the array. If the array is initially empty, this may be null. This must be from reallocable storage.
+ * @additions:(array length_additions_length): The array whose items to copy.
+ */
+void panda_tweak_general_append(
+	const panda_tweak_general ***array,
+	size_t *length,
+	const panda_tweak_general *const *additions,
+	size_t additions_length);
 
 /**
  * Create a sequence reader after argument parsing.
