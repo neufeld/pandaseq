@@ -1,4 +1,2 @@
-BUFFER(forward, panda_qual, MAX_LEN)
-BUFFER(reverse, panda_qual, MAX_LEN)
 BUFFER(static, char, BUFFER_SIZE)
 BUFFER(seqid, char, BUFFER_SIZE)

@@ -106,35 +106,49 @@ void panda_mux_unref(
 	}
 }
 
+struct mux_data {
+	PandaMux mux;
+	panda_qual forward[MAX_LEN];
+	panda_qual reverse[MAX_LEN];
+};
+
 static bool mux_next(
 	panda_seq_identifier *id,
 	panda_qual **forward,
 	size_t *forward_length,
 	panda_qual **reverse,
 	size_t *reverse_length,
-	PandaMux mux) {
+	struct mux_data *data) {
 	bool result;
 	panda_qual *common_forward;
 	panda_qual *common_reverse;
-	pthread_mutex_lock(&mux->next_mutex);
+	pthread_mutex_lock(&data->mux->next_mutex);
 
-	result = mux->next(id, &common_forward, forward_length, &common_reverse, reverse_length, mux->next_data);
-	if (common_forward == NULL) {
+	result = data->mux->next(id, &common_forward, forward_length, &common_reverse, reverse_length, data->mux->next_data);
+	if (common_forward == NULL || *forward_length == 0) {
 		*forward = NULL;
 		*forward_length = 0;
 	} else {
-		*forward = forward_buffer();
+		*forward = data->forward;
+		fprintf(stderr, "fcopy %p %p %zd\n", *forward, common_forward, sizeof(panda_qual) * *forward_length);
 		memcpy(*forward, common_forward, sizeof(panda_qual) * *forward_length);
 	}
-	if (common_reverse == NULL) {
+	if (common_reverse == NULL || *reverse_length == 0) {
 		*reverse = NULL;
 		*reverse_length = 0;
 	} else {
-		*reverse = reverse_buffer();
+		*reverse = data->reverse;
+		fprintf(stderr, "rcopy %p %p %zd\n", *reverse, common_reverse, sizeof(panda_qual) * *reverse_length);
 		memcpy(*reverse, common_reverse, sizeof(panda_qual) * *reverse_length);
 	}
-	pthread_mutex_unlock(&mux->next_mutex);
+	pthread_mutex_unlock(&data->mux->next_mutex);
 	return result;
+}
+
+void mux_free(
+	struct mux_data *data) {
+	panda_mux_unref(data->mux);
+	free(data);
 }
 
 void mux_fail_algn(
@@ -164,13 +178,11 @@ PandaAssembler panda_mux_create_assembler_kmer(
 	PandaMux mux,
 	size_t num_kmers) {
 	PandaAssembler assembler;
-	pthread_mutex_lock(&mux->mutex);
-	mux->refcnt++;
-	pthread_mutex_unlock(&mux->mutex);
-	assembler = panda_assembler_new_kmer((PandaNextSeq) mux_next, mux, (PandaDestroy) panda_mux_unref, mux->logger, num_kmers);
+	struct mux_data *data = malloc(sizeof(struct mux_data));
+	data->mux = panda_mux_ref(mux);
+	assembler = panda_assembler_new_kmer((PandaNextSeq) mux_next, data, (PandaDestroy) mux_free, mux->logger, num_kmers);
 	if (assembler != NULL) {
-		panda_assembler_set_fail_alignment(assembler, (PandaFailAlign)
-			mux_fail_algn, mux, NULL);
+		panda_assembler_set_fail_alignment(assembler, (PandaFailAlign) mux_fail_algn, mux, NULL);
 	}
 	return assembler;
 }
