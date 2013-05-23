@@ -253,6 +253,11 @@ bool panda_parse_args(
 		size_t assembler_it = 0;
 
 		fprintf(stderr, "%s <%s>\nUsage: %s", PACKAGE_STRING, PACKAGE_BUGREPORT, args[0]);
+		for (general_it = 0; general_it < general_args_length; general_it++) {
+			if (general_args[general_it]->takes_argument != NULL && !general_args[general_it]->optional) {
+				fprintf(stderr, " -%c %s", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
+			}
+		}
 		fprintf(stderr, " [-C module1 -C module2 ...]");
 		fprintf(stderr, " [-d flags]");
 		fprintf(stderr, " [-k kmers]");
@@ -260,10 +265,14 @@ bool panda_parse_args(
 #		ifdef HAVE_PTHREAD
 		fprintf(stderr, " [-T threads]");
 #		endif
+		general_it = 0;
 		while (general_it < general_args_length || assembler_it < assembler_args_length) {
 			if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
+
 				if (general_args[general_it]->takes_argument != NULL) {
-					fprintf(stderr, (general_args[general_it]->optional ? " [-%c %s]" : " -%c %s"), (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
+					if (general_args[general_it]->optional) {
+						fprintf(stderr, " [-%c %s]", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
+					}
 				} else {
 					fprintf(stderr, " [-%c]", (int) general_args[general_it]->flag);
 				}
@@ -296,16 +305,16 @@ bool panda_parse_args(
 		while (general_it < general_args_length || assembler_it < assembler_args_length) {
 			if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
 				if (general_args[general_it]->takes_argument != NULL) {
-					fprintf(stderr, (general_args[general_it]->optional ? "\t[-%c %s]\t%s\n" : "\t-%c %s\t%s\n"), (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help);
+					fprintf(stderr, "\t-%c %s\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help);
 				} else {
-					fprintf(stderr, "\t[-%c]\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->help);
+					fprintf(stderr, "\t-%c\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->help);
 				}
 				general_it++;
 			} else {
 				if (assembler_args[assembler_it]->takes_argument != NULL) {
-					fprintf(stderr, "\t[-%c %s]\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument, assembler_args[assembler_it]->help);
+					fprintf(stderr, "\t-%c %s\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument, assembler_args[assembler_it]->help);
 				} else {
-					fprintf(stderr, "\t[-%c]\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->help);
+					fprintf(stderr, "\t-%c\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->help);
 				}
 				assembler_it++;
 			}
