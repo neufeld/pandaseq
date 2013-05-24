@@ -130,7 +130,6 @@ static bool mux_next(
 		*forward_length = 0;
 	} else {
 		*forward = data->forward;
-		fprintf(stderr, "fcopy %p %p %zd\n", *forward, common_forward, sizeof(panda_qual) * *forward_length);
 		memcpy(*forward, common_forward, sizeof(panda_qual) * *forward_length);
 	}
 	if (common_reverse == NULL || *reverse_length == 0) {
@@ -138,7 +137,6 @@ static bool mux_next(
 		*reverse_length = 0;
 	} else {
 		*reverse = data->reverse;
-		fprintf(stderr, "rcopy %p %p %zd\n", *reverse, common_reverse, sizeof(panda_qual) * *reverse_length);
 		memcpy(*reverse, common_reverse, sizeof(panda_qual) * *reverse_length);
 	}
 	pthread_mutex_unlock(&data->mux->next_mutex);
