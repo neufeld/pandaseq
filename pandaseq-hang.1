@@ -1,0 +1,34 @@
+.\" Authors: Andre Masella
+.TH pandaseq-hang 1 "May 2013" "1.0" "USER COMMANDS"
+.SH NAME 
+pandaseq-hang \- PAired-eND Assembler for DNA sequences for files which overhang
+.SH SYNOPSIS
+.B pandaseq-hang
+[
+.B \-P
+.I forwardtrim
+] [
+.B \-Q
+.I reversetrim
+] [
+.B \-s
+] ...
+.SH DESCRIPTION
+PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The regular PANDAseq software cannot cope with long overhangs where the reverse read extends past the first base of the forward read, and vice versa. This version can clip reads after a sequence has been recognised so that assembly works. For more information, see
+.BR pandaseq (1).
+.SH OPTIONS
+All parameters not listed here are identical to their
+.BR pandaseq (1)
+versions.
+.TP
+\-P forwardtrim
+Seach for the provided nucleotide sequence in the forward read and discard all sequence including and after this sequence if it is found in the forward read. This sequence should be in the reverse primer from the original PCR.
+.TP
+\-Q reversetrim
+Seach for the provided nucleotide sequence in the reverse read and discard all sequence including and after this sequence if it is found in the reverse read. This sequence should be in the forward primer from the original PCR.
+.TP
+\-s
+If the reads do not contain the trim sequences provided, attempt assembly anyway. If this is not provided, any reads not containing the trim sequences are discarded. This can be useful if the sequence length is just on the border between overhanging and normal.
+.SH SEE ALSO
+.BR pandaseq (1),
+.BR pandaxs (1).
