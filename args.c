@@ -267,6 +267,10 @@ bool panda_parse_args(
 #		endif
 		general_it = 0;
 		while (general_it < general_args_length || assembler_it < assembler_args_length) {
+			if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
+				assembler_it++;
+				continue;
+			}
 			if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
 
 				if (general_args[general_it]->takes_argument != NULL) {
@@ -303,6 +307,10 @@ bool panda_parse_args(
 		general_it = 0;
 		assembler_it = 0;
 		while (general_it < general_args_length || assembler_it < assembler_args_length) {
+			if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
+				assembler_it++;
+				continue;
+			}
 			if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
 				if (general_args[general_it]->takes_argument != NULL) {
 					fprintf(stderr, "\t-%c %s\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help);
