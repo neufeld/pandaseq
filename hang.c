@@ -16,7 +16,6 @@
 
  */
 #define _POSIX_C_SOURCE 2
-#include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -37,6 +36,7 @@ struct hang_data {
 	panda_nt reverse[MAX_LEN];
 	size_t reverse_length;
 	bool skip;
+	double threshold;
 };
 
 bool hang_next(
@@ -50,7 +50,7 @@ bool hang_next(
 	while (data->next(id, forward, forward_length, reverse, reverse_length, data->next_data)) {
 		size_t offset;
 		if (data->forward_length > 0) {
-			offset = panda_compute_offset_qual(log(0.6), true, *forward, *forward_length, data->forward, data->forward_length);
+			offset = panda_compute_offset_qual(data->threshold, true, *forward, *forward_length, data->forward, data->forward_length);
 			if (offset == 0) {
 				panda_log_proxy_write(data->logger, PANDA_CODE_NO_FORWARD_PRIMER, id, "OVERHANGING REJECT");
 				if (!data->skip)
@@ -60,7 +60,7 @@ bool hang_next(
 			}
 		}
 		if (data->reverse_length > 0) {
-			offset = panda_compute_offset_qual(log(0.6), true, *reverse, *reverse_length, data->reverse, data->reverse_length);
+			offset = panda_compute_offset_qual(data->threshold, true, *reverse, *reverse_length, data->reverse, data->reverse_length);
 			if (offset == 0) {
 				panda_log_proxy_write(data->logger, PANDA_CODE_NO_REVERSE_PRIMER, id, "OVERHANGING REJECT");
 				if (!data->skip)
@@ -92,6 +92,7 @@ PandaNextSeq panda_trim_overhangs(
 	panda_nt *reverse,
 	size_t reverse_length,
 	bool skip,
+	double threshold,
 	void **next_data,
 	PandaDestroy *next_destroy) {
 	struct hang_data *data = malloc(sizeof(struct hang_data));
@@ -101,6 +102,7 @@ PandaNextSeq panda_trim_overhangs(
 	data->next_data = inner_data;
 	data->next_destroy = inner_destroy;
 	data->skip = skip;
+	data->threshold = threshold;
 	for (it = 0; it < forward_length; it++)
 		data->forward[forward_length - it - 1] = forward[it];
 	for (it = 0; it < reverse_length; it++)

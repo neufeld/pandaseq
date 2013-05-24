@@ -1246,9 +1246,10 @@ file);
 	 * @param forward the sequence to trim from the forward read.
 	 * @param reverse the sequence to trim from the reverse read.
 	 * @param skip whether to try to assemble sequences that don't contain a trim sequence.
+	 * @param threshold a log probability threshold for cut-off alignment
 	 */
 	[CCode(cname = "panda_trim_overhangs")]
-	public NextSeq trim_overhangs(owned NextSeq inner, [CCode(array_length = "size_t")] Nt[] forward, [CCode(array_length = "size_t")] Nt[] reverse, bool skip);
+	public NextSeq trim_overhangs(owned NextSeq inner, [CCode(array_length = "size_t")] Nt[] forward, [CCode(array_length = "size_t")] Nt[] reverse, bool skip, double threshold);
 
 	/**
 	 * The current flags used be the assember to report errors. Some errors are always reported.

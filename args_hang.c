@@ -17,6 +17,8 @@
  */
 #define _POSIX_C_SOURCE 2
 #include<ctype.h>
+#include<errno.h>
+#include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -38,6 +40,7 @@ struct panda_args_hang {
 	panda_nt *reverse;
 	size_t reverse_length;
 	bool skip;
+	double threshold;
 };
 
 PandaArgsHang panda_args_hang_new(
@@ -53,6 +56,7 @@ PandaArgsHang panda_args_hang_new(
 	data->setup = setup;
 	data->tweak = tweak;
 	data->skip = false;
+	data->threshold = log(0.6);
 
 	data->forward = calloc(PANDA_MAX_LEN, sizeof(panda_nt));
 	data->reverse = calloc(PANDA_MAX_LEN, sizeof(panda_nt));
@@ -97,6 +101,8 @@ bool panda_args_hang_tweak(
 	PandaArgsHang data,
 	char flag,
 	const char *argument) {
+	double threshold;
+
 	switch (flag) {
 	case 'P':
 		return set_cutoff_primer(data->forward, &data->forward_length, argument, panda_nt_from_ascii, "forward");
@@ -104,6 +110,15 @@ bool panda_args_hang_tweak(
 		return set_cutoff_primer(data->reverse, &data->reverse_length, argument, panda_nt_from_ascii_complement, "reverse");
 	case 's':
 		data->skip = true;
+		return true;
+	case 't':
+		errno = 0;
+		threshold = strtod(argument, NULL);
+		if (errno != 0 || threshold < 0 || threshold > 1) {
+			fprintf(stderr, "Bad threshold: %s. It should be between 0 and 1.\n", argument);
+			return false;
+		}
+		data->threshold = log(threshold);
 		return true;
 	default:
 		return data->tweak(data->user_data, flag, argument);
@@ -113,16 +128,18 @@ bool panda_args_hang_tweak(
 static const panda_tweak_general hang_forward = { 'P', false, "primer", "The sequence in the forward read overhang cut-off." };
 static const panda_tweak_general hang_reverse = { 'Q', false, "primer", "The sequence in the reverse read overhang cut-off." };
 static const panda_tweak_general hang_skip = { 's', true, NULL, "Skip reads that do not contain the primer (otherwise, assembly will be attempted)." };
+static const panda_tweak_general hang_threshold = { 't', true, "threshold", "The minimum probability that a sequence must have to match a primer." };
 
 const panda_tweak_general **panda_args_hang_args(
 	const panda_tweak_general *const *const general_args,
 	size_t general_args_length,
 	size_t *length) {
-	const panda_tweak_general **array = calloc(3, sizeof(panda_tweak_general *));
+	const panda_tweak_general **array = calloc(4, sizeof(panda_tweak_general *));
 	array[0] = &hang_forward;
 	array[1] = &hang_reverse;
 	array[2] = &hang_skip;
-	*length = 3;
+	array[3] = &hang_threshold;
+	*length = 4;
 	panda_tweak_general_append(&array, length, general_args, general_args_length);
 	return array;
 }
@@ -146,11 +163,12 @@ PandaNextSeq panda_args_hang_opener(
 		return NULL;
 	}
 
-	return panda_trim_overhangs(inner, inner_data, inner_destroy, logger, data->forward, data->forward_length, data->reverse, data->reverse_length, data->skip, next_data, next_destroy);
+	return panda_trim_overhangs(inner, inner_data, inner_destroy, logger, data->forward, data->forward_length, data->reverse, data->reverse_length, data->skip, data->threshold, next_data, next_destroy);
 }
 
 bool panda_args_hang_setup(
 	PandaArgsHang data,
 	PandaAssembler assembler) {
+	panda_assembler_set_threshold(assembler, data->threshold);
 	return data->setup(data->user_data, assembler);
 }
