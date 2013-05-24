@@ -1,6 +1,6 @@
 NULL =
 ACLOCAL_AMFLAGS = -I m4
-bin_PROGRAMS = pandaseq pandaseq-checkid
+bin_PROGRAMS = pandaseq pandaseq-checkid pandaseq-hang
 lib_LTLIBRARIES = libpandaseq.la
 noinst_PROGRAMS = mktable
 bin_SCRIPTS = pandaxs
@@ -24,6 +24,10 @@ pandaseq_checkid_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_checkid_CFLAGS = $(MAIN_CFLAGS)
 pandaseq_checkid_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
 pandaseq_checkid_SOURCES = main-parse.c
+pandaseq_hang_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
+pandaseq_hang_CFLAGS = $(MAIN_CFLAGS)
+pandaseq_hang_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
+pandaseq_hang_SOURCES = main-hang.c
 libpandaseq_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
@@ -41,11 +45,13 @@ libpandaseq_la_SOURCES = \
 	args_array.c \
 	args_assembler.c \
 	args_fastq.c \
+	args_hang.c \
 	assembler.c \
 	assembler_support.c \
 	buffer.c \
 	fastq.c \
 	fileio.c \
+	hang.c \
 	idset.c \
 	misc.c \
 	module.c \

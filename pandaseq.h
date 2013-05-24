@@ -637,6 +637,28 @@ PandaNextSeq panda_create_fastq_reader(
 	PandaTagging policy,
 	void **user_data,
 	PandaDestroy *destroy);
+
+/**
+ * Wraps an existing stream of reads and clips off reads that have the too-long overlap problem.
+ * @inner:(closure inner_data) (scope notified): the stream to wrap.
+ * @forward:(array length=forward_length): the sequence to trim from the forward read.
+ * @reverse:(array length=reverse_length): the sequence to trim from the reverse read.
+ * @skip: whether to try to assemble sequences that don't contain a trim sequence.
+ * Returns: (scope notified): the sequence stream
+ */
+PandaNextSeq panda_trim_overhangs(
+	PandaNextSeq inner,
+	void *inner_data,
+	PandaDestroy inner_destroy,
+	PandaLogProxy logger,
+	panda_nt *forward,
+	size_t forward_length,
+	panda_nt *reverse,
+	size_t reverse_length,
+	bool skip,
+	void **next_data,
+	PandaDestroy *next_destroy);
+
 /**
  * Open a pair of gzipped (or uncompressed files).
  *
@@ -1587,6 +1609,62 @@ PandaNextSeq panda_args_fastq_opener(
  */
 bool panda_args_fastq_setup(
 	PandaArgsFastq data,
+	PandaAssembler assembler);
+
+/**
+ * The standard argument handler for overhanging read pair trimmer.
+ */
+typedef struct panda_args_hang *PandaArgsHang;
+
+/**
+ * Command line arguments for overhanging read pair trimmer.
+ */
+const panda_tweak_general **panda_args_hang_args(
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length,
+	size_t *length);
+
+/**
+ * Create a new argument handler.
+ */
+PandaArgsHang panda_args_hang_new(
+	void *user_data,
+	PandaDestroy destroy,
+	PandaTweakGeneral tweak,
+	PandaOpener opener,
+	PandaSetup setup);
+
+/**
+ * Cleanup the argument handler.
+ */
+void panda_args_hang_free(
+	PandaArgsHang data);
+
+/**
+ * Process the command line arguments.
+ */
+bool panda_args_hang_tweak(
+	PandaArgsHang data,
+	char flag,
+	const char *argument);
+
+/**
+ * Initialise the sequence stream.
+ */
+PandaNextSeq panda_args_hang_opener(
+	PandaArgsHang data,
+	PandaLogProxy logger,
+	PandaFailAlign *fail,
+	void **fail_data,
+	PandaDestroy *fail_destroy,
+	void **next_data,
+	PandaDestroy *next_destroy);
+
+/**
+ * Do additional assembly setup.
+ */
+bool panda_args_hang_setup(
+	PandaArgsHang data,
 	PandaAssembler assembler);
 
 /*
