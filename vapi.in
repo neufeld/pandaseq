@@ -634,7 +634,7 @@ namespace Panda {
 		public void unref();
 
 		[CCode(cname = "panda_log_proxy_write")]
-		public bool write(Code code, identifier id, string message);
+		public bool write(Code code, Assembler? assembler, identifier? id, string message);
 	}
 
 	/**
@@ -1133,7 +1133,7 @@ file);
 	 * @see Code
 	 */
 	[CCode(cname = "PandaLogger")]
-	public delegate bool Logger(Code code, identifier? id, string? message);
+	public delegate bool Logger(Code code, Assembler? assembler, identifier? id, string? message);
 	/**
 	 * A callback for iterating over the current modules.
 	 * @param assembler the assembler which is being queried

@@ -35,6 +35,7 @@ struct panda_mux {
 		PandaFailAlign,
 		noalgn);
 	volatile size_t refcnt;
+	volatile size_t child_count;
 };
 
 PandaMux panda_mux_new(
@@ -72,6 +73,15 @@ PandaMux panda_mux_new_fastq_reader(
 	PandaNextSeq next;
 	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, qualmin, policy, &user_data, &destroy);
 	return panda_mux_new(next, user_data, destroy, logger);
+}
+
+size_t child_count(
+	PandaMux mux) {
+	size_t count;
+	pthread_mutex_lock(&mux->mutex);
+	count = mux->child_count++;
+	pthread_mutex_unlock(&mux->mutex);
+	return count;
 }
 
 PandaMux panda_mux_ref(
@@ -180,7 +190,10 @@ PandaAssembler panda_mux_create_assembler_kmer(
 	data->mux = panda_mux_ref(mux);
 	assembler = panda_assembler_new_kmer((PandaNextSeq) mux_next, data, (PandaDestroy) mux_free, mux->logger, num_kmers);
 	if (assembler != NULL) {
+		char buffer[MAX_LEN];
 		panda_assembler_set_fail_alignment(assembler, (PandaFailAlign) mux_fail_algn, mux, NULL);
+		sprintf(buffer, "%p:%zd", (void *) mux, child_count(mux));
+		panda_assembler_set_name(assembler, buffer);
 	}
 	return assembler;
 }

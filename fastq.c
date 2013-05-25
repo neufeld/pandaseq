@@ -72,8 +72,8 @@ static bool read_line(
 	return false;
 }
 
-#define LOG(flag, code) do { if(panda_debug_flags & flag) panda_log_proxy_write(data->logger, (code), id, NULL); } while(0)
-#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(data->logger, (code), id, static_buffer()); }} while(0)
+#define LOG(flag, code) do { if(panda_debug_flags & flag) panda_log_proxy_write(data->logger, (code), NULL, id, NULL); } while(0)
+#define LOGV(flag, code, fmt, ...) do { if(panda_debug_flags & flag) { snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(data->logger, (code), NULL, id, static_buffer()); }} while(0)
 #define TOINDEX(val) (((int)(val)) < data->qualmin ? 0 : ((((int)(val)) > data->qualmin + PHREDMAX ? PHREDMAX : (int)(val)) - data->qualmin))
 static bool read_seq(
 	panda_seq_identifier *id,

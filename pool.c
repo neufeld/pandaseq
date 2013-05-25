@@ -44,11 +44,7 @@ struct thread_info {
 	size_t index;
 };
 
-#ifdef HAVE_PTHREAD
-#        	define STAT(str, val)	fprintf(stderr, "thread%zd\tSTAT\t" str "\n", info->index, (val))
-#else
-#        	define STAT(str, val)	fprintf(stderr, "STAT\t" str "\n", (val))
-#endif
+#define STAT(str, val)	fprintf(stderr, "%s\tSTAT\t" str "\n", panda_assembler_get_name(info->assembler), (val))
 
 static void printtime(
 	struct thread_info *info,

@@ -86,6 +86,7 @@ void panda_log_proxy_unref(
 bool panda_log_proxy_write(
 	PandaLogProxy proxy,
 	PandaCode code,
+	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const char *message) {
 	bool result;
@@ -95,7 +96,7 @@ bool panda_log_proxy_write(
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&proxy->mutex);
 #endif
-	result = proxy->log(code, id, message, proxy->log_data);
+	result = proxy->log(code, assembler, id, message, proxy->log_data);
 #ifdef HAVE_PTHREAD
 	pthread_mutex_unlock(&proxy->mutex);
 #endif

@@ -431,6 +431,12 @@ typedef bool (
 typedef void (
 	*PandaDestroy) (
 	void *user_data);
+
+/**
+ * The manager for an assembly
+ */
+typedef struct panda_assembler *PandaAssembler;
+
 /**
  * Log an error/event
  *
@@ -441,6 +447,7 @@ typedef void (
 typedef bool (
 	*PandaLogger) (
 	PandaCode code,
+	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const char *message,
 	void *user_data);
@@ -479,6 +486,7 @@ void panda_log_proxy_unref(
 bool panda_log_proxy_write(
 	PandaLogProxy proxy,
 	PandaCode code,
+	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const char *message);
 
@@ -563,10 +571,6 @@ const char *panda_module_get_args(
 int panda_module_get_api(
 	PandaModule module);
 
-/**
- * The manager for an assembly
- */
-typedef struct panda_assembler *PandaAssembler;
 /**
  * Open a pair of gzipped (or uncompressed files) for assembly.
  * @logger: The proxy for error logging.
@@ -1067,6 +1071,7 @@ bool panda_output_fastq(
  */
 bool panda_logger_file(
 	PandaCode code,
+	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const char *message,
 	FILE *file);

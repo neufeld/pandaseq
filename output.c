@@ -23,12 +23,13 @@
 
 bool panda_logger_file(
 	PandaCode code,
+	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const char *message,
 	FILE *file) {
-#if HAVE_PTHREAD
-	fprintf(file, "%p\t", static_buffer());
-#endif
+	const char *name = panda_assembler_get_name(assembler);
+	if (name != NULL)
+		fprintf(file, "%s\t", name);
 	(void) fputs(panda_code_str(code), file);
 	if (id != NULL) {
 		(void) fputc('\t', file);

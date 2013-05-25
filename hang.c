@@ -52,7 +52,7 @@ bool hang_next(
 		if (data->forward_length > 0) {
 			offset = panda_compute_offset_qual(data->threshold, true, *forward, *forward_length, data->forward, data->forward_length);
 			if (offset == 0) {
-				panda_log_proxy_write(data->logger, PANDA_CODE_NO_FORWARD_PRIMER, id, "OVERHANGING REJECT");
+				panda_log_proxy_write(data->logger, PANDA_CODE_NO_FORWARD_PRIMER, NULL, id, "OVERHANGING REJECT");
 				if (!data->skip)
 					continue;
 			} else {
@@ -62,7 +62,7 @@ bool hang_next(
 		if (data->reverse_length > 0) {
 			offset = panda_compute_offset_qual(data->threshold, true, *reverse, *reverse_length, data->reverse, data->reverse_length);
 			if (offset == 0) {
-				panda_log_proxy_write(data->logger, PANDA_CODE_NO_REVERSE_PRIMER, id, "OVERHANGING REJECT");
+				panda_log_proxy_write(data->logger, PANDA_CODE_NO_REVERSE_PRIMER, NULL, id, "OVERHANGING REJECT");
 				if (!data->skip)
 					continue;
 			} else {

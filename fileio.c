@@ -39,12 +39,12 @@ PandaNextSeq panda_open_gz(
 
 	forward_file = gzopen(forward, "r");
 	if (forward_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, forward);
+		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, forward);
 		return NULL;
 	}
 	reverse_file = gzopen(reverse, "r");
 	if (reverse_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, reverse);
+		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, reverse);
 		gzclose(forward_file);
 		return NULL;
 	}
@@ -105,12 +105,12 @@ PandaNextSeq panda_open_bz2(
 	BZFILE *reverse_file;
 	forward_file = BZ2_bzopen(forward, "r");
 	if (forward_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, forward);
+		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, forward);
 		return NULL;
 	}
 	reverse_file = BZ2_bzopen(reverse, "r");
 	if (reverse_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, reverse);
+		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, reverse);
 		BZ2_bzclose(forward_file);
 		return NULL;
 	}
