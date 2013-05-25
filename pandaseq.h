@@ -1036,6 +1036,21 @@ size_t panda_assembler_get_longest_overlap(
 	PandaAssembler assembler);
 
 /**
+ * Get the name assoicated with this assembler.
+ *
+ * This is shown in logging output.
+ */
+const char *panda_assembler_get_name(
+	PandaAssembler assembler);
+
+/**
+ * Set the name associated wih this assembler.
+ */
+void panda_assembler_set_name(
+	PandaAssembler assembler,
+	const char *name);
+
+/**
  * Write an assembly to a FASTA file.
  */
 bool panda_output_fasta(

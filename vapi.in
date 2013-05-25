@@ -337,6 +337,16 @@ namespace Panda {
 		}
 
 		/**
+		 * The assembler's name in logging output.
+		 */
+		public string? name {
+			[CCode(cname = "panda_assembler_get_name")]
+			get;
+			[CCode(cname = "panda_assembler_set_name")]
+			set;
+		}
+
+		/**
 		 * The number of sequences rejected because the forward primer could not be aligned.
 		 */
 		public long no_forward_primer_count {

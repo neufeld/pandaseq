@@ -46,6 +46,7 @@ PandaAssembler panda_assembler_new_kmer(
 		return NULL;
 	}
 	assembler->refcnt = 1;
+	assembler->name[0] = '\0';
 	assembler->next = next;
 	assembler->next_data = next_data;
 	assembler->next_destroy = next_destroy;
@@ -368,4 +369,22 @@ long panda_assembler_get_overlap_count(
 size_t panda_assembler_get_longest_overlap(
 	PandaAssembler assembler) {
 	return assembler->longest_overlap;
+}
+
+const char *panda_assembler_get_name(
+	PandaAssembler assembler) {
+	if (assembler == NULL || assembler->name[0] == '\0')
+		return NULL;
+	return assembler->name;
+}
+
+void panda_assembler_set_name(
+	PandaAssembler assembler,
+	const char *name) {
+	if (name == NULL) {
+		assembler->name[0] = '\0';
+		return;
+	}
+	strncpy(assembler->name, name, MAX_LEN);
+	assembler->name[MAX_LEN - 1] = '\0';
 }
