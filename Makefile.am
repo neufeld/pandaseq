@@ -5,7 +5,21 @@ lib_LTLIBRARIES = libpandaseq.la
 noinst_PROGRAMS = mktable
 bin_SCRIPTS = pandaxs
 library_includedir=$(includedir)/$(LIB_NAME)
-library_include_HEADERS = pandaseq.h panda_api.c
+library_include_HEADERS = \
+	pandaseq.h \
+	pandaseq-args.h \
+	pandaseq-assembler.h \
+	pandaseq-common.h \
+	pandaseq-iter.h \
+	pandaseq-log.h \
+	pandaseq-module.h \
+	pandaseq-mux.h \
+	pandaseq-nt.h \
+	pandaseq-plugin.h \
+	pandaseq-seqid.h \
+	pandaseq-set.h \
+	panda_api.c \
+	$(NULL)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(LIB_NAME).pc
 vapidir = $(datadir)/vala/vapi
@@ -91,3 +105,4 @@ CLEANFILES = table.c table.h $(bin_SCRIPTS)
 
 table.c table.h: mktable
 	./mktable
+

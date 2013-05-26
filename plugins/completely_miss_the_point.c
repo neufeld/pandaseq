@@ -2,7 +2,7 @@
 #include<errno.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<pandaseq.h>
+#include<pandaseq-plugin.h>
 
 HELP("Filter out sequences that have mismatches in the overlap region.", "completely_miss_the_point:mismatches");
 

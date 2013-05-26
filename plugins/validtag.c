@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<pandaseq.h>
+#include<pandaseq-plugin.h>
 
 HELP("Filter out any sequences without a valid index tag.", "validtag:TAG1:TAG2:TAG3");
 VER_INFO("1.0");

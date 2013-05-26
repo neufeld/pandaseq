@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<pandaseq.h>
+#include<pandaseq-plugin.h>
 
 /* Adding a validation plugin:
  *
