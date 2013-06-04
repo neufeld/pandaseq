@@ -318,6 +318,11 @@ namespace Panda {
 			set;
 		}
 
+		public LogProxy logger {
+			[CCode(cname = "panda_assembler_get_loggger")]
+			get;
+		}
+
 		/**
 		 * The number of sequences rejected because the quality score is too low.
 		 */
@@ -753,6 +758,12 @@ namespace Panda {
 	[CCode(cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref")]
 	[Compact]
 	public class Mux {
+
+		public LogProxy logger {
+			[CCode(cname = "panda_mux_get_loggger")]
+			get;
+		}
+
 		/**
 		 * Open a pair of gzipped files for multi-threaded assembled.
 		 * @see Assembler.open_gz

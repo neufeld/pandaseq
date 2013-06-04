@@ -210,4 +210,10 @@ void panda_mux_set_fail_alignment(
 	mux->noalgn = handler;
 	pthread_mutex_unlock(&mux->noalgn_mutex);
 }
+
+PandaLogProxy panda_mux_get_loggger(
+	PandaMux mux) {
+	return mux->logger;
+}
+
 #endif

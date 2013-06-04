@@ -388,3 +388,8 @@ void panda_assembler_set_name(
 	strncpy(assembler->name, name, MAX_LEN);
 	assembler->name[MAX_LEN - 1] = '\0';
 }
+
+PandaLogProxy panda_assembler_get_loggger(
+	PandaAssembler assembler) {
+	return assembler->logger;
+}

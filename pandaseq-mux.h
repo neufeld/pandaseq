@@ -128,5 +128,12 @@ void panda_mux_set_fail_alignment(
 void panda_mux_unref(
 	PandaMux mux);
 
+/**
+ * The logging proxy used by this mux
+ * Returns: (transfer none): the proxy
+ */
+PandaLogProxy panda_mux_get_loggger(
+	PandaMux mux);
+
 EXTERN_C_END
 #endif

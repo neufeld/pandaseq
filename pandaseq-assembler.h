@@ -396,5 +396,13 @@ double panda_assembler_get_threshold(
 void panda_assembler_set_threshold(
 	PandaAssembler assembler,
 	double threshold);
+
+/**
+ * The logging proxy used by this assembler
+ * Returns: (transfer none): the proxy
+ */
+PandaLogProxy panda_assembler_get_loggger(
+	PandaAssembler assembler);
+
 EXTERN_C_END
 #endif
