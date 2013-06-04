@@ -642,7 +642,7 @@ file);
 		 * Increase the reference count on a proxy.
 		 */
 		[CCode(cname = "panda_log_proxy_ref")]
-		public void @ref();
+		public unowned LogProxy @ref();
 		/**
 		 * Decrease the reference count on a proxy.
 		 */
