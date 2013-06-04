@@ -216,4 +216,9 @@ PandaLogProxy panda_mux_get_loggger(
 	return mux->logger;
 }
 
+size_t panda_mux_get_child_count(
+	PandaMux mux) {
+	return mux->child_count;
+}
+
 #endif

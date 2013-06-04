@@ -129,6 +129,12 @@ void panda_mux_unref(
 	PandaMux mux);
 
 /**
+ * Get the number of assemblers created so far.
+ */
+size_t panda_mux_get_child_count(
+	PandaMux mux);
+
+/**
  * The logging proxy used by this mux
  * Returns: (transfer none): the proxy
  */

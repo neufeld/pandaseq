@@ -758,6 +758,13 @@ namespace Panda {
 	[CCode(cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref")]
 	[Compact]
 	public class Mux {
+		/**
+		 * Get the number of assemblers created so far.
+		 */
+		public size_t child_count {
+			[CCode(cname = "panda_mux_get_child_count")]
+			get;
+		}
 
 		public LogProxy logger {
 			[CCode(cname = "panda_mux_get_loggger")]
