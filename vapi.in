@@ -638,6 +638,11 @@ namespace Panda {
 		[CCode(cname = "panda_log_proxy_unref")]
 		public void unref();
 
+		/**
+		 * Print a message to the log.
+		 *
+		 * This method is thread-safe.
+		 */
 		[CCode(cname = "panda_log_proxy_write")]
 		public bool write(Code code, Assembler? assembler, identifier? id, string message);
 	}
@@ -1469,7 +1474,7 @@ file);
 			 */
 			char flag;
 			/**
-			 *  The name of the argument as it appears in the help. If null, the argument is assumed to be boolean.
+			 * The name of the argument as it appears in the help. If null, the argument is assumed to be boolean.
 			 */
 			string? takes_argument;
 			/**
@@ -1516,7 +1521,7 @@ file);
 			 */
 			string? takes_argument;
 			/**
-			 * The callback to record the appropriate information.
+			 * The help information to display to the user.
 			 */
 			string help;
 		}

@@ -215,7 +215,7 @@ typedef struct panda_tweak_general {
 	 */
 	const char *takes_argument;
 	/**
-	 * The callback to record the appropriate information.
+	 * The help information to display to the user.
 	 */
 	const char *help;
 } panda_tweak_general;
