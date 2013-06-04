@@ -159,10 +159,12 @@ namespace Panda {
 		 */
 		MISMATCH,
 		DEFAULT;
-		[CCode(cname = "panda_debug_flags |= ")]
-		public void enable();
 		[CCode(cname = "panda_debug_flags &= ~")]
 		public void disable();
+		[CCode(cname = "panda_debug_flags |= ")]
+		public void enable();
+		[CCode(cname = "panda_debug_flags = ")]
+		public void set();
 	}
 
 	/**
