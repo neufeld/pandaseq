@@ -261,6 +261,7 @@ bool panda_output_fastq(
 
 /* === Convenience macro is for Vala === */
 #        define PANDA_FAIL(file, append, user_data, destroy) (*(user_data) = fopen(file, append ? "a" : "w"), *(destroy) = fclose, *(user_data) == NULL ? NULL : (PandaFailAlign) panda_output_fail)
+#        define PANDA_LOG_PROXY_FILE(file) panda_log_proxy_new(panda_logger_file, file, (PandaDestroy) fclose)
 #        define PANDACONCATE(x,y) x ## y
 #        define PANDACONCAT(x,y) PANDACONCATE(x, y)
 

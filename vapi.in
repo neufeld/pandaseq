@@ -622,6 +622,17 @@ namespace Panda {
 		[CCode(cname = "panda_log_proxy_new")]
 		public LogProxy(owned Logger log);
 		/**
+		 * Write the log to an open file.
+		 */
+		[CCode(cname = "PANDA_LOG_PROXY_FILE")]
+		public LogProxy.file(owned
+#if POSIX
+Posix.FILE
+#else
+GLib.FileStream
+#endif
+file);
+		/**
 		 * Create a new proxy to standard error.
 		 */
 		[CCode(cname = "panda_log_proxy_new_stderr")]
