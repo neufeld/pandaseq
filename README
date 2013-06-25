@@ -90,3 +90,8 @@ ALTERNATIVES
 PEAR (Paired-End AssembleR): http://www.exelixis-lab.org/pear
 FLASH (Fast Length Adjustment of SHort reads): http://ccb.jhu.edu/software/FLASH/
 COPE (Connecting Overlapped Pair-End reads): ftp://ftp.genomics.org.cn/pub/cope
+
+CITATION
+--------
+
+Andre P Masella, Andrea K Bartram, Jakub M Truszkowski, Daniel G Brown and Josh D Neufeld. PANDAseq: paired-end assembler for illumina sequences. BMC Bioinformatics 2012, 13:31. <http://www.biomedcentral.com/1471-2105/13/31>
