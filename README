@@ -89,3 +89,4 @@ ALTERNATIVES
 
 PEAR (Paired-End AssembleR): http://www.exelixis-lab.org/pear
 FLASH (Fast Length Adjustment of SHort reads): http://ccb.jhu.edu/software/FLASH/
+COPE (Connecting Overlapped Pair-End reads): ftp://ftp.genomics.org.cn/pub/cope
