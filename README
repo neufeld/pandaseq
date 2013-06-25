@@ -87,5 +87,5 @@ A: The PHRED scores from the input are not copied directly to the output when us
 ALTERNATIVES
 ------------
 
-PEAR (Paired-End AssembleR): https://github.com/zhangjiajie/PEAR
+PEAR (Paired-End AssembleR): http://www.exelixis-lab.org/pear
 FLASH (Fast Length Adjustment of SHort reads): http://ccb.jhu.edu/software/FLASH/
