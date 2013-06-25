@@ -79,7 +79,7 @@ PandaSet panda_idset_ref(
  * Decrease the reference count on a set.
  *
  * This is thread-safe.
- * @set: (transfer full): the mux to be released.
+ * @set: (transfer full): the set to be released.
  */
 void panda_idset_unref(
 	PandaSet set);
