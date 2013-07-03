@@ -77,6 +77,8 @@ bool panda_args_fastq_tweak(
 		return true;
 	case 'u':
 		data->no_algn_file = fopen(argument, "w");
+		if (data->no_algn_file == NULL)
+			perror(argument);
 		return (data->no_algn_file != NULL);
 	default:
 		return false;
