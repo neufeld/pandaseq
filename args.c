@@ -211,7 +211,13 @@ bool panda_parse_args(
 			break;
 		case '?':
 			if (strchr(optlist, optopt) != NULL) {
-				fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+				if ((general_tweak = BSEARCH(&optopt, general)) != NULL) {
+					fprintf(stderr, "Option -%c requires an argument %s.\n", optopt, (*general_tweak)->takes_argument);
+				} else if ((assembler_tweak = BSEARCH(&optopt, assembler)) != NULL) {
+					fprintf(stderr, "Option -%c requires an argument.\n", optopt, (*assembler_tweak)->takes_argument);
+				} else {
+					fprintf(stderr, "Unhandled command line argument -%c requires an argument. This is a bug.\n", (int) optopt);
+				}
 			} else if (isprint(optopt)) {
 				fprintf(stderr, "Unknown option `-%c'.\n", optopt);
 			} else {
