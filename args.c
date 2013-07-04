@@ -45,6 +45,7 @@ int compare_assembler(
 }
 
 #define CLEANUP() for (it = 0; it < modules_length; it++) panda_module_unref(modules[it]); for (it = 0; it < assembler_args_length; it++) if(opt_assembler_args[it] > (char*)1) free(opt_assembler_args[it]); DESTROY_STACK(next); DESTROY_STACK(fail); if (mux != NULL) panda_mux_unref(mux); if (assembler != NULL) panda_assembler_unref(assembler); panda_log_proxy_unref(logger)
+#define BSEARCH(item, type) bsearch(item, PANDACONCAT(type, _args), PANDACONCAT(type, _args_length), sizeof(PANDACONCAT(panda_tweak_, type) *), PANDACONCAT(compare_, type))
 
 bool panda_parse_args(
 	char *const *args,
@@ -219,12 +220,12 @@ bool panda_parse_args(
 			CLEANUP();
 			return false;
 		default:
-			if ((general_tweak = bsearch(&c, general_args, general_args_length, sizeof(panda_tweak_general *), compare_general)) != NULL) {
+			if ((general_tweak = BSEARCH(&c, general)) != NULL) {
 				if (!tweak(user_data, c, (*general_tweak)->takes_argument != NULL ? optarg : NULL)) {
 					CLEANUP();
 					return false;
 				}
-			} else if ((assembler_tweak = bsearch(&c, assembler_args, assembler_args_length, sizeof(panda_tweak_assembler *), compare_assembler)) != NULL) {
+			} else if ((assembler_tweak = BSEARCH(&c, assembler)) != NULL) {
 				it = assembler_tweak - assembler_args;
 				if ((*assembler_tweak)->takes_argument != NULL) {
 					opt_assembler_args[it] = malloc(strlen(optarg) + 1);
