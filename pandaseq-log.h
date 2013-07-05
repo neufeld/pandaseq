@@ -29,31 +29,36 @@
 #        include <stdio.h>
 #        include <stdbool.h>
 EXTERN_C_BEGIN
-/**
- * Write errors and information to a file.
- */
-bool panda_logger_file(
-	PandaCode code,
-	PandaAssembler assembler,
-	panda_seq_identifier *id,
-	const char *message,
-	FILE *file);
-
 /* === Constructors === */
-
 /**
  * Create a new proxy with a callback.
  */
 PandaLogProxy panda_log_proxy_new(
-	PandaLogger log,
-	void *log_data,
-	PandaDestroy log_destroy);
+	PandaPrintf printf,
+	void *printf_data,
+	PandaDestroy printf_destroy);
 
 /**
  * Create a new proxy to standard error.
  */
 PandaLogProxy panda_log_proxy_new_stderr(
 	);
+
+/**
+ * Write the log to an open file.
+ */
+PandaLogProxy panda_log_proxy_new_file(
+	FILE *file);
+
+/**
+ * Open a file for writing error messages.
+ * @filename: The file to write.
+ * @bzip: Write BZipped text rather than plain text.
+ * Returns: (allow-none): A logger proxy.
+ */
+PandaLogProxy panda_log_proxy_open_file(
+	const char *filename,
+	bool bzip);
 
 /* === Methods === */
 
@@ -70,11 +75,79 @@ PandaLogProxy panda_log_proxy_ref(
 void panda_log_proxy_unref(
 	PandaLogProxy proxy);
 
-bool panda_log_proxy_write(
+/**
+ * Print a message to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_write(
 	PandaLogProxy proxy,
 	PandaCode code,
 	PandaAssembler assembler,
 	panda_seq_identifier *id,
 	const char *message);
+
+/**
+ * Print the overlap histogram of an assember to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_write_overlap(
+	PandaLogProxy proxy,
+	PandaAssembler assembler);
+
+/**
+ * Print a string to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_write_str(
+	PandaLogProxy proxy,
+	const char *str);
+
+/**
+ * Print a double with a STAT header to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_stat_double(
+	PandaLogProxy proxy,
+	PandaAssembler assembler,
+	const char *name,
+	double value);
+
+/**
+ * Print a double with a STAT header to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_stat_long(
+	PandaLogProxy proxy,
+	PandaAssembler assembler,
+	const char *name,
+	long value);
+
+/**
+ * Print a size_t with a STAT header to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_stat_size_t(
+	PandaLogProxy proxy,
+	PandaAssembler assembler,
+	const char *name,
+	size_t value);
+
+/**
+ * Print a string with a STAT header to the log.
+ *
+ * This method is thread-safe.
+ */
+void panda_log_proxy_stat_str(
+	PandaLogProxy proxy,
+	PandaAssembler assembler,
+	const char *name,
+	const char *value);
+
 EXTERN_C_END
 #endif

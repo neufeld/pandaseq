@@ -21,35 +21,6 @@
 #include "buffer.h"
 #include "table.h"
 
-bool panda_logger_file(
-	PandaCode code,
-	PandaAssembler assembler,
-	panda_seq_identifier *id,
-	const char *message,
-	FILE *file) {
-	const char *name = panda_assembler_get_name(assembler);
-	if (name != NULL)
-		fprintf(file, "%s\t", name);
-	(void) fputs(panda_code_str(code), file);
-	if (id != NULL) {
-		(void) fputc('\t', file);
-		panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
-	}
-	if (message != NULL) {
-		(void) fputc('\t', file);
-		(void) fputs(message, file);
-	}
-	(void) fputc('\n', file);
-	if (code == PANDA_CODE_ID_PARSE_FAILURE && message != NULL) {
-		(void) fprintf(file, "* * * * * Something is wrong with this ID. If tags are absent, try passing the -B option.\n* * * * * Consult `pandaseq-checkid \"%s\"` to get an idea of the problem..\n", message);
-	} else if (code == PANDA_CODE_PHRED_OFFSET) {
-		(void) fprintf(file, "* * * * * Using the default PHRED+33 offset, but no sequences had quality data under PHRED+64.\n* * * * * This is probably not what you want. Consult the manual about the -6 option.\n");
-	} else if (code == PANDA_CODE_READ_TOO_LONG) {
-		(void) fprintf(file, "* * * * * The input reads are longer than this version of PANDAseq can handle. Currently %zd nucleotides.\n", PANDA_MAX_LEN);
-	}
-	return true;
-}
-
 const char *const panda_code_str(
 	PandaCode code) {
 	switch (code) {

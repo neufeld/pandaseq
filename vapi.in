@@ -619,14 +619,22 @@ namespace Panda {
 	[Compact]
 	public class LogProxy {
 		/**
+		 * Open a file for writing error messages.
+		 * @param filename The file to write.
+		 * @param bzip Write BZipped text rather than plain text.
+		 */
+		[CCode(cname = "panda_log_proxy_open_file")]
+		public LogProxy? open_file(string filename, bool bzip);
+
+		/**
 		 * Create a new proxy with a callback.
 		 */
 		[CCode(cname = "panda_log_proxy_new")]
-		public LogProxy(owned Logger log);
+		public LogProxy(owned PrintfFunc log);
 		/**
 		 * Write the log to an open file.
 		 */
-		[CCode(cname = "PANDA_LOG_PROXY_FILE")]
+		[CCode(cname = "panda_log_proxy_new_file")]
 		public LogProxy.file(owned
 #if POSIX
 Posix.FILE
@@ -657,7 +665,55 @@ file);
 		 * This method is thread-safe.
 		 */
 		[CCode(cname = "panda_log_proxy_write")]
-		public bool write(Code code, Assembler? assembler, identifier? id, string message);
+		public void write(Code code, Assembler? assembler, identifier? id, string message);
+
+		/**
+		 * Print the overlap histogram of an assember to the log.
+		 *
+		 * This method is thread-safe.
+		 */
+		[CCode(cname = "panda_log_proxy_write_overlap")]
+		public void write_overlap(Assembler assembler);
+
+		/**
+		 * Print a string to the log.
+		 *
+		 * This method is thread-safe.
+		 */
+		[CCode(cname = "panda_log_proxy_write_str")]
+		public void panda_log_proxy_write_str(string str);
+
+		/**
+		 * Print a double with a STAT header to the log.
+		 *
+		 * This method is thread-safe.
+		 */
+		[CCode(cname = "panda_log_proxy_stat_double")]
+		public void stat_double(Assembler assembler, string name, double @value);
+
+		/**
+		 * Print a double with a STAT header to the log.
+		 *
+		 * This method is thread-safe.
+		 */
+		[CCode(cname = "panda_log_proxy_stat_long")]
+		public void stat_long(Assembler assembler, string name, long @value);
+
+		/**
+		 * Print a size_t with a STAT header to the log.
+		 *
+		 * This method is thread-safe.
+		 */
+		[CCode(cname = "panda_log_proxy_stat_size_t")]
+		public void stat_size_t(Assembler assembler, string name, size_t @value);
+
+		/**
+		 * Print a string with a STAT header to the log.
+		 *
+		 * This method is thread-safe.
+		 */
+		[CCode(cname = "panda_log_proxy_stat_str")]
+		public void stat_str(Assembler assembler, string name, string @value);
 	}
 
 	/**
@@ -1163,14 +1219,6 @@ file);
 	public delegate void FailAlign(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
 
 	/**
-	 * Log an error/event
-	 *
-	 * If the function returns false, assembly will be halted.
-	 * @see Code
-	 */
-	[CCode(cname = "PandaLogger")]
-	public delegate bool Logger(Code code, Assembler? assembler, identifier? id, string? message);
-	/**
 	 * A callback for iterating over the current modules.
 	 * @param assembler the assembler which is being queried
 	 * @param module the module selected
@@ -1233,18 +1281,6 @@ file);
 	 */
 	[CCode(cname = "panda_version")]
 	public unowned string get_version();
-
-	/**
-	 * Write errors and information to a file.
-	 */
-	[CCode(cname = "panda_logger_file")]
-	public bool file_logger(Code code, identifier? id, string? message,
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
 
 	/**
 	 * Write an unassembled sequence to a FASTA file as a concatenated pair.

@@ -316,21 +316,6 @@ typedef void (
 	void *user_data);
 
 /**
- * Log an error/event
- *
- * @message: (allow-none): The error message, for the user.
- * Returns: If the function returns false, assembly will be halted.
- * @see PandaCode
- */
-typedef bool (
-	*PandaLogger) (
-	PandaCode code,
-	PandaAssembler assembler,
-	panda_seq_identifier *id,
-	const char *message,
-	void *user_data);
-
-/**
  * Get the next character from a FASTQ file or EOF.
  *
  * For assembly from an alternate source of data, this function returns the next character in the stream.

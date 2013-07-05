@@ -97,7 +97,7 @@ bool panda_parse_args(
 
 	memset(&opt_assembler_args, 0, assembler_args_length * sizeof(char *));
 	optlist[0] = '\0';
-	strncat(optlist, "C:d:hk:vF", MAX_OPT_LIST);
+	strncat(optlist, "C:d:g:G:hk:vF", MAX_OPT_LIST);
 #ifdef HAVE_PTHREAD
 	strncat(optlist, "T:", MAX_OPT_LIST);
 #endif
@@ -182,6 +182,16 @@ bool panda_parse_args(
 			break;
 		case 'F':
 			fastq = true;
+			break;
+		case 'g':
+		case 'G':
+			panda_log_proxy_unref(logger);
+			logger = panda_log_proxy_open_file(optarg, isupper(c));
+			if (logger == NULL) {
+				perror(optarg);
+				CLEANUP();
+				return false;
+			}
 			break;
 		case 'h':
 			help = true;
@@ -269,6 +279,8 @@ bool panda_parse_args(
 		fprintf(stderr, " [-d flags]");
 		fprintf(stderr, " [-k kmers]");
 		fprintf(stderr, " [-F]");
+		fprintf(stderr, " [-g log.txt]");
+		fprintf(stderr, " [-G log.txt.bz2]");
 #		ifdef HAVE_PTHREAD
 		fprintf(stderr, " [-T threads]");
 #		endif
@@ -340,10 +352,14 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
-	fprintf(stderr, "INFO\tVER\t%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
+	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">\n");
 
+#define BSIZE 2048
 	for (it = 0; it < args_length; it++) {
-		fprintf(stderr, "INFO\tARG[%d]\t%s\n", (int) it, args[it]);
+		char buf[BSIZE];
+		if (snprintf(buf, BSIZE, "ARG[%d]\t%s", (int) it, args[it]) < BSIZE) {
+			panda_log_proxy_write_str(logger, buf);
+		}
 	}
 
 #ifdef HAVE_PTHREAD
