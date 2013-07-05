@@ -97,9 +97,9 @@ bool panda_parse_args(
 
 	memset(&opt_assembler_args, 0, assembler_args_length * sizeof(char *));
 	optlist[0] = '\0';
-	strncat(optlist, "C:d:hvF", MAX_OPT_LIST);
+	strncat(optlist, "C:d:hk:vF", MAX_OPT_LIST);
 #ifdef HAVE_PTHREAD
-	strncat(optlist, "k:T:", MAX_OPT_LIST);
+	strncat(optlist, "T:", MAX_OPT_LIST);
 #endif
 
 	opt_it = strlen(optlist);
