@@ -183,12 +183,11 @@ void panda_log_proxy_write_overlap(
 
 	len = name == NULL ? snprintf(buffer, BSIZE, "%s\t", name) : 0;
 
-	len += snprintf(buffer, BSIZE - len, "STAT\tOVERLAPS\t%ld", panda_assembler_get_overlap_count(assembler, it));
+	len += snprintf(buffer + len, BSIZE - len, "STAT\tOVERLAPS\t%ld", panda_assembler_get_overlap_count(assembler, it));
 	max = panda_assembler_get_longest_overlap(assembler);
 	for (it = 1; it <= max; it++) {
-		len += snprintf(buffer, BSIZE - len, " %ld", panda_assembler_get_overlap_count(assembler, it));
+		len += snprintf(buffer + len, BSIZE - len, " %ld", panda_assembler_get_overlap_count(assembler, it));
 	}
-	len += snprintf(buffer, BSIZE - len, "\n");
 	if (len < BSIZE) {
 		panda_log_proxy_write_str(proxy, buffer);
 	}
