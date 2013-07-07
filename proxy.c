@@ -225,7 +225,7 @@ void panda_log_proxy_stat_long(
 	if (proxy->printf == NULL)
 		return;
 #ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
+	pthread_mutex_lock(&proxy->mutex);
 #endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
@@ -248,7 +248,7 @@ void panda_log_proxy_stat_size_t(
 	if (proxy->printf == NULL)
 		return;
 #ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
+	pthread_mutex_lock(&proxy->mutex);
 #endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
@@ -271,7 +271,7 @@ void panda_log_proxy_stat_str(
 	if (proxy->printf == NULL)
 		return;
 #ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
+	pthread_mutex_lock(&proxy->mutex);
 #endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
