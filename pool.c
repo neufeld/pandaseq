@@ -18,6 +18,7 @@
 #define _POSIX_C_SOURCE 2
 #include "config.h"
 #include<stdlib.h>
+#include<string.h>
 #include<time.h>
 #ifdef HAVE_PTHREAD
 #        include<pthread.h>
@@ -52,7 +53,9 @@ static void printtime(
 	char buf[27];
 	time_t now;
 	(void) time(&now);
-	STAT("TIME", str, ctime_r(&now, buf));
+	ctime_r(&now, buf);
+	buf[strlen(buf) - 1] = '\0';
+	STAT("TIME", str, buf);
 	STAT("ELAPSED", long,
 		 (int) (now - info->shared->starttime));
 	STAT("READS", long,
