@@ -34,7 +34,6 @@ struct shared_info {
 	time_t starttime;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_t output_mutex;
-	pthread_mutex_t stderr_mutex;
 #endif
 };
 
@@ -50,9 +49,10 @@ struct thread_info {
 static void printtime(
 	struct thread_info *info,
 	long count) {
+	char buf[27];
 	time_t now;
 	(void) time(&now);
-	STAT("TIME", str, ctime(&now));
+	STAT("TIME", str, ctime_r(&now, buf));
 	STAT("ELAPSED", long,
 		 (int) (now - info->shared->starttime));
 	STAT("READS", long,
@@ -67,13 +67,7 @@ static void *do_assembly(
 	while ((result = panda_assembler_next(info->assembler)) != NULL) {
 		count = panda_assembler_get_count(info->assembler);
 		if (count % 1000 == 0) {
-#ifdef HAVE_PTHREAD
-			pthread_mutex_lock(&info->shared->stderr_mutex);
-#endif
 			printtime(info, count);
-#ifdef HAVE_PTHREAD
-			pthread_mutex_unlock(&info->shared->stderr_mutex);
-#endif
 		}
 #ifdef HAVE_PTHREAD
 		pthread_mutex_lock(&info->shared->output_mutex);
@@ -83,9 +77,6 @@ static void *do_assembly(
 		pthread_mutex_unlock(&info->shared->output_mutex);
 #endif
 	}
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&info->shared->stderr_mutex);
-#endif
 	count = panda_assembler_get_count(info->assembler);
 	if (count > 0) {
 		info->shared->some_seqs = true;
@@ -141,7 +132,6 @@ bool panda_run_pool(
 
 #if HAVE_PTHREAD
 	pthread_mutex_init(&shared_info.output_mutex, NULL);
-	pthread_mutex_init(&shared_info.stderr_mutex, NULL);
 	if (threads > 1 && mux != NULL) {
 
 		thread_list = calloc(sizeof(struct thread_info), threads - 1);
@@ -176,7 +166,6 @@ bool panda_run_pool(
 		free(thread_list);
 	}
 	pthread_mutex_destroy(&shared_info.output_mutex);
-	pthread_mutex_destroy(&shared_info.stderr_mutex);
 #endif
 	DESTROY_MEMBER(&shared_info, output);
 	return shared_info.some_seqs;
