@@ -32,16 +32,19 @@ mktable_LDFLAGS = $(PANDA_LIBS)
 mktable_SOURCES = mktable.c
 pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_CFLAGS = $(MAIN_CFLAGS)
-pandaseq_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
+pandaseq_LDFLAGS = $(MAIN_LIBS)
 pandaseq_SOURCES = main.c
+pandaseq_LDADD = libpandaseq.la
 pandaseq_checkid_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_checkid_CFLAGS = $(MAIN_CFLAGS)
-pandaseq_checkid_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
+pandaseq_checkid_LDFLAGS = $(MAIN_LIBS)
 pandaseq_checkid_SOURCES = main-parse.c
+pandaseq_checkid_LDADD = libpandaseq.la
 pandaseq_hang_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_hang_CFLAGS = $(MAIN_CFLAGS)
-pandaseq_hang_LDFLAGS = $(MAIN_LIBS) libpandaseq.la
+pandaseq_hang_LDFLAGS = $(MAIN_LIBS)
 pandaseq_hang_SOURCES = main-hang.c
+pandaseq_hang_LDADD = libpandaseq.la
 libpandaseq_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
