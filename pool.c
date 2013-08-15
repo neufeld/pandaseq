@@ -37,7 +37,9 @@ struct shared_info {
 
 struct thread_info {
 	struct shared_info *shared;
+#ifdef HAVE_PTHREAD
 	pthread_t thread;
+#endif
 	PandaAssembler assembler;
 	size_t index;
 };

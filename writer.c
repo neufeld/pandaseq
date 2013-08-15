@@ -154,9 +154,9 @@ void panda_writer_append(
 	PandaWriter writer,
 	const char *format,
 	...) {
+	va_list va;
 #ifdef HAVE_PTHREAD
 	struct write_buffer *data = get_write_buffer(writer);
-	va_list va;
 	va_start(va, format);
 	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, UNCOMMITTED_BUFF_SIZE - data->uncommitted_length, format, va);
 	va_end(va);

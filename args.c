@@ -44,9 +44,14 @@ int compare_assembler(
 	return *((int *) key) - (*tweak)->flag;
 }
 
-#define CLEANUP() for (it = 0; it < modules_length; it++) panda_module_unref(modules[it]); for (it = 0; it < assembler_args_length; it++) if(opt_assembler_args[it] > (char*)1) free(opt_assembler_args[it]); DESTROY_STACK(next); DESTROY_STACK(fail); if (mux != NULL) panda_mux_unref(mux); if (assembler != NULL) panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(writer_out);
-#define BSEARCH(item, type) bsearch(item, PANDACONCAT(type, _args), PANDACONCAT(type, _args_length), sizeof(PANDACONCAT(panda_tweak_, type) *), PANDACONCAT(compare_, type))
+#define BASE_CLEANUP() for (it = 0; it < modules_length; it++) panda_module_unref(modules[it]); for (it = 0; it < assembler_args_length; it++) if(opt_assembler_args[it] > (char*)1) free(opt_assembler_args[it]); DESTROY_STACK(next); DESTROY_STACK(fail); panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(writer_out)
+#ifdef HAVE_PTHREAD
+#        define CLEANUP() BASE_CLEANUP(); panda_mux_unref(mux)
+#else
+#        define CLEANUP() BASE_CLEANUP()
+#endif
 
+#define BSEARCH(item, type) bsearch(item, PANDACONCAT(type, _args), PANDACONCAT(type, _args_length), sizeof(PANDACONCAT(panda_tweak_, type) *), PANDACONCAT(compare_, type))
 bool panda_parse_args(
 	char *const *args,
 	int args_length,
@@ -97,7 +102,11 @@ bool panda_parse_args(
 
 	MAYBE(out_mux) = NULL;
 	MAYBE(out_assembler) = NULL;
+#ifdef HAVE_PTHREAD
 	MAYBE(out_threads) = threads;
+#else
+	MAYBE(out_threads) = 1;
+#endif
 	MAYBE(output) = NULL;
 	MAYBE(output_data) = NULL;
 	MAYBE(output_destroy) = NULL;
@@ -359,7 +368,9 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
+#ifdef HAVE_PTHREAD
 	next = panda_create_async_reader(next, next_data, next_destroy, threads, &next_data, &next_destroy);
+#endif
 	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">\n");
 
 #define BSIZE 2048
@@ -423,15 +434,23 @@ bool panda_parse_args(
 		return false;
 	}
 	if (out_mux) {
+#if HAVE_PTHREAD
 		*out_mux = mux;
 		mux = NULL;
+#else
+		*out_mux = NULL;
+#endif
 	}
 
 	if (out_assembler) {
 		*out_assembler = assembler;
 		assembler = NULL;
 	}
+#if HAVE_PTHREAD
 	MAYBE(out_threads) = threads;
+#else
+	MAYBE(out_threads) = 1;
+#endif
 	MAYBE(output) = (PandaOutputSeq) (fastq ? panda_output_fastq : panda_output_fasta);
 	MAYBE(output_data) = writer_out;
 	MAYBE(output_destroy) = (PandaDestroy) panda_writer_unref;
