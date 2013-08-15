@@ -114,7 +114,9 @@ void panda_log_proxy_unref(
 #endif
 	if (count == 0) {
 		DESTROY_MEMBER(proxy, printf);
+#ifdef HAVE_PTHREAD
 		pthread_mutex_destroy(&proxy->mutex);
+#endif
 		free(proxy);
 	}
 }
