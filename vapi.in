@@ -1275,6 +1275,9 @@ file);
 	[PrintfFormat]
 	public delegate void PrintfFunc(string format, ...);
 
+	[CCode(cname = "panda_create_async_reader")]
+	public static NextSeq create_async_reader(owned NextSeq next, size_t length);
+
 	/**
 	 * Create an object to read sequences from two character streams of FASTQ data
 	 *

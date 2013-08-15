@@ -352,6 +352,7 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
+	next = panda_create_async_reader(next, next_data, next_destroy, threads, &next_data, &next_destroy);
 	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">\n");
 
 #define BSIZE 2048

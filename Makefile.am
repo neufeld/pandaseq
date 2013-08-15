@@ -66,6 +66,7 @@ libpandaseq_la_SOURCES = \
 	args_hang.c \
 	assembler.c \
 	assembler_support.c \
+	async.c \
 	buffer.c \
 	fastq.c \
 	fileio.c \

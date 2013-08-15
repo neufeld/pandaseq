@@ -258,6 +258,14 @@ bool panda_output_fastq(
 	const panda_result_seq *sequence,
 	FILE *file);
 
+PandaNextSeq panda_create_async_reader(
+	PandaNextSeq next,
+	void *next_data,
+	PandaDestroy next_destroy,
+	size_t length,
+	void **user_data,
+	PandaDestroy *destroy);
+
 /* === Convenience macro is for Vala === */
 #        define PANDA_FAIL(file, append, user_data, destroy) (*(user_data) = fopen(file, append ? "a" : "w"), *(destroy) = fclose, *(user_data) == NULL ? NULL : (PandaFailAlign) panda_output_fail)
 #        define PANDACONCATE(x,y) x ## y
