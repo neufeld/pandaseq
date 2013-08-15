@@ -11,6 +11,7 @@ library_include_HEADERS = \
 	pandaseq-assembler.h \
 	pandaseq-common.h \
 	pandaseq-iter.h \
+	pandaseq-linebuf.h \
 	pandaseq-log.h \
 	pandaseq-module.h \
 	pandaseq-mux.h \
@@ -70,6 +71,7 @@ libpandaseq_la_SOURCES = \
 	fileio.c \
 	hang.c \
 	idset.c \
+	linebuf.c \
 	misc.c \
 	module.c \
 	mux.c \

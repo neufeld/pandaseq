@@ -59,10 +59,10 @@ PandaMux panda_mux_new(
 }
 
 PandaMux panda_mux_new_fastq_reader(
-	PandaNextChar forward,
+	PandaBufferRead forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,
-	PandaNextChar reverse,
+	PandaBufferRead reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
 	PandaLogProxy logger,

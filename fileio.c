@@ -23,6 +23,23 @@
 #        include <pthread.h>
 #endif
 #include "pandaseq.h"
+#include "misc.h"
+
+static bool buff_read_gz(
+	char *buf,
+	size_t buf_len,
+	size_t *read,
+	void *data) {
+	gzFile *file = (gzFile *) data;
+	int code;
+	code = gzread(file, buf, buf_len);
+	if (code < 1) {
+		*read = 0;
+		return gzeof(file);
+	}
+	*read = code;
+	return true;
+}
 
 PandaNextSeq panda_open_gz(
 	const char *forward,
@@ -48,7 +65,7 @@ PandaNextSeq panda_open_gz(
 		gzclose(forward_file);
 		return NULL;
 	}
-	return panda_create_fastq_reader(gzgetc, forward_file, (PandaDestroy) gzclose, gzgetc, reverse_file, (PandaDestroy) gzclose, logger, qualmin, policy, user_data, destroy);
+	return panda_create_fastq_reader(buff_read_gz, forward_file, (PandaDestroy) gzclose, buff_read_gz, reverse_file, (PandaDestroy) gzclose, logger, qualmin, policy, user_data, destroy);
 }
 
 PandaAssembler panda_assembler_open_gz(
@@ -84,13 +101,15 @@ PandaMux panda_mux_open_gz(
 }
 #endif
 
-static int bzgetc(
-	BZFILE * file) {
-	char c;
-	if (BZ2_bzread(file, &c, 1) != 1) {
-		return EOF;
-	}
-	return c;
+static bool buff_read_bz2(
+	char *buf,
+	size_t buf_len,
+	size_t *read,
+	void *data) {
+	BZFILE *file = (BZFILE *) data;
+	int bzerror;
+	*read = BZ2_bzRead(&bzerror, file, buf, buf_len);
+	return bzerror == BZ_OK || bzerror == BZ_STREAM_END;
 }
 
 PandaNextSeq panda_open_bz2(
@@ -114,7 +133,7 @@ PandaNextSeq panda_open_bz2(
 		BZ2_bzclose(forward_file);
 		return NULL;
 	}
-	return panda_create_fastq_reader(bzgetc, forward_file, BZ2_bzclose, bzgetc, reverse_file, BZ2_bzclose, logger, qualmin, policy, user_data, destroy);
+	return panda_create_fastq_reader(buff_read_bz2, forward_file, BZ2_bzclose, buff_read_bz2, reverse_file, BZ2_bzclose, logger, qualmin, policy, user_data, destroy);
 }
 
 PandaAssembler panda_assembler_open_bz2(

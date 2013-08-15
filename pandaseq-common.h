@@ -62,6 +62,11 @@ typedef struct panda_args_hang *PandaArgsHang;
 typedef struct panda_iter *PandaIter;
 
 /**
+ * A structure to read lines from an input stream.
+ */
+typedef struct panda_linebuf *PandaLineBuf;
+
+/**
  * Logging proxy object.
  */
 typedef struct panda_log_proxy *PandaLogProxy;
@@ -318,11 +323,18 @@ typedef void (
 /**
  * Get the next character from a FASTQ file or EOF.
  *
- * For assembly from an alternate source of data, this function returns the next character in the stream.
+ * For assembly from an alternate source of data, this function reads data from the stream.
+ * @buffer:(array length=buffer_length): the buffer to fill
+ * @read:(out): the number of bytes successfully read from the buffer
+ * @data: (closure): some user context data provided
+ * Returns: false if an error occured, true otherwise
  */
-typedef int (
-	*PandaNextChar) (
-	void *user_data);
+typedef bool (
+	*PandaBufferRead) (
+	char *buffer,
+	size_t buffer_length,
+	size_t *read,
+	void *data);
 
 /**
  * A callback for iterating over the current modules.

@@ -477,7 +477,7 @@ namespace Panda {
 		 * @see create_fastq_reader
 		 */
 		[CCode(cname = "panda_assembler_new_fastq_reader")]
-		public Assembler.fastq (owned NextChar forward, owned NextChar reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public Assembler.fastq (owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Assemble a single sequence pair not drawn from the sequence stream.
@@ -611,7 +611,21 @@ namespace Panda {
 		[CCode(cname = "panda_iter_reset")]
 		public void reset();
 	}
-
+	[CCode(cname = "struct panda_linebuf", free_function = "panda_linebuf_free")]
+	[Compact]
+	public class LineBuf {
+		/**
+		 * Create a new line reader from a buffer reading source.
+		 */
+		[CCode(cname = "panda_linebuf_new")]
+		public LineBuf(owned BufferRead read);
+		/**
+		 * Read the next line.
+		 * Returns: (transfer none) (allow-none): the next line in the file. This is only valid until the next call.
+		 */
+		[CCode(cname = "panda_linebuf_next")]
+		public unowned string? next_value();
+	}
 	/**
 	 * Logging proxy
 	 */
@@ -869,7 +883,7 @@ file);
 		 * Create a new multiplexed reader for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
-		public Mux.fastq(owned NextChar forward, owned NextChar reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public Mux.fastq(owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new assembler using the multiplexer as it sequence source.
 		 *
@@ -1207,6 +1221,17 @@ file);
 	public const int MAX_LEN;
 
 	/**
+	 * Get the next characters from a FASTQ file.
+	 *
+	 * For assembly from an alternate source of data, this function reads more data from the stream.
+	 * @param buffer the buffer to which to write the bytes
+	 * @param read the number of bytes read into the buffer
+	 * @return true if no error occurred
+	 */
+	[CCode(cname = "PandaBufferRead")]
+	public delegate bool BufferRead([CCode(array_length_type = "size_t")] uint8[] buffer, out size_t read);
+
+	/**
 	 * Handle a failed alignment
 	 *
 	 * This is called when an assembler fails to align a sequence because it can't compute a reasonable overlap.
@@ -1227,14 +1252,6 @@ file);
 	 */
 	[CCode(cname = "PandaModuleCallback")]
 	public delegate bool ModuleCallback(Assembler assembler, Module module, size_t rejected);
-
-	/**
-	 * Get the next character from a FASTQ file or EOF.
-	 *
-	 * For assembly from an alternate source of data, this function returns the next character in the stream.
-	 */
-	[CCode(cname = "PandaNextChar")]
-	public delegate int NextChar();
 
 	/**
 	 * Get the next sequence pair.
@@ -1261,14 +1278,14 @@ file);
 	/**
 	 * Create an object to read sequences from two character streams of FASTQ data
 	 *
-	 * @param forward the stream of forward characters, called every time a new character is required.
-	 * @param reverse the stream of reverse characters, called every time a new character is required.
+	 * @param forward the stream of forward characters, called every time new characters are required.
+	 * @param reverse the stream of reverse characters, called every time new characters are required.
 	 * @param logger the logging proxy to use during assembly.
 	 * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
 	 * @param policy method to handle unbarcoded sequences
 	 */
 	[CCode(cname = "panda_assembler_create_fastq_reader")]
-	public static NextSeq create_fastq_reader(owned NextChar forward, owned NextChar reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	public static NextSeq create_fastq_reader(owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * The current module API version of the running library

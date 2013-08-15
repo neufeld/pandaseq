@@ -254,10 +254,10 @@ void panda_assembler_unref(
 }
 
 PandaAssembler panda_assembler_new_fastq_reader(
-	PandaNextChar forward,
+	PandaBufferRead forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,
-	PandaNextChar reverse,
+	PandaBufferRead reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
 	PandaLogProxy logger,

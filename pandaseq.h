@@ -94,10 +94,9 @@ size_t panda_compute_offset_result(
 /**
  * Create an object to read sequences from two character streams of FASTQ data
  *
- * @forward: (closure forward_data) (scope notified): the functions to provide the stream of forward cha
-acters. Every time a new character is required, forward(forward_data) is called. When the stream has ret
-rned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
- * @reverse: (closure reverse_data) (scope notified): the same for the reverse sequence.
+ * @forward: (closure forward_data) (scope notified): the functions to provide the stream of forward characters. Every time a new data is required, forward(forward_data) is called. When the stream has retrned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
+ * @reverse: (closure reverse_data) (scope notified): the same for the reverse
+ * sequence.
  * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA versi
 n)
  * @policy: method to handle unbarcoded sequences
@@ -105,10 +104,10 @@ n)
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_create_fastq_reader(
-	PandaNextChar forward,
+	PandaBufferRead forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,
-	PandaNextChar reverse,
+	PandaBufferRead reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
 	PandaLogProxy logger,
@@ -269,6 +268,7 @@ bool panda_output_fastq(
 #        include<pandaseq-args.h>
 #        include<pandaseq-assembler.h>
 #        include<pandaseq-iter.h>
+#        include<pandaseq-linebuf.h>
 #        include<pandaseq-log.h>
 #        include<pandaseq-module.h>
 #        include<pandaseq-mux.h>

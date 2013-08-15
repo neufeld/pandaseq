@@ -67,7 +67,7 @@ PandaAssembler panda_assembler_new_kmer(
 
 /**
  * Create a new assembler for given to FASTQ streams.
- * @forward: (closure forward_data) (scope notified): the functions to provide the stream of forward characters. Every time a new character is required, forward(forward_data) is called. When the stream has returned EOF or the assembler is deallocated, forward_destroy(forward_data) is called.
+ * @forward: (closure forward_data) (scope notified): the functions to provide the stream of forward characters.
  * @reverse: (closure reverse_data) (scope notified): the same for the reverse sequence.
  * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
  * @policy: method to handle unbarcoded sequences
@@ -75,10 +75,10 @@ PandaAssembler panda_assembler_new_kmer(
  * @see panda_create_fastq_reader
  */
 PandaAssembler panda_assembler_new_fastq_reader(
-	PandaNextChar forward,
+	PandaBufferRead forward,
 	void *forward_data,
 	PandaDestroy forward_destroy,
-	PandaNextChar reverse,
+	PandaBufferRead reverse,
 	void *reverse_data,
 	PandaDestroy reverse_destroy,
 	PandaLogProxy logger,
