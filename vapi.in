@@ -1275,24 +1275,12 @@ file);
 		 * Write an assembly to a FASTA file.
 		 */
 		[CCode(cname = "panda_output_fasta")]
-		public bool write_fasta(
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
+		public bool write_fasta(Writer writer);
 		/**
 		 * Write an assembly to a FASTQ file.
 		 */
 		[CCode(cname = "panda_output_fastq")]
-		public bool write_fastq(
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
+		public bool write_fastq(Writer writer);
 	}
 
 	/**
