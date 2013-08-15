@@ -3,6 +3,8 @@
 -T FILE
 -T PandaArgsFastq
 -T PandaAssembler
+-T PandaBufferRead
+-T PandaBufferWrite
 -T PandaCheck
 -T PandaCode
 -T PandaDebug
@@ -10,6 +12,7 @@
 -T PandaFailAlign
 -T PandaIter
 -T panda_kmer
+-T PandaLineBuf
 -T PandaLogger
 -T PandaLogProxy
 -T PandaModule
@@ -32,4 +35,5 @@
 -T panda_tweak_assembler
 -T PandaTweakGeneral
 -T panda_tweak_general
+-T PandaWriter
 -T size_t
