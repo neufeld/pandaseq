@@ -60,6 +60,11 @@ PandaLogProxy panda_log_proxy_new_file(
 	return panda_log_proxy_new((PandaPrintf) fprintf, file, (PandaDestroy) fclose);
 }
 
+PandaLogProxy panda_log_proxy_new_writer(
+	PandaWriter writer) {
+	return panda_log_proxy_new((PandaPrintf) panda_writer_append, panda_writer_ref(writer), (PandaDestroy) panda_writer_unref);
+}
+
 #define BSIZE 2048
 void bzprintf(
 	BZFILE * file,
@@ -131,10 +136,6 @@ void panda_log_proxy_write(
 	if (proxy->printf == NULL)
 		return;
 
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&proxy->mutex);
-#endif
-
 	name = panda_assembler_get_name(assembler);
 	proxy->printf(proxy->printf_data, "%s%s%s%s", name == NULL ? "" : name, name == NULL ? "" : "\t", panda_code_str(code), id == NULL ? "" : "\t");
 	if (id != NULL) {
@@ -152,9 +153,6 @@ void panda_log_proxy_write(
 	} else if (code == PANDA_CODE_READ_TOO_LONG) {
 		proxy->printf(proxy->printf_data, "* * * * * The input reads are longer than this version of PANDAseq can handle. Currently %zd nucleotides.\n", PANDA_MAX_LEN);
 	}
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
-#endif
 }
 
 void panda_log_proxy_write_str(
@@ -163,13 +161,7 @@ void panda_log_proxy_write_str(
 	if (proxy->printf == NULL)
 		return;
 
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&proxy->mutex);
-#endif
 	proxy->printf(proxy->printf_data, "%s\n", str);
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
-#endif
 }
 
 void panda_log_proxy_write_overlap(
@@ -205,9 +197,6 @@ void panda_log_proxy_stat_double(
 	const char *asm_name;
 	if (proxy->printf == NULL)
 		return;
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&proxy->mutex);
-#endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
 		proxy->printf(proxy->printf_data, "STAT\t%s\t%f\n", panda_assembler_get_name(assembler), name, value);
@@ -215,9 +204,6 @@ void panda_log_proxy_stat_double(
 		proxy->printf(proxy->printf_data, "%s\tSTAT\t%s\t%f\n", asm_name, name, value);
 	}
 
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
-#endif
 }
 
 void panda_log_proxy_stat_long(
@@ -228,19 +214,12 @@ void panda_log_proxy_stat_long(
 	const char *asm_name;
 	if (proxy->printf == NULL)
 		return;
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&proxy->mutex);
-#endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
 		proxy->printf(proxy->printf_data, "STAT\t%s\t%ld\n", panda_assembler_get_name(assembler), name, value);
 	} else {
 		proxy->printf(proxy->printf_data, "%s\tSTAT\t%s\t%ld\n", asm_name, name, value);
 	}
-
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
-#endif
 }
 
 void panda_log_proxy_stat_size_t(
@@ -251,9 +230,6 @@ void panda_log_proxy_stat_size_t(
 	const char *asm_name;
 	if (proxy->printf == NULL)
 		return;
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&proxy->mutex);
-#endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
 		proxy->printf(proxy->printf_data, "STAT\t%s\t%zd\n", panda_assembler_get_name(assembler), name, value);
@@ -261,9 +237,6 @@ void panda_log_proxy_stat_size_t(
 		proxy->printf(proxy->printf_data, "%s\tSTAT\t%s\t%zd\n", asm_name, name, value);
 	}
 
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
-#endif
 }
 
 void panda_log_proxy_stat_str(
@@ -274,17 +247,10 @@ void panda_log_proxy_stat_str(
 	const char *asm_name;
 	if (proxy->printf == NULL)
 		return;
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&proxy->mutex);
-#endif
 	asm_name = panda_assembler_get_name(assembler);
 	if (asm_name == NULL) {
 		proxy->printf(proxy->printf_data, "STAT\t%s\t%s\n", panda_assembler_get_name(assembler), name, value);
 	} else {
 		proxy->printf(proxy->printf_data, "%s\tSTAT\t%s\t%s\n", asm_name, name, value);
 	}
-
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&proxy->mutex);
-#endif
 }

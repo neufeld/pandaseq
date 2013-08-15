@@ -86,6 +86,15 @@ typedef struct panda_mux *PandaMux;
  */
 typedef struct panda_idset *PandaSet;
 
+/**
+ * A transaction stream writer to improve output throughtput while using threads.
+ *
+ * This buffers writes to output into small transactions that are written in
+ * groups to an output source. This is mean to alleviate contention since each
+ * thread need not obtain an output lock for every write.
+ */
+typedef struct panda_writer *PandaWriter;
+
 /* === Enum and Flags === */
 
 /**
@@ -321,7 +330,7 @@ typedef void (
 	void *user_data);
 
 /**
- * Get the next character from a FASTQ file or EOF.
+ * Get the next characters from an input stream.
  *
  * For assembly from an alternate source of data, this function reads data from the stream.
  * @buffer:(array length=buffer_length): the buffer to fill
@@ -334,6 +343,17 @@ typedef bool (
 	char *buffer,
 	size_t buffer_length,
 	size_t *read,
+	void *data);
+
+/**
+ * Write data to an output stream.
+ * @buffer:(array length=buffer_length): the buffer to write
+ * @data: (closure): some user context data provided
+ */
+typedef void (
+	*PandaBufferWrite) (
+	const char *buffer,
+	size_t buffer_length,
 	void *data);
 
 /**

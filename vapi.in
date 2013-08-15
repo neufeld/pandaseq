@@ -985,7 +985,96 @@ file);
 		[CCode(cname = "panda_idset_unref")]
 		public void unref();
 	}
+	/**
+	 * A transaction stream writer to improve output throughtput while using threads.
+	 *
+	 * This buffers writes to output into small transactions that are written in
+	 * groups to an output source. This is mean to alleviate contention since each
+	 * thread need not obtain an output lock for every write.
+	 */
+	[CCode(cname = "struct panda_writer", ref_function = "panda_writer_ref", unref_function = "panda_writer_unref")]
+	[Compact]
+	public class Writer {
+		/**
+		 * Create a new writer, backed by some target.
+		 */
+		[CCode(cname = "panda_writer_new")]
+		public Writer(owned BufferWrite write);
+		/**
+		 * Create a new writer, backed by an open file.
+		 */
+		[CCode(cname = "panda_writer_new_file")]
+		public Writer.file(owned
+#if POSIX
+Posix.FILE
+#else
+GLib.FileStream
+#endif
+file);
+		/**
+		 * Create a new writer, backed by standard error.
+		 */
+		[CCode(cname = "panda_writer_new_stderr")]
+		public Writer.stderr();
+		/**
+		 * Create a new writer, backed by standard output.
+		 */
+		[CCode(cname = "panda_writer_new_stdout")]
+		public Writer.stdout();
 
+		/**
+		 * A target write to be commited at the same time as this one.
+		 *
+		 * A writer may have a slave writer that will recieve a commit whenever
+		 * {@link commit} is called on this writer.
+		 */
+		public Writer? slave {
+			[CCode(cname = "panda_writer_get_slave")]
+			get;
+			[CCode(cname = "panda_writer_set_slave")]
+			set;
+		}
+
+		/**
+		 * Write a printf-like formatted string to the output.
+		 */
+		[CCode(cname = "panda_writer_append")]
+		[PrintfFormat]
+		public void append(string format, ...);
+		/**
+		 * Write a single character to the output.
+		 */
+		[CCode(cname = "panda_writer_append_c")]
+		public void append_c(char c);
+		/**
+		 * Write a sequence identifier to the output.
+		 */
+		[CCode(cname = "panda_writer_append_id")]
+		public void append_id(identifier id);
+		/**
+		 * End the current transaction and start another.
+		 *
+		 * This will consider the appending done so far to this writer to be a unit
+		 * that can be passed to the output when necessary.
+		 */
+		[CCode(cname = "panda_writer_commit")]
+		public void commit();
+
+		/**
+		 * Increase the reference count on a writer.
+		 *
+		 * This is thread-safe.
+		 */
+		[CCode(cname = "panda_writer_ref")]
+		public unowned Writer @ref();
+		/**
+		 * Decrease the reference count on a writer.
+		 *
+		 * This is thread-safe.
+		 */
+		[CCode(cname = "panda_writer_unref")]
+		public void unref();
+	}
 	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
@@ -1221,7 +1310,7 @@ file);
 	public const int MAX_LEN;
 
 	/**
-	 * Get the next characters from a FASTQ file.
+	 * Get the next characters from an input stream.
 	 *
 	 * For assembly from an alternate source of data, this function reads more data from the stream.
 	 * @param buffer the buffer to which to write the bytes
@@ -1230,6 +1319,14 @@ file);
 	 */
 	[CCode(cname = "PandaBufferRead")]
 	public delegate bool BufferRead([CCode(array_length_type = "size_t")] uint8[] buffer, out size_t read);
+
+	/**
+	 * Write data to an output stream.
+	 * @buffer:(array length=buffer_length): the buffer to write
+	 * @data: (closure): some user context data provided
+	 */
+	[CCode(cname = "PandaBufferWrite")]
+	public delegate void BufferWrite([CCode(array_length_type = "size_t")] uint8[] buffer);
 
 	/**
 	 * Handle a failed alignment

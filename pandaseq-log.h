@@ -51,6 +51,12 @@ PandaLogProxy panda_log_proxy_new_file(
 	FILE *file);
 
 /**
+ * Write the log to a transactional writer.
+ */
+PandaLogProxy panda_log_proxy_new_writer(
+	PandaWriter writer);
+
+/**
  * Open a file for writing error messages.
  * @filename: The file to write.
  * @bzip: Write BZipped text rather than plain text.

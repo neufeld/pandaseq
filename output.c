@@ -85,33 +85,35 @@ const char *const panda_code_str(
 
 bool panda_output_fasta(
 	const panda_result_seq *sequence,
-	FILE *file) {
+	PandaWriter writer) {
 	size_t it;
-	(void) fputc('>', file);
-	panda_seqid_print(&sequence->name, file);
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '>');
+	panda_writer_append_id(writer, &sequence->name);
+	panda_writer_append_c(writer, '\n');
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void) fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
+		panda_writer_append_c(writer, panda_nt_to_ascii(sequence->sequence[it].nt));
 	}
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '\n');
+	panda_writer_commit(writer);
 	return true;
 }
 
 bool panda_output_fastq(
 	const panda_result_seq *sequence,
-	FILE *file) {
+	PandaWriter writer) {
 	size_t it;
-	(void) fputc('@', file);
-	panda_seqid_print(&sequence->name, file);
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '@');
+	panda_writer_append_id(writer, &sequence->name);
+	panda_writer_append_c(writer, '\n');
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void) fputc(panda_nt_to_ascii(sequence->sequence[it].nt), file);
+		panda_writer_append_c(writer, panda_nt_to_ascii(sequence->sequence[it].nt));
 	}
-	fprintf(file, "\n+\n");
+	panda_writer_append(writer, "\n+\n");
 	for (it = 0; it < sequence->sequence_length; it++) {
-		(void) fputc(33 - (int) (10 * log10(1 - exp(sequence->sequence[it].p)) - 0.5), file);
+		panda_writer_append_c(writer, 33 - (int) (10 * log10(1 - exp(sequence->sequence[it].p)) - 0.5));
 	}
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '\n');
+	panda_writer_commit(writer);
 	return true;
 }
 

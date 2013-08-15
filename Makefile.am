@@ -19,6 +19,7 @@ library_include_HEADERS = \
 	pandaseq-plugin.h \
 	pandaseq-seqid.h \
 	pandaseq-set.h \
+	pandaseq-writer.h \
 	panda_api.c \
 	$(NULL)
 pkgconfigdir = $(libdir)/pkgconfig
@@ -82,6 +83,7 @@ libpandaseq_la_SOURCES = \
 	pool.c \
 	seqid.c \
 	table.c \
+	writer.c \
 	$(NULL)
 pkglibxdir = $(pkglibdir)$(LIB_MAJOR)
 pkglibx_LTLIBRARIES = \

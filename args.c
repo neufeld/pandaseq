@@ -44,7 +44,7 @@ int compare_assembler(
 	return *((int *) key) - (*tweak)->flag;
 }
 
-#define CLEANUP() for (it = 0; it < modules_length; it++) panda_module_unref(modules[it]); for (it = 0; it < assembler_args_length; it++) if(opt_assembler_args[it] > (char*)1) free(opt_assembler_args[it]); DESTROY_STACK(next); DESTROY_STACK(fail); if (mux != NULL) panda_mux_unref(mux); if (assembler != NULL) panda_assembler_unref(assembler); panda_log_proxy_unref(logger)
+#define CLEANUP() for (it = 0; it < modules_length; it++) panda_module_unref(modules[it]); for (it = 0; it < assembler_args_length; it++) if(opt_assembler_args[it] > (char*)1) free(opt_assembler_args[it]); DESTROY_STACK(next); DESTROY_STACK(fail); if (mux != NULL) panda_mux_unref(mux); if (assembler != NULL) panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(writer_out);
 #define BSEARCH(item, type) bsearch(item, PANDACONCAT(type, _args), PANDACONCAT(type, _args_length), sizeof(PANDACONCAT(panda_tweak_, type) *), PANDACONCAT(compare_, type))
 
 bool panda_parse_args(
@@ -73,7 +73,7 @@ bool panda_parse_args(
 	bool fastq = false;
 	bool help = false;
 	size_t it;
-	PandaLogProxy logger = panda_log_proxy_new_stderr();
+	PandaLogProxy logger;
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
@@ -83,10 +83,17 @@ bool panda_parse_args(
 	const panda_tweak_assembler **assembler_tweak;
 	size_t opt_it;
 	bool version = false;
+	PandaWriter writer_err;
+	PandaWriter writer_out;
 #ifdef HAVE_PTHREAD
 	PandaMux mux = NULL;
 	int threads = 1;
 #endif
+	writer_out = panda_writer_new_stdout();
+	writer_err = panda_writer_new_stderr();
+	logger = panda_log_proxy_new_writer(writer_err);
+	panda_writer_set_slave(writer_out, writer_err);
+	panda_writer_unref(writer_err);
 
 	MAYBE(out_mux) = NULL;
 	MAYBE(out_assembler) = NULL;
@@ -426,8 +433,9 @@ bool panda_parse_args(
 	}
 	MAYBE(out_threads) = threads;
 	MAYBE(output) = (PandaOutputSeq) (fastq ? panda_output_fastq : panda_output_fasta);
-	MAYBE(output_data) = stdout;
-	MAYBE(output_destroy) = NULL;
+	MAYBE(output_data) = writer_out;
+	MAYBE(output_destroy) = (PandaDestroy) panda_writer_unref;
+	writer_out = NULL;
 
 	CLEANUP();
 	return true;

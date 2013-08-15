@@ -250,13 +250,13 @@ void panda_output_fail(
  */
 bool panda_output_fasta(
 	const panda_result_seq *sequence,
-	FILE *file);
+	PandaWriter writer);
 /**
  * Write an assembly to a FASTQ file.
  */
 bool panda_output_fastq(
 	const panda_result_seq *sequence,
-	FILE *file);
+	PandaWriter writer);
 
 PandaNextSeq panda_create_async_reader(
 	PandaNextSeq next,
@@ -283,5 +283,6 @@ PandaNextSeq panda_create_async_reader(
 #        include<pandaseq-nt.h>
 #        include<pandaseq-seqid.h>
 #        include<pandaseq-set.h>
+#        include<pandaseq-writer.h>
 EXTERN_C_END
 #endif

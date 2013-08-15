@@ -33,9 +33,6 @@ struct shared_info {
 		output);
 	volatile bool some_seqs;
 	time_t starttime;
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t output_mutex;
-#endif
 };
 
 struct thread_info {
@@ -72,13 +69,7 @@ static void *do_assembly(
 		if (count % 1000 == 0) {
 			printtime(info, count);
 		}
-#ifdef HAVE_PTHREAD
-		pthread_mutex_lock(&info->shared->output_mutex);
-#endif
 		info->shared->output(result, info->shared->output_data);
-#ifdef HAVE_PTHREAD
-		pthread_mutex_unlock(&info->shared->output_mutex);
-#endif
 	}
 	count = panda_assembler_get_count(info->assembler);
 	if (count > 0) {
@@ -134,7 +125,6 @@ bool panda_run_pool(
 	(void) time(&shared_info.starttime);
 
 #if HAVE_PTHREAD
-	pthread_mutex_init(&shared_info.output_mutex, NULL);
 	if (threads > 1 && mux != NULL) {
 
 		thread_list = calloc(sizeof(struct thread_info), threads - 1);
@@ -168,7 +158,6 @@ bool panda_run_pool(
 		}
 		free(thread_list);
 	}
-	pthread_mutex_destroy(&shared_info.output_mutex);
 #endif
 	DESTROY_MEMBER(&shared_info, output);
 	return shared_info.some_seqs;
