@@ -233,6 +233,8 @@ PandaAssembler panda_assembler_ref(
 void panda_assembler_unref(
 	PandaAssembler assembler) {
 	size_t count;
+	if (assembler == NULL)
+		return;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&assembler->mutex);
 #endif

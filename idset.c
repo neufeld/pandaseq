@@ -73,6 +73,8 @@ static void node_free(
 void panda_idset_unref(
 	PandaSet set) {
 	size_t count;
+	if (set == NULL)
+		return;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
 #endif

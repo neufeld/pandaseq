@@ -103,6 +103,8 @@ PandaLogProxy panda_log_proxy_ref(
 void panda_log_proxy_unref(
 	PandaLogProxy proxy) {
 	size_t count;
+	if (proxy == NULL)
+		return;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&proxy->mutex);
 #endif
