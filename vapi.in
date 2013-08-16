@@ -1478,6 +1478,11 @@ file);
 		[CCode(cname = "panda_stdargs_degenerates")]
 		public const Tweak.assembler degenerates;
 		/**
+		 * The minimum overlap switch (-o).
+		 */
+		[CCode(cname = "panda_stdargs_min_overlap")]
+		public const Tweak.assembler min_overlap;
+		/**
 		 * The forward primer filter switch (-p).
 		 */
 		[CCode(cname = "panda_stdargs_forward_primer")]

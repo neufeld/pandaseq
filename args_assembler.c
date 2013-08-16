@@ -192,11 +192,37 @@ static bool set_long_check(
 
 const panda_tweak_assembler panda_stdargs_max_len = { 'L', "length", "Maximum length for a sequence.", set_long_check };
 
+static bool set_minimum_overlap(
+	PandaAssembler assembler,
+	char flag,
+	char *argument,
+	bool is_set) {
+	int min_overlap;
+
+	if (argument == NULL) {
+		return true;
+	}
+	errno = 0;
+	min_overlap = strtol(argument, NULL, 10);
+	if (errno != 0 || min_overlap < 1 || min_overlap > PANDA_MAX_LEN) {
+		fprintf(stderr, "Bad overlap length.\n");
+		free(argument);
+		return false;
+	}
+
+	panda_assembler_set_minimum_overlap(assembler, min_overlap);
+	free(argument);
+	return true;
+}
+
+const panda_tweak_assembler panda_stdargs_min_overlap = { 'o', "length", "Minumum overlap region length for a sequence.", set_minimum_overlap };
+
 const panda_tweak_assembler *const panda_stdargs[] = {
 	&panda_stdargs_max_len,
 	&panda_stdargs_degenerates,
 	&panda_stdargs_primers_after,
 	&panda_stdargs_min_len,
+	&panda_stdargs_min_overlap,
 	&panda_stdargs_forward_primer,
 	&panda_stdargs_reverse_primer,
 	&panda_stdargs_threshold,

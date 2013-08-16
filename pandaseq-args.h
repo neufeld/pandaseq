@@ -34,7 +34,7 @@ EXTERN_C_BEGIN
  *
  * Lists of command line arguments are passed in and parsed. The opener is then called to open the data source and provide a sequence source. Then, an assembler and multiplexer will be created. All the assembler-only arguments and any additional setup are applied to the assembler. Any needed modules are loaded. Finally, the assembler and multiplexer are output, for use by the thread pool code.
  * @args:(array length=args_length): the strings from the command line
- * @assembler_args:(array length_assembler_args_length): descriptors of all the assembler-only command line arguments
+ * @assembler_args:(array length=assembler_args_length): descriptors of all the assembler-only command line arguments
  * @general_args:(array length=general_args_length): descriptors of all the command line arguments userstood by the callbacks
  * @tweak:(closure user_data): a callback for every command line argument matching a general argument
  * @opener:(closure user_data): a callback to open the sequence source
@@ -136,6 +136,10 @@ EXTERN const panda_tweak_assembler panda_stdargs_max_len;
  * The no N's switch (-N).
  */
 EXTERN const panda_tweak_assembler panda_stdargs_degenerates;
+/**
+ * The minimum overlap switch (-o).
+ */
+EXTERN const panda_tweak_assembler panda_stdargs_min_overlap;
 /**
  * The forward primer filter switch (-p).
  */
