@@ -52,9 +52,11 @@ static void printtime(
 	char buf[27];
 	time_t now;
 	(void) time(&now);
+#ifndef _WIN32
 	ctime_r(&now, buf);
 	buf[strlen(buf) - 1] = '\0';
 	STAT("TIME", str, buf);
+#endif
 	STAT("ELAPSED", long,
 		 (int) (now - info->shared->starttime));
 	STAT("READS", long,
