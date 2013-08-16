@@ -16,6 +16,7 @@
 
  */
 #include "config.h"
+#include <bzlib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +94,14 @@ static void file_write(
 	fwrite(buffer, 1, buffer_length, file);
 }
 
+static void bzip_write(
+	const char *buffer,
+	size_t buffer_length,
+	BZFILE * file) {
+	int bzerror;
+	BZ2_bzWrite(&bzerror, file, (void *) buffer, buffer_length);
+}
+
 PandaWriter panda_writer_new_stderr(
 	void) {
 	return panda_writer_new((PandaBufferWrite) file_write, stderr, NULL);
@@ -106,6 +115,20 @@ PandaWriter panda_writer_new_stdout(
 PandaWriter panda_writer_new_file(
 	FILE *file) {
 	return panda_writer_new((PandaBufferWrite) file_write, file, (PandaDestroy) fclose);
+}
+
+PandaWriter panda_writer_open_file(
+	const char *filename,
+	bool bzip) {
+	if (bzip) {
+		BZFILE *file;
+		file = BZ2_bzopen(filename, "w");
+		return (file == NULL) ? NULL : panda_writer_new((PandaBufferWrite) bzip_write, file, (PandaDestroy) BZ2_bzclose);
+	} else {
+		FILE *file;
+		file = fopen(filename, "w");
+		return (file == NULL) ? NULL : panda_writer_new_file(file);
+	}
 }
 
 void panda_writer_commit(

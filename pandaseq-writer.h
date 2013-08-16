@@ -54,6 +54,16 @@ PandaWriter panda_writer_new_stderr(
 PandaWriter panda_writer_new_stdout(
 	void);
 
+/**
+ * Open a file for writing.
+ * @filename: The file to write.
+ * @bzip: Write BZipped text rather than plain text.
+ * Returns: (allow-none): A writer.
+ */
+PandaWriter panda_writer_open_file(
+	const char *filename,
+	bool bzip);
+
 /* === Methods === */
 /**
  * Write a printf-like formatted string to the output.

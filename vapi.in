@@ -996,6 +996,13 @@ file);
 	[Compact]
 	public class Writer {
 		/**
+		 * Open a file for writing.
+		 * @filename: The file to write.
+		 * @bzip: Write BZipped text rather than plain text.
+		 */
+		[CCode(cname = "panda_writer_open_file")]
+		public static Writer? open_file(string filename, bool bzip);
+		/**
 		 * Create a new writer, backed by some target.
 		 */
 		[CCode(cname = "panda_writer_new")]
