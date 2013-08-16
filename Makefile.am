@@ -28,7 +28,7 @@ vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = $(LIB_NAME).vapi
 man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1 pandaseq-hang.1
 docdir = $(datadir)/doc/@PACKAGE@
-doc_DATA = README plugins/sample.c
+doc_DATA = README plugin_sample.c
 mktable_CPPFLAGS = -std=gnu99 -pedantic $(PANDA_CPPFLAGS)
 mktable_LDFLAGS = $(PANDA_LIBS)
 mktable_SOURCES = mktable.c
@@ -94,23 +94,23 @@ pkglibx_LTLIBRARIES = \
 	validtag.la \
 	$(NULL)
 after_la_CFLAGS = -DPANDASEQ_MODULE=after -g
-after_la_SOURCES = plugins/after.c panda_api.c
+after_la_SOURCES = plugin_after.c panda_api.c
 after_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 after_la_LIBADD = libpandaseq.la
 before_la_CFLAGS = -DPANDASEQ_MODULE=before -g
-before_la_SOURCES = plugins/before.c panda_api.c
+before_la_SOURCES = plugin_before.c panda_api.c
 before_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 before_la_LIBADD = libpandaseq.la
 completely_miss_the_point_la_CFLAGS = -DPANDASEQ_MODULE=completely_miss_the_point -g
-completely_miss_the_point_la_SOURCES = plugins/completely_miss_the_point.c panda_api.c
+completely_miss_the_point_la_SOURCES = plugin_completely_miss_the_point.c panda_api.c
 completely_miss_the_point_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 completely_miss_the_point_la_LIBADD = libpandaseq.la
 filter_la_CFLAGS = -DPANDASEQ_MODULE=filter -g
-filter_la_SOURCES = plugins/filter.c panda_api.c
+filter_la_SOURCES = plugin_filter.c panda_api.c
 filter_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 filter_la_LIBADD = libpandaseq.la
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
-validtag_la_SOURCES = plugins/validtag.c panda_api.c
+validtag_la_SOURCES = plugin_validtag.c panda_api.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 validtag_la_LIBADD = libpandaseq.la
 BUILT_SOURCES = table.c table.h
