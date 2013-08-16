@@ -997,8 +997,8 @@ file);
 	public class Writer {
 		/**
 		 * Open a file for writing.
-		 * @filename: The file to write.
-		 * @bzip: Write BZipped text rather than plain text.
+		 * @param filename The file to write.
+		 * @param bzip Write BZipped text rather than plain text.
 		 */
 		[CCode(cname = "panda_writer_open_file")]
 		public static Writer? open_file(string filename, bool bzip);
@@ -1317,8 +1317,7 @@ file);
 
 	/**
 	 * Write data to an output stream.
-	 * @buffer:(array length=buffer_length): the buffer to write
-	 * @data: (closure): some user context data provided
+	 * @param buffer the buffer to write
 	 */
 	[CCode(cname = "PandaBufferWrite")]
 	public delegate void BufferWrite([CCode(array_length_type = "size_t")] uint8[] buffer);
