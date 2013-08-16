@@ -1,3 +1,17 @@
+pandaseq (2.5~ppa0) lucid; urgency=low
+
+  * Add support for output and log files via Writer
+  * Add thread-friendly output writing system
+  * Added asynchronous reader to improve input read speed
+  * Added support for reads which overhang
+  *	Fix memory allocation bug in when minoverlap specified by the user is
+    greater than either of the input sequences.
+  * Salvage extra sequences when a minimum overlap is applied.
+  * Updated checkid to include CASAVA version
+  * Collect information about sequences that fail to assemble by hashing
+
+ -- Andre Masella <andre@masella.name>  Thu, 15 Aug 2013 21:27:52 -0700
+
 pandaseq (2.4~ppa0) lucid; urgency=low
 
   * Allow stripping primers after assembly

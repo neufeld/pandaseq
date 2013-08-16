@@ -2,6 +2,6 @@ usr/bin/pandaxs
 usr/include/*
 usr/lib/*.so
 usr/lib/pkgconfig
-usr/share/doc/pandaseq/sample.c
+usr/share/doc/pandaseq/plugin_sample.c
 usr/share/man/man1/pandaxs.1
 usr/share/vala
