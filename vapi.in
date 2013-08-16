@@ -644,7 +644,7 @@ namespace Panda {
 		 * Create a new proxy with a callback.
 		 */
 		[CCode(cname = "panda_log_proxy_new")]
-		public LogProxy(owned PrintfFunc log);
+		public LogProxy(Writer writer);
 		/**
 		 * Write the log to an open file.
 		 */

@@ -59,6 +59,12 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 ] [
 .B \-u
 .I unpaired.fasta
+] [
+.B \-w
+.I output.fasta
+] [
+.B \-W
+.I output.fasta.bz2
 ]
 .SH DESCRIPTION
 PANDASEQ assembles paired-end Illumina reads into sequences, trying to correct for errors and uncalled bases. The assembler reads two files in FASTQ format with quality information. If amplification primers were used (e.g., to isolate a variable region of the 16S gene, or the constant regions around zinc finger binding residues), they can be removed from the sequence during assembly. The final sequence will correct any uncalled bases in the overlapping region using the complementary strand. When mismatches occur in the overlapping region, the base with the better quality score is chosen.
@@ -163,6 +169,14 @@ Note that using multiple threads prevents sequences from being output in the sam
 .TP
 \-u unpaired.fasta
 Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs. For downstream processing or to stare at wistfully.
+.TP
+\-w output.fasta
+Write all assembled sequences to a FASTA (or FASTQ) file, \fIoutput.fasta\fR, instead of standard output.
+.TP
+\-W output.fasta.bz2
+Write all assembled sequences to a
+.BR bzip2 (1)
+compressed FASTA (or FASTQ) file, \fIoutput.fasta\fR, instead of standard output.
 .SH OUTPUT STATISTICS
 At the end of reconstruction, several statistics are output on lines beginning with \fBSTAT\fR.
 .TP
@@ -297,7 +311,7 @@ This will assemble data from lane 7, stripping conserved regions around the prok
 and store the logging output
 .B s_7.log.bz2.
 
-.B (pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG | bzip2 > s_7.fasta.bz2) 2>&1 | bzip2 -c > s_7.log.bz2
+.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG -G s_7.log.bz2 | bzip2 > s_7.fasta.bz2
 .SH VALIDATON MODULES
 Validation modules are capable of making decisions about whether or not to keep output sequences. For example, one could write a module to check secondary structure of a RNA, or that a coding sequence contains no stop codons. To create a module, please see
 .BR pandaxs (1).

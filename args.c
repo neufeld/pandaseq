@@ -78,7 +78,7 @@ bool panda_parse_args(
 	bool fastq = false;
 	bool help = false;
 	size_t it;
-	PandaLogProxy logger;
+	PandaLogProxy logger = NULL;
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
@@ -96,9 +96,6 @@ bool panda_parse_args(
 #endif
 	writer_out = panda_writer_new_stdout();
 	writer_err = panda_writer_new_stderr();
-	logger = panda_log_proxy_new_writer(writer_err);
-	panda_writer_set_slave(writer_out, writer_err);
-	panda_writer_unref(writer_err);
 
 	MAYBE(out_mux) = NULL;
 	MAYBE(out_assembler) = NULL;
@@ -113,7 +110,7 @@ bool panda_parse_args(
 
 	memset(&opt_assembler_args, 0, assembler_args_length * sizeof(char *));
 	optlist[0] = '\0';
-	strncat(optlist, "C:d:g:G:hk:vF", MAX_OPT_LIST);
+	strncat(optlist, "C:d:Fg:G:hk:vw:W:", MAX_OPT_LIST);
 #ifdef HAVE_PTHREAD
 	strncat(optlist, "T:", MAX_OPT_LIST);
 #endif
@@ -201,9 +198,9 @@ bool panda_parse_args(
 			break;
 		case 'g':
 		case 'G':
-			panda_log_proxy_unref(logger);
-			logger = panda_log_proxy_open_file(optarg, isupper(c));
-			if (logger == NULL) {
+			panda_writer_unref(writer_err);
+			writer_err = panda_writer_open_file(optarg, isupper(c));
+			if (writer_err == NULL) {
 				perror(optarg);
 				CLEANUP();
 				return false;
@@ -232,6 +229,16 @@ bool panda_parse_args(
 			}
 			break;
 #endif
+		case 'w':
+		case 'W':
+			panda_writer_unref(writer_out);
+			writer_out = panda_writer_open_file(optarg, isupper(c));
+			if (writer_out == NULL) {
+				perror(optarg);
+				CLEANUP();
+				return false;
+			}
+			break;
 		case 'v':
 			version = true;
 			break;
@@ -281,6 +288,10 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
+	logger = panda_log_proxy_new(writer_err);
+	panda_writer_set_slave(writer_out, writer_err);
+	panda_writer_unref(writer_err);
+
 	if (help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
 		size_t general_it = 0;
 		size_t assembler_it = 0;
@@ -300,6 +311,8 @@ bool panda_parse_args(
 #		ifdef HAVE_PTHREAD
 		fprintf(stderr, " [-T threads]");
 #		endif
+		fprintf(stderr, " [-w output.fasta]");
+		fprintf(stderr, " [-W output.fasta.bz2]");
 		general_it = 0;
 		while (general_it < general_args_length || assembler_it < assembler_args_length) {
 			if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
@@ -336,9 +349,13 @@ bool panda_parse_args(
 		fprintf(stderr, "\t\tOptional (s)tatistics.\n");
 		fprintf(stderr, "\t-k kmers\tThe number of k-mers in the table.\n");
 		fprintf(stderr, "\t-F\tOutput FASTQ instead of FASTA.\n");
+		fprintf(stderr, "\t-g log.txt\tOutput log to a text file.\n");
+		fprintf(stderr, "\t-G log.txt.bz2\tOutput log to a BZip2-compressed text file.\n");
 #		ifdef HAVE_PTHREAD
 		fprintf(stderr, "\t-T thread\tRun with a number of parallel threads.\n");
 #		endif
+		fprintf(stderr, "\t-w output.fasta\tOutput seqences to a FASTA (or FASTQ) file.\n");
+		fprintf(stderr, "\t-W output.fasta.bz2\tOutput seqences to a BZip2-compressed FASTA (or FASTQ) file.\n");
 		general_it = 0;
 		assembler_it = 0;
 		while (general_it < general_args_length || assembler_it < assembler_args_length) {

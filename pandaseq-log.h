@@ -31,12 +31,10 @@
 EXTERN_C_BEGIN
 /* === Constructors === */
 /**
- * Create a new proxy with a callback.
+ * Write the log to a transactional writer.
  */
 PandaLogProxy panda_log_proxy_new(
-	PandaPrintf printf,
-	void *printf_data,
-	PandaDestroy printf_destroy);
+	PandaWriter writer);
 
 /**
  * Create a new proxy to standard error.
@@ -49,12 +47,6 @@ PandaLogProxy panda_log_proxy_new_stderr(
  */
 PandaLogProxy panda_log_proxy_new_file(
 	FILE *file);
-
-/**
- * Write the log to a transactional writer.
- */
-PandaLogProxy panda_log_proxy_new_writer(
-	PandaWriter writer);
 
 /**
  * Open a file for writing error messages.
