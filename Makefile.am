@@ -2,7 +2,6 @@ NULL =
 ACLOCAL_AMFLAGS = -I m4
 bin_PROGRAMS = pandaseq pandaseq-checkid pandaseq-hang
 lib_LTLIBRARIES = libpandaseq.la
-noinst_PROGRAMS = mktable
 bin_SCRIPTS = pandaxs
 library_includedir=$(includedir)/$(LIB_NAME)
 library_include_HEADERS = \
@@ -29,9 +28,10 @@ dist_vapi_DATA = $(LIB_NAME).vapi
 man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1 pandaseq-hang.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugin_sample.c
-mktable_CPPFLAGS = -std=gnu99 -pedantic $(PANDA_CPPFLAGS)
-mktable_LDFLAGS = $(PANDA_LIBS)
-mktable_SOURCES = mktable.c
+
+mktable$(EXEEXT): mktable.c
+	@CC_FOR_BUILD@ -std=c99 -pedantic -o $@ $< -lm
+
 pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_CFLAGS = $(MAIN_CFLAGS)
 pandaseq_LDFLAGS = $(MAIN_LIBS)
@@ -51,6 +51,7 @@ libpandaseq_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
 	-DPKGLIBDIR=$(pkglibdir)$(LIB_MAJOR) \
+	-DPANDA_LIB_COMPILING \
 	-g \
 	$(NULL)
 libpandaseq_la_LDFLAGS = \
@@ -114,8 +115,13 @@ validtag_la_SOURCES = plugin_validtag.c panda_api.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 validtag_la_LIBADD = libpandaseq.la
 BUILT_SOURCES = table.c table.h
-CLEANFILES = table.c table.h $(bin_SCRIPTS)
+CLEANFILES = \
+	table.c \
+	table.h \
+	$(bin_SCRIPTS) \
+	mktable$(EXEEXT) \
+	$(NULL)
 
-table.c table.h: mktable
-	./mktable
+table.c table.h: mktable$(EXEEXT)
+	./mktable$(EXEEXT)
 

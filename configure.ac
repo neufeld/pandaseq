@@ -26,6 +26,18 @@ if test "x$enable_debug" = xyes; then
 	AC_DEFINE(DEBUG, 1, [Enable debugging code])
 fi
 
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+
+AC_MSG_CHECKING([(non-cross) C compiler for building tools])
+if test "$cross_compiling" = "yes"; then
+  CC_FOR_BUILD="${CC_FOR_BUILD-gcc}"
+else
+  CC_FOR_BUILD="${CC_FOR_BUILD-$CC}"
+fi
+AC_MSG_RESULT([$CC_FOR_BUILD])
+AC_ARG_VAR(CC_FOR_BUILD,[C compiler for building tools])
+
 ORIG_CPPFLAGS="$CPPFLAGS"
 ORIG_CFLAGS="$CFLAGS"
 ORIG_LIBS="$LIBS"
@@ -37,6 +49,7 @@ case "$host" in
 *-mingw*)
 	NO_UNDEFINED='-no-undefined'
 	MODULE_LDFLAGS="$LDFLAGS -Wl,-static"
+	LDFLAGS="$LDFLAGS -no-undefined"
 	MOD_LIBTOOL=libtool
 	;;
 *openbsd*|*freebsd*)
@@ -44,12 +57,10 @@ case "$host" in
 	MOD_LIBTOOL=libtool
 	;;
 *darwin*|*Darwin*)
-	os_win32=no
 	NO_UNDEFINED='-no-undefined -flat_namespace'
 	MOD_LIBTOOL=glibtool
 	;;
 *)
-	os_win32=no
 	NO_UNDEFINED='-no-undefined'
 	MOD_LIBTOOL=libtool
 	;;

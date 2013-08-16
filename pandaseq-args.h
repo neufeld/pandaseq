@@ -118,44 +118,44 @@ void panda_tweak_general_sort(
 /**
  * The standard list of assembler-only arguments for PANDAseq binaries.
  */
-extern const panda_tweak_assembler *const panda_stdargs[];
-extern const size_t panda_stdargs_length;
+EXTERN const panda_tweak_assembler *const panda_stdargs[];
+EXTERN const size_t panda_stdargs_length;
 /**
  * The strip primers after switch (-a).
  */
-extern const panda_tweak_assembler panda_stdargs_primers_after;
+EXTERN const panda_tweak_assembler panda_stdargs_primers_after;
 /**
  * The minimum length filter switch (-l).
  */
-extern const panda_tweak_assembler panda_stdargs_min_len;
+EXTERN const panda_tweak_assembler panda_stdargs_min_len;
 /**
  * The maximum length filter switch (-L).
  */
-extern const panda_tweak_assembler panda_stdargs_max_len;
+EXTERN const panda_tweak_assembler panda_stdargs_max_len;
 /**
  * The no N's switch (-N).
  */
-extern const panda_tweak_assembler panda_stdargs_degenerates;
+EXTERN const panda_tweak_assembler panda_stdargs_degenerates;
 /**
  * The forward primer filter switch (-p).
  */
-extern const panda_tweak_assembler panda_stdargs_forward_primer;
+EXTERN const panda_tweak_assembler panda_stdargs_forward_primer;
 /**
  * The reverse primer filter switch (-q).
  */
-extern const panda_tweak_assembler panda_stdargs_reverse_primer;
+EXTERN const panda_tweak_assembler panda_stdargs_reverse_primer;
 /**
  * The threshold filter switch (-t).
  */
-extern const panda_tweak_assembler panda_stdargs_threshold;
+EXTERN const panda_tweak_assembler panda_stdargs_threshold;
 
 /* === FASTQ file arguments === */
 
 /**
  * Command line arguments for a pair of FASTQ files from Illumina.
  */
-extern const panda_tweak_general *const panda_args_fastq_args[];
-extern const size_t panda_args_fastq_args_length;
+EXTERN const panda_tweak_general *const panda_args_fastq_args[];
+EXTERN const size_t panda_args_fastq_args_length;
 
 /**
  * Create a new argument handler.

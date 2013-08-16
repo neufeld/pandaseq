@@ -25,6 +25,15 @@
 #                define EXTERN_C_BEGIN
 #                define EXTERN_C_END
 #        endif
+#        ifdef _WIN32
+#                ifdef PANDA_LIB_COMPILING
+#                        define EXTERN extern __declspec(dllexport)
+#                else
+#                        define EXTERN extern __declspec(dllimport)
+#                endif
+#        else
+#                define EXTERN extern
+#        endif
 #        include <stdarg.h>
 #        include <stdio.h>
 #        include <stdbool.h>

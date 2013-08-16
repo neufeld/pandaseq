@@ -172,7 +172,7 @@ const char *panda_version(
 /**
  * The current flags used be the assember to report errors. Some errors are always reported.
  */
-extern PandaDebug panda_debug_flags;
+EXTERN PandaDebug panda_debug_flags;
 
 /* === Methods (for things from elsewhere) === */
 
