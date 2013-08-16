@@ -59,8 +59,8 @@ static bool set_threshold(
 			free(argument);
 			return false;
 		}
+		free(argument);
 	}
-	free(argument);
 	panda_assembler_set_threshold(assembler, threshold);
 	return true;
 }
@@ -100,8 +100,8 @@ static bool set_primer(
 		} else {
 			set_trim(assembler, offset);
 		}
+		free(argument);
 	}
-	free(argument);
 	return true;
 }
 
@@ -115,7 +115,9 @@ static bool set_primer_group(
 	} else if (flag == 'q') {
 		return set_primer(assembler, argument, "reverse", panda_assembler_set_reverse_trim, panda_assembler_set_reverse_primer, panda_nt_from_ascii_complement);
 	}
-	free(argument);
+	if (argument != NULL) {
+		free(argument);
+	}
 	return false;
 }
 
@@ -137,7 +139,6 @@ static bool set_short_check(
 	PandaModule m;
 
 	if (argument == NULL) {
-		free(argument);
 		return true;
 	}
 	errno = 0;
@@ -172,7 +173,6 @@ static bool set_long_check(
 	PandaModule m;
 
 	if (argument == NULL) {
-		free(argument);
 		return true;
 	}
 	errno = 0;
