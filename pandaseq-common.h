@@ -27,12 +27,12 @@
 #        endif
 #        ifdef _WIN32
 #                ifdef PANDA_LIB_COMPILING
-#                        define EXTERN extern __declspec(dllexport)
+#                        define PANDA_EXTERN extern __declspec(dllexport)
 #                else
-#                        define EXTERN extern __declspec(dllimport)
+#                        define PANDA_EXTERN extern __declspec(dllimport)
 #                endif
 #        else
-#                define EXTERN extern
+#                define PANDA_EXTERN extern
 #        endif
 #        include <stdarg.h>
 #        include <stdio.h>

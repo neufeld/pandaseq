@@ -118,48 +118,48 @@ void panda_tweak_general_sort(
 /**
  * The standard list of assembler-only arguments for PANDAseq binaries.
  */
-EXTERN const panda_tweak_assembler *const panda_stdargs[];
-EXTERN const size_t panda_stdargs_length;
+PANDA_EXTERN const panda_tweak_assembler *const panda_stdargs[];
+PANDA_EXTERN const size_t panda_stdargs_length;
 /**
  * The strip primers after switch (-a).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_primers_after;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_primers_after;
 /**
  * The minimum length filter switch (-l).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_min_len;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_min_len;
 /**
  * The maximum length filter switch (-L).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_max_len;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_max_len;
 /**
  * The no N's switch (-N).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_degenerates;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_degenerates;
 /**
  * The minimum overlap switch (-o).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_min_overlap;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_min_overlap;
 /**
  * The forward primer filter switch (-p).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_forward_primer;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_forward_primer;
 /**
  * The reverse primer filter switch (-q).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_reverse_primer;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_reverse_primer;
 /**
  * The threshold filter switch (-t).
  */
-EXTERN const panda_tweak_assembler panda_stdargs_threshold;
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_threshold;
 
 /* === FASTQ file arguments === */
 
 /**
  * Command line arguments for a pair of FASTQ files from Illumina.
  */
-EXTERN const panda_tweak_general *const panda_args_fastq_args[];
-EXTERN const size_t panda_args_fastq_args_length;
+PANDA_EXTERN const panda_tweak_general *const panda_args_fastq_args[];
+PANDA_EXTERN const size_t panda_args_fastq_args_length;
 
 /**
  * Create a new argument handler.
