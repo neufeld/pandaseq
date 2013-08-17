@@ -59,6 +59,7 @@ libpandaseq_la_LDFLAGS = \
 	$(PTHREAD_LIBS) \
 	-export-symbols-regex '^panda_' \
 	-version-info $(LIB_VER) \
+	$(NO_UNDEFINED) \
 	$(NULL)
 libpandaseq_la_SOURCES = \
 	args.c \

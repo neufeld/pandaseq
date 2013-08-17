@@ -49,7 +49,6 @@ case "$host" in
 *-mingw*)
 	NO_UNDEFINED='-no-undefined'
 	MODULE_LDFLAGS="$LDFLAGS -Wl,-static"
-	LDFLAGS="$LDFLAGS -no-undefined"
 	MOD_LIBTOOL=libtool
 	;;
 *openbsd*|*freebsd*)
