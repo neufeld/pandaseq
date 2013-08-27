@@ -1270,6 +1270,30 @@ file);
 		public size_t overlap;
 
 		/**
+		 * The first base in the result sequence in the overlap.
+		 */
+		public size_t overlap_offset {
+			[CCode(cname = "PANDA_RESULT_OVERLAP_OFFSET")]
+			get;
+		}
+
+		/**
+		 * The first base in the forward sequence in the overlap.
+		 */
+		public size_t overlap_forward_offset {
+			[CCode(cname = "PANDA_RESULT_OVERLAP_FORWARD_OFFSET")]
+			get;
+		}
+
+		/**
+		 * The first base in the reverse sequence in the overlap.
+		 */
+		public size_t overlap_reverse_offset {
+			[CCode(cname = "PANDA_RESULT_OVERLAP_REVERSE_OFFSET")]
+			get;
+		}
+
+		/**
 		 * The number of mismatches in the overlap region.
 		 */
 		public size_t overlap_mismatches;

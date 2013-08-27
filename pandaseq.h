@@ -266,6 +266,19 @@ PandaNextSeq panda_create_async_reader(
 	void **user_data,
 	PandaDestroy *destroy);
 
+	/**
+	 * The first base in the result sequence in the overlap.
+	 */
+#define PANDA_RESULT_OVERLAP_OFFSET(result) ((result)->forward_length - (result)->forward_offset - (result)->overlap)
+	/**
+	 * The first base in the forward sequence in the overlap.
+	 */
+#define PANDA_RESULT_OVERLAP_FORWARD_OFFSET(result) ((result)->forward_length - (result)->overlap)
+	/**
+	 * The first base in the reverse sequence in the overlap.
+	 */
+#define PANDA_RESULT_OVERLAP_REVERSE_OFFSET(result) ((result)->result_length - (result)->overlap)
+
 /* === Convenience macro is for Vala === */
 #        define PANDA_FAIL(file, append, user_data, destroy) (*(user_data) = fopen(file, append ? "a" : "w"), *(destroy) = fclose, *(user_data) == NULL ? NULL : (PandaFailAlign) panda_output_fail)
 #        define PANDACONCATE(x,y) x ## y
