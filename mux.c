@@ -52,6 +52,7 @@ PandaMux panda_mux_new(
 	mux->noalgn = NULL;
 	mux->noalgn_data = NULL;
 	mux->noalgn_destroy = NULL;
+	mux->child_count = 0;
 	pthread_mutex_init(&mux->mutex, NULL);
 	pthread_mutex_init(&mux->next_mutex, NULL);
 	pthread_mutex_init(&mux->noalgn_mutex, NULL);
