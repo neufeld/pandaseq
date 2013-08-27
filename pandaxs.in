@@ -25,8 +25,14 @@ fi
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-@MOD_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@PACKAGE@ -I. @CPPFLAGS@ @CFLAGS@ -c -o "${MOD}.lo" @includedir@/@PACKAGE@/panda_api.c $SRC $PT
-@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" "${MOD}.lo" $PT @NO_UNDEFINED@
+LO_FILES=""
+for each in @includedir@/@LIB_NAME@/panda_api.c $SRC
+do
+	LO="${MOD}-$(basename "${each}.lo")"
+	@MOD_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@LIB_NAME@ @CPPFLAGS@ @CFLAGS@ -c -o "$LO" "$each" $PT
+	LO_FILES="$LO_FILES $LO"
+done
+@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" $LO_FILES $PT @NO_UNDEFINED@
 if [ -d "@libdir@/@PACKAGE@@LIB_MAJOR@" -a -w "@libdir@/@PACKAGE@@LIB_MAJOR@" ]
 then
 	@MOD_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@@LIB_MAJOR@/${MOD}.la"
