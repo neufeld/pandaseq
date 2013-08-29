@@ -75,6 +75,7 @@ libpandaseq_la_SOURCES = \
 	fileio.c \
 	hang.c \
 	idset.c \
+	iter.c \
 	linebuf.c \
 	misc.c \
 	module.c \
