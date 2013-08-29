@@ -72,7 +72,7 @@ void panda_tbld_free(
 
 void panda_tbld_array(
 	PandaTBld t_bld,
-	char *name,
+	const char *name,
 	PandaArrayFormula formula,
 	void *formula_context,
 	size_t max) {
@@ -104,7 +104,7 @@ static double array_prob_formula(
 
 void panda_tbld_array_prob(
 	PandaTBld t_bld,
-	char *name,
+	const char *name,
 	PandaArrayProbFormula formula,
 	void *formula_context,
 	bool log_output) {
@@ -119,14 +119,14 @@ void panda_tbld_array_prob(
 
 void panda_tbld_constant(
 	PandaTBld t_bld,
-	char *name,
+	const char *name,
 	double value) {
 	fprintf(t_bld->header, "#define %s %g\n", name, value);
 }
 
 void panda_tbld_matrix(
 	PandaTBld t_bld,
-	char *name,
+	const char *name,
 	PandaMatrixFormula formula,
 	void *formula_context,
 	size_t x_max,
@@ -169,7 +169,7 @@ static double matrix_prob_formula(
 
 void panda_tbld_matrix_prob(
 	PandaTBld t_bld,
-	char *name,
+	const char *name,
 	PandaMatrixProbFormula formula,
 	void *formula_context,
 	bool log_output) {
