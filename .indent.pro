@@ -32,6 +32,7 @@
 -T PandaSet
 -T PandaSetup
 -T PandaTagging
+-T PandaTBld
 -T PandaTweakAssembler
 -T panda_tweak_assembler
 -T PandaTweakGeneral

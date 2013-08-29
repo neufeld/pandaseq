@@ -16,77 +16,26 @@
 
  */
 
-#include <stdio.h>
 #include <math.h>
-#include "prob.h"
-
-static void buildmatrix(
-	FILE *header,
-	FILE *source,
-	char *name,
-	double (*formula) (double,
-		double)) {
-	int i, j;
-	fprintf(header, "extern double %s[][%d];\n", name, PHREDMAX + 1);
-	fprintf(source, "double %s[][%d] = {\n", name, PHREDMAX + 1);
-	for (i = 0; i <= PHREDMAX; i++) {
-		if (i > 0) {
-			fprintf(source, ", \n");
-		}
-		fprintf(source, "\t{");
-		for (j = 0; j <= PHREDMAX; j++) {
-			if (j > 0) {
-				fprintf(source, ",");
-			}
-
-			fprintf(source, " %g", log(formula(PROBABILITY(i), PROBABILITY(j))));
-
-		}
-		fprintf(source, "}");
-	}
-	fprintf(source, "};\n");
-
-}
-
-static void buildlist(
-	FILE *header,
-	FILE *source,
-	char *name,
-	double (*formula) (double)) {
-	int i;
-	fprintf(header, "extern double %s[%d];\n", name, PHREDMAX + 1);
-	fprintf(source, "double %s[%d] = {\n", name, PHREDMAX + 1);
-	for (i = 0; i <= PHREDMAX; i++) {
-		if (i > 0) {
-			fprintf(source, ",");
-		}
-		fprintf(source, " %g", (double) formula(PROBABILITY(i)));
-	}
-	fprintf(source, "};\n");
-}
+#include "pandaseq-tablebuilder.h"
 
 static double match(
 	double p,
-	double q) {
+	double q,
+	void *data) {
 	return (1 - p) * (1 - q) + p * q / 3;
 }
 
 static double mismatch(
 	double p,
-	double q) {
+	double q,
+	void *data) {
 	return (1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9;
 }
 
-static double nmatch(
-	double p) {
-	if (p == 1) {
-		return -2;
-	}
-	return log(p / 2 + 0.25);
-}
-
 static double score(
-	double p) {
+	double p,
+	void *data) {
 	if (p == 1) {
 		return -2;
 	}
@@ -94,34 +43,27 @@ static double score(
 }
 
 static double score_err(
-	double p) {
+	double p,
+	void *data) {
 	return log(p);
 }
 
 int main(
 	int argc,
 	char **argv) {
-	FILE *header;
-	FILE *source = fopen("table.c", "w");
-	if (source == NULL) {
-		perror("table.c");
-		return 1;
-	}
-	header = fopen("table.h", "w");
-	if (header == NULL) {
-		perror("table.h");
+	PandaTBld t_bld;
+
+	t_bld = panda_tbld_open("table");
+	if (t_bld == NULL) {
 		return 1;
 	}
 
-	fprintf(header, "#ifndef _TABLE_H\n#define _TABLE_H\n#define qual_nn %f\n", log(0.25));
-	buildmatrix(header, source, "qual_match", match);
-	buildmatrix(header, source, "qual_mismatch", mismatch);
-	buildlist(header, source, "qual_nmatch", nmatch);
-	buildlist(header, source, "qual_score", score);
-	buildlist(header, source, "qual_score_err", score_err);
-	fprintf(header, "#endif\n");
+	panda_tbld_constant(t_bld, "qual_nn", log(0.25));
+	panda_tbld_matrix_prob(t_bld, "qual_match", match, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_mismatch", mismatch, NULL, true);
+	panda_tbld_array_prob(t_bld, "qual_score", score, NULL, false);
+	panda_tbld_array_prob(t_bld, "qual_score_err", score_err, NULL, false);
 
-	(void) fclose(source);
-	(void) fclose(header);
+	panda_tbld_free(t_bld);
 	return 0;
 }

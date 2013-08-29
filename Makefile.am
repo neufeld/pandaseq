@@ -29,8 +29,8 @@ man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1 pandaseq-hang.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugin_sample.c
 
-mktable$(EXEEXT): mktable.c
-	@CC_FOR_BUILD@ -std=c99 -pedantic -o $@ $< -lm
+mktable$(EXEEXT): mktable.c tablebuilder.c
+	@CC_FOR_BUILD@ -std=c99 -pedantic -o $@ $^ -lm
 
 pandaseq_CPPFLAGS = $(MAIN_CPPFLAGS) -std=gnu99 -pedantic -g
 pandaseq_CFLAGS = $(MAIN_CFLAGS)
