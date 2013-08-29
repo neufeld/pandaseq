@@ -195,6 +195,14 @@ double panda_quality_log_probability(
 double panda_quality_probability(
 	const panda_qual *q);
 
+/**
+ * Compute the log probability of bases matching or mismatching with the
+ * supplied PHRED scores.
+ */
+double panda_quality_compare(
+	const panda_qual *a,
+	const panda_qual *b);
+
 /* === I/O Methods === */
 
 /**

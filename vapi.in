@@ -1201,6 +1201,12 @@ file);
 			[CCode(cname = "panda_quality_probability")]
 			get;
 		}
+		/**
+		 * Compute the log probability of bases matching or mismatching with the
+		 * supplied PHRED scores.
+		 */
+		[CCode(cname = "panda_quality_compare")]
+		double compare(qual other);
 	}
 
 	/**

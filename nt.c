@@ -101,13 +101,13 @@ double panda_quality_probability(
 
 double panda_quality_log_probability(
 	const panda_qual *q) {
-	int index = (int) q->qual;
-	if (index < 0) {
-		index = 0;
-	} else if (index > PHREDMAX) {
-		index = PHREDMAX;
-	}
-	return qual_score[index];
+	return qual_score[PHREDCLAMP(q->qual)];
+}
+
+double panda_quality_compare(
+	const panda_qual *a,
+	const panda_qual *b) {
+	return ((a->nt & b->nt) != '\0' ? qual_match : qual_mismatch)[PHREDCLAMP(a->qual)][PHREDCLAMP(b->qual)];
 }
 
 panda_nt panda_nt_from_ascii(
