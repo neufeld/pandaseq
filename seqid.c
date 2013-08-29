@@ -101,19 +101,6 @@ int panda_seqid_parse(
 	return panda_seqid_parse_fail(id, input, policy, &detected_format, &endptr);
 }
 
-bool shuffle_along(
-	const char **endptr,
-	const char *match) {
-	size_t match_len = strlen(match);
-	size_t it;
-	for (it = 0; it < match_len; it++) {
-		if (**endptr != match[it])
-			return false;
-		(*endptr)++;
-	}
-	return true;
-}
-
 int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	const char *input,
