@@ -169,6 +169,19 @@ namespace Panda {
 	}
 
 	/**
+	 * FASTQ header format
+	 */
+	[CCode(cname = "PandaIdFmt", has_type_id = false, cprefix = "PANDA_IDFMT_")]
+	public enum IdFormat {
+		UNKNOWN,
+		SRA,
+		CASAVA_1_4,
+		CASAVA_1_7;
+		[CCode(cname = "panda_idfmt_str")]
+		public unowned string to_string();
+	}
+
+	/**
 	 * A single nucleotide
 	 */
 	[CCode(cname = "panda_nt", has_type_id = false, cprefix = "PANDA_NT_")]
@@ -962,7 +975,7 @@ file);
 		 * @see identifier.parse_fail
 		 */
 		[CCode(cname = "panda_idset_add_str")]
-		public bool add_str(string id, Tagging policy = Tagging.OPTIONAL, out bool old = null, out unowned string end = null);
+		public bool add_str(string id, Tagging policy = Tagging.OPTIONAL, out IdFormat detected_format = null, out unowned string end = null);
 
 		/**
 		 * Check if a sequence identifier has been added to the set.
@@ -1108,12 +1121,11 @@ file);
 		/**
 		 * Parse an Illumina header with failure information
 		 *
-		 * @param old whether the sequence is the old CASAVA 1.4-1.6 format
 		 * @param end the remainder of the string if parsing failed.
 		 * @see parse
 		 */
 		[CCode(cname = "panda_seqid_parse_fail")]
-		public static int parse_fail(out identifier id, string input, Tagging policy, out bool old, out unowned string end);
+		public static int parse_fail(out identifier id, string input, Tagging policy, out IdFormat detected_format, out unowned string end);
 		/**
 		 * Compare two Illumina headers
 		 */

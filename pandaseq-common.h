@@ -170,6 +170,16 @@ typedef enum {
  */
 typedef char panda_nt;
 
+/**
+ * FASTQ header format
+ */
+typedef enum {
+	PANDA_IDFMT_UNKNOWN,
+	PANDA_IDFMT_SRA,
+	PANDA_IDFMT_CASAVA_1_4,
+	PANDA_IDFMT_CASAVA_1_7
+} PandaIdFmt;
+
 /* === Structures === */
 
 /**

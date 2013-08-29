@@ -27,6 +27,12 @@
 #        endif
 #        include <pandaseq-common.h>
 EXTERN_C_BEGIN
+/**
+ * Display the name of the header format.
+ */
+const char *panda_idfmt_str(
+	PandaIdFmt format);
+
 /* === Constructors === */
 /**
  * Reset a sequnce identifier.
@@ -51,7 +57,7 @@ int panda_seqid_parse(
  *
  * @id: (out caller-allocates): The structure to fill with the parse result.
  * Returns: The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
- * @old: (out): Whether the sequence is from CASAVA 1.3-1.5 or not.
+ * @detected_format: (out): The pipeline that produced this header.
  * @end_ptr: (out) (transfer none): The point in the input where parsing stopped. If parsing was successful, this will be the end of the string.
  * @see panda_seqid_parse
  */
@@ -59,7 +65,7 @@ int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,
-	bool *old,
+	PandaIdFmt * detected_format,
 	const char **end_ptr);
 
 /* === Methods === */

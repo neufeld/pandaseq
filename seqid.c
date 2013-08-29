@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#include <ctype.h>
 #include <string.h>
 #include "pandaseq.h"
 #include "buffer.h"
@@ -77,6 +78,7 @@ int panda_seqid_compare(
 #define PARSE_CHUNK_MAYBE for(;**endptr != '\0' && **endptr != ':' && **endptr != '#' && **endptr != '/' && **endptr != ' '; (*endptr)++)
 #define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
+#define PARSE_SRA_INT do { value = 0; for(;**endptr != '\0' && **endptr != '.' && **endptr != ' '; (*endptr)++){ if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 
 void panda_seqid_clear(
 	panda_seq_identifier *id) {
@@ -95,15 +97,28 @@ int panda_seqid_parse(
 	const char *input,
 	PandaTagging policy) {
 	const char *endptr;
-	bool old;
-	return panda_seqid_parse_fail(id, input, policy, &old, &endptr);
+	PandaIdFmt detected_format;
+	return panda_seqid_parse_fail(id, input, policy, &detected_format, &endptr);
+}
+
+bool shuffle_along(
+	const char **endptr,
+	const char *match) {
+	size_t match_len = strlen(match);
+	size_t it;
+	for (it = 0; it < match_len; it++) {
+		if (**endptr != match[it])
+			return false;
+		(*endptr)++;
+	}
+	return true;
 }
 
 int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,
-	bool *old,
+	PandaIdFmt * detected_format,
 	const char **endptr) {
 	char *dest;
 	bool has_tag;
@@ -112,12 +127,29 @@ int panda_seqid_parse_fail(
 
 	if (endptr == NULL)
 		endptr = &temp;
-
 	*endptr = input;
-	if (strchr(input, '/') != NULL) {
+
+	if (strncmp(input, "SRR", 3) == 0) {
+		/* NCBI Short Read Archive. Most of the data is too mangled to get out. */
+		if (detected_format != NULL)
+			*detected_format = PANDA_IDFMT_SRA;
+		*endptr += 3;
+		panda_seqid_clear(id);
+		PARSE_SRA_INT;
+		(*endptr)++;
+		sprintf(id->instrument, "SRR%d", value);
+		PARSE_SRA_INT;
+		(*endptr)++;
+		id->lane = value;
+		PARSE_SRA_INT;
+		(*endptr)++;
+		/* endptr still contains stuff, but it's just mangled SRA version of the
+		 * Illumina header, so ignore it. */
+		return value;
+	} else if (strchr(input, '/') != NULL) {
 		/* Old CASAVA 1.4-1.6 format */
-		if (old != NULL)
-			*old = true;
+		if (detected_format != NULL)
+			*detected_format = PANDA_IDFMT_CASAVA_1_4;
 		id->run = 0;
 		id->flowcell[0] = '\0';
 		dest = id->instrument;
@@ -161,8 +193,8 @@ int panda_seqid_parse_fail(
 	} else {
 		/* New CASAVA 1.7+ format */
 		int mate;
-		if (old != NULL)
-			*old = false;
+		if (detected_format != NULL)
+			*detected_format = PANDA_IDFMT_CASAVA_1_7;
 		dest = id->instrument;
 		PARSE_CHUNK {
 			if (dest - id->instrument > sizeof(id->instrument))
@@ -216,5 +248,19 @@ int panda_seqid_parse_fail(
 			return 0;
 		}
 		return mate;
+	}
+}
+
+const char *panda_idfmt_str(
+	PandaIdFmt format) {
+	switch (format) {
+	case PANDA_IDFMT_SRA:
+		return "NCBI Short Read Archive";
+	case PANDA_IDFMT_CASAVA_1_4:
+		return "CASAVA 1.4-1.6";
+	case PANDA_IDFMT_CASAVA_1_7:
+		return "CASAVA 1.7+";
+	default:
+		return "unknown";
 	}
 }

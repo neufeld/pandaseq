@@ -73,9 +73,9 @@ int main(
 	for (it = 1; it < argc; it++) {
 		const char *endptr;
 		int dir;
-		bool old;
+		PandaIdFmt detected_format;
 		panda_seqid_clear(&id);
-		dir = panda_seqid_parse_fail(&id, argv[it] + (argv[it][0] == '@' ? 1 : 0), PANDA_TAG_OPTIONAL, &old, &endptr);
+		dir = panda_seqid_parse_fail(&id, argv[it] + (argv[it][0] == '@' ? 1 : 0), PANDA_TAG_OPTIONAL, &detected_format, &endptr);
 		if (dir == 0) {
 			int count;
 			printf("%s\n", argv[it]);
@@ -87,7 +87,7 @@ int main(
 			panda_seqid_print(&id, stdout);
 			printf("\n\tGOOD\n\tdirection = %s\n\thastag = %s\n", dir == 1 ? "forward" : "reverse", id.tag[0] == '\0' ? "no" : "yes");
 		}
-		printf("\tinstrument = \"%s\"\n\trun = %d\n\tflowcell = \"%s\"\n\tlane = %d\n\ttile = %d\n\tx = %d\n\ty = %d\n\ttag = \"%s\"\n\tCASAVA version = %s\n", id.instrument, id.run, id.flowcell, id.lane, id.tile, id.x, id.y, id.tag, old ? "1.4-1.6" : "1.7+");
+		printf("\tinstrument = \"%s\"\n\trun = %d\n\tflowcell = \"%s\"\n\tlane = %d\n\ttile = %d\n\tx = %d\n\ty = %d\n\ttag = \"%s\"\n\tgenerator = %s\n", id.instrument, id.run, id.flowcell, id.lane, id.tile, id.x, id.y, id.tag, panda_idfmt_str(detected_format));
 	}
 	return 0;
 }

@@ -48,7 +48,7 @@ void panda_idset_add(
 /**
  * Parse a sequence identifier and add it to the set.
  * @id: the text id to parse
- * @old: (out): Whether the sequence is from CASAVA 1.3-1.5 or not.
+ * @detected_format: (out): What pipeline produced this header
  * @end_ptr: (out) (transfer none): The point in the input where parsing stopped. If parsing was successful, this will be the end of the string.
  * Returns: true on success
  * @see panda_seqid_parse_fail
@@ -57,7 +57,7 @@ bool panda_idset_add_str(
 	PandaSet set,
 	const char *id,
 	PandaTagging policy,
-	bool *old,
+	PandaIdFmt * detected_format,
 	const char **end_ptr);
 
 /**
