@@ -105,7 +105,7 @@ int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
 	const char *input,
 	PandaTagging policy,
-	PandaIdFmt * detected_format,
+	PandaIdFmt *detected_format,
 	const char **endptr) {
 	char *dest;
 	bool has_tag;

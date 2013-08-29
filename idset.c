@@ -131,7 +131,7 @@ bool panda_idset_add_str(
 	PandaSet set,
 	const char *id,
 	PandaTagging policy,
-	PandaIdFmt * detected_format,
+	PandaIdFmt *detected_format,
 	const char **end_ptr) {
 	panda_seq_identifier seq_id;
 	if (panda_seqid_parse_fail(&seq_id, id, policy, detected_format, end_ptr) == 0) {

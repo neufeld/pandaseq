@@ -57,7 +57,7 @@ bool panda_idset_add_str(
 	PandaSet set,
 	const char *id,
 	PandaTagging policy,
-	PandaIdFmt * detected_format,
+	PandaIdFmt *detected_format,
 	const char **end_ptr);
 
 /**

@@ -10,6 +10,7 @@
 -T PandaDebug
 -T PandaDestroy
 -T PandaFailAlign
+-T PandaIdFmt
 -T PandaIter
 -T panda_kmer
 -T PandaLineBuf
