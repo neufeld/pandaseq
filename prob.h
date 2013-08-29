@@ -20,5 +20,6 @@
 
 #        define PROBABILITY(score) (pow(10.0, (-(double)(score)) / 10.0))
 #        define PHREDMAX 46
+#        define PHREDCLAMP(x) ((x) > PHREDMAX ? PHREDMAX : ((x) < 0 ? 0 : (x)))
 
 #endif

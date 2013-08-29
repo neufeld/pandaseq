@@ -49,7 +49,6 @@ typedef unsigned int bitstype;
 #define VEEZ(x) ((x) < 0 ? 0 : (x))
 #define WEDGEZ(x) ((x) > 0 ? 0 : (x))
 #define CIRC(index, len) (((index) + (len)) % (len))
-#define PHREDCLAMP(x) ((x) > PHREDMAX ? PHREDMAX : ((x) < 0 ? 0 : (x)))
 
 #ifndef M_LN2
 #        define M_LN2 0.69314718055994530942
