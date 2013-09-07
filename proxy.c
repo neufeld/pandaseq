@@ -194,3 +194,8 @@ void panda_log_proxy_stat_str(
 	panda_writer_append(proxy->writer, "STAT\t%s\t%s\n", name, value);
 	panda_writer_commit(proxy->writer);
 }
+
+PandaWriter panda_log_proxy_get_writer(
+	PandaLogProxy proxy) {
+	return proxy->writer;
+}

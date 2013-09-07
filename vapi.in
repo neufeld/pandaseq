@@ -676,6 +676,11 @@ file);
 		[CCode(cname = "panda_log_proxy_new_stderr")]
 		public LogProxy.stderr();
 
+		public Writer writer {
+			[CCode(cname = "panda_log_proxy_get_writer")]
+			get;
+		}
+
 		/**
 		 * Increase the reference count on a proxy.
 		 */

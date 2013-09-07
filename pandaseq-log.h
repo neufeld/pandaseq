@@ -58,6 +58,11 @@ PandaLogProxy panda_log_proxy_open_file(
 	const char *filename,
 	bool bzip);
 
+/* === Getters and Setters === */
+
+PandaWriter panda_log_proxy_get_writer(
+	PandaLogProxy proxy);
+
 /* === Methods === */
 
 /**
