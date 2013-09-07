@@ -83,6 +83,7 @@ AC_CHECK_LIB(ltdl, lt_dlinit,,AC_MSG_ERROR(Cannot link with libtool libs! (liblt
 
 AC_CHECK_HEADERS([math.h])
 AC_CHECK_LIB([m],[pow])
+AG_CHECK_UNAME_SYSCALL
 
 AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([*** zlib.h is required, install zlib header files])])
 AC_CHECK_LIB([z], [gzopen], [], [AC_MSG_ERROR([*** gzopen is required, install zlib library files])])

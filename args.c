@@ -21,6 +21,9 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#if HAVE_UNAME_SYSCALL
+#        include<sys/utsname.h>
+#endif
 #ifdef HAVE_PTHREAD
 #        include<pthread.h>
 #endif
@@ -93,6 +96,9 @@ bool panda_parse_args(
 #ifdef HAVE_PTHREAD
 	PandaMux mux = NULL;
 	int threads = 1;
+#endif
+#if HAVE_UNAME_SYSCALL
+	struct utsname uname_info;
 #endif
 	writer_out = panda_writer_new_stdout();
 	writer_err = panda_writer_new_stderr();
@@ -290,11 +296,12 @@ bool panda_parse_args(
 	}
 	logger = panda_log_proxy_new(writer_err);
 	panda_writer_set_slave(writer_out, writer_err);
-	panda_writer_unref(writer_err);
 
 	if (help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
 		size_t general_it = 0;
 		size_t assembler_it = 0;
+
+		panda_writer_unref(writer_err);
 
 		fprintf(stderr, "%s <%s>\nUsage: %s", PACKAGE_STRING, PACKAGE_BUGREPORT, args[0]);
 		for (general_it = 0; general_it < general_args_length; general_it++) {
@@ -389,6 +396,16 @@ bool panda_parse_args(
 	next = panda_create_async_reader(next, next_data, next_destroy, threads, &next_data, &next_destroy);
 #endif
 	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">");
+
+#if HAVE_UNAME_SYSCALL
+	if (uname(&uname_info) == 0) {
+		panda_writer_append(writer_err, "INFO\tUNAME\t%s %s %s %s\n", uname_info.sysname, uname_info.release, uname_info.version, uname_info.machine);
+		panda_writer_commit(writer_err);
+	} else {
+		perror("uname");
+	}
+#endif
+	panda_writer_unref(writer_err);
 
 #define BSIZE 2048
 	for (it = 0; it < args_length; it++) {
