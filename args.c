@@ -388,7 +388,7 @@ bool panda_parse_args(
 #ifdef HAVE_PTHREAD
 	next = panda_create_async_reader(next, next_data, next_destroy, threads, &next_data, &next_destroy);
 #endif
-	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">\n");
+	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">");
 
 #define BSIZE 2048
 	for (it = 0; it < args_length; it++) {
