@@ -6,7 +6,7 @@ PANDASEQ is a program to align Illumina reads, optionally with PCR primers embed
 INSTALLATION
 ------------
 
-Binary packages are available for recent versions of MacOS and Linux. Installing from source is not too difficult.
+Binary packages are available for recent versions of Windows, MacOS and Linux. Installing from source is not too difficult. See https://github.com/neufeld/pandaseq/wiki/Installation for details.
 
 Development packages for zlib and libbz2 are needed, as is a standard compiler environment. On Ubuntu, this can be installed via
 	sudo apt-get install build-essentials libtool automake zlib1g-dev libbz2-dev
