@@ -1119,7 +1119,7 @@ file);
 		/**
 		 * Parse an Illumina header
 		 *
-		 * Fills `id` with the parse result. The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
+		 * @return the direction of the sequence (1 for forward, 2 or 3 for reverse) or 0 if an error occurs. Sequences from the Short Read Archive are always 1.
 		 */
 		[CCode(cname = "panda_seqid_parse")]
 		public static int parse(out identifier id, string input, Tagging policy);

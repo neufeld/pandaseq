@@ -45,7 +45,7 @@ void panda_seqid_clear(
  * Parse an Illumina header
  *
  * @id: (out caller-allocates): The structure to fill with the parse result.
- * Returns: The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
+ * Returns: The function returns the direction of the sequence (1 for forward, 2 or 3 for reverse) or 0 if an error occurs. Sequences from the Short Read Archive are always 1.
  */
 int panda_seqid_parse(
 	panda_seq_identifier *id,
@@ -56,9 +56,9 @@ int panda_seqid_parse(
  * Parse the Illumina header
  *
  * @id: (out caller-allocates): The structure to fill with the parse result.
- * Returns: The function returns the direction of the sequence (1 for forward, 2 for reverse) or 0 if an error occurs.
  * @detected_format: (out): The pipeline that produced this header.
  * @end_ptr: (out) (transfer none): The point in the input where parsing stopped. If parsing was successful, this will be the end of the string.
+ * Returns: The function returns the direction of the sequence (1 for forward, 2 or 3 for reverse) or 0 if an error occurs. Sequences from the Short Read Archive are always 1.
  * @see panda_seqid_parse
  */
 int panda_seqid_parse_fail(
