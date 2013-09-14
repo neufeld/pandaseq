@@ -120,6 +120,7 @@ static bool stream_next_seq(
 	struct fastq_data *data) {
 	panda_seq_identifier rid;
 	char buffer[BUFFER_SIZE];
+	PandaIdFmt format;
 	const char *line;
 	int fdir;
 	int rdir;
@@ -132,7 +133,7 @@ static bool stream_next_seq(
 	if ((line = panda_linebuf_next(data->forward)) == NULL) {
 		return false;
 	}
-	if ((fdir = panda_seqid_parse(id, &line[1], data->policy)) == 0) {
+	if ((fdir = panda_seqid_parse_fail(id, &line[1], data->policy, &format, NULL)) == 0) {
 		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
 		return false;
 	}
@@ -143,7 +144,7 @@ static bool stream_next_seq(
 		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
 		return false;
 	}
-	if (!panda_seqid_equal(id, &rid)) {
+	if (!panda_seqid_equal(id, &rid) || format != PANDA_IDFMT_SRA && rdir == fdir) {
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
 		return false;
 	}

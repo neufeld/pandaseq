@@ -128,11 +128,10 @@ int panda_seqid_parse_fail(
 		PARSE_SRA_INT;
 		(*endptr)++;
 		id->lane = value;
-		PARSE_SRA_INT;
 		(*endptr)++;
 		/* endptr still contains stuff, but it's just mangled SRA version of the
 		 * Illumina header, so ignore it. */
-		return value;
+		return 1;
 	} else if (strchr(input, '/') != NULL) {
 		/* Old CASAVA 1.4-1.6 format */
 		if (detected_format != NULL)
