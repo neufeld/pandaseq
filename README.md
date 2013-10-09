@@ -1,4 +1,4 @@
-![PANDASEQ](pandaseq.svg)
+![PANDASEQ](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq.svg)
 ========
 
 PANDASEQ is a program to align Illumina reads, optionally with PCR primers embedded in the sequence, and reconstruct an overlapping sequence.
