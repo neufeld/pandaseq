@@ -12,7 +12,7 @@ Development packages for zlib and libbz2 are needed, as is a standard compiler e
 
 	sudo apt-get install build-essentials libtool automake zlib1g-dev libbz2-dev
 
-On MacOS, the Apple Developer tools and Fink must be installed, then
+On MacOS, the Apple Developer tools and Fink (or MacPorts or Brew) must be installed, then
 
 	sudo fink install bzip2-dev
 
@@ -31,7 +31,7 @@ Please consult the manual page by invoking
 
 	man pandaseq
 
-or visiting <http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_man1.html>
+or visiting [online PANDAseq manual page](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_man1.html).
 
 The short version is
 
@@ -60,48 +60,48 @@ to create a header with basic details about your system. Please include:
 BINDING
 -------
 
-PANDAseq may be used in other programs via a programmatic interface. Consult the header file pandaseq.h for more details. The C interface is pseudo-object oriented and documented in the header. The library provides pkg-config information, so compiling against it can be done using something like:
+PANDAseq may be used in other programs via a programmatic interface. Consult the header file `pandaseq.h` for more details. The C interface is pseudo-object oriented and documented in the header. The library provides `pkg-config` information, so compiling against it can be done using something like:
 
 	cc mycode.c `pkg-config --cflags --libs pandaseq-2`
 
-or using, in configure.ac:
+or using, in `configure.ac`:
 
-	PKG_CHECK_MODULES(PANDASEQ, [ pandaseq-2 >= 2.2 ])
+	PKG_CHECK_MODULES(PANDASEQ, [ pandaseq-2 >= 2.5 ])
 
-A Vala binding is also included. Documentation is available at <http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-vapi/>
+A [Vala binding](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-vapi/) is also included.
 
 Other lanugage bindings are welcome.
 
 FAQ
 ---
 
-Q: Can I insist that PANDAseq only assembler perfect sequences?
-A: Yes, but you shouldn't want to do it. The whole point is to fix sequences which are probably good. There is no quality setting that will achieve this effect. You can use the plugin `completely_miss_the_point`, but this really does miss the point. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
+### Can I insist that PANDAseq only assembler perfect sequences?
+Yes, but you shouldn't want to do it. The whole point is to fix sequences which are probably good. There is no quality setting that will achieve this effect. You can use the plugin `completely_miss_the_point`, but this really does miss the point. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
 
-Q: Can PANDAseq use multiple core/threads?
-A: Yes, but you shouldn't turn it on until you've checked you need it. In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with `top`; watch the CPU% for the PANDAseq process and the overall system CPU waiting time (`%wa` in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
+### Can PANDAseq use multiple core/threads?
+Yes, but you shouldn't turn it on until you've checked you need it. In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with `top`; watch the CPU% for the PANDAseq process and the overall system CPU waiting time (`%wa` in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
 
-Q: Can I use SAM/BAM files as input without converting them to FASTQ?
-A: Yes. [PANDAseq-sam](https://github.com/neufeld/pandaseq-sam) extends PANDAseq to do this. SAM/BAM files do not guarantee that sequences will be in the right order, so files may be slower and PANDAseq will use more memory.
+### Can I use SAM/BAM files as input without converting them to FASTQ?
+Yes. [PANDAseq-sam](https://github.com/neufeld/pandaseq-sam) extends PANDAseq to do this. SAM/BAM files do not guarantee that sequences will be in the right order, so files may be slower and PANDAseq will use more memory.
 
-Q: The scores of the output bases seem really low. What's wrong?
-A: Nothing. The quality scores of the output do not have any similarity to the original quality scores and are not uniform across the sequence (i.e., the overlap is scored differently from the unpaired ends.
+### The scores of the output bases seem really low. What's wrong?
+Nothing. The quality scores of the output do not have any similarity to the original quality scores and are not uniform across the sequence (i.e., the overlap is scored differently from the unpaired ends.
 
 In the overlap region where there is a mismatch, it is the probability that one base was sequenced correctly and the other was sequenced incorrectly. If both bases have high scores (i.e., are probably correct), the chance of the resulting base is low (i.e., is probably incorrect). For more information, see the paper. Also, remember that the PHRED to probability conversion is not linear, so most scores are relatively high. It's also not uncommon to see the PHRED score `!`, which is zero, but in this context, it means less than `"` (PHRED = 1, P = .20567).
 
 Again, these scores are not meant to be interpreted as regular scores and should not be processed by downstream applications expecting PHRED scores from Illumina sequences.
 
 
-Q: The scores of the non-overlapping regions are not the same as the original reads. Why?
-A: The PHRED scores from the input are not copied directly to the output when using FASTQ (`-F`) output. They go through a transformation from PHRED scores into probabilities, which is how PANDAseq uses them. When output as FASTQ, the probability is converted back to a PHRED scores. The rounding error involved can cause a score to jump by one.
+### The scores of the non-overlapping regions are not the same as the original reads. Why?
+The PHRED scores from the input are not copied directly to the output when using FASTQ (`-F`) output. They go through a transformation from PHRED scores into probabilities, which is how PANDAseq uses them. When output as FASTQ, the probability is converted back to a PHRED scores. The rounding error involved can cause a score to jump by one.
 
 ALTERNATIVES
 ------------
 
-[PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear)
-[FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/)
-[COPE (Connecting Overlapped Pair-End reads)](ftp://ftp.genomics.org.cn/pub/cope)
-[XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)
+[PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear)  
+[FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/)  
+[COPE (Connecting Overlapped Pair-End reads)](ftp://ftp.genomics.org.cn/pub/cope)  
+[XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)  
 
 CITATION
 --------
