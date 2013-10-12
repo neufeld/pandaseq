@@ -203,6 +203,12 @@ double panda_quality_compare(
 	const panda_qual *a,
 	const panda_qual *b);
 
+/**
+ * Convert the probability to a PHRED quality score.
+ */
+char panda_result_phred(
+	const panda_result *r);
+
 /* === I/O Methods === */
 
 /**

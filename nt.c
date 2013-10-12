@@ -17,6 +17,7 @@
  */
 #include "config.h"
 #include <math.h>
+#include <stdlib.h>
 #include "pandaseq.h"
 #include "nt.h"
 #include "prob.h"
@@ -108,6 +109,27 @@ double panda_quality_compare(
 	const panda_qual *a,
 	const panda_qual *b) {
 	return ((a->nt & b->nt) != '\0' ? qual_match : qual_mismatch)[PHREDCLAMP(a->qual)][PHREDCLAMP(b->qual)];
+}
+
+static int find_double(
+	const double *key,
+	const double *value) {
+	if (*key == *value)
+		return 0;
+	return *key < *value ? -1 : 1;
+}
+
+char panda_result_phred(
+	const panda_result *r) {
+	const double *item;
+
+	if (r->p <= -2)
+		return 1;
+
+	item = bsearch(&r->p, qual_score, PHREDMAX, sizeof(double), (int (*)(const void *, const void *)) find_double);
+	if (item == NULL)
+		return 1;
+	return item - qual_score;
 }
 
 panda_nt panda_nt_from_ascii(

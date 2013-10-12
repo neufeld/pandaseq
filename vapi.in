@@ -1210,6 +1210,13 @@ file);
 		 */
 		public double p;
 		/**
+		 * Convert the probability to a PHRED quality score.
+		 */
+		public int8 phred {
+			[CCode(cname = "panda_result_phred")]
+			get;
+		}
+		/**
 		 * Find the best offset of a small sequence in a large sequence.
 		 * @param threshold the minimum log probability to match
 		 * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction

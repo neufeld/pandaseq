@@ -110,7 +110,7 @@ bool panda_output_fastq(
 	}
 	panda_writer_append(writer, "\n+\n");
 	for (it = 0; it < sequence->sequence_length; it++) {
-		panda_writer_append_c(writer, 33 - (int) (10 * log10(1 - exp(sequence->sequence[it].p)) - 0.5));
+		panda_writer_append_c(writer, 33 + panda_result_phred(&sequence->sequence[it]));
 	}
 	panda_writer_append_c(writer, '\n');
 	panda_writer_commit(writer);
