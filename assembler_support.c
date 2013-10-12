@@ -68,12 +68,10 @@ PandaAssembler panda_assembler_new_kmer(
 	assembler->norpcount = 0;
 	assembler->okcount = 0;
 	assembler->lowqcount = 0;
-	assembler->degencount = 0;
 	assembler->noalgncount = 0;
 	assembler->badreadcount = 0;
 	assembler->slowcount = 0;
 	assembler->count = 0;
-	assembler->no_n = false;
 	assembler->post_primers = false;
 	memset(assembler->overlapcount, 0, PANDA_MAX_LEN * sizeof(long));
 	assembler->longest_overlap = 0;
@@ -111,7 +109,6 @@ void panda_assembler_copy_configuration(
 	dest->reverse_trim = src->reverse_trim;
 	dest->threshold = src->threshold;
 	dest->minoverlap = src->minoverlap;
-	dest->no_n = src->no_n;
 	dest->post_primers = src->post_primers;
 }
 
@@ -192,11 +189,6 @@ long panda_assembler_get_slow_count(
 	return assembler->slowcount;
 }
 
-long panda_assembler_get_degenerate_count(
-	PandaAssembler assembler) {
-	return assembler->degencount;
-}
-
 long panda_assembler_get_failed_alignment_count(
 	PandaAssembler assembler) {
 	return assembler->noalgncount;
@@ -205,17 +197,6 @@ long panda_assembler_get_failed_alignment_count(
 long panda_assembler_get_count(
 	PandaAssembler assembler) {
 	return assembler->count;
-}
-
-bool panda_assembler_get_disallow_degenerates(
-	PandaAssembler assembler) {
-	return assembler->no_n;
-}
-
-void panda_assembler_set_disallow_degenerates(
-	PandaAssembler assembler,
-	bool allow) {
-	assembler->no_n = allow;
 }
 
 PandaAssembler panda_assembler_ref(

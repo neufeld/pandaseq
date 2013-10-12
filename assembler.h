@@ -66,7 +66,6 @@ struct panda_assembler {
 	long badreadcount;
 	long slowcount;
 	long count;
-	bool no_n;
 	bool post_primers;
 #        ifdef HAVE_PTHREAD
 	pthread_mutex_t mutex;

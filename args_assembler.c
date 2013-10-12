@@ -34,12 +34,23 @@ static bool set_primers_after(
 
 const panda_tweak_assembler panda_stdargs_primers_after = { 'a', NULL, "Strip the primers after assembly, rather than before.", set_primers_after };
 
+bool no_n_check(
+	const panda_result_seq *sequence,
+	void *user_data) {
+
+	return sequence->degenerates == 0;
+}
+
 static bool set_degenerates(
 	PandaAssembler assembler,
 	char flag,
 	char *argument,
 	bool is_set) {
-	panda_assembler_set_disallow_degenerates(assembler, is_set);
+	if (is_set) {
+		PandaModule m = panda_module_new("DEGENERATE", no_n_check, NULL, NULL, NULL);
+		panda_assembler_add_module(assembler, m);
+		panda_module_unref(m);
+	}
 	return true;
 }
 

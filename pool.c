@@ -94,9 +94,6 @@ static void *do_assembly(
 		panda_assembler_get_bad_read_count(info->assembler));
 	STAT("SLOW", long,
 		panda_assembler_get_slow_count(info->assembler));
-	if (panda_assembler_get_disallow_degenerates(info->assembler))
-		STAT("DEGENERATE", long,
-			panda_assembler_get_degenerate_count(info->assembler));
 	panda_assembler_module_stats(info->assembler);
 	STAT("OK", long,
 		panda_assembler_get_ok_count(info->assembler));

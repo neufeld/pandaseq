@@ -275,24 +275,6 @@ namespace Panda {
 		}
 
 		/**
-		 * The number of sequences rejected because they contain degenerate (N) bases.
-		 */
-		public long degenerate_count {
-			[CCode(cname = "panda_assembler_get_degenerate_count")]
-			get;
-		}
-
-		/**
-		 * Reject sequences with degenerate (N) bases.
-		 */
-		public bool disallow_degenerates {
-			[CCode(cname = "panda_assembler_get_disallow_degenerates")]
-			get;
-			[CCode(cname = "panda_assembler_set_disallow_degenerates")]
-			set;
-		}
-
-		/**
 		 * The minimum error estimation in the sequence data (epsilon)
 		 */
 		public double error_estimation {

@@ -215,21 +215,6 @@ long panda_assembler_get_count(
 	PandaAssembler assembler);
 
 /**
- * The number of sequences rejected because they contain degenerate (N) bases.
- */
-long panda_assembler_get_degenerate_count(
-	PandaAssembler assembler);
-
-/**
- * Reject sequences with degenerate (N) bases.
- */
-bool panda_assembler_get_disallow_degenerates(
-	PandaAssembler assembler);
-void panda_assembler_set_disallow_degenerates(
-	PandaAssembler assembler,
-	bool allow);
-
-/**
  * The minimum error estimation in the sequence data (epsilon)
  */
 double panda_assembler_get_error_estimation(
