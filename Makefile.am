@@ -94,6 +94,7 @@ pkglibx_LTLIBRARIES = \
 	before.la \
 	completely_miss_the_point.la \
 	filter.la \
+	min_phred.la \
 	validtag.la \
 	$(NULL)
 after_la_CFLAGS = -DPANDASEQ_MODULE=after -g
@@ -112,6 +113,10 @@ filter_la_CFLAGS = -DPANDASEQ_MODULE=filter -g
 filter_la_SOURCES = plugin_filter.c panda_api.c
 filter_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 filter_la_LIBADD = libpandaseq.la
+min_phred_la_CFLAGS = -DPANDASEQ_MODULE=min_phred -g
+min_phred_la_SOURCES = plugin_min_phred.c panda_api.c
+min_phred_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+min_phred_la_LIBADD = libpandaseq.la
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
 validtag_la_SOURCES = plugin_validtag.c panda_api.c
 validtag_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
