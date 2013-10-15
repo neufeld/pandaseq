@@ -335,6 +335,9 @@ This can be used to only include sequences with perfect overlap regions. You sho
 filter:\fIfile\fR
 Output only the sequences whose identifiers match those in the file specified, one per line. If the file is missing, sequences are read from standard input.
 .TP
+min_phred:\fIvalue\fR
+Check the PHRED score of every base in the output sequence and make sure it is at least \fIvalue\fR. The threshold is based on the sequence as a whole, but this is based on the individual base scores, as they would be seen with the \fB-F\fR option.
+.TP
 validtag:\fItag1\fR:\fItag2\fR:...
 Only include sequences in the output with one of the tags specified. This can be used to demultiplex sequences. This will not work well with \fB-B\fR option.
 .SH SEE ALSO
