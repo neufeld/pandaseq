@@ -36,6 +36,9 @@ PandaLogProxy panda_log_proxy_new(
 	PandaWriter writer) {
 	PandaLogProxy proxy = malloc(sizeof(struct panda_log_proxy));
 	proxy->refcnt = 1;
+#ifdef HAVE_PTHREAD
+	pthread_mutex_init(&proxy->mutex, NULL);
+#endif
 	proxy->writer = panda_writer_ref(writer);
 	return proxy;
 }
