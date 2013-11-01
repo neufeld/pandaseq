@@ -81,6 +81,7 @@ libpandaseq_la_SOURCES = \
 	module.c \
 	mux.c \
 	nt.c \
+	offset.c \
 	output.c \
 	proxy.c \
 	pool.c \
