@@ -31,7 +31,6 @@ struct shared_info {
 	MANAGED_MEMBER(
 		PandaOutputSeq,
 		output);
-	volatile bool some_seqs;
 	time_t starttime;
 };
 
@@ -42,6 +41,7 @@ struct thread_info {
 #endif
 	PandaAssembler assembler;
 	size_t index;
+	volatile bool some_seqs;
 };
 
 #define STAT(name, type, val)	PANDACONCAT(panda_log_proxy_stat_, type)(info->assembler->logger, info->assembler, name, (val))
@@ -76,9 +76,7 @@ static void *do_assembly(
 		info->shared->output(result, info->shared->output_data);
 	}
 	count = panda_assembler_get_count(info->assembler);
-	if (count > 0) {
-		info->shared->some_seqs = true;
-	}
+	info->some_seqs = count > 0;
 	printtime(info, count);
 	if (panda_assembler_get_forward_primer(info->assembler, NULL) != NULL)
 		STAT("NOFP", long,
@@ -114,12 +112,12 @@ bool panda_run_pool(
 	size_t it;
 	struct thread_info self;
 	struct shared_info shared_info;
+	bool some_seqs = false;
 	struct thread_info *thread_list;
 
 	if (assembler == NULL)
 		return false;
 
-	shared_info.some_seqs = false;
 	shared_info.output = output;
 	shared_info.output_data = output_data;
 	shared_info.output_destroy = output_destroy;
@@ -156,10 +154,11 @@ bool panda_run_pool(
 	if (threads > 1 && mux != NULL) {
 		for (it = 0; it < threads - 1; it++) {
 			pthread_join(thread_list[it].thread, NULL);
+			some_seqs |= thread_list[it].some_seqs;
 		}
 		free(thread_list);
 	}
 #endif
 	DESTROY_MEMBER(&shared_info, output);
-	return shared_info.some_seqs;
+	return some_seqs;
 }

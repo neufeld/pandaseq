@@ -70,9 +70,9 @@ static bool async_next_seq(
 		pthread_mutex_lock(&data->free_mutex);
 		seq->next = data->free;
 		data->free = seq;
-		pthread_mutex_unlock(&data->free_mutex);
 		pthread_setspecific(data->in_flight, NULL);
 		pthread_cond_signal(&data->has_free);
+		pthread_mutex_unlock(&data->free_mutex);
 	}
 
 	pthread_mutex_lock(&data->ready_mutex);
@@ -109,8 +109,10 @@ static void *async_thread(
 		while ((seq = data->free) == NULL) {
 			if (pthread_cond_wait(&data->has_free, &data->free_mutex) != 0 || data->done) {
 				data->done = true;
-				pthread_cond_broadcast(&data->is_ready);
 				pthread_mutex_unlock(&data->free_mutex);
+				pthread_mutex_lock(&data->ready_mutex);
+				pthread_cond_broadcast(&data->is_ready);
+				pthread_mutex_unlock(&data->ready_mutex);
 				pthread_exit(NULL);
 			}
 		}
@@ -137,7 +139,10 @@ static void *async_thread(
 					next = seq->next;
 					free(seq);
 				}
+				pthread_mutex_lock(&data->ready_mutex);
 				pthread_cond_broadcast(&data->is_ready);
+				pthread_mutex_unlock(&data->ready_mutex);
+				seq = next;
 				pthread_exit(NULL);
 			}
 		}
@@ -150,8 +155,9 @@ static void async_destroy(
 	struct seq_data *temp;
 	data->done = true;
 
-	pthread_cond_broadcast(&data->is_ready);
+	pthread_mutex_lock(&data->free_mutex);
 	pthread_cond_broadcast(&data->has_free);
+	pthread_mutex_unlock(&data->free_mutex);
 	pthread_join(data->reader, NULL);
 	pthread_cond_destroy(&data->is_ready);
 	pthread_cond_destroy(&data->has_free);
