@@ -21,10 +21,17 @@
 
 PandaAssembler panda_assembler_new_from_file(
 	const char *file_name,
-	PandaLogProxy logger, const panda_result_seq *(*assemble)(PandaAssembler assemble, panda_seq_identifier *id, const panda_qual *forward, size_t forward_length, const panda_qual *reverse, size_t reverse_length)) {
+	PandaLogProxy logger,
+	const panda_result_seq *(*assemble) (PandaAssembler assemble,
+		panda_seq_identifier *id,
+		const panda_qual *forward,
+		size_t forward_length,
+		const panda_qual *reverse,
+		size_t reverse_length)) {
 	lt_dlhandle handle = NULL;
 	lt_dladvise advise;
-	PandaAssembler (*new_func)(
+	PandaAssembler (
+		*new_func) (
 		PandaNextSeq next,
 		void *next_data,
 		PandaDestroy next_destroy,
