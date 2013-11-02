@@ -1479,7 +1479,7 @@ file);
 	 * @param reverse the location of the parsed sequence data of the reverse read.
 	 */
 	[CCode(cname = "PandaNextSeq")]
-	public delegate bool NextSeq(out identifier id, out unowned qual[] forward, out unowned qual[] reverse);
+	public delegate bool NextSeq(out identifier id, [CCode(array_length_type = "size_t")] out unowned qual[] forward, [CCode(array_length_type = "size_t")] out unowned qual[] reverse);
 
 	/**
 	 * Write a finsihed sequence to an appropriate place.
