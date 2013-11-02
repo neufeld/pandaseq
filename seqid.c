@@ -46,6 +46,19 @@ const char *panda_seqid_str(
 	return buffer;
 }
 
+void panda_seqid_copy(
+	const panda_seq_identifier *src,
+	panda_seq_identifier *dest) {
+	dest->run = src->run;
+	dest->lane = src->lane;
+	dest->tile = src->tile;
+	dest->x = src->x;
+	dest->y = src->y;
+	strncpy(dest->instrument, src->instrument, sizeof(src->instrument));
+	strncpy(dest->flowcell, src->flowcell, sizeof(src->flowcell));
+	strncpy(dest->tag, src->tag, PANDA_TAG_LEN);
+}
+
 bool panda_seqid_equal(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two) {

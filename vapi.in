@@ -1155,7 +1155,7 @@ file);
 	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
-	[CCode(cname = "panda_seq_identifier", has_type_id = false, destroy_function = "")]
+	[CCode(cname = "panda_seq_identifier", copy_function = "panda_seqid_copy", has_type_id = false, destroy_function = "")]
 	public struct identifier {
 		string flowcell;
 		string instrument;

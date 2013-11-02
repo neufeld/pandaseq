@@ -34,6 +34,16 @@ const char *panda_idfmt_str(
 	PandaIdFmt format);
 
 /* === Constructors === */
+
+/**
+ * Reset a sequnce identifier.
+ * @src: The structure to read.
+ * @dest: (out caller-allocates): The structure to write.
+ */
+void panda_seqid_copy(
+	const panda_seq_identifier *src,
+	panda_seq_identifier *dest);
+
 /**
  * Reset a sequnce identifier.
  * @id: (out caller-allocates): The structure to clear.
