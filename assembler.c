@@ -373,9 +373,7 @@ const panda_result_seq *panda_assembler_assemble(
 	assembler->result.name = *id;
 	assembler->result.forward_length = forward_length;
 	assembler->result.reverse_length = reverse_length;
-	for (it = 0; it < forward_length; it++)
-		assembler->result.forward[it] = forward[it];
-	for (it = 0; it < reverse_length; it++)
-		assembler->result.reverse[it] = reverse[it];
+	assembler->result.forward = forward;
+	assembler->result.reverse = reverse;
 	return assemble_seq(assembler) ? &assembler->result : NULL;
 }
