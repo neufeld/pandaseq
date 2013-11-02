@@ -16,8 +16,8 @@
 
  */
 
-#ifndef ASM_H
-#        define ASM_H
+#ifndef ALGO_H
+#        define ALGO_H
 #        include "config.h"
 #        include "pandaseq.h"
 #        include "misc.h"
@@ -25,55 +25,13 @@
 #                include <pthread.h>
 #        endif
 
-struct panda_assembler {
+struct panda_algorithm {
+	const struct panda_algorithm_class *clazz;
 	volatile size_t refcnt;
-
-	 MANAGED_MEMBER(
-		PandaNextSeq,
-		next);
-	 MANAGED_MEMBER(
-		PandaFailAlign,
-		noalgn);
-	PandaLogProxy logger;
-
-	size_t *rejected;
-	PandaModule *modules;
-	size_t modules_length;
-	size_t modules_size;
-
-	double threshold;
-	int minoverlap;
-
-	seqindex *kmerseen;
-	size_t num_kmers;
-	PandaAlgorithm algo;
-
-	panda_result_seq result;
-
-	size_t forward_primer_length;
-	size_t reverse_primer_length;
-	size_t forward_trim;
-	size_t reverse_trim;
-
-	long nofpcount;
-	long norpcount;
-	long okcount;
-	long lowqcount;
-	long degencount;
-	long noalgncount;
-	long badreadcount;
-	long slowcount;
-	long count;
-	bool post_primers;
 #        ifdef HAVE_PTHREAD
 	pthread_mutex_t mutex;
 #        endif
-	panda_nt forward_primer[MAX_LEN];
-	panda_nt reverse_primer[MAX_LEN];
-	panda_result result_seq[2 * MAX_LEN];
-	long overlapcount[MAX_LEN];
-	size_t longest_overlap;
-	char name[MAX_LEN];
+	void *end;
 };
 
 #endif

@@ -58,9 +58,9 @@ int main(
 		return 1;
 	}
 
-	panda_tbld_constant(t_bld, "qual_nn", log(0.25));
-	panda_tbld_matrix_prob(t_bld, "qual_match", match, NULL, true);
-	panda_tbld_matrix_prob(t_bld, "qual_mismatch", mismatch, NULL, true);
+	panda_tbld_constant(t_bld, "qual_nn_simple_bayesian", log(0.25));
+	panda_tbld_matrix_prob(t_bld, "qual_match_simple_bayesian", match, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_mismatch_simple_bayesian", mismatch, NULL, true);
 	panda_tbld_array_prob(t_bld, "qual_score", score, NULL, false);
 	panda_tbld_array_prob(t_bld, "qual_score_err", score_err, NULL, false);
 

@@ -215,15 +215,6 @@ long panda_assembler_get_count(
 	PandaAssembler assembler);
 
 /**
- * The minimum error estimation in the sequence data (epsilon)
- */
-double panda_assembler_get_error_estimation(
-	PandaAssembler assembler);
-void panda_assembler_set_error_estimation(
-	PandaAssembler assembler,
-	double q);
-
-/**
  * Attached a callback for every sequence that fails to have an overlap.
  *
  * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.

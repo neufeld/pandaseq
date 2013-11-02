@@ -29,6 +29,7 @@
 #        include <pthread.h>
 #endif
 #include "pandaseq.h"
+#include "algo.h"
 #include "assembler.h"
 #include "buffer.h"
 #include "misc.h"
@@ -53,6 +54,7 @@ typedef unsigned int bitstype;
 static bool align(
 	PandaAssembler assembler,
 	panda_result_seq *result) {
+	double qual_nn = assembler->algo->clazz->prob_unpaired;
 	ssize_t i, j;
 	ssize_t df, dr;
 	/* For determining overlap. */
@@ -110,29 +112,12 @@ static bool align(
 	result->overlaps_examined = 0;
 	/* Compute the quality of the overlapping region for the various overlaps and pick the best one. */
 	FOR_BITS_IN_LIST(posn, counter) {
-		size_t matches = 0;
-		size_t mismatches = 0;
-		size_t unknowns = 0;
 		double probability;
-		overlap = counter + assembler->minoverlap;
+		size_t overlap = counter + assembler->minoverlap;
 
-		for (i = 0; i < overlap; i++) {
-			int findex = result->forward_length + i - overlap;
-			int rindex = result->reverse_length - i - 1;
-			panda_nt f = result->forward[findex].nt;
-			panda_nt r = result->reverse[rindex].nt;
-			if (PANDA_NT_IS_N(f) || PANDA_NT_IS_N(r)) {
-				unknowns++;
-			} else if ((f & r) != 0) {
-				matches++;
-			} else {
-				mismatches++;
-			}
-		}
+		probability = assembler->algo->clazz->overlap_probability(panda_algorithm_data(assembler->algo), result->forward, result->forward_length, result->reverse, result->reverse_length, overlap);
 
-		probability = (qual_nn * (result->forward_length + result->reverse_length - 2 * overlap + unknowns) + matches * assembler->pmatch + mismatches * assembler->pmismatch);
-
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %d, matches = %d, mismatches = %d, unknowns = %d, probability = %f", (int) overlap, (int) matches, (int) mismatches, (int) unknowns, (float) probability);
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %d probability = %f", (int) overlap, (float) probability);
 		if (probability > bestprobability && overlap >= assembler->minoverlap) {
 			bestprobability = probability;
 			bestoverlap = overlap;
@@ -217,8 +202,7 @@ static bool align(
 		} else if (result->reverse[rindex].qual == '\0') {
 			q = ismatch ? fpr : qual_nn;
 		} else {
-			q = (ismatch ? qual_match : qual_mismatch)[PHREDCLAMP(result->forward[findex].qual)]
-				[PHREDCLAMP(result->reverse[rindex].qual)];
+			q = assembler->algo->clazz->match_probability(&assembler->algo->end, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
 		}
 
 		if (ismatch) {

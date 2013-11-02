@@ -252,12 +252,75 @@ namespace Panda {
 		OPTIONAL,
 	}
 
+	[CCode(cname = "struct panda_algorithm", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+	[Compact]
+	public class Algorithm {
+		[CCode(cname = "panda_algorithm_simple_bayes")]
+		public const algorithm_class<bool> simple_bayes_class;
+
+		/**
+		 * The minimum error estimation in the sequence data (epsilon)
+		 */
+		public double simple_bayes_error_estimation {
+			[CCode(cname = "panda_algorithm_simple_bayes_get_error_estimation")]
+			get;
+			[CCode(cname = "simple_bayes_set_error_estimation")]
+			set;
+		}
+
+		/**
+		 * Create a new algorithm with the specified amount of storage for the private user data.
+		 *
+		 * @param clazz the structure holding the callbacks.
+		 */
+		[CCode(cname = "panda_algorithm_new", simple_generics = true)]
+		public static Algorithm create<T>(algorithm_class<T> clazz);
+
+		/**
+		 * Create a simple Bayesian algorithm.
+		 */
+		[CCode(cname = "panda_algorithm_simple_bayes_new")]
+		public Algorithm.simple_bayes();
+
+		/**
+		 * Compute the log probability of bases matching or mismatching with the supplied PHRED scores.
+		 */
+		[CCode(cname = "panda_quality_compare")]
+		double compare(qual one, qual other);
+
+		/**
+		 * Checks if an algorithm is a member of a particular class.
+		 */
+		[CCode(cname = "panda_algorithm_is_a", simple_generics = true)]
+		public bool is_a<T>(algorithm_class<T> clazz);
+
+		/**
+		 * Increase the reference count on an algorithm.
+		 */
+		[CCode(cname = "panda_algorithm_ref")]
+		public void @ref();
+
+		/**
+		 * Decrease the reference count on an algorithm.
+		 */
+		[CCode(cname = "panda_algorithm_unref")]
+		public void unref();
+	}
 	/**
 	 * The manager for an assembly
 	 */
 	[CCode(cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
 	[Compact]
 	public class Assembler {
+		/**
+		 * The algorithm used in overlap selection.
+		 */
+		public Algorithm algorithm {
+			[CCode(cname = "panda_assembler_get_algorithm")]
+			get;
+			[CCode(cname = "panda_assembler_set_algorithm")]
+			set;
+		}
 		/**
 		 * The number of sequences rejected because the reads are unsatisfactory in some way.
 		 */
@@ -272,16 +335,6 @@ namespace Panda {
 		public long count {
 			[CCode(cname = "panda_assembler_get_count")]
 			get;
-		}
-
-		/**
-		 * The minimum error estimation in the sequence data (epsilon)
-		 */
-		public double error_estimation {
-			[CCode(cname = "panda_assembler_get_error_estimation")]
-			get;
-			[CCode(cname = "panda_assembler_set_error_estimation")]
-			set;
 		}
 
 		/**
@@ -1083,6 +1136,22 @@ file);
 		[CCode(cname = "panda_writer_unref")]
 		public void unref();
 	}
+
+	/**
+	 * The base structure for an assembly algorithm.
+	 */
+	[CCode(cname = "struct panda_algorithm_class", destroy_function = "")]
+	public struct algorithm_class<T> {
+		/**
+		 * The number of bytes to allocate for the private data.
+		 */
+		public size_t data_size;
+		public Destroy<T> data_destroy;
+		public ComputeOverlap<T> overlap_probability;
+		public ComputeMatch<T> match_probability;
+		public double prob_unpaired;
+	}
+
 	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
@@ -1188,12 +1257,6 @@ file);
 			[CCode(cname = "panda_quality_probability")]
 			get;
 		}
-		/**
-		 * Compute the log probability of bases matching or mismatching with the
-		 * supplied PHRED scores.
-		 */
-		[CCode(cname = "panda_quality_compare")]
-		double compare(qual other);
 	}
 
 	/**
@@ -1358,6 +1421,32 @@ file);
 	 */
 	[CCode(cname = "PandaBufferWrite")]
 	public delegate void BufferWrite([CCode(array_length_type = "size_t")] uint8[] buffer);
+	/**
+	 * Compute the probability of a match or mismatch given two quality scores.
+	 *
+	 * @param data the private data for the algorithm
+	 * @param match do the nucleotides match
+	 * @param a the PHRED score of one base
+	 * @param b the PHRED score of the other base
+	 * @return the log probability the match.
+	 */
+	[CCode(cname = "PandaComputeMatch", simple_generics = true, has_target = false)]
+	public delegate double ComputeMatch<T>(T data, bool match, char a, char b);
+
+	/**
+	 * Compute the probability of an offset being a good one.
+	 *
+	 * @private_data: (closure): the private data for the algorithm
+	 * @forward: (array length=forward_length): the forward read
+	 * @reverse: (array length=reverse_length): the reverse read
+	 * @overlap: the overlap length to check
+	 * Return: the log probability the overlap is correct.
+	 */
+	[CCode(cname = "PandaComputeOverlap", simple_generics = true, has_target = false)]
+	public delegate double ComputeOverlap<T>(T data, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse, size_t overlap);
+
+	[CCode(cname = "PandaDestroy", simple_generics = true, has_target = false)]
+	public delegate void Destroy<T>(owned T data);
 
 	/**
 	 * Handle a failed alignment

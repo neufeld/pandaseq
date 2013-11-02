@@ -49,6 +49,18 @@ extern size_t panda_max_len(
 /* === Objects === */
 
 /**
+ * The algorithm used to select the overlap.
+ */
+typedef struct panda_algorithm *PandaAlgorithm;
+
+/**
+ * The algorithm's class template.
+ *
+ * Yes, we're pretending we have inheritance.
+ */
+typedef const struct panda_algorithm_class *PandaAlgorithmClass;
+
+/**
  * The manager for an assembly
  */
 typedef struct panda_assembler *PandaAssembler;
@@ -320,6 +332,40 @@ typedef bool (
 	void *user_data);
 
 /**
+ * Compute the probability of a match or mismatch given two quality scores.
+ *
+ * @private_data: (closure): the private data for the algorithm
+ * @match: do the nucleotides match
+ * @a: the PHRED score of one base
+ * @b: the PHRED score of the other base
+ * Return: the log probability the match.
+ */
+typedef double (
+	*PandaComputeMatch) (
+	void *private_data,
+	bool match,
+	char a,
+	char b);
+
+/**
+ * Compute the probability of an offset being a good one.
+ *
+ * @private_data: (closure): the private data for the algorithm
+ * @forward: (array length=forward_length): the forward read
+ * @reverse: (array length=reverse_length): the reverse read
+ * @overlap: the overlap length to check
+ * Return: the log probability the overlap is correct.
+ */
+typedef double (
+	*PandaComputeOverlap) (
+	void *private_data,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length,
+	size_t overlap);
+
+/**
  * Free user data
  *
  * Any method which takes user data with a function pointer will call a destroy function when the user data is not longer needed such that the memory can be freed, if necessary. A destroy function may always be null, in which case, the memory managment is the responsibility of the caller.
@@ -500,6 +546,20 @@ typedef bool (
 	const char *argument);
 
 /* === Round 2 Structures === */
+
+/**
+ * The base structure for an assembly algorithm.
+ */
+struct panda_algorithm_class {
+	/**
+	 * The number of bytes to allocate for the private data.
+	 */
+	size_t data_size;
+	PandaDestroy data_destroy;
+	PandaComputeOverlap overlap_probability;
+	PandaComputeMatch match_probability;
+	const double prob_unpaired;
+};
 
 /**
  * Describes a command line option that can be applied to an assembler.

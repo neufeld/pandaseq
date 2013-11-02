@@ -73,6 +73,7 @@ PandaAssembler panda_assembler_new_kmer(
 	assembler->slowcount = 0;
 	assembler->count = 0;
 	assembler->post_primers = false;
+	assembler->algo = panda_algorithm_simple_bayes_new();
 	memset(assembler->overlapcount, 0, PANDA_MAX_LEN * sizeof(long));
 	assembler->longest_overlap = 0;
 	assembler->num_kmers = num_kmers;
@@ -90,8 +91,6 @@ PandaAssembler panda_assembler_new_kmer(
 	pthread_mutex_init(&assembler->mutex, NULL);
 #endif
 	memset(assembler->kmerseen, 0, KMERSEEN_SIZE(num_kmers));
-	panda_assembler_set_error_estimation(assembler, 0.36);
-	panda_assembler_set_threshold(assembler, 0.6);
 	panda_assembler_set_minimum_overlap(assembler, 2);
 	return assembler;
 }
@@ -110,6 +109,8 @@ void panda_assembler_copy_configuration(
 	dest->threshold = src->threshold;
 	dest->minoverlap = src->minoverlap;
 	dest->post_primers = src->post_primers;
+	panda_algorithm_unref(dest->algo);
+	dest->algo = panda_algorithm_ref(src->algo);
 }
 
 int panda_assembler_get_minimum_overlap(
@@ -135,27 +136,6 @@ void panda_assembler_set_threshold(
 	double threshold) {
 	if (threshold > 0 && threshold < 1) {
 		assembler->threshold = log(threshold);
-	}
-}
-
-double panda_assembler_get_error_estimation(
-	PandaAssembler assembler) {
-	return assembler->q;
-}
-
-void panda_assembler_set_error_estimation(
-	PandaAssembler assembler,
-	double q) {
-	if (q > 0 && q < 1) {
-#ifdef HAVE_PTHREAD
-		pthread_mutex_lock(&assembler->mutex);
-#endif
-		assembler->q = q;
-		assembler->pmatch = log(0.25 * (1 - 2 * q + q * q));
-		assembler->pmismatch = log((3 * q - 2 * q * q) / 18.0);
-#ifdef HAVE_PTHREAD
-		pthread_mutex_unlock(&assembler->mutex);
-#endif
 	}
 }
 
@@ -231,6 +211,7 @@ void panda_assembler_unref(
 		module_destroy(assembler);
 		DESTROY_MEMBER(assembler, next);
 		DESTROY_MEMBER(assembler, noalgn);
+		panda_algorithm_unref(assembler->algo);
 		panda_log_proxy_unref(assembler->logger);
 		free(assembler);
 	}

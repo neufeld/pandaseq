@@ -25,7 +25,7 @@ INIT {
 		fprintf(stderr, "Need a number for a PHRED score.\n", args);
 		return false;
 	}
-	
+
 	value = strtol(args, &endptr, 10);
 	if (endptr != NULL && *endptr != '\0' || value < 0 || value > 127) {
 		fprintf(stderr, "PHRED score must be a number between 0 and 127.\n", args);

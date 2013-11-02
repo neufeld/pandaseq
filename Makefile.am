@@ -6,6 +6,7 @@ bin_SCRIPTS = pandaxs
 library_includedir=$(includedir)/$(LIB_NAME)
 library_include_HEADERS = \
 	pandaseq.h \
+	pandaseq-algorithm.h \
 	pandaseq-args.h \
 	pandaseq-assembler.h \
 	pandaseq-common.h \
@@ -62,6 +63,8 @@ libpandaseq_la_LDFLAGS = \
 	$(NO_UNDEFINED) \
 	$(NULL)
 libpandaseq_la_SOURCES = \
+	algo.c \
+	algo_simple_bayes.c \
 	args.c \
 	args_array.c \
 	args_assembler.c \

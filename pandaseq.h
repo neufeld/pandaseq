@@ -196,14 +196,6 @@ double panda_quality_probability(
 	const panda_qual *q);
 
 /**
- * Compute the log probability of bases matching or mismatching with the
- * supplied PHRED scores.
- */
-double panda_quality_compare(
-	const panda_qual *a,
-	const panda_qual *b);
-
-/**
  * Convert the probability to a PHRED quality score.
  */
 char panda_result_phred(
@@ -300,6 +292,7 @@ PandaNextSeq panda_create_async_reader(
 
 /* === Everything else === */
 
+#        include<pandaseq-algorithm.h>
 #        include<pandaseq-args.h>
 #        include<pandaseq-assembler.h>
 #        include<pandaseq-iter.h>

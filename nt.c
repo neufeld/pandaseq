@@ -105,12 +105,6 @@ double panda_quality_log_probability(
 	return qual_score[PHREDCLAMP(q->qual)];
 }
 
-double panda_quality_compare(
-	const panda_qual *a,
-	const panda_qual *b) {
-	return ((a->nt & b->nt) != '\0' ? qual_match : qual_mismatch)[PHREDCLAMP(a->qual)][PHREDCLAMP(b->qual)];
-}
-
 static int find_double(
 	const double *key,
 	const double *value) {
