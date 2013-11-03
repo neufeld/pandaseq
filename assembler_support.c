@@ -113,6 +113,18 @@ void panda_assembler_copy_configuration(
 	dest->algo = panda_algorithm_ref(src->algo);
 }
 
+PandaAlgorithm panda_assembler_get_algorithm(
+	PandaAssembler assembler) {
+	return assembler->algo;
+}
+
+void panda_assembler_set_algorithm(
+	PandaAssembler assembler,
+	PandaAlgorithm algorithm) {
+	panda_algorithm_unref(assembler->algo);
+	assembler->algo = panda_algorithm_ref(algorithm);
+}
+
 int panda_assembler_get_minimum_overlap(
 	PandaAssembler assembler) {
 	return assembler->minoverlap;

@@ -203,6 +203,15 @@ void panda_assembler_unref(
 /* === Getters and Setters === */
 
 /**
+ * The scoring algorithm used.
+ */
+PandaAlgorithm panda_assembler_get_algorithm(
+	PandaAssembler assembler);
+void panda_assembler_set_algorithm(
+	PandaAssembler assembler,
+	PandaAlgorithm algorithm);
+
+/**
  * The number of sequences rejected because the reads are unsatisfactory in some way.
  */
 long panda_assembler_get_bad_read_count(
