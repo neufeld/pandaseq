@@ -133,8 +133,8 @@ static bool mux_next(
 	size_t *reverse_length,
 	struct mux_data *data) {
 	bool result;
-	panda_qual *common_forward;
-	panda_qual *common_reverse;
+	const panda_qual *common_forward;
+	const panda_qual *common_reverse;
 	pthread_mutex_lock(&data->mux->next_mutex);
 
 	result = data->mux->next(id, &common_forward, forward_length, &common_reverse, reverse_length, data->mux->next_data);
