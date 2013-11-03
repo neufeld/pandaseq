@@ -22,48 +22,30 @@
 #include "pandaseq.h"
 #include "buffer.h"
 
-void panda_seqid_print(
-	const panda_seq_identifier *id,
-	FILE *file) {
-	panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
+const char *panda_idfmt_str(
+	PandaIdFmt format) {
+	switch (format) {
+	case PANDA_IDFMT_SRA:
+		return "NCBI Short Read Archive";
+	case PANDA_IDFMT_CASAVA_1_4:
+		return "CASAVA 1.4-1.6";
+	case PANDA_IDFMT_CASAVA_1_7:
+		return "CASAVA 1.7+";
+	default:
+		return "unknown";
+	}
 }
 
-void panda_seqid_xprint(
-	const panda_seq_identifier *id,
-	PandaPrintf xprintf,
-	void *x) {
-	if (id == NULL)
-		return;
-	xprintf(x, "%s:%d:%s:%d:%d:%d:%d:%s", id->instrument, id->run, id->flowcell, id->lane, id->tile, id->x, id->y, id->tag);
-}
-
-const char *panda_seqid_str(
-	const panda_seq_identifier *id) {
-	char *buffer = seqid_buffer();
-	if (id == NULL)
-		return NULL;
-	panda_seqid_xprint(id, (PandaPrintf) bufferprintf, buffer);
-	return buffer;
-}
-
-void panda_seqid_copy(
-	const panda_seq_identifier *src,
-	panda_seq_identifier *dest) {
-	dest->run = src->run;
-	dest->lane = src->lane;
-	dest->tile = src->tile;
-	dest->x = src->x;
-	dest->y = src->y;
-	strncpy(dest->instrument, src->instrument, sizeof(src->instrument));
-	strncpy(dest->flowcell, src->flowcell, sizeof(src->flowcell));
-	strncpy(dest->tag, src->tag, PANDA_TAG_LEN);
-}
-
-bool panda_seqid_equal(
-	const panda_seq_identifier *one,
-	const panda_seq_identifier *two) {
-	return one->run == two->run && one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
-	;
+void panda_seqid_clear(
+	panda_seq_identifier *id) {
+	id->instrument[0] = '\0';
+	id->run = 0;
+	id->flowcell[0] = '\0';
+	id->lane = 0;
+	id->tile = 0;
+	id->x = 0;
+	id->y = 0;
+	id->tag[0] = '\0';
 }
 
 int panda_seqid_compare(
@@ -88,21 +70,48 @@ int panda_seqid_compare(
 	return result;
 }
 
-#define PARSE_CHUNK_MAYBE for(;**endptr != '\0' && **endptr != ':' && **endptr != '#' && **endptr != '/' && **endptr != ' '; (*endptr)++)
-#define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
-#define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
-#define PARSE_SRA_INT do { value = 0; for(;**endptr != '\0' && **endptr != '.' && **endptr != ' '; (*endptr)++){ if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
+void panda_seqid_copy(
+	const panda_seq_identifier *src,
+	panda_seq_identifier *dest) {
+	dest->run = src->run;
+	dest->lane = src->lane;
+	dest->tile = src->tile;
+	dest->x = src->x;
+	dest->y = src->y;
+	strncpy(dest->instrument, src->instrument, sizeof(src->instrument));
+	strncpy(dest->flowcell, src->flowcell, sizeof(src->flowcell));
+	strncpy(dest->tag, src->tag, PANDA_TAG_LEN);
+}
 
-void panda_seqid_clear(
-	panda_seq_identifier *id) {
-	id->instrument[0] = '\0';
-	id->run = 0;
-	id->flowcell[0] = '\0';
-	id->lane = 0;
-	id->tile = 0;
-	id->x = 0;
-	id->y = 0;
-	id->tag[0] = '\0';
+bool panda_seqid_equal(
+	const panda_seq_identifier *one,
+	const panda_seq_identifier *two) {
+	return one->run == two->run && one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
+	;
+}
+
+void panda_seqid_print(
+	const panda_seq_identifier *id,
+	FILE *file) {
+	panda_seqid_xprint(id, (PandaPrintf) fprintf, file);
+}
+
+void panda_seqid_xprint(
+	const panda_seq_identifier *id,
+	PandaPrintf xprintf,
+	void *x) {
+	if (id == NULL)
+		return;
+	xprintf(x, "%s:%d:%s:%d:%d:%d:%d:%s", id->instrument, id->run, id->flowcell, id->lane, id->tile, id->x, id->y, id->tag);
+}
+
+const char *panda_seqid_str(
+	const panda_seq_identifier *id) {
+	char *buffer = seqid_buffer();
+	if (id == NULL)
+		return NULL;
+	panda_seqid_xprint(id, (PandaPrintf) bufferprintf, buffer);
+	return buffer;
 }
 
 int panda_seqid_parse(
@@ -113,6 +122,11 @@ int panda_seqid_parse(
 	PandaIdFmt detected_format;
 	return panda_seqid_parse_fail(id, input, policy, &detected_format, &endptr);
 }
+
+#define PARSE_CHUNK_MAYBE for(;**endptr != '\0' && **endptr != ':' && **endptr != '#' && **endptr != '/' && **endptr != ' '; (*endptr)++)
+#define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
+#define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
+#define PARSE_SRA_INT do { value = 0; for(;**endptr != '\0' && **endptr != '.' && **endptr != ' '; (*endptr)++){ if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 
 int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
@@ -247,19 +261,5 @@ int panda_seqid_parse_fail(
 			return 0;
 		}
 		return mate;
-	}
-}
-
-const char *panda_idfmt_str(
-	PandaIdFmt format) {
-	switch (format) {
-	case PANDA_IDFMT_SRA:
-		return "NCBI Short Read Archive";
-	case PANDA_IDFMT_CASAVA_1_4:
-		return "CASAVA 1.4-1.6";
-	case PANDA_IDFMT_CASAVA_1_7:
-		return "CASAVA 1.7+";
-	default:
-		return "unknown";
 	}
 }

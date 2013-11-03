@@ -131,88 +131,6 @@ PandaWriter panda_writer_open_file(
 	}
 }
 
-void panda_writer_commit(
-	PandaWriter writer) {
-#ifdef HAVE_PTHREAD
-	struct write_buffer *data = get_write_buffer(writer);
-	if (COMMITTED_BUFF_SIZE - data->committed_length < data->uncommitted_length) {
-		pthread_mutex_lock(&writer->mutex);
-		data->owner->write(data->committed, data->committed_length, data->owner->write_data);
-		data->owner->write(data->uncommitted, data->uncommitted_length, data->owner->write_data);
-		data->uncommitted_length = 0;
-		data->committed_length = 0;
-		pthread_mutex_unlock(&writer->mutex);
-	} else {
-		memcpy(data->committed + data->committed_length, data->uncommitted, data->uncommitted_length);
-		data->committed_length += data->uncommitted_length;
-		data->uncommitted_length = 0;
-	}
-	if (writer->commit_slave != NULL) {
-		panda_writer_commit(writer->commit_slave);
-	}
-#endif
-}
-
-void panda_writer_set_slave(
-	PandaWriter writer,
-	PandaWriter slave) {
-	PandaWriter check;
-	if (writer->commit_slave != NULL) {
-		panda_writer_unref(writer->commit_slave);
-	}
-	for (check = slave; check != NULL; check = check->commit_slave) {
-		if (check->commit_slave == writer) {
-			return;
-		}
-	}
-	writer->commit_slave = panda_writer_ref(slave);
-}
-
-PandaWriter panda_writer_get_slave(
-	PandaWriter writer) {
-	return writer->commit_slave;
-}
-
-void panda_writer_append(
-	PandaWriter writer,
-	const char *format,
-	...) {
-	va_list va;
-#ifdef HAVE_PTHREAD
-	struct write_buffer *data = get_write_buffer(writer);
-	va_start(va, format);
-	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, UNCOMMITTED_BUFF_SIZE - data->uncommitted_length, format, va);
-	va_end(va);
-#else
-	char buffer[UNCOMMITTED_BUFF_SIZE];
-	size_t buffer_length;
-	va_start(va, format);
-	buffer_length = vsnprintf(buffer, UNCOMMITTED_BUFF_SIZE, format, va);
-	va_end(va);
-	writer->write(buffer, buffer_length, writer->write_data);
-#endif
-}
-
-void panda_writer_append_c(
-	PandaWriter writer,
-	char c) {
-#ifdef HAVE_PTHREAD
-	struct write_buffer *data = get_write_buffer(writer);
-	if (data->uncommitted_length < UNCOMMITTED_BUFF_SIZE) {
-		data->uncommitted[data->uncommitted_length] = c;
-		data->uncommitted_length++;
-	}
-#else
-	writer->write(&c, 1, writer->write_data);
-#endif
-}
-
-void panda_writer_append_id(
-	PandaWriter writer,
-	const panda_seq_identifier *id) {
-	panda_seqid_xprint(id, (PandaPrintf) panda_writer_append, writer);
-}
-
 PandaWriter panda_writer_ref(
 	PandaWriter writer) {
 #ifdef HAVE_PTHREAD
@@ -258,4 +176,86 @@ void panda_writer_unref(
 		DESTROY_MEMBER(writer, write);
 		free(writer);
 	}
+}
+
+void panda_writer_append(
+	PandaWriter writer,
+	const char *format,
+	...) {
+	va_list va;
+#ifdef HAVE_PTHREAD
+	struct write_buffer *data = get_write_buffer(writer);
+	va_start(va, format);
+	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, UNCOMMITTED_BUFF_SIZE - data->uncommitted_length, format, va);
+	va_end(va);
+#else
+	char buffer[UNCOMMITTED_BUFF_SIZE];
+	size_t buffer_length;
+	va_start(va, format);
+	buffer_length = vsnprintf(buffer, UNCOMMITTED_BUFF_SIZE, format, va);
+	va_end(va);
+	writer->write(buffer, buffer_length, writer->write_data);
+#endif
+}
+
+void panda_writer_append_c(
+	PandaWriter writer,
+	char c) {
+#ifdef HAVE_PTHREAD
+	struct write_buffer *data = get_write_buffer(writer);
+	if (data->uncommitted_length < UNCOMMITTED_BUFF_SIZE) {
+		data->uncommitted[data->uncommitted_length] = c;
+		data->uncommitted_length++;
+	}
+#else
+	writer->write(&c, 1, writer->write_data);
+#endif
+}
+
+void panda_writer_append_id(
+	PandaWriter writer,
+	const panda_seq_identifier *id) {
+	panda_seqid_xprint(id, (PandaPrintf) panda_writer_append, writer);
+}
+
+void panda_writer_commit(
+	PandaWriter writer) {
+#ifdef HAVE_PTHREAD
+	struct write_buffer *data = get_write_buffer(writer);
+	if (COMMITTED_BUFF_SIZE - data->committed_length < data->uncommitted_length) {
+		pthread_mutex_lock(&writer->mutex);
+		data->owner->write(data->committed, data->committed_length, data->owner->write_data);
+		data->owner->write(data->uncommitted, data->uncommitted_length, data->owner->write_data);
+		data->uncommitted_length = 0;
+		data->committed_length = 0;
+		pthread_mutex_unlock(&writer->mutex);
+	} else {
+		memcpy(data->committed + data->committed_length, data->uncommitted, data->uncommitted_length);
+		data->committed_length += data->uncommitted_length;
+		data->uncommitted_length = 0;
+	}
+	if (writer->commit_slave != NULL) {
+		panda_writer_commit(writer->commit_slave);
+	}
+#endif
+}
+
+PandaWriter panda_writer_get_slave(
+	PandaWriter writer) {
+	return writer->commit_slave;
+}
+
+void panda_writer_set_slave(
+	PandaWriter writer,
+	PandaWriter slave) {
+	PandaWriter check;
+	for (check = slave; check != NULL; check = check->commit_slave) {
+		if (check->commit_slave == writer) {
+			return;
+		}
+	}
+	if (writer->commit_slave != NULL) {
+		panda_writer_unref(writer->commit_slave);
+	}
+	writer->commit_slave = panda_writer_ref(slave);
 }

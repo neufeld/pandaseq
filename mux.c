@@ -201,6 +201,16 @@ PandaAssembler panda_mux_create_assembler_kmer(
 	return assembler;
 }
 
+size_t panda_mux_get_child_count(
+	PandaMux mux) {
+	return mux->child_count;
+}
+
+PandaLogProxy panda_mux_get_loggger(
+	PandaMux mux) {
+	return mux->logger;
+}
+
 void panda_mux_set_fail_alignment(
 	PandaMux mux,
 	PandaFailAlign handler,
@@ -212,16 +222,6 @@ void panda_mux_set_fail_alignment(
 	mux->noalgn_destroy = handler_destroy;
 	mux->noalgn = handler;
 	pthread_mutex_unlock(&mux->noalgn_mutex);
-}
-
-PandaLogProxy panda_mux_get_loggger(
-	PandaMux mux) {
-	return mux->logger;
-}
-
-size_t panda_mux_get_child_count(
-	PandaMux mux) {
-	return mux->child_count;
 }
 
 #endif

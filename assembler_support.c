@@ -112,7 +112,6 @@ PandaAssembler panda_assembler_new_fastq_reader(
 	return panda_assembler_new(next, user_data, destroy, logger);
 }
 
-
 void panda_assembler_copy_configuration(
 	PandaAssembler dest,
 	PandaAssembler src) {
