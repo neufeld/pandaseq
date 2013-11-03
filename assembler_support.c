@@ -121,6 +121,8 @@ PandaAlgorithm panda_assembler_get_algorithm(
 void panda_assembler_set_algorithm(
 	PandaAssembler assembler,
 	PandaAlgorithm algorithm) {
+	if (algorithm == NULL)
+		return;
 	panda_algorithm_unref(assembler->algo);
 	assembler->algo = panda_algorithm_ref(algorithm);
 }
