@@ -119,8 +119,8 @@ static void *async_thread(
 		data->free = NULL;
 		pthread_mutex_unlock(&data->free_mutex);
 		while (seq != NULL) {
-			panda_qual *forward;
-			panda_qual *reverse;
+			const panda_qual *forward;
+			const panda_qual *reverse;
 			if (data->next(&seq->id, &forward, &seq->forward_length, &reverse, &seq->reverse_length, data->next_data)) {
 				struct seq_data *next;
 				memcpy(seq->forward, forward, seq->forward_length * sizeof(panda_qual));

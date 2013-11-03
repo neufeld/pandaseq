@@ -70,9 +70,9 @@ EXTERN_C_BEGIN
 size_t panda_compute_offset_qual(
 	double threshold,
 	bool reverse,
-	panda_qual *haystack,
+	const panda_qual *haystack,
 	size_t haystack_length,
-	panda_nt *needle,
+	const panda_nt *needle,
 	size_t needle_length);
 
 /**
@@ -86,9 +86,9 @@ size_t panda_compute_offset_qual(
 size_t panda_compute_offset_result(
 	double threshold,
 	bool reverse,
-	panda_result *haystack,
+	const panda_result *haystack,
 	size_t haystack_length,
-	panda_nt *needle,
+	const panda_nt *needle,
 	size_t needle_length);
 
 /**

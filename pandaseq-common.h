@@ -291,12 +291,12 @@ typedef struct {
 	/**
 	 * The original forward sequence
 	 */
-	panda_qual *forward;
+	panda_qual const *forward;
 	size_t forward_length;
 	/**
 	 * The original reverse sequence
 	 */
-	panda_qual *reverse;
+	panda_qual const *reverse;
 	size_t reverse_length;
 
 	/**
@@ -448,9 +448,9 @@ typedef bool (
 typedef bool (
 	*PandaNextSeq) (
 	panda_seq_identifier *id,
-	panda_qual **forward,
+	const panda_qual **forward,
 	size_t *forward_length,
-	panda_qual **reverse,
+	const panda_qual **reverse,
 	size_t *reverse_length,
 	void *user_data);
 

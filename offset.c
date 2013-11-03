@@ -41,7 +41,7 @@ double panda_log1mexp(
 
 typedef void (
 	*base_score) (
-	void *data,
+	const void *data,
 	panda_nt *base,
 	double *prob,
 	double *notprob);
@@ -49,11 +49,11 @@ typedef void (
 static size_t computeoffset(
 	double threshold,
 	bool reverse,
-	unsigned char *seq,
+	const unsigned char *seq,
 	size_t seq_length,
 	size_t size,
 	base_score score,
-	panda_nt *primer,
+	const panda_nt *primer,
 	size_t primerlen) {
 	/* Circular buffer of probabilities of primer alignment indexed by the offset. */
 	double probabilities[primerlen];
@@ -90,7 +90,7 @@ static size_t computeoffset(
 }
 
 void qual_base_score(
-	void *data,
+	const void *data,
 	panda_nt *base,
 	double *prob,
 	double *notprob) {
@@ -103,15 +103,15 @@ void qual_base_score(
 size_t panda_compute_offset_qual(
 	double threshold,
 	bool reverse,
-	panda_qual *haystack,
+	const panda_qual *haystack,
 	size_t haystack_length,
-	panda_nt *needle,
+	const panda_nt *needle,
 	size_t needle_length) {
-	return computeoffset(threshold, reverse, (unsigned char *) haystack, haystack_length, sizeof(panda_qual), qual_base_score, needle, needle_length);
+	return computeoffset(threshold, reverse, (const unsigned char *) haystack, haystack_length, sizeof(panda_qual), qual_base_score, needle, needle_length);
 }
 
 void result_base_score(
-	void *data,
+	const void *data,
 	panda_nt *base,
 	double *prob,
 	double *notprob) {
@@ -123,9 +123,9 @@ void result_base_score(
 size_t panda_compute_offset_result(
 	double threshold,
 	bool reverse,
-	panda_result *haystack,
+	const panda_result *haystack,
 	size_t haystack_length,
-	panda_nt *needle,
+	const panda_nt *needle,
 	size_t needle_length) {
-	return computeoffset(threshold, reverse, (unsigned char *) haystack, haystack_length, sizeof(panda_result), result_base_score, needle, needle_length);
+	return computeoffset(threshold, reverse, (const unsigned char *) haystack, haystack_length, sizeof(panda_result), result_base_score, needle, needle_length);
 }

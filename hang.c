@@ -41,9 +41,9 @@ struct hang_data {
 
 bool hang_next(
 	panda_seq_identifier *id,
-	panda_qual **forward,
+	const panda_qual **forward,
 	size_t *forward_length,
-	panda_qual **reverse,
+	const panda_qual **reverse,
 	size_t *reverse_length,
 	void *user_data) {
 	struct hang_data *data = (struct hang_data *) user_data;
