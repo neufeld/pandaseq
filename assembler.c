@@ -64,6 +64,8 @@ static bool align(
 	size_t overlap;
 	size_t counter;
 	kmer_it it;
+	size_t unmasked_forward_length;
+	size_t unmasked_reverse_length;
 
 	/* For computing new sequence. */
 	double fquality = 0;
@@ -166,12 +168,9 @@ static bool align(
 	}
 
 	/* Mask out the B-cliff at the end of sequences */
-	for (i = result->forward_length - 1; i > 0 && result->forward[i].qual == (char) 2; i--) {
-		result->forward[i].qual = '\0';
-	}
-	for (i = result->reverse_length - 1; i > 0 && result->reverse[i].qual == (char) 2; i--) {
-		result->reverse[i].qual = '\0';
-	}
+	for (unmasked_forward_length = result->forward_length; i > 0 && result->forward[unmasked_forward_length - 1].qual == (char) 2; unmasked_forward_length--) ;
+	for (unmasked_reverse_length = result->reverse_length; i > 0 && result->reverse[unmasked_reverse_length - 1].qual == (char) 2; unmasked_reverse_length--) ;
+
 	/* Copy the paired sequence adjusting the probabilities based on the quality information from both sequences. */
 	result->overlap_mismatches = 0;
 	for (i = 0; i < bestoverlap + WEDGEZ(df) + WEDGEZ(dr); i++) {
@@ -187,19 +186,19 @@ static bool align(
 		if (index < 0 || findex < 0 || rindex < 0 || findex >= result->forward_length || rindex >= result->reverse_length)
 			continue;
 
-		fpr = result->forward[findex].qual == '\0' ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
-		rpr = result->reverse[rindex].qual == '\0' ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
+		fpr = findex < unmasked_forward_length ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
+		rpr = rindex < unmasked_reverse_length ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
 
 		if (!ismatch) {
 			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE, "(F[%d] = %c) != (R[%d] = %c)", findex, panda_nt_to_ascii(result->forward[findex].nt), rindex, panda_nt_to_ascii(result->reverse[rindex].nt));
 			result->overlap_mismatches++;
 		}
 
-		if (result->forward[findex].qual == '\0' && result->reverse[rindex].qual == '\0') {
+		if (findex < unmasked_forward_length && rindex < unmasked_reverse_length) {
 			q = qual_nn;
-		} else if (result->forward[findex].qual == '\0') {
+		} else if (findex < unmasked_forward_length) {
 			q = ismatch ? rpr : qual_nn;
-		} else if (result->reverse[rindex].qual == '\0') {
+		} else if (rindex < unmasked_reverse_length) {
 			q = ismatch ? fpr : qual_nn;
 		} else {
 			q = assembler->algo->clazz->match_probability(&assembler->algo->end, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
