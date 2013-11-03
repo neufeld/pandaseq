@@ -41,3 +41,4 @@ pkgroot
 stamp-h1
 table.c
 table.h
+testing/pandaseq-diff
