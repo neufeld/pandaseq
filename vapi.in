@@ -370,7 +370,7 @@ namespace Panda {
 		}
 
 		public LogProxy logger {
-			[CCode(cname = "panda_assembler_get_loggger")]
+			[CCode(cname = "panda_assembler_get_logger")]
 			get;
 		}
 

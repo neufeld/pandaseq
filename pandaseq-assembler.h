@@ -386,7 +386,7 @@ void panda_assembler_set_threshold(
  * The logging proxy used by this assembler
  * Returns: (transfer none): the proxy
  */
-PandaLogProxy panda_assembler_get_loggger(
+PandaLogProxy panda_assembler_get_logger(
 	PandaAssembler assembler);
 
 EXTERN_C_END

@@ -95,6 +95,24 @@ PandaAssembler panda_assembler_new_kmer(
 	return assembler;
 }
 
+PandaAssembler panda_assembler_new_fastq_reader(
+	PandaBufferRead forward,
+	void *forward_data,
+	PandaDestroy forward_destroy,
+	PandaBufferRead reverse,
+	void *reverse_data,
+	PandaDestroy reverse_destroy,
+	PandaLogProxy logger,
+	unsigned char qualmin,
+	PandaTagging policy) {
+	void *user_data;
+	PandaDestroy destroy;
+	PandaNextSeq next;
+	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, qualmin, policy, &user_data, &destroy);
+	return panda_assembler_new(next, user_data, destroy, logger);
+}
+
+
 void panda_assembler_copy_configuration(
 	PandaAssembler dest,
 	PandaAssembler src) {
@@ -111,86 +129,6 @@ void panda_assembler_copy_configuration(
 	dest->post_primers = src->post_primers;
 	panda_algorithm_unref(dest->algo);
 	dest->algo = panda_algorithm_ref(src->algo);
-}
-
-PandaAlgorithm panda_assembler_get_algorithm(
-	PandaAssembler assembler) {
-	return assembler->algo;
-}
-
-void panda_assembler_set_algorithm(
-	PandaAssembler assembler,
-	PandaAlgorithm algorithm) {
-	if (algorithm == NULL)
-		return;
-	panda_algorithm_unref(assembler->algo);
-	assembler->algo = panda_algorithm_ref(algorithm);
-}
-
-int panda_assembler_get_minimum_overlap(
-	PandaAssembler assembler) {
-	return assembler->minoverlap;
-}
-
-void panda_assembler_set_minimum_overlap(
-	PandaAssembler assembler,
-	int overlap) {
-	if (overlap > 1 && overlap < PANDA_MAX_LEN) {
-		assembler->minoverlap = overlap;
-	}
-}
-
-double panda_assembler_get_threshold(
-	PandaAssembler assembler) {
-	return exp(assembler->threshold);
-}
-
-void panda_assembler_set_threshold(
-	PandaAssembler assembler,
-	double threshold) {
-	if (threshold > 0 && threshold < 1) {
-		assembler->threshold = log(threshold);
-	}
-}
-
-long panda_assembler_get_no_forward_primer_count(
-	PandaAssembler assembler) {
-	return assembler->nofpcount;
-}
-
-long panda_assembler_get_no_reverse_primer_count(
-	PandaAssembler assembler) {
-	return assembler->norpcount;
-}
-
-long panda_assembler_get_ok_count(
-	PandaAssembler assembler) {
-	return assembler->okcount;
-}
-
-long panda_assembler_get_low_quality_count(
-	PandaAssembler assembler) {
-	return assembler->lowqcount;
-}
-
-long panda_assembler_get_bad_read_count(
-	PandaAssembler assembler) {
-	return assembler->badreadcount;
-}
-
-long panda_assembler_get_slow_count(
-	PandaAssembler assembler) {
-	return assembler->slowcount;
-}
-
-long panda_assembler_get_failed_alignment_count(
-	PandaAssembler assembler) {
-	return assembler->noalgncount;
-}
-
-long panda_assembler_get_count(
-	PandaAssembler assembler) {
-	return assembler->count;
 }
 
 PandaAssembler panda_assembler_ref(
@@ -231,21 +169,28 @@ void panda_assembler_unref(
 	}
 }
 
-PandaAssembler panda_assembler_new_fastq_reader(
-	PandaBufferRead forward,
-	void *forward_data,
-	PandaDestroy forward_destroy,
-	PandaBufferRead reverse,
-	void *reverse_data,
-	PandaDestroy reverse_destroy,
-	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy) {
-	void *user_data;
-	PandaDestroy destroy;
-	PandaNextSeq next;
-	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, qualmin, policy, &user_data, &destroy);
-	return panda_assembler_new(next, user_data, destroy, logger);
+PandaAlgorithm panda_assembler_get_algorithm(
+	PandaAssembler assembler) {
+	return assembler->algo;
+}
+
+void panda_assembler_set_algorithm(
+	PandaAssembler assembler,
+	PandaAlgorithm algorithm) {
+	if (algorithm == NULL)
+		return;
+	panda_algorithm_unref(assembler->algo);
+	assembler->algo = panda_algorithm_ref(algorithm);
+}
+
+long panda_assembler_get_bad_read_count(
+	PandaAssembler assembler) {
+	return assembler->badreadcount;
+}
+
+long panda_assembler_get_count(
+	PandaAssembler assembler) {
+	return assembler->count;
 }
 
 void panda_assembler_set_forward_primer(
@@ -260,6 +205,120 @@ void panda_assembler_set_forward_primer(
 		assembler->forward_primer_length = length;
 		assembler->forward_trim = 0;
 	}
+}
+
+void panda_assembler_set_fail_alignment(
+	PandaAssembler assembler,
+	PandaFailAlign handler,
+	void *handler_data,
+	PandaDestroy handler_destroy) {
+	DESTROY_MEMBER(assembler, noalgn);
+	assembler->noalgn = handler;
+	assembler->noalgn_data = handler_data;
+	assembler->noalgn_destroy = handler_destroy;
+}
+
+long panda_assembler_get_failed_alignment_count(
+	PandaAssembler assembler) {
+	return assembler->noalgncount;
+}
+
+panda_nt *panda_assembler_get_forward_primer(
+	PandaAssembler assembler,
+	size_t *length) {
+	if (length != NULL)
+		*length = assembler->forward_primer_length;
+	return assembler->forward_primer_length == 0 ? NULL : assembler->forward_primer;
+}
+
+size_t panda_assembler_get_forward_trim(
+	PandaAssembler assembler) {
+	return assembler->forward_trim;
+}
+
+void panda_assembler_set_forward_trim(
+	PandaAssembler assembler,
+	size_t trim) {
+	assembler->forward_trim = trim;
+	assembler->forward_primer_length = 0;
+}
+
+size_t panda_assembler_get_longest_overlap(
+	PandaAssembler assembler) {
+	return assembler->longest_overlap;
+}
+
+PandaLogProxy panda_assembler_get_logger(
+	PandaAssembler assembler) {
+	return assembler->logger;
+}
+
+long panda_assembler_get_low_quality_count(
+	PandaAssembler assembler) {
+	return assembler->lowqcount;
+}
+
+int panda_assembler_get_minimum_overlap(
+	PandaAssembler assembler) {
+	return assembler->minoverlap;
+}
+
+void panda_assembler_set_minimum_overlap(
+	PandaAssembler assembler,
+	int overlap) {
+	if (overlap > 1 && overlap < PANDA_MAX_LEN) {
+		assembler->minoverlap = overlap;
+	}
+}
+
+const char *panda_assembler_get_name(
+	PandaAssembler assembler) {
+	if (assembler == NULL || assembler->name[0] == '\0')
+		return NULL;
+	return assembler->name;
+}
+
+void panda_assembler_set_name(
+	PandaAssembler assembler,
+	const char *name) {
+	if (name == NULL) {
+		assembler->name[0] = '\0';
+		return;
+	}
+	strncpy(assembler->name, name, MAX_LEN);
+	assembler->name[MAX_LEN - 1] = '\0';
+}
+
+long panda_assembler_get_no_forward_primer_count(
+	PandaAssembler assembler) {
+	return assembler->nofpcount;
+}
+
+long panda_assembler_get_no_reverse_primer_count(
+	PandaAssembler assembler) {
+	return assembler->norpcount;
+}
+
+long panda_assembler_get_ok_count(
+	PandaAssembler assembler) {
+	return assembler->okcount;
+}
+
+long panda_assembler_get_overlap_count(
+	PandaAssembler assembler,
+	size_t length) {
+	return (length < PANDA_MAX_LEN) ? assembler->overlapcount[length] : -1;
+}
+
+bool panda_assembler_get_primers_after(
+	PandaAssembler assembler) {
+	return assembler->post_primers;
+}
+
+void panda_assembler_set_primers_after(
+	PandaAssembler assembler,
+	bool after) {
+	assembler->post_primers = after;
 }
 
 void panda_assembler_set_reverse_primer(
@@ -284,37 +343,6 @@ panda_nt *panda_assembler_get_reverse_primer(
 	return assembler->reverse_primer_length == 0 ? NULL : assembler->reverse_primer;
 }
 
-panda_nt *panda_assembler_get_forward_primer(
-	PandaAssembler assembler,
-	size_t *length) {
-	if (length != NULL)
-		*length = assembler->forward_primer_length;
-	return assembler->forward_primer_length == 0 ? NULL : assembler->forward_primer;
-}
-
-size_t panda_assembler_get_forward_trim(
-	PandaAssembler assembler) {
-	return assembler->forward_trim;
-}
-
-void panda_assembler_set_forward_trim(
-	PandaAssembler assembler,
-	size_t trim) {
-	assembler->forward_trim = trim;
-	assembler->forward_primer_length = 0;
-}
-
-bool panda_assembler_get_primers_after(
-	PandaAssembler assembler) {
-	return assembler->post_primers;
-}
-
-void panda_assembler_set_primers_after(
-	PandaAssembler assembler,
-	bool after) {
-	assembler->post_primers = after;
-}
-
 size_t panda_assembler_get_reverse_trim(
 	PandaAssembler assembler) {
 	return assembler->reverse_trim;
@@ -327,47 +355,20 @@ void panda_assembler_set_reverse_trim(
 	assembler->reverse_primer_length = 0;
 }
 
-void panda_assembler_set_fail_alignment(
-	PandaAssembler assembler,
-	PandaFailAlign handler,
-	void *handler_data,
-	PandaDestroy handler_destroy) {
-	DESTROY_MEMBER(assembler, noalgn);
-	assembler->noalgn = handler;
-	assembler->noalgn_data = handler_data;
-	assembler->noalgn_destroy = handler_destroy;
-}
-
-long panda_assembler_get_overlap_count(
-	PandaAssembler assembler,
-	size_t length) {
-	return (length < PANDA_MAX_LEN) ? assembler->overlapcount[length] : -1;
-}
-
-size_t panda_assembler_get_longest_overlap(
+long panda_assembler_get_slow_count(
 	PandaAssembler assembler) {
-	return assembler->longest_overlap;
+	return assembler->slowcount;
 }
 
-const char *panda_assembler_get_name(
+double panda_assembler_get_threshold(
 	PandaAssembler assembler) {
-	if (assembler == NULL || assembler->name[0] == '\0')
-		return NULL;
-	return assembler->name;
+	return exp(assembler->threshold);
 }
 
-void panda_assembler_set_name(
+void panda_assembler_set_threshold(
 	PandaAssembler assembler,
-	const char *name) {
-	if (name == NULL) {
-		assembler->name[0] = '\0';
-		return;
+	double threshold) {
+	if (threshold > 0 && threshold < 1) {
+		assembler->threshold = log(threshold);
 	}
-	strncpy(assembler->name, name, MAX_LEN);
-	assembler->name[MAX_LEN - 1] = '\0';
-}
-
-PandaLogProxy panda_assembler_get_loggger(
-	PandaAssembler assembler) {
-	return assembler->logger;
 }
