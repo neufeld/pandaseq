@@ -31,7 +31,6 @@
 #define STR(x) STR0(x)
 #define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(assembler->logger, (code), assembler, NULL, static_buffer());
 
-
 static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0' };
 
 static volatile int ltdl_count = 0;
