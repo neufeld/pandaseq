@@ -338,6 +338,9 @@ Output only the sequences whose identifiers match those in the file specified, o
 min_phred:\fIvalue\fR
 Check the PHRED score of every base in the output sequence and make sure it is at least \fIvalue\fR. The threshold is based on the sequence as a whole, but this is based on the individual base scores, as they would be seen with the \fB-F\fR option.
 .TP
+pear
+Perform the false-positive test described in section 2.2 of Zhang 2013.
+.TP
 validtag:\fItag1\fR:\fItag2\fR:...
 Only include sequences in the output with one of the tags specified. This can be used to demultiplex sequences. This will not work well with \fB-B\fR option.
 .SH SEE ALSO
@@ -350,3 +353,8 @@ Andre P Masella, Andrea K Bartram, Jakub M Truszkowski, Daniel G Brown and Josh 
 .I PANDAseq: paired-end assembler for illumina sequences.
 BMC Bioinformatics 2012, 13:31. 
 <http://www.biomedcentral.com/1471-2105/13/31>
+
+J. Zhang, K. Kobert, T. Flouri, and A. Stamatakis.
+.I PEAR: A fast and accurate Illumina Paired-End reAd mergeR
+Bioinformatics 2013 : btt593v1-btt593.
+<http://bioinformatics.oxfordjournals.org/content/early/2013/10/18/bioinformatics.btt593.short>
