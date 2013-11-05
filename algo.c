@@ -36,6 +36,11 @@ void *panda_algorithm_data(
 	return &algo->end;
 }
 
+PandaAlgorithmClass panda_algorithm_class(
+	PandaAlgorithm algo) {
+	return algo->clazz;
+}
+
 bool panda_algorithm_is_a(
 	PandaAlgorithm algo,
 	PandaAlgorithmClass clazz) {

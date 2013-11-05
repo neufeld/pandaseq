@@ -46,6 +46,12 @@ PandaAlgorithm panda_algorithm_new(
 /* === Getters and Setters === */
 
 /**
+ * Get the underlying algorithm class.
+ */
+PandaAlgorithmClass panda_algorithm_class(
+	PandaAlgorithm algo);
+
+/**
  * Get the implementation-defined data for this algorithm.
  */
 void *panda_algorithm_data(

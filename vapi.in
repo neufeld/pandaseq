@@ -296,6 +296,12 @@ namespace Panda {
 		double compare(qual one, qual other);
 
 		/**
+		 * Get the underlying algorithm class.
+		 */
+		[CCode(cname = "panda_algorithm_class", simple_generics = true)]
+		public algorithm_class<T> get_class<T>();
+
+		/**
 		 * Checks if an algorithm is a member of a particular class.
 		 */
 		[CCode(cname = "panda_algorithm_is_a", simple_generics = true)]
