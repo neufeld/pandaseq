@@ -31,7 +31,15 @@
 #define STR(x) STR0(x)
 #define LOGV(code, fmt, ...) snprintf(static_buffer(), BUFFER_SIZE, fmt, __VA_ARGS__); panda_log_proxy_write(assembler->logger, (code), assembler, NULL, static_buffer());
 
+
+static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0' };
+
 static volatile int ltdl_count = 0;
+#ifdef HAVE_PTHREAD
+/* All modules share a single mutex to control reference counts */
+static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
 static bool ref_ltdl(
 	void) {
 #ifdef HAVE_PTHREAD
@@ -72,13 +80,6 @@ static void unref_ltdl(
 	pthread_mutex_unlock(&ref_lock);
 #endif
 }
-
-static const char path_sep_string[] = { LT_PATHSEP_CHAR, '\0' };
-
-#ifdef HAVE_PTHREAD
-/* All modules share a single mutex to control reference counts */
-static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
-#endif
 
 struct panda_module {
 	volatile size_t refcnt;
