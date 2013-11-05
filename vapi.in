@@ -256,7 +256,9 @@ namespace Panda {
 	[Compact]
 	public class Algorithm {
 		[CCode(cname = "panda_algorithm_simple_bayes")]
-		public const algorithm_class<bool> simple_bayes_class;
+		public const algorithm_class<void> simple_bayes_class;
+		[CCode(cname = "panda_algorithm_pear")]
+		public const algorithm_class<void> pear_class;
 		[CCode(cname = "panda_algorithms", array_length_cexpr = "panda_algorithms_length", array_length_type = "size_t")]
 		public const algorithm_class<bool>[] algorithms;
 		/**
@@ -264,6 +266,16 @@ namespace Panda {
 		 */
 		[CCode(cname = "PandaAlgorithmCreate")]
 		public delegate Algorithm Create(string? args);
+
+		/**
+		 * The log probability of a random base match.
+		 */
+		double pear_random_base_log_p {
+			[CCode(cname = "panda_algorithm_pear_get_random_base_log_p")]
+			get;
+			[CCode(cname = "panda_algorithm_pear_set_random_base_log_p")]
+			set;
+		}
 
 		/**
 		 * The minimum error estimation in the sequence data (epsilon)

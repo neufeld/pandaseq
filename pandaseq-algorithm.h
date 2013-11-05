@@ -29,7 +29,6 @@
 #        include <stdio.h>
 #        include <stdbool.h>
 EXTERN_C_BEGIN
-
 /* === Constants === */
 PANDA_EXTERN const PandaAlgorithmClass panda_algorithms[];
 PANDA_EXTERN const size_t panda_algorithms_length;
@@ -107,5 +106,23 @@ void panda_algorithm_simple_bayes_set_error_estimation(
 	PandaAlgorithm algorithm,
 	double q);
 
+/* === PEAR === */
+
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_pear;
+
+/**
+ * Create a PEAR algorithm from Zhang 2013.
+ */
+PandaAlgorithm panda_algorithm_pear_new(
+	void);
+
+/**
+ * The log probability of a random base match.
+ */
+double panda_algorithm_pear_get_random_base_log_p(
+	PandaAlgorithm algorithm);
+void panda_algorithm_pear_set_random_base_log_p(
+	PandaAlgorithm algorithm,
+	double log_p);
 EXTERN_C_END
 #endif

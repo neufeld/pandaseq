@@ -33,6 +33,20 @@ static double mismatch(
 	return (1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9;
 }
 
+static double match_pear(
+	double p,
+	double q,
+	void *data) {
+	return (1 - (1 - q) * p / 3 - (1 - p) * q / 3 - 2 * (1 - p) * (1 - q) / 9);
+}
+
+static double mismatch_pear(
+	double p,
+	double q,
+	void *data) {
+	return (1 - p) * q / 3 + (1 - q) * p / 3 + p * q / 2;
+}
+
 static double score(
 	double p,
 	void *data) {
@@ -61,6 +75,8 @@ int main(
 	panda_tbld_constant(t_bld, "qual_nn_simple_bayesian", log(0.25));
 	panda_tbld_matrix_prob(t_bld, "qual_match_simple_bayesian", match, NULL, true);
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_simple_bayesian", mismatch, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_match_pear", match_pear, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_mismatch_pear", mismatch_pear, NULL, true);
 	panda_tbld_array_prob(t_bld, "qual_score", score, NULL, false);
 	panda_tbld_array_prob(t_bld, "qual_score_err", score_err, NULL, false);
 
