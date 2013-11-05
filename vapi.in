@@ -296,6 +296,12 @@ namespace Panda {
 		public static Algorithm create<T>(algorithm_class<T> clazz);
 
 		/**
+		 * Create a PEAR algorithm.
+		 */
+		[CCode(cname = "panda_algorithm_pear_new")]
+		public Algorithm.pear();
+
+		/**
 		 * Create a simple Bayesian algorithm.
 		 */
 		[CCode(cname = "panda_algorithm_simple_bayes_new")]
