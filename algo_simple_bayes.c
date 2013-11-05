@@ -16,7 +16,9 @@
 
  */
 #include "config.h"
+#include<errno.h>
 #include <math.h>
+#include<stdlib.h>
 #include "pandaseq.h"
 #include "algo.h"
 #include "prob.h"
@@ -66,8 +68,33 @@ static double match_probability(
 	return (match ? qual_match_simple_bayesian : qual_mismatch_simple_bayesian)[PHREDCLAMP(a)][PHREDCLAMP(b)];
 }
 
+static PandaAlgorithm from_string(
+	const char *argument) {
+	PandaAlgorithm algo;
+	double err_estimation;
+	char *end;
+
+	if (argument == NULL)
+		return panda_algorithm_simple_bayes_new();
+	errno = 0;
+	err_estimation = strtod(argument, &end);
+	if (errno == ERANGE || *end != '\0') {
+		fprintf(stderr, "Cannot parse value: %s\n", argument);
+		return NULL;
+	}
+	if (err_estimation < 0 || err_estimation > 1) {
+		fprintf(stderr, "Error estimation %f is not a probability.\n", err_estimation);
+		return NULL;
+	}
+	algo = panda_algorithm_simple_bayes_new();
+	panda_algorithm_simple_bayes_set_error_estimation(algo, err_estimation);
+	return algo;
+}
+
 const struct panda_algorithm_class panda_algorithm_simple_bayes = {
 	.data_size = sizeof(struct simple_bayes),
+	.name = "simple_bayesian",
+	.create = from_string,
 	.data_destroy = NULL,
 	.overlap_probability = (PandaComputeOverlap) overlap_probability,
 	.match_probability = (PandaComputeMatch) match_probability,

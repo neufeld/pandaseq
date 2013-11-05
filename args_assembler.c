@@ -18,10 +18,47 @@
 #define _POSIX_C_SOURCE 2
 #include<ctype.h>
 #include<errno.h>
+#include<ltdl.h>
 #include<stdlib.h>
 #include<string.h>
 #include "config.h"
 #include "pandaseq.h"
+
+static bool set_algorithm(
+	PandaAssembler assembler,
+	char flag,
+	char *argument,
+	bool is_set) {
+	char *end;
+	size_t it;
+	if (argument == NULL)
+		return true;
+	end = strchr(argument, LT_PATHSEP_CHAR);
+	for (it = 0; it < panda_algorithms_length; it++) {
+		if (strncmp(argument, panda_algorithms[it]->name, (end == NULL) ? strlen(argument) : end - argument) == 0) {
+			PandaAlgorithm algo;
+			if (panda_algorithms[it]->create == NULL) {
+				fprintf(stderr, "It seems that no one wrote the code to use this algorithm properly.\n");
+				free(argument);
+				return false;
+			}
+			algo = panda_algorithms[it]->create((end == NULL || *end == '\0') ? NULL : end + 1);
+			if (algo == NULL) {
+				fprintf(stderr, "Unable to initialise requested algorithm.\n");
+				free(argument);
+				return false;
+			}
+			panda_assembler_set_algorithm(assembler, algo);
+			free(argument);
+			return true;
+		}
+	}
+	fprintf(stderr, "Unknown algorithm: %s\n", argument);
+	free(argument);
+	return false;
+}
+
+const panda_tweak_assembler panda_stdargs_algorithm = { 'A', "algorithm:parameters", "Select the algorithm to use for overlap selection and scoring.", set_algorithm };
 
 static bool set_primers_after(
 	PandaAssembler assembler,
@@ -229,6 +266,7 @@ static bool set_minimum_overlap(
 const panda_tweak_assembler panda_stdargs_min_overlap = { 'o', "length", "Minumum overlap region length for a sequence.", set_minimum_overlap };
 
 const panda_tweak_assembler *const panda_stdargs[] = {
+	&panda_stdargs_algorithm,
 	&panda_stdargs_max_len,
 	&panda_stdargs_degenerates,
 	&panda_stdargs_primers_after,

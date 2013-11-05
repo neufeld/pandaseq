@@ -87,3 +87,9 @@ PandaAlgorithm panda_algorithm_new(
 	instance->clazz = clazz;
 	return instance;
 }
+
+const PandaAlgorithmClass panda_algorithms[] = {
+	&panda_algorithm_simple_bayes,
+};
+
+const size_t panda_algorithms_length = sizeof(panda_algorithms) / sizeof(PandaAlgorithmClass);

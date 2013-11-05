@@ -324,6 +324,14 @@ typedef struct {
 /* === Function Pointers === */
 
 /**
+ * Construct a new algorithm from a string of arguments
+ * @args: (allow-none): The arguments from the user.
+ */
+typedef PandaAlgorithm (
+	*PandaAlgorithmCreate) (
+	const char *args);
+
+/**
  * Check a sequence after reconstruction for validity.
  */
 typedef bool (
@@ -555,6 +563,8 @@ struct panda_algorithm_class {
 	 * The number of bytes to allocate for the private data.
 	 */
 	size_t data_size;
+	const char *name;
+	PandaAlgorithmCreate create;
 	PandaDestroy data_destroy;
 	PandaComputeOverlap overlap_probability;
 	PandaComputeMatch match_probability;

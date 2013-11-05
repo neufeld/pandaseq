@@ -121,6 +121,10 @@ void panda_tweak_general_sort(
 PANDA_EXTERN const panda_tweak_assembler *const panda_stdargs[];
 PANDA_EXTERN const size_t panda_stdargs_length;
 /**
+ * The algorithm selection switch (-A).
+ */
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_algorithm;
+/**
  * The strip primers after switch (-a).
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_primers_after;

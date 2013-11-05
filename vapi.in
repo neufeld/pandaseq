@@ -257,6 +257,13 @@ namespace Panda {
 	public class Algorithm {
 		[CCode(cname = "panda_algorithm_simple_bayes")]
 		public const algorithm_class<bool> simple_bayes_class;
+		[CCode(cname = "panda_algorithms", array_length_cexpr = "panda_algorithms_length", array_length_type = "size_t")]
+		public const algorithm_class<bool>[] algorithms;
+		/**
+		 * Construct a new algorithm from a string of arguments
+		 */
+		[CCode(cname = "PandaAlgorithmCreate")]
+		public delegate Algorithm Create(string? args);
 
 		/**
 		 * The minimum error estimation in the sequence data (epsilon)
@@ -1146,6 +1153,8 @@ file);
 		 * The number of bytes to allocate for the private data.
 		 */
 		public size_t data_size;
+		public string name;
+		public Algorithm.Create create;
 		public Destroy<T> data_destroy;
 		public ComputeOverlap<T> overlap_probability;
 		public ComputeMatch<T> match_probability;
@@ -1582,6 +1591,11 @@ file);
 		 */
 		[CCode(cname = "panda_tweak_assembler", array_length_cexpr = "panda_stdargs_length", array_length_type = "size_t")]
 		public const Tweak.assembler?[] list;
+		/**
+		 * The algorithm selection switch (-A).
+		 */
+		[CCode(cname = "panda_stdargs_algorithm")]
+		public const Tweak.assembler algorithm;
 		/**
 		 * The strip primers after switch (-a).
 		 */

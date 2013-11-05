@@ -29,9 +29,14 @@
 #        include <stdio.h>
 #        include <stdbool.h>
 EXTERN_C_BEGIN
+
+/* === Constants === */
+PANDA_EXTERN const PandaAlgorithmClass panda_algorithms[];
+PANDA_EXTERN const size_t panda_algorithms_length;
+
 /* === Constructors === */
 /**
- * Create a new algorithm with the specified amount of storage for the privae user data.
+ * Create a new algorithm with the specified amount of storage for the private user data.
  *
  * @clazz: the structure holding the callbacks.
  */
