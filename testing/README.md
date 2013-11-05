@@ -1,7 +1,7 @@
 This is an experimental tool for determining if changes to PANDAseq affect the output. You will need Vala to compile it.
 
 1. Install PANDAseq.
-2. Install Vala (`sudo apt-get install valac` or sudo `yum install vala vala-tools`).
+2. Install Vala (`sudo apt-get install valac` or `sudo yum install vala vala-tools`).
 3. Compiled the binary using:
 
 		valac pandaseq-diff.vala dynamic_loader.c --pkg pandaseq-2 -X -lltdl -g
