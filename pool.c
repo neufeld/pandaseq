@@ -125,6 +125,8 @@ bool panda_run_pool(
 	(void) time(&shared_info.starttime);
 
 #if HAVE_PTHREAD
+	panda_writer_append(log_writer, "STAT\tTHREADS\t%d\n", threads);
+	panda_writer_commit(log_writer);
 	if (threads > 1 && mux != NULL) {
 		thread_list = calloc(sizeof(struct thread_info), threads - 1);
 		for (it = 0; it < threads - 1; it++) {
