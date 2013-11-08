@@ -107,7 +107,7 @@ static void *async_thread(
 
 		pthread_mutex_lock(&data->free_mutex);
 		while ((seq = data->free) == NULL) {
-			if (pthread_cond_wait(&data->has_free, &data->free_mutex) != 0 || data->done) {
+			if (data->done || pthread_cond_wait(&data->has_free, &data->free_mutex) != 0 || data->done) {
 				data->done = true;
 				pthread_mutex_unlock(&data->free_mutex);
 				pthread_mutex_lock(&data->ready_mutex);
