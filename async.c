@@ -187,6 +187,7 @@ PandaNextSeq panda_create_async_reader(
 	}
 
 	data = malloc(sizeof(struct async_data));
+	data->done = false;
 	data->next = next;
 	data->next_data = next_data;
 	data->next_destroy = next_destroy;
