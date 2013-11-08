@@ -168,8 +168,8 @@ static bool align(
 	}
 
 	/* Mask out the B-cliff at the end of sequences */
-	for (unmasked_forward_length = result->forward_length; i > 0 && result->forward[unmasked_forward_length - 1].qual == (char) 2; unmasked_forward_length--) ;
-	for (unmasked_reverse_length = result->reverse_length; i > 0 && result->reverse[unmasked_reverse_length - 1].qual == (char) 2; unmasked_reverse_length--) ;
+	for (unmasked_forward_length = result->forward_length; unmasked_forward_length > 0 && result->forward[unmasked_forward_length - 1].qual == (char) 2; unmasked_forward_length--) ;
+	for (unmasked_reverse_length = result->reverse_length; unmasked_reverse_length > 0 && result->reverse[unmasked_reverse_length - 1].qual == (char) 2; unmasked_reverse_length--) ;
 
 	/* Copy the paired sequence adjusting the probabilities based on the quality information from both sequences. */
 	result->overlap_mismatches = 0;
