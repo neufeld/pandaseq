@@ -34,7 +34,7 @@ INIT {
 		buffer[it] = '\0';
 
 		if (!panda_idset_add_str(set, buffer[0] == '@' ? (buffer + 1) : buffer, PANDA_TAG_OPTIONAL, NULL, NULL)) {
-			fprintf(stderr, "ERR\tFILTER\tBAD\t%s\n", buffer);
+			panda_log_proxy_write_f(logger, "ERR\tFILTER\tBAD\t%s\n", buffer);
 			if (close)
 				fclose(file);
 			return false;

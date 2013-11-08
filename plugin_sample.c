@@ -26,24 +26,22 @@ HELP("This is a sample module that does nothing", "sample:args");
 VER_INFO("1.0");
 
 /* Given a sequence, determine if the sequence is valid.
- * Arguments: resultseq* sequence
- *                       View pandaseq.h for more information about resultseq.
- * Return true if the sequence should be kept.
+ * @logger: View pandaseq-log.h for more information about PandaLogProxy.
+ * @sequence: View pandaseq-common.h for more information about panda_result_seq.
+ * Returns: true if the sequence should be kept.
  * At least one of this function or PRECHECK is required.
  */
 CHECK {
-	fprintf(stderr, "INFO\tSAMPLE\tCHECK\n");
+	panda_log_proxy_write_str(logger, "INFO\tSAMPLE\tCHECK\n");
 	return true;
 }
 
 /* Given the forward and reverse reads, determine if the sequence is worth assembling.
- * Arguments: seqidentifier* id
- *                       View pandaseq.h for more information about id.
- *            char* forward
- *                       The forward sequence.
- *            char* reverse
- *                       The reverse sequence.
- * Return true if the reads should be assembled.
+ * @logger: View pandaseq-log.h for more information about PandaLogProxy.
+ * @id: View pandaseq-common.h for more information about panda_seqid.
+ * @forward: (array length=forward_length): The forward read, of type panda_qual.
+ * @reverse: (array length=reverse_length): The reverse read, of type panda_qual.
+ * Returns: true if the reads should be assembled.
  * At least one of this function or CHECK is required.
  */
 PRECHECK {
@@ -54,12 +52,13 @@ PRECHECK {
 /* Called once to initialise the module upon loading. Arguments can be provided
  * to the module upon loading.
  * (e.g., "-C /usr/lib/pandaseq/mynewmodule.so:foo=bar", then args = "foo=bar")
- * Arguments: char* args
- * Returns false if there is a failure to initialise.
+ * @logger: View pandaseq-log.h for more information about PandaLogProxy.
+ * @args: the argument string provided.
+ * Returns: false if there is a failure to initialise.
  * This function is optional.
  */
 INIT {
-	fprintf(stderr, "INFO\tSAMPLE\tINIT\t%s\n", args);
+	panda_log_proxy_write_f(logger, "INFO\tSAMPLE\tINIT\t%s\n", args);
 	return false;
 }
 
@@ -67,6 +66,5 @@ INIT {
  * This function is optional.
  */
 CLEANUP {
-	fprintf(stderr, "INFO\tSAMPLE\tDESTROY\n");
 	return;
 }

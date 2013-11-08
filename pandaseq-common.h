@@ -336,6 +336,7 @@ typedef PandaAlgorithm (
  */
 typedef bool (
 	*PandaCheck) (
+	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data);
 
@@ -490,6 +491,7 @@ typedef bool (
  */
 typedef bool (
 	*PandaPreCheck) (
+	PandaLogProxy logger,
 	const panda_seq_identifier *id,
 	const panda_qual *forward,
 	size_t forward_length,

@@ -85,7 +85,8 @@ struct panda_module {
 
 	bool (
 		*init) (
-		char *args);
+		char *args,
+		PandaLogProxy logger);
 	PandaCheck check;
 	PandaPreCheck precheck;
 	PandaDestroy destroy;
@@ -130,7 +131,7 @@ bool module_checkseq(
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
-		if (module->check != NULL && !module->check(sequence, module->user_data)) {
+		if (module->check != NULL && !module->check(assembler->logger, sequence, module->user_data)) {
 			assembler->rejected[it]++;
 			return false;
 		}
@@ -148,7 +149,7 @@ bool module_precheckseq(
 	int it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
-		if (module->precheck != NULL && !module->precheck(id, forward, forward_length, reverse, reverse_length, module->user_data)) {
+		if (module->precheck != NULL && !module->precheck(assembler->logger, id, forward, forward_length, reverse, reverse_length, module->user_data)) {
 			assembler->rejected[it]++;
 			return false;
 		}
@@ -167,7 +168,7 @@ bool panda_assembler_add_module(
 	pthread_mutex_lock(&ref_lock);
 #endif
 	if (module->init != NULL) {
-		init = module->init(module->args);
+		init = module->init(module->args, assembler->logger);
 		if (init)
 			module->init = NULL;
 	}

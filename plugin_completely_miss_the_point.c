@@ -16,13 +16,13 @@ CHECK {
 
 INIT {
 	if (args == NULL || *args == '\0') {
-		fprintf(stderr, "Please supply the maximum allowed mismatches.\n");
+		panda_log_proxy_write_str(logger, "Please supply the maximum allowed mismatches.\n");
 		return false;
 	}
 	errno = 0;
 	mismatches = (size_t) strtol(args, NULL, 10);
 	if (errno != 0 || mismatches < 0 || mismatches > PANDA_MAX_LEN) {
-		fprintf(stderr, "Bad maximum allowed mismatches.\n");
+		panda_log_proxy_write_str(logger, "Bad maximum allowed mismatches.\n");
 		return false;
 	}
 	return true;

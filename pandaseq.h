@@ -58,7 +58,7 @@ EXTERN_C_BEGIN
  * See https://live.gnome.org/GObjectIntrospection/Annotations for more
  * information.
  */
-#        define PANDA_API 2
+#        define PANDA_API 3
 /**
  * Find the best offset of a small sequence in a large sequence.
  * @threshold: the minimum log probability to match

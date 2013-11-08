@@ -72,6 +72,7 @@ static bool set_primers_after(
 const panda_tweak_assembler panda_stdargs_primers_after = { 'a', NULL, "Strip the primers after assembly, rather than before.", set_primers_after };
 
 bool no_n_check(
+	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data) {
 
@@ -173,6 +174,7 @@ const panda_tweak_assembler panda_stdargs_forward_primer = { 'p', "primer", "For
 const panda_tweak_assembler panda_stdargs_reverse_primer = { 'q', "primer", "Reverse primer sequence or number of bases to be removed.", set_primer_group };
 
 bool short_check(
+	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data) {
 	return sequence->sequence_length >= (size_t) user_data;
@@ -206,6 +208,7 @@ static bool set_short_check(
 const panda_tweak_assembler panda_stdargs_min_len = { 'l', "length", "Minimum length for a sequence.", set_short_check };
 
 bool long_check(
+	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data) {
 	size_t length = (size_t) user_data;

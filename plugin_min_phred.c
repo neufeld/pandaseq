@@ -22,13 +22,13 @@ INIT {
 	long int value;
 	char *endptr;
 	if (args == NULL || *args == '\0') {
-		fprintf(stderr, "Need a number for a PHRED score.\n", args);
+		panda_log_proxy_write_str(logger, "Need a number for a PHRED score.\n");
 		return false;
 	}
 
 	value = strtol(args, &endptr, 10);
 	if (endptr != NULL && *endptr != '\0' || value < 0 || value > 127) {
-		fprintf(stderr, "PHRED score must be a number between 0 and 127.\n", args);
+		panda_log_proxy_write_str(logger, "PHRED score must be a number between 0 and 127.\n");
 		return false;
 	}
 	min_score = value;

@@ -41,6 +41,7 @@ struct {
 };
 
 bool parse_argument(
+	PandaLogProxy logger,
 	const char *value,
 	const char *arg_name,
 	double *output) {
@@ -51,7 +52,7 @@ bool parse_argument(
 		perror(arg_name);
 		return false;
 	} else if (*remainder != '\0') {
-		fprintf(stderr, "%s: trailing garbage: %s\n", arg_name, remainder);
+		panda_log_proxy_write_f(logger, "%s: trailing garbage: %s\n", arg_name, remainder);
 		return false;
 	}
 	return true;
@@ -64,18 +65,18 @@ static bool key_processor(
 	size_t it;
 	for (it = 0; token[it].name != NULL; it++) {
 		if (strcmp(key, token[it].name) == 0) {
-			return parse_argument(value, token[it].name, token[it].holder);
+			return parse_argument((PandaLogProxy) data, value, token[it].name, token[it].holder);
 		}
 	}
-	fprintf(stderr, "Unknown setting: /%s/\n", key);
+	panda_log_proxy_write_f((PandaLogProxy) data, "Unknown setting: /%s/\n", key);
 }
 
 INIT {
 	char *value;
-	if (!panda_parse_key_values(args, key_processor, NULL))
+	if (!panda_parse_key_values(args, key_processor, logger))
 		return false;
 	if (cutoff < 0 || cutoff > 1) {
-		fprintf(stderr, "Value %f out of range for p-value cut-off.", cutoff);
+		panda_log_proxy_write_f(logger, "Value %f out of range for p-value cut-off.", cutoff);
 		return false;
 	}
 	return true;
