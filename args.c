@@ -493,3 +493,46 @@ bool panda_parse_args(
 	CLEANUP();
 	return true;
 }
+
+bool panda_parse_key_values(
+	const char *str,
+	PandaKeyParsed key_parsed,
+	void *key_parsed_data) {
+	char key[100];
+	size_t key_length = 0;
+	char value[200];
+	size_t value_length = 0;
+	bool in_key = true;
+	if (str == NULL)
+		return true;
+
+	for (; *str != '\0'; str++) {
+		if (*str == ',' && !in_key) {
+			value[value_length] = '\0';
+			if (!key_parsed(key, value, key_parsed_data))
+				return false;
+			key_length = 0;
+			value_length = 0;
+			in_key = true;
+		}
+		if (*str == '=' && in_key) {
+			key[key_length] = '\0';
+			in_key = false;
+		} else if (!in_key) {
+			value[value_length++] = *str;
+		} else if (isalnum(*str) || *str == '_' || *str == '-') {
+			key[key_length++] = *str;
+		} else {
+			return false;
+		}
+		if (key_length == sizeof(key) || value_length == sizeof(value))
+			return false;
+	}
+	if (in_key)
+		return false;
+	if (key_length > 0 && !in_key) {
+		value[value_length] = '\0';
+		return key_parsed(key, value, key_parsed_data);
+	}
+	return !in_key;
+}

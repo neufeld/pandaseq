@@ -430,6 +430,17 @@ typedef void (
 	void *data);
 
 /**
+ * Process a key-value pair.
+ *
+ * Returns: whether processing was successful.
+ */
+typedef bool (
+	*PandaKeyParsed) (
+	const char *key,
+	const char *value,
+	void *data);
+
+/**
  * A callback for iterating over the current modules.
  * @assembler: the assembler which is being queried
  * @module: the module selected

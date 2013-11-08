@@ -63,6 +63,18 @@ bool panda_parse_args(
 	PandaDestroy *output_destroy);
 
 /**
+ * Parse a list of comma separated separated key=value keys.
+ *
+ * @str: the string containing the arguments
+ * @key_parsed: (closure key_parsed_data): invoked for each key-value pair.
+ * Return: whether parsing was successful.
+ */
+bool panda_parse_key_values(
+	const char *str,
+	PandaKeyParsed key_parsed,
+	void *key_parsed_data);
+
+/**
  * Spawn threads and assemble sequences.
  * @threads: the number of threads to spawn
  * @assembler: (transfer full): the main assembler to use. If multiple threads are to be used, the configuration of this assembler will be copied to all the slave assemblers.

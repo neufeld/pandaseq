@@ -1874,5 +1874,23 @@ file);
 		 */
 		[CCode(cname = "panda_parse_args", simple_generics = true)]
 		public bool parse_args<T>(string[] args, [CCode(array_length_type = "size_t")] Tweak.general?[] general_args, [CCode(array_length_type = "size_t")] Tweak.assembler?[] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? assembler, out Mux? mux, out int threads, out OutputSeq output);
+		/**
+		 * Parse a list of comma separated separated key=value keys.
+		 *
+		 * @param str the string containing the arguments
+		 * @param key_parsed invoked for each key-value pair.
+		 * @return whether parsing was successful.
+		 */
+		[CCode(cname = "panda_parse_key_values")]
+		public bool parse_key_values(string? str, KeyParsed key_parsed);
+
+		/**
+		 * Process a key-value pair.
+		 *
+		 * Returns: whether processing was successful.
+		 */
+		[CCode(cname = "PandaKeyParsed", has_type_id = false)]
+		public delegate bool KeyParsed(string key, string @value);
+
 	}
 }

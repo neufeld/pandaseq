@@ -1,15 +1,15 @@
-#define _XOPEN_SOURCE 500
 #include<errno.h>
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<pandaseq-plugin.h>
 
 double alpha = 1;
 double beta = -1;
 double cutoff = 0.01;
 
-HELP("This is a sample module that does nothing", "pear_test:alpha=1.0,beta=-1.0,cutoff=0.01");
+HELP("Use the statistical test from PEAR (Zhang 2013)", "pear_test:alpha=1.0,beta=-1.0,cutoff=0.01");
 
 VER_INFO("1.0");
 
@@ -30,24 +30,21 @@ CHECK {
 	return cutoff > 1 - product * product;
 }
 
-enum {
-	OPT_ALPHA = 0,
-	OPT_BETA,
-	OPT_CUTOFF
-};
-
-char *const token[] = {
-	[OPT_ALPHA] = "alpha",
-	[OPT_BETA] = "beta",
-	[OPT_CUTOFF] = "cutoff",
-	NULL
+struct {
+	const char *name;
+	double *holder;
+} const token[] = {
+	{.name = "alpha",.holder = &alpha},
+	{.name = "beta",.holder = &beta},
+	{.name = "cutoff",.holder = &cutoff},
+	{NULL}
 };
 
 bool parse_argument(
-	char *value,
-	char *arg_name,
+	const char *value,
+	const char *arg_name,
 	double *output) {
-	char *remainder;
+	char *remainder = NULL;
 	errno = 0;
 	*output = strtod(value, &remainder);
 	if (errno != 0) {
@@ -60,29 +57,25 @@ bool parse_argument(
 	return true;
 }
 
+static bool key_processor(
+	const char *key,
+	const char *value,
+	void *data) {
+	size_t it;
+	for (it = 0; token[it].name != NULL; it++) {
+		if (strcmp(key, token[it].name) == 0) {
+			return parse_argument(value, token[it].name, token[it].holder);
+		}
+	}
+	fprintf(stderr, "Unknown setting: /%s/\n", key);
+}
+
 INIT {
 	char *value;
-	if (args == NULL)
-		return true;
-	switch (getsubopt(&args, token, &value)) {
-	case OPT_ALPHA:
-		if (!parse_argument(value, token[OPT_ALPHA], &alpha))
-			return false;
-		break;
-	case OPT_BETA:
-		if (!parse_argument(value, token[OPT_BETA], &beta))
-			return false;
-		break;
-	case OPT_CUTOFF:
-		if (!parse_argument(value, token[OPT_CUTOFF], &cutoff))
-			return false;
-		if (cutoff < 0 || cutoff > 1) {
-			fprintf(stderr, "Value %f out of range for p-value cut-off.", cutoff);
-			return false;
-		}
-		break;
-	default:
-		fprintf(stderr, "No match found for token: /%s/\n", value);
+	if (!panda_parse_key_values(args, key_processor, NULL))
+		return false;
+	if (cutoff < 0 || cutoff > 1) {
+		fprintf(stderr, "Value %f out of range for p-value cut-off.", cutoff);
 		return false;
 	}
 	return true;
