@@ -1544,7 +1544,7 @@ file);
 	 * The current module API version of the running library
 	 */
 	[CCode(cname = "panda_api_version")]
-	int get_api_version();
+	public int get_api_version();
 
 	/**
 	 * The current version string
