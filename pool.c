@@ -114,6 +114,7 @@ bool panda_run_pool(
 	struct shared_info shared_info;
 	bool some_seqs = false;
 	struct thread_info *thread_list;
+	PandaWriter log_writer = panda_log_proxy_get_writer(assembler->logger);
 
 	if (assembler == NULL)
 		return false;
@@ -125,20 +126,21 @@ bool panda_run_pool(
 
 #if HAVE_PTHREAD
 	if (threads > 1 && mux != NULL) {
-
 		thread_list = calloc(sizeof(struct thread_info), threads - 1);
 		for (it = 0; it < threads - 1; it++) {
 			thread_list[it].assembler = panda_mux_create_assembler(mux);
 			thread_list[it].index = it + 1;
 			thread_list[it].shared = &shared_info;
 			if (thread_list[it].assembler == NULL) {
-				fprintf(stderr, "ERR\tMUXCREATE\t%d\n", (int) it + 1);
+				panda_writer_append(log_writer, "ERR\tMUXCREATE\t%d\n", (int) it + 1);
+				panda_writer_commit(log_writer);
 				threads = it + 1;
 				break;
 			}
 			panda_assembler_copy_configuration(thread_list[it].assembler, assembler);
 			if (pthread_create(&thread_list[it].thread, NULL, (void *(*)(void *)) do_assembly, &thread_list[it]) != 0) {
-				fprintf(stderr, "ERR\tPCREATE\t%d\n", (int) it + 1);
+				panda_writer_append(log_writer, "ERR\tPCREATE\t%d\n", (int) it + 1);
+				panda_writer_commit(log_writer);
 				threads = it + 1;
 				break;
 			}
