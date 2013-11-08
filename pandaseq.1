@@ -11,6 +11,9 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 [
 .B \-6 
 ] [
+.B \-A
+.I algorithm
+] [
 .B \-a 
 ] [
 .B \-B 
@@ -84,6 +87,15 @@ Check for various constraints, including quality, length, uncalled bases, and us
 .TP
 \-6
 Input files will have their quality encoded as PHRED + 64 instead of the PHRED + 33. PHRED + 64 was used originally in the CASAVA pipeline from version 1.3 through 1.7. In CASAVA 1.8, the score is encoded as PHRED + 33, the default.
+.TP
+\-A algorithm
+Set the algorithm used for assembly. Currently there are:
+.RS
+.IP simple_bayesian[:\fIerror_estimation\fR]
+Uses the formula described in the original paper (Masella 2012), optionally with an error estimation (epsilon) provided.
+.IP pear[:\fIrandom_base\fR]
+Uses the formula described in the PEAR paper (Zhang 2013), optionally with the probability of a random base (q) provided.
+.RE
 .TP
 \-a
 Strip the primers after assembly, rather than before. Stripping the primers first saves time, but if the overlap region is very large compared to the read, the read may have sequence from the other primer (i.e., the forward read ends with reverse primer, and/or the reverse read ends with forward primer). If the primers are stripped first, the reads will fail to assemble. This option attempts assembly first, then tries to strip the primers, so the heavily overlapping case will assemble. You should only need this if the region of interest is smaller than the whole read. It is undesirable, unless necessary, as it slows assembly down.
