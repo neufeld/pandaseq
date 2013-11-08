@@ -787,7 +787,7 @@ file);
 		 * This method is thread-safe.
 		 */
 		[CCode(cname = "panda_log_proxy_write_str")]
-		public void panda_log_proxy_write_str(string str);
+		public void write_str(string str);
 
 		/**
 		 * Print a double with a STAT header to the log.
