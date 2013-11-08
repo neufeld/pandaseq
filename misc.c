@@ -16,6 +16,13 @@
 
  */
 #include "config.h"
+#include <unistd.h>
+#if HAVE_SYS_PARAM_H
+#        include <sys/param.h>
+#endif
+#if HAVE_SYS_SYSCTL_H
+#        include <sys/sysctl.h>
+#endif
 #include "pandaseq.h"
 
 const char const *panda_version(
@@ -32,3 +39,44 @@ size_t panda_max_len(
 	void) {
 	return MAX_LEN;
 }
+
+#ifdef _WIN32
+#        include <windows.h>
+int panda_get_default_worker_threads(
+	void) {
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+
+	return (sysinfo.dwNumberOfProcessors < 1) ? 1 : sysinfo.dwNumberOfProcessors;
+}
+#elif defined(_SC_NPROCESSORS_ONLN)
+int panda_get_default_worker_threads(
+	void) {
+	int num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+	return (num_cpus < 1) ? 1 : num_cpus;
+}
+#elif defined(HW_AVAILCPU)
+#        include <unistd.h>
+#        include <sys/types.h>
+#        include <sys/sysctl.h>
+int panda_get_default_worker_threads(
+	void) {
+	int num_cpus;
+	int mib[4];
+	size_t len = sizeof(num_cpus);
+	mib[0] = CTL_HW;
+	mib[1] = HW_AVAILCPU;
+	sysctl(mib, 2, &num_cpu, &len, NULL, 0);
+
+	if (num_cpu < 1) {
+		mib[1] = HW_NCPU;
+		sysctl(mib, 2, &numCPU, &len, NULL, 0);
+	}
+	return (num_cpus < 1) ? 1 : num_cpus;
+}
+#else
+int panda_get_default_worker_threads(
+	void) {
+	return 1;
+}
+#endif

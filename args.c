@@ -95,7 +95,7 @@ bool panda_parse_args(
 	PandaWriter writer_out;
 #ifdef HAVE_PTHREAD
 	PandaMux mux = NULL;
-	int threads = 1;
+	int threads = panda_get_default_worker_threads();
 #endif
 #if HAVE_UNAME_SYSCALL
 	struct utsname uname_info;

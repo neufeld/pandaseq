@@ -28,6 +28,12 @@
 #        include <pandaseq-common.h>
 EXTERN_C_BEGIN
 /**
+ * Get the number of worker threads that should be created given the number of processors in this system, if that can be determined.
+ */
+int panda_get_default_worker_threads(
+	void);
+
+/**
  * Parse command line arguments to in order to construct assemblers.
  *
  * This is meant to serve as a general framework for parsing command line arguments with maximum code reuse. There are two kinds of arguments: assembler-only and general. Assembler-only arguments need no context (i.e., they on modify the assembler based on their argument). General arguments might do this or they might be involved in selecting the sequence source.

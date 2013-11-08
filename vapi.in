@@ -1547,6 +1547,12 @@ file);
 	public int get_api_version();
 
 	/**
+	 * Get the number of worker threads that should be created given the number of processors in this system, if that can be determined.
+	 */
+	[CCode(cname = "panda_get_default_worker_threads")]
+	public int get_default_worker_threads();
+
+	/**
 	 * The current version string
 	 */
 	[CCode(cname = "panda_version")]
