@@ -418,7 +418,7 @@ bool panda_parse_args(
 #ifdef HAVE_PTHREAD
 	mux = panda_mux_new(next, next_data, next_destroy, logger);
 	if (mux == NULL) {
-		fprintf(stderr, "ERR\tLIB\tCould not create multiplexer.\n");
+		panda_log_proxy_write_str(logger, "ERR\tLIB\tCould not create multiplexer.\n");
 		CLEANUP();
 		return false;
 	}
@@ -431,7 +431,7 @@ bool panda_parse_args(
 	next_data = NULL;
 	next_destroy = NULL;
 	if (assembler == NULL) {
-		fprintf(stderr, "ERR\tLIB\tCould not create assembler.\n");
+		panda_log_proxy_write_str(logger, "ERR\tLIB\tCould not create assembler.\n");
 		CLEANUP();
 		return false;
 	}
