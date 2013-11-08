@@ -359,10 +359,11 @@ void panda_module_unref(
 			free(module->name);
 		if (module->args != NULL)
 			free(module->args);
-		if (module->handle != NULL)
+		if (module->handle != NULL) {
 			lt_dlclose(module->handle);
+			unref_ltdl();
+		}
 		free(module);
-		unref_ltdl();
 	}
 }
 
