@@ -183,19 +183,9 @@ void panda_writer_append(
 	const char *format,
 	...) {
 	va_list va;
-#ifdef HAVE_PTHREAD
-	struct write_buffer *data = get_write_buffer(writer);
 	va_start(va, format);
-	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, UNCOMMITTED_BUFF_SIZE - data->uncommitted_length, format, va);
+	panda_writer_append_v(writer, format, va);
 	va_end(va);
-#else
-	char buffer[UNCOMMITTED_BUFF_SIZE];
-	size_t buffer_length;
-	va_start(va, format);
-	buffer_length = vsnprintf(buffer, UNCOMMITTED_BUFF_SIZE, format, va);
-	va_end(va);
-	writer->write(buffer, buffer_length, writer->write_data);
-#endif
 }
 
 void panda_writer_append_c(
@@ -216,6 +206,21 @@ void panda_writer_append_id(
 	PandaWriter writer,
 	const panda_seq_identifier *id) {
 	panda_seqid_xprint(id, (PandaPrintf) panda_writer_append, writer);
+}
+
+void panda_writer_append_v(
+	PandaWriter writer,
+	const char *format,
+	va_list va) {
+#ifdef HAVE_PTHREAD
+	struct write_buffer *data = get_write_buffer(writer);
+	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, UNCOMMITTED_BUFF_SIZE - data->uncommitted_length, format, va);
+#else
+	char buffer[UNCOMMITTED_BUFF_SIZE];
+	size_t buffer_length;
+	buffer_length = vsnprintf(buffer, UNCOMMITTED_BUFF_SIZE, format, va);
+	writer->write(buffer, buffer_length, writer->write_data);
+#endif
 }
 
 void panda_writer_commit(

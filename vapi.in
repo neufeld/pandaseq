@@ -767,6 +767,13 @@ file);
 		public void write(Code code, Assembler? assembler, identifier? id, string message);
 
 		/**
+		 * Put a printf-like message in the log.
+		 */
+		[CCode(cname = "panda_log_proxy_write_f")]
+		[PrintfFormat]
+		public void write_f(string format, ...);
+
+		/**
 		 * Print the overlap histogram of an assember to the log.
 		 *
 		 * This method is thread-safe.
@@ -1133,6 +1140,13 @@ file);
 		[CCode(cname = "panda_writer_append")]
 		[PrintfFormat]
 		public void append(string format, ...);
+		/**
+		 * Write a printf-like formatted string to the output.
+		 */
+		[CCode(cname = "panda_writer_append_v")]
+		[PrintfFormat]
+		public void append_v(string format, va_list va);
+
 		/**
 		 * Write a single character to the output.
 		 */

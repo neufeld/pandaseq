@@ -100,6 +100,14 @@ void panda_log_proxy_write_overlap(
 	PandaAssembler assembler);
 
 /**
+ * Put a printf-like message in the log.
+ */
+void panda_log_proxy_write_f(
+	PandaLogProxy proxy,
+	const char *format,
+	...);
+
+/**
  * Print a string to the log.
  *
  * This method is thread-safe.

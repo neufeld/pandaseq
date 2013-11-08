@@ -130,6 +130,17 @@ void panda_log_proxy_write_str(
 	panda_writer_commit(proxy->writer);
 }
 
+void panda_log_proxy_write_f(
+	PandaLogProxy proxy,
+	const char *format,
+	...) {
+	va_list va;
+	va_start(va, format);
+	panda_writer_append_v(proxy->writer, format, va);
+	va_end(va);
+	panda_writer_commit(proxy->writer);
+}
+
 static void write_assembler_name(
 	PandaLogProxy proxy,
 	PandaAssembler assembler) {

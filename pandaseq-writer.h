@@ -85,6 +85,13 @@ void panda_writer_append_id(
 	PandaWriter writer,
 	const panda_seq_identifier *id);
 /**
+ * Write a printf-like formatted string to the output.
+ */
+void panda_writer_append_v(
+	PandaWriter writer,
+	const char *format,
+	va_list va);
+/**
  * End the current transaction and start another.
  *
  * This will consider the appending done so far to this writer to be a unit
