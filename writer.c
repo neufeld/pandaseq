@@ -67,6 +67,15 @@ static struct write_buffer *get_write_buffer(
 	}
 	return data;
 }
+
+static void flush_buffer(PandaWriter writer, struct write_buffer *data) {
+		pthread_mutex_lock(&writer->mutex);
+		data->owner->write(data->committed, data->committed_length, data->owner->write_data);
+		data->owner->write(data->uncommitted, data->uncommitted_length, data->owner->write_data);
+		data->uncommitted_length = 0;
+		data->committed_length = 0;
+		pthread_mutex_unlock(&writer->mutex);
+}
 #endif
 
 PandaWriter panda_writer_new(
@@ -134,6 +143,7 @@ PandaWriter panda_writer_open_file(
 PandaWriter panda_writer_ref(
 	PandaWriter writer) {
 #ifdef HAVE_PTHREAD
+	flush_buffer(writer, get_write_buffer(writer));
 	pthread_mutex_lock(&writer->mutex);
 #endif
 	writer->refcnt++;
@@ -149,6 +159,7 @@ void panda_writer_unref(
 	if (writer == NULL)
 		return;
 #ifdef HAVE_PTHREAD
+	flush_buffer(writer, get_write_buffer(writer));
 	pthread_mutex_lock(&writer->mutex);
 #endif
 	count = --(writer->refcnt);
@@ -228,12 +239,7 @@ void panda_writer_commit(
 #ifdef HAVE_PTHREAD
 	struct write_buffer *data = get_write_buffer(writer);
 	if (COMMITTED_BUFF_SIZE - data->committed_length < data->uncommitted_length) {
-		pthread_mutex_lock(&writer->mutex);
-		data->owner->write(data->committed, data->committed_length, data->owner->write_data);
-		data->owner->write(data->uncommitted, data->uncommitted_length, data->owner->write_data);
-		data->uncommitted_length = 0;
-		data->committed_length = 0;
-		pthread_mutex_unlock(&writer->mutex);
+		flush_buffer(writer, data);
 	} else {
 		memcpy(data->committed + data->committed_length, data->uncommitted, data->uncommitted_length);
 		data->committed_length += data->uncommitted_length;
@@ -242,6 +248,13 @@ void panda_writer_commit(
 	if (writer->commit_slave != NULL) {
 		panda_writer_commit(writer->commit_slave);
 	}
+#endif
+}
+
+void panda_writer_flush(
+	PandaWriter writer) {
+#ifdef HAVE_PTHREAD
+	flush_buffer(writer, get_write_buffer(writer));
 #endif
 }
 

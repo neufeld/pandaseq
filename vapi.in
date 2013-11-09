@@ -1175,6 +1175,14 @@ file);
 		public void commit();
 
 		/**
+		 * Force writing all buffered data to the output.
+		 *
+		 * This requires getting a lock and happens automatically under normal circumstances.
+		 */
+		[CCode(cname = "panda_writer_flush")]
+		public void flush();
+
+		/**
 		 * Increase the reference count on a writer.
 		 *
 		 * This is thread-safe.

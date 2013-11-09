@@ -112,6 +112,14 @@ PandaWriter panda_writer_get_slave(
 	PandaWriter writer);
 
 /**
+ * Force writing all buffered data to the output.
+ *
+ * This requires getting a lock and happens automatically under normal circumstances.
+ */
+void panda_writer_flush(
+	PandaWriter writer);
+
+/**
  * Increase the reference count on a writer.
  *
  * This is thread-safe.

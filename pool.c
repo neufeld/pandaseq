@@ -149,6 +149,7 @@ bool panda_run_pool(
 		}
 	}
 	panda_mux_unref(mux);
+	panda_writer_flush(log_writer);
 #endif
 	self.shared = &shared_info;
 	self.index = 0;
