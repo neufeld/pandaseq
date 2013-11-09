@@ -450,6 +450,14 @@ namespace Panda {
 		}
 
 		/**
+		 * The size of the k-mer table in this assembler.
+		 */
+		public size_t num_kmer {
+			[CCode(cname = "panda_assembler_get_num_kmer")]
+			get;
+		}
+
+		/**
 		 * The number of sequences accepted.
 		 */
 		public long ok_count {

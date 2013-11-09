@@ -316,6 +316,12 @@ long panda_assembler_get_no_reverse_primer_count(
 	PandaAssembler assembler);
 
 /**
+ * The size of the k-mer table in this assembler.
+ */
+size_t panda_assembler_get_num_kmer(
+	PandaAssembler assembler);
+
+/**
  * The number of sequences accepted.
  */
 long panda_assembler_get_ok_count(

@@ -130,7 +130,7 @@ bool panda_run_pool(
 	if (threads > 1 && mux != NULL) {
 		thread_list = calloc(sizeof(struct thread_info), threads - 1);
 		for (it = 0; it < threads - 1; it++) {
-			thread_list[it].assembler = panda_mux_create_assembler(mux);
+			thread_list[it].assembler = panda_mux_create_assembler_kmer(mux, panda_assembler_get_num_kmer(assembler));
 			thread_list[it].index = it + 1;
 			thread_list[it].shared = &shared_info;
 			if (thread_list[it].assembler == NULL) {

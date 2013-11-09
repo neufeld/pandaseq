@@ -242,6 +242,11 @@ void panda_assembler_set_forward_trim(
 	assembler->forward_primer_length = 0;
 }
 
+size_t panda_assembler_get_num_kmer(
+	PandaAssembler assembler) {
+	return assembler->num_kmers;
+}
+
 size_t panda_assembler_get_longest_overlap(
 	PandaAssembler assembler) {
 	return assembler->longest_overlap;
