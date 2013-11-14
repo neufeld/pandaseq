@@ -15,21 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-
-[CCode(cname = "panda_assembler_new_from_file")]
-public extern Panda.Assembler panda_assembler_new_from_file(string file_name, Panda.LogProxy logger, out Assemble assemble);
-
-[CCode(has_target = false)]
-public delegate unowned Panda.result_seq? Assemble(Panda.Assembler assembler, Panda.identifier id, [CCode(array_length_type = "size_t")]Panda.qual[] forward, [CCode(array_length_type = "size_t")]Panda.qual[] reverse);
-
 string? forward_file = null;
 string? reverse_file = null;
-string? lib_name = null;
 
 const OptionEntry[] options = {
 	{ "forward", 'f', 0, OptionArg.FILENAME, ref forward_file, "Forward read FASTQ file.", "forward.fastq.bz2" },
 	{ "reverse", 'r', 0, OptionArg.FILENAME, ref reverse_file, "Reverse read FASTQ file.", "reverse.fastq.bz2" },
-	{ "library", 'l', 0, OptionArg.FILENAME, ref lib_name, "Library to test.", "libpandaseq.la" },
 	{ null }
 };
 
@@ -68,10 +59,9 @@ public int main(string[] args) {
 		return 1;
 	}
 
-	Assemble assemble;
 	var old_assembler = new Panda.Assembler(null, logger);
-	var new_assembler = panda_assembler_new_from_file(lib_name ?? "libpandaseq.la", logger, out assemble);
-	if (new_assembler == null) {
+	var assemble = panda_assembler_new_from_file(logger);
+	if (assemble == null) {
 		return 1;
 	}
 
@@ -80,11 +70,11 @@ public int main(string[] args) {
 	var lost = 0;
 	var total = 0;
 	Panda.identifier id;
-	stdout.printf("Old Assembler: %p New Assembler: %p\n", old_assembler, new_assembler);
+	stdout.printf("Old Assembler: %p\n", old_assembler);
 	while (fastq_reader(out id, out forward, out reverse)) {
 		total++;
 		unowned Panda.result_seq? old_result = old_assembler.assemble(id, forward, reverse);
-		unowned Panda.result_seq? new_result = assemble(new_assembler, id, forward, reverse);
+		unowned Panda.result_seq? new_result = assemble(id, forward, reverse);
 		if (old_result == null && new_result == null) {
 			/* Both fail. That's a match. */
 		} else if (old_result == null || new_result == null) {

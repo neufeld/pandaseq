@@ -1,13 +1,14 @@
+*.a
 *.exe
 *.la
 *.lo
 *.o
 *.pc
-*.vapi
 *~
 .deps
 .libs
-Makefile
+/*.vapi
+/Makefile
 Makefile.in
 PANDAseq-*.pkg
 aclocal.m4
