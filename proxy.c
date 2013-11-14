@@ -45,12 +45,18 @@ PandaLogProxy panda_log_proxy_new(
 
 PandaLogProxy panda_log_proxy_new_stderr(
 	) {
-	return panda_log_proxy_new(panda_writer_new_stderr());
+	PandaWriter writer = panda_writer_new_stderr();
+	PandaLogProxy proxy = panda_log_proxy_new(writer);
+	panda_writer_unref(writer);
+	return proxy;
 }
 
 PandaLogProxy panda_log_proxy_new_file(
 	FILE *file) {
-	return panda_log_proxy_new(panda_writer_new_file(file));
+	PandaWriter writer = panda_writer_new_file(file);
+	PandaLogProxy proxy = panda_log_proxy_new(writer);
+	panda_writer_unref(writer);
+	return proxy;
 }
 
 PandaLogProxy panda_log_proxy_open_file(
