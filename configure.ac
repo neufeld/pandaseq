@@ -3,7 +3,8 @@ AC_PREREQ([2.60])
 AM_INIT_AUTOMAKE([-Wall foreign])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
-AC_ARG_ENABLE(debug, [  --enable-debug          build with debugging output [default=no].], [DEBUG="$enableval"], [DEBUG="no"])
+AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug], [build with debugging output [default=no].]), [DEBUG="$enableval"], [DEBUG="no"])
+AC_ARG_ENABLE(threads, AC_HELP_STRING([--disable-threads], [disable thread support (default is autodetect)]))
 AC_ARG_WITH(max-len, [  --with-max-len=LEN      sets the maximum read length], [MAX_LEN="$withval"], [MAX_LEN="450"])
 
 if ! test "$MAX_LEN" -eq "$MAX_LEN" 2> /dev/null
@@ -71,7 +72,9 @@ AC_SUBST(MODULE_CPPFLAGS)
 AC_SUBST(MODULE_CFLAGS)
 AC_SUBST(MODULE_LIBS)
 
-ACX_PTHREAD
+if test "$enable_threads" != no; then
+	ACX_PTHREAD
+fi
 MAIN_CPPFLAGS="$CPPFLAGS"
 MAIN_CFLAGS="$CFLAGS"
 MAIN_LIBS="$LIBS"
