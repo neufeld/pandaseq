@@ -1,4 +1,11 @@
 language: c
+env:
+  - OPTIONS= GET_WIN=
+  - OPTIONS="--host=i586-mingw32msvc --enable-shared" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
 before_script:
+  - test "x$GET_WIN" = x || wget -O- http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-windeps.tar.bz2 | tar xj
   - ./autogen.sh
-script: "./configure && make"
+script: "./configure $OPTIONS && make"
+notifications:
+  on_success: never
+  on_failure: change
