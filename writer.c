@@ -68,13 +68,15 @@ static struct write_buffer *get_write_buffer(
 	return data;
 }
 
-static void flush_buffer(PandaWriter writer, struct write_buffer *data) {
-		pthread_mutex_lock(&writer->mutex);
-		data->owner->write(data->committed, data->committed_length, data->owner->write_data);
-		data->owner->write(data->uncommitted, data->uncommitted_length, data->owner->write_data);
-		data->uncommitted_length = 0;
-		data->committed_length = 0;
-		pthread_mutex_unlock(&writer->mutex);
+static void flush_buffer(
+	PandaWriter writer,
+	struct write_buffer *data) {
+	pthread_mutex_lock(&writer->mutex);
+	data->owner->write(data->committed, data->committed_length, data->owner->write_data);
+	data->owner->write(data->uncommitted, data->uncommitted_length, data->owner->write_data);
+	data->uncommitted_length = 0;
+	data->committed_length = 0;
+	pthread_mutex_unlock(&writer->mutex);
 }
 #endif
 
