@@ -186,19 +186,19 @@ static bool align(
 		if (index < 0 || findex < 0 || rindex < 0 || findex >= result->forward_length || rindex >= result->reverse_length)
 			continue;
 
-		fpr = findex < unmasked_forward_length ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
-		rpr = rindex < unmasked_reverse_length ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
+		fpr = findex >= unmasked_forward_length ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
+		rpr = rindex >= unmasked_reverse_length ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
 
 		if (!ismatch) {
 			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE, "(F[%d] = %c) != (R[%d] = %c)", findex, panda_nt_to_ascii(result->forward[findex].nt), rindex, panda_nt_to_ascii(result->reverse[rindex].nt));
 			result->overlap_mismatches++;
 		}
 
-		if (findex < unmasked_forward_length && rindex < unmasked_reverse_length) {
+		if (findex >= unmasked_forward_length && rindex >= unmasked_reverse_length) {
 			q = qual_nn;
-		} else if (findex < unmasked_forward_length) {
+		} else if (findex >= unmasked_forward_length) {
 			q = ismatch ? rpr : qual_nn;
-		} else if (rindex < unmasked_reverse_length) {
+		} else if (rindex >= unmasked_reverse_length) {
 			q = ismatch ? fpr : qual_nn;
 		} else {
 			q = assembler->algo->clazz->match_probability(&assembler->algo->end, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
