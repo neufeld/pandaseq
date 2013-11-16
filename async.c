@@ -77,10 +77,6 @@ static bool async_next_seq(
 
 	pthread_mutex_lock(&data->ready_mutex);
 	do {
-		if (data->done) {
-			pthread_mutex_unlock(&data->ready_mutex);
-			return false;
-		}
 		seq = data->ready;
 		if (seq != NULL) {
 			data->ready = seq->next;
@@ -94,6 +90,10 @@ static bool async_next_seq(
 			*id = seq->id;
 			seq->next = NULL;
 			return true;
+		}
+		if (data->done) {
+			pthread_mutex_unlock(&data->ready_mutex);
+			return false;
 		}
 	} while (pthread_cond_wait(&data->is_ready, &data->ready_mutex) == 0);
 	pthread_mutex_unlock(&data->ready_mutex);
