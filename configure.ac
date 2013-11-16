@@ -5,7 +5,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug], [build with debugging output [default=no].]), [DEBUG="$enableval"], [DEBUG="no"])
 AC_ARG_ENABLE(threads, AC_HELP_STRING([--disable-threads], [disable thread support (default is autodetect)]))
-AC_ARG_WITH(max-len, [  --with-max-len=LEN      sets the maximum read length], [MAX_LEN="$withval"], [MAX_LEN="450"])
+AC_ARG_WITH(max-len, AC_HELP_STRING([--with-max-len=LEN], [sets the maximum read length]), [MAX_LEN="$withval"], [MAX_LEN="450"])
 
 if ! test "$MAX_LEN" -eq "$MAX_LEN" 2> /dev/null
 then
