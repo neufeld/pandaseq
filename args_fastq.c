@@ -28,6 +28,7 @@ struct panda_args_fastq {
 	bool fastq;
 	bool bzip;
 	const char *forward_filename;
+	bool no_algn_qual;
 	FILE *no_algn_file;
 	PandaTagging policy;
 	int qualmin;
@@ -39,6 +40,7 @@ PandaArgsFastq panda_args_fastq_new(
 	PandaArgsFastq data = malloc(sizeof(struct panda_args_fastq));
 	data->bzip = false;
 	data->forward_filename = NULL;
+	data->no_algn_qual = false;
 	data->no_algn_file = NULL;
 	data->policy = PANDA_TAG_PRESENT;
 	data->qualmin = 33;
@@ -76,6 +78,10 @@ bool panda_args_fastq_tweak(
 		data->reverse_filename = argument;
 		return true;
 	case 'u':
+	case 'U':
+		data->no_algn_qual = flag == 'U';
+		if (data->no_algn_file != NULL)
+			fclose(data->no_algn_file);
 		data->no_algn_file = fopen(argument, "w");
 		if (data->no_algn_file == NULL)
 			perror(argument);
@@ -87,6 +93,7 @@ bool panda_args_fastq_tweak(
 
 static const panda_tweak_general fastq_phred = { '6', true, NULL, "Use PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+)." };
 static const panda_tweak_general fastq_barcoded = { 'B', true, NULL, "Allow unbarcoded sequences (try this for BADID errors)." };
+static const panda_tweak_general fastq_unalign_qual = { 'U', true, "unaligned.txt", "File to write unalignable read pairs with quality scores." };
 static const panda_tweak_general fastq_forward = { 'f', false, "forward.fastq", "Input FASTQ file containing forward reads." };
 static const panda_tweak_general fastq_bzip = { 'j', true, NULL, "Input files are bzipped." };
 static const panda_tweak_general fastq_reverse = { 'r', false, "reverse.fastq", "Input FASTQ file containing reverse reads." };
@@ -95,6 +102,7 @@ static const panda_tweak_general fastq_unalign = { 'u', true, "unaligned.txt", "
 const panda_tweak_general *const panda_args_fastq_args[] = {
 	&fastq_phred,
 	&fastq_barcoded,
+	&fastq_unalign_qual,
 	&fastq_forward,
 	&fastq_bzip,
 	&fastq_reverse,
@@ -116,7 +124,7 @@ PandaNextSeq panda_args_fastq_opener(
 		return NULL;
 
 	if (data->no_algn_file != NULL) {
-		*fail = (PandaFailAlign) panda_output_fail;
+		*fail = (PandaFailAlign) (data->no_algn_qual ? panda_output_fail_qual : panda_output_fail);
 		*fail_data = data->no_algn_file;
 		*fail_destroy = (PandaDestroy) fclose;
 		data->no_algn_file = NULL;

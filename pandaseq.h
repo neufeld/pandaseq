@@ -252,6 +252,18 @@ void panda_output_fail(
 	FILE *file);
 
 /**
+ * Write an unassembled sequence to a FASTQ file as a concatenated pair.
+ */
+void panda_output_fail_qual(
+	PandaAssembler assembler,
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length,
+	FILE *file);
+
+/**
  * Write an assembly to a FASTA file.
  */
 bool panda_output_fasta(

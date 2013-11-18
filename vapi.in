@@ -1619,6 +1619,30 @@ file);
 	public NextSeq? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
+	 * Write an unassembled sequence to a FASTA file as a concatenated pair.
+	 */
+	[CCode(cname = "panda_output_fail")]
+	public void output_fail(PandaAssembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse,
+#if POSIX
+Posix.FILE
+#else
+GLib.FileStream
+#endif
+file);
+
+	/**
+	 * Write an unassembled sequence to a FASTQ file as a concatenated pair.
+	 */
+	[CCode(cname = "panda_output_fail_qual")]
+	public void output_fail_qual(PandaAssembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse,
+#if POSIX
+Posix.FILE
+#else
+GLib.FileStream
+#endif
+file);
+
+	/**
 	 * Spawn threads and assemble sequences.
 	 * @param threads the number of threads to spawn
 	 * @param assembler the main assembler to use. If multiple threads are to be used, the configuration of this assembler will be copied to all the slave assemblers.

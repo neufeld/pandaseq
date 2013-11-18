@@ -60,8 +60,12 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .B \-T
 .I threads
 ] [
+{
 .B \-u
-.I unpaired.fasta
+|
+.B \-U
+}
+.I unpaired.txt
 ] [
 .B \-w
 .I output.fasta
@@ -179,8 +183,8 @@ watch the CPU% for the PANDAseq process and the overall system CPU waiting time 
 
 Note that using multiple threads prevents sequences from being output in the same order as the original file. If you a filtering reads downstream, consider using the \fBfilter\fR validation module as matching them up may be difficult.
 .TP
-\-u unpaired.fasta
-Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs. For downstream processing or to stare at wistfully.
+\-[U|u] unpaired.txt
+Write sequences for which the optimal alignment cannot be computed to a file as concatenated pairs. For downstream processing or to stare at wistfully. If \fB-U\fR is used, the quality scores will be included.
 .TP
 \-w output.fasta
 Write all assembled sequences to a FASTA (or FASTQ) file, \fIoutput.fasta\fR, instead of standard output.
