@@ -29,7 +29,7 @@ struct panda_args_fastq {
 	bool bzip;
 	const char *forward_filename;
 	bool no_algn_qual;
-	FILE *no_algn_file;
+	PandaWriter no_algn_writer;
 	PandaTagging policy;
 	int qualmin;
 	const char *reverse_filename;
@@ -41,7 +41,7 @@ PandaArgsFastq panda_args_fastq_new(
 	data->bzip = false;
 	data->forward_filename = NULL;
 	data->no_algn_qual = false;
-	data->no_algn_file = NULL;
+	data->no_algn_writer = NULL;
 	data->policy = PANDA_TAG_PRESENT;
 	data->qualmin = 33;
 	data->reverse_filename = NULL;
@@ -51,9 +51,7 @@ PandaArgsFastq panda_args_fastq_new(
 
 void panda_args_fastq_free(
 	PandaArgsFastq data) {
-	if (data->no_algn_file != NULL) {
-		fclose(data->no_algn_file);
-	}
+	panda_writer_unref(data->no_algn_writer);
 	free(data);
 }
 
@@ -80,12 +78,11 @@ bool panda_args_fastq_tweak(
 	case 'u':
 	case 'U':
 		data->no_algn_qual = flag == 'U';
-		if (data->no_algn_file != NULL)
-			fclose(data->no_algn_file);
-		data->no_algn_file = fopen(argument, "w");
-		if (data->no_algn_file == NULL)
+		panda_writer_unref(data->no_algn_writer);
+		data->no_algn_writer = panda_writer_open_file(argument, false);
+		if (data->no_algn_writer == NULL)
 			perror(argument);
-		return (data->no_algn_file != NULL);
+		return (data->no_algn_writer != NULL);
 	default:
 		return false;
 	}
@@ -123,11 +120,11 @@ PandaNextSeq panda_args_fastq_opener(
 	if (data->forward_filename == NULL || data->reverse_filename == NULL)
 		return NULL;
 
-	if (data->no_algn_file != NULL) {
+	if (data->no_algn_writer != NULL) {
 		*fail = (PandaFailAlign) (data->no_algn_qual ? panda_output_fail_qual : panda_output_fail);
-		*fail_data = data->no_algn_file;
-		*fail_destroy = (PandaDestroy) fclose;
-		data->no_algn_file = NULL;
+		*fail_data = data->no_algn_writer;
+		*fail_destroy = (PandaDestroy) panda_writer_unref;
+		data->no_algn_writer = NULL;
 	} else {
 		*fail = NULL;
 		*fail_data = NULL;

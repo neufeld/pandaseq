@@ -124,19 +124,20 @@ void panda_output_fail(
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length,
-	FILE *file) {
+	PandaWriter writer) {
 	size_t it;
-	(void) fputc('>', file);
-	panda_seqid_print(id, file);
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '>');
+	panda_writer_append_id(writer, id);
+	panda_writer_append_c(writer, '\n');
 	for (it = 0; it < forward_length; it++) {
-		(void) fputc(panda_nt_to_ascii(forward[it].nt), file);
+		panda_writer_append_c(writer, panda_nt_to_ascii(forward[it].nt));
 	}
-	(void) fputc('-', file);
+	panda_writer_append_c(writer, '-');
 	for (it = reverse_length; it > 0; it--) {
-		(void) fputc(panda_nt_to_ascii(reverse[it - 1].nt), file);
+		panda_writer_append_c(writer, panda_nt_to_ascii(reverse[it - 1].nt));
 	}
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '\n');
+	panda_writer_commit(writer);
 }
 
 void panda_output_fail_qual(
@@ -146,25 +147,26 @@ void panda_output_fail_qual(
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length,
-	FILE *file) {
+	PandaWriter writer) {
 	size_t it;
-	(void) fputc('@', file);
-	panda_seqid_print(id, file);
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '@');
+	panda_writer_append_id(writer, id);
+	panda_writer_append_c(writer, '\n');
 	for (it = 0; it < forward_length; it++) {
-		(void) fputc(panda_nt_to_ascii(forward[it].nt), file);
+		panda_writer_append_c(writer, panda_nt_to_ascii(forward[it].nt));
 	}
-	(void) fputc('-', file);
+	panda_writer_append_c(writer, '-');
 	for (it = reverse_length; it > 0; it--) {
-		(void) fputc(panda_nt_to_ascii(reverse[it - 1].nt), file);
+		panda_writer_append_c(writer, panda_nt_to_ascii(reverse[it - 1].nt));
 	}
-	(void) fputs("\n+\n", file);
+	panda_writer_append(writer, "\n+\n");
 	for (it = 0; it < forward_length; it++) {
-		(void) fputc(33 + forward[it].qual, file);
+		panda_writer_append_c(writer, 33 + forward[it].qual);
 	}
-	(void) fputc('!', file);
+	panda_writer_append_c(writer, '!');
 	for (it = reverse_length; it > 0; it--) {
-		(void) fputc(33 + reverse[it - 1].qual, file);
+		panda_writer_append_c(writer, 33 + reverse[it - 1].qual);
 	}
-	(void) fputc('\n', file);
+	panda_writer_append_c(writer, '\n');
+	panda_writer_commit(writer);
 }

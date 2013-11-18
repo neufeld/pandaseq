@@ -1196,6 +1196,18 @@ file);
 		 */
 		[CCode(cname = "panda_writer_unref")]
 		public void unref();
+
+		/**
+		 * Write an unassembled sequence to a FASTA file as a concatenated pair.
+		 */
+		[CCode(cname = "panda_output_fail", instance_pos = -1)]
+		public void write_fail(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
+
+		/**
+		 * Write an unassembled sequence to a FASTQ file as a concatenated pair.
+		 */
+		[CCode(cname = "panda_output_fail_qual", instance_pos = -1)]
+		public void write_fail_qual(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
 	}
 
 	/**
@@ -1617,30 +1629,6 @@ file);
 	 */
 	[CCode(cname = "panda_open_bz2")]
 	public NextSeq? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
-
-	/**
-	 * Write an unassembled sequence to a FASTA file as a concatenated pair.
-	 */
-	[CCode(cname = "panda_output_fail")]
-	public void output_fail(PandaAssembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse,
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
-
-	/**
-	 * Write an unassembled sequence to a FASTQ file as a concatenated pair.
-	 */
-	[CCode(cname = "panda_output_fail_qual")]
-	public void output_fail_qual(PandaAssembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse,
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
 
 	/**
 	 * Spawn threads and assemble sequences.

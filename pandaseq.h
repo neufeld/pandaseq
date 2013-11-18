@@ -249,7 +249,7 @@ void panda_output_fail(
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length,
-	FILE *file);
+	PandaWriter writer);
 
 /**
  * Write an unassembled sequence to a FASTQ file as a concatenated pair.
@@ -261,7 +261,7 @@ void panda_output_fail_qual(
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length,
-	FILE *file);
+	PandaWriter writer);
 
 /**
  * Write an assembly to a FASTA file.
