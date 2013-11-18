@@ -160,11 +160,11 @@ void panda_output_fail_qual(
 	}
 	(void) fputs("\n+\n", file);
 	for (it = 0; it < forward_length; it++) {
-		(void) fputc(32 + forward[it].qual, file);
+		(void) fputc(33 + forward[it].qual, file);
 	}
 	(void) fputc('!', file);
 	for (it = reverse_length; it > 0; it--) {
-		(void) fputc(32 + reverse[it - 1].qual, file);
+		(void) fputc(33 + reverse[it - 1].qual, file);
 	}
 	(void) fputc('\n', file);
 }
