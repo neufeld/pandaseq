@@ -110,7 +110,7 @@ PandaMux panda_mux_ref(
  *
  * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
  *
- * Concurrency will be handled by the mulitplexer; all calls to this function will be serialised.
+ * Synchronisation is the resonsibility of the callee. This function must be re-entrant.
  *
  * @handler: (closure handler_data) (scope notified): the callback for a failed pair
  */

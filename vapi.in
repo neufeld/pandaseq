@@ -1008,7 +1008,7 @@ file);
 		 *
 		 * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
 		 *
-		 * Concurrency will be handled by the mulitplexer; all calls to this function will be serialised.
+		 * Synchronisation is the resonsibility of the callee. This function must be re-entrant.
 		 */
 		[CCode(cname = "panda_mux_set_fail_alignment")]
 		public void set_fail_alignment(owned FailAlign? handler);

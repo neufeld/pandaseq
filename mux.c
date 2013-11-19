@@ -15,8 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
+#define __USE_UNIX98 1
+#define _XOPEN_SOURCE 500
 #include "config.h"
 #if HAVE_PTHREAD
+#        include <pthread.h>
 #        include <stdlib.h>
 #        include <string.h>
 #        include "pandaseq.h"
@@ -26,7 +29,7 @@
 struct panda_mux {
 	pthread_mutex_t mutex;
 	pthread_mutex_t next_mutex;
-	pthread_mutex_t noalgn_mutex;
+	pthread_rwlock_t noalgn_rwlock;
 	PandaLogProxy logger;
 	 MANAGED_MEMBER(
 		PandaNextSeq,
@@ -55,7 +58,7 @@ PandaMux panda_mux_new(
 	mux->child_count = 0;
 	pthread_mutex_init(&mux->mutex, NULL);
 	pthread_mutex_init(&mux->next_mutex, NULL);
-	pthread_mutex_init(&mux->noalgn_mutex, NULL);
+	pthread_rwlock_init(&mux->noalgn_rwlock, NULL);
 	return mux;
 }
 
@@ -111,10 +114,10 @@ void panda_mux_unref(
 		pthread_mutex_unlock(&mux->next_mutex);
 		pthread_mutex_destroy(&mux->next_mutex);
 
-		pthread_mutex_lock(&mux->noalgn_mutex);
+		pthread_rwlock_wrlock(&mux->noalgn_rwlock);
 		DESTROY_MEMBER(mux, noalgn);
-		pthread_mutex_unlock(&mux->noalgn_mutex);
-		pthread_mutex_destroy(&mux->noalgn_mutex);
+		pthread_rwlock_unlock(&mux->noalgn_rwlock);
+		pthread_rwlock_destroy(&mux->noalgn_rwlock);
 		free(mux);
 	}
 }
@@ -172,12 +175,12 @@ void mux_fail_algn(
 	PandaMux mux) {
 	if (mux->noalgn == NULL)
 		return;
-	pthread_mutex_lock(&mux->noalgn_mutex);
+	pthread_rwlock_rdlock(&mux->noalgn_rwlock);
 	/* We repeat this check to solve a potential race condition. Locking the mutex is expensive, so if the handler is not set, we bail out. However, it is possible that someone is concurrently setting the handler via panda_mux_set_fail_alignment, so we have to check again once we have an exclusive lock. */
 	if (mux->noalgn != NULL) {
 		mux->noalgn(assembler, id, forward, forward_length, reverse, reverse_length, mux->noalgn_data);
 	}
-	pthread_mutex_unlock(&mux->noalgn_mutex);
+	pthread_rwlock_unlock(&mux->noalgn_rwlock);
 }
 
 PandaAssembler panda_mux_create_assembler(
@@ -216,12 +219,12 @@ void panda_mux_set_fail_alignment(
 	PandaFailAlign handler,
 	void *handler_data,
 	PandaDestroy handler_destroy) {
-	pthread_mutex_lock(&mux->noalgn_mutex);
+	pthread_rwlock_wrlock(&mux->noalgn_rwlock);
 	DESTROY_MEMBER(mux, noalgn);
 	mux->noalgn_data = handler_data;
 	mux->noalgn_destroy = handler_destroy;
 	mux->noalgn = handler;
-	pthread_mutex_unlock(&mux->noalgn_mutex);
+	pthread_rwlock_unlock(&mux->noalgn_rwlock);
 }
 
 #endif
