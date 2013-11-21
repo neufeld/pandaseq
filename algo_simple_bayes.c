@@ -46,6 +46,8 @@ static double overlap_probability(
 	for (i = 0; i < overlap; i++) {
 		int findex = forward_length + i - overlap;
 		int rindex = reverse_length - i - 1;
+		if (findex < 0 || rindex < 0 || findex > forward_length || rindex > reverse_length)
+			continue;
 		panda_nt f = forward[findex].nt;
 		panda_nt r = reverse[rindex].nt;
 		if (PANDA_NT_IS_N(f) || PANDA_NT_IS_N(r)) {
@@ -57,7 +59,11 @@ static double overlap_probability(
 		}
 	}
 
-	return (qual_nn_simple_bayesian * (forward_length + reverse_length - 2 * overlap + unknowns) + matches * data->pmatch + mismatches * data->pmismatch);
+	if (overlap > forward_length && overlap > reverse_length) {
+		return (qual_nn_simple_bayesian * unknowns + matches * data->pmatch + mismatches * data->pmismatch);
+	} else {
+		return (qual_nn_simple_bayesian * (forward_length + reverse_length - 2 * overlap + unknowns) + matches * data->pmatch + mismatches * data->pmismatch);
+	}
 }
 
 static double match_probability(

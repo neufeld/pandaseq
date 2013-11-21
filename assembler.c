@@ -58,9 +58,9 @@ static bool align(
 	ssize_t i, j;
 	ssize_t df, dr;
 	/* For determining overlap. */
-	size_t maxoverlap = result->forward_length < result->reverse_length ? result->forward_length : result->reverse_length;
+	size_t maxoverlap = result->forward_length + result->reverse_length - assembler->minoverlap - result->forward_offset - result->reverse_offset - 1;
 	double bestprobability = qual_nn * (result->forward_length + result->reverse_length);
-	int bestoverlap = -1;
+	ssize_t bestoverlap = -1;
 	size_t overlap;
 	size_t counter;
 	kmer_it it;
