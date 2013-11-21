@@ -81,11 +81,11 @@ static bool align(
 
 	/* Scan forward sequence building k-mers and appending the position to kmerseen[k] */
 	FOREACH_KMER(it, result->forward,.nt) {
-		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
 		if (j == assembler->num_kmers) {
 			/* If we run out of storage, we lose k-mers. */
-			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
+			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
 		} else {
 			assembler->kmerseen[(KMER(it) << 1) + j] = KMER_POSITION(it);
 		}
@@ -93,7 +93,7 @@ static bool align(
 
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
 	FOREACH_KMER_REVERSE(it, result->reverse,.nt) {
-		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%d@%d", (int) KMER(it), (int) KMER_POSITION(it));
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != (seqindex) 0; j++) {
 			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) << 1) + j] - assembler->minoverlap - 1;
 
@@ -119,7 +119,7 @@ static bool align(
 
 		probability = assembler->algo->clazz->overlap_probability(panda_algorithm_data(assembler->algo), result->forward, result->forward_length, result->reverse, result->reverse_length, overlap);
 
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %d probability = %f", (int) overlap, (float) probability);
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %zd probability = %f", overlap, probability);
 		if (probability > bestprobability && overlap >= assembler->minoverlap) {
 			bestprobability = probability;
 			bestoverlap = overlap;
@@ -131,7 +131,7 @@ static bool align(
 		assembler->slowcount++;
 	}
 
-	LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_BEST_OVERLAP, "%d", (int) bestoverlap);
+	LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_BEST_OVERLAP, "%zd", bestoverlap);
 
 	if (bestoverlap == -1) {
 		return false;
@@ -153,7 +153,7 @@ static bool align(
 	df = (ssize_t) result->forward_length - (ssize_t) result->forward_offset - bestoverlap;
 	dr = (ssize_t) result->reverse_length - (ssize_t) result->reverse_offset - bestoverlap;
 	/* Copy the unpaired forward sequence. */
-	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM, "bestoverlap = %d, dforward = %d, dreverse = %d", (int) bestoverlap, (int) df, (int) dr);
+	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM, "bestoverlap = %zd, dforward = %zd, dreverse = %zd, len = %zd", bestoverlap, df, dr, len);
 	for (i = 0; i < VEEZ(df); i++) {
 		int findex = i + result->forward_offset;
 		panda_nt fbits = result->forward[findex].nt;
@@ -164,7 +164,7 @@ static bool align(
 			result->degenerates++;
 		}
 		fquality += q;
-		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_FORWARD, "S[%d] = F[%d] = %c", (int) i, (int) findex, panda_nt_to_ascii(result->sequence[i].nt));
+		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_BUILD_FORWARD, "S[%zd] = F[%d] = %c", i, findex, panda_nt_to_ascii(result->sequence[i].nt));
 	}
 
 	/* Mask out the B-cliff at the end of sequences */
