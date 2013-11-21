@@ -87,16 +87,15 @@ static bool align(
 			/* If we run out of storage, we lose k-mers. */
 			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
 		} else {
-			assembler->kmerseen[(KMER(it) << 1) + j] = KMER_POSITION(it);
+			assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] = KMER_POSITION(it);
 		}
 	}
 
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
 	FOREACH_KMER_REVERSE(it, result->reverse,.nt) {
 		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
-		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != (seqindex) 0; j++) {
-			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) << 1) + j] - assembler->minoverlap - 1;
-
+		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] != (seqindex) 0; j++) {
+			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] - assembler->minoverlap - 1;
 			if (index >= 0) {
 				BIT_LIST_SET(posn, index);
 			}
@@ -106,7 +105,7 @@ static bool align(
 	/* Reset kmerseen */
 	FOREACH_KMER(it, result->forward,.nt) {
 		for (j = 0; j < assembler->num_kmers; j++)
-			assembler->kmerseen[(KMER(it) << 1) + j] = 0;
+			assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] = 0;
 	}
 
 	ALL_BITS_IF_NONE(posn);
