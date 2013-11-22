@@ -17,10 +17,13 @@
  */
 string? forward_file = null;
 string? reverse_file = null;
+bool web = false;
+const string URL = "http://neufeldserver.uwaterloo.ca/~apmasell/mcbath-small_%d.fastq";
 
 const OptionEntry[] options = {
 	{ "forward", 'f', 0, OptionArg.FILENAME, ref forward_file, "Forward read FASTQ file.", "forward.fastq.bz2" },
 	{ "reverse", 'r', 0, OptionArg.FILENAME, ref reverse_file, "Reverse read FASTQ file.", "reverse.fastq.bz2" },
+	{ "web", 'W', 0, OptionArg.NONE, ref web, "Get files from the web.", null },
 	{ null }
 };
 
@@ -43,18 +46,27 @@ public int main(string[] args) {
 		stdout.printf("Run '%s --help' to see a full list of available command line options.\n", args[0]);
 		return 1;
 	}
-	if (forward_file == null) {
-		stdout.printf("You must supply a forward read file.\n");
-		return 1;
-	}
-	if (reverse_file == null) {
-		stdout.printf("You must supply a reverse read file.\n");
-		return 1;
-	}
-
 	var logger = new Panda.LogProxy.stderr();
-	var fastq_reader = Panda.open_bz2(forward_file, reverse_file, logger);
-	if (fastq_reader == null) {
+	Panda.NextSeq reader;
+	if (web) {
+		var forward = Panda.open_url(URL.printf(1), logger);
+		var reverse = Panda.open_url(URL.printf(2), logger);
+		if (forward == null || reverse == null)
+			return 1;
+		reader = Panda.create_fastq_reader((owned) forward, (owned) reverse, logger);
+	} else {
+		if (forward_file == null) {
+			stdout.printf("You must supply a forward read file.\n");
+			return 1;
+		}
+		if (reverse_file == null) {
+			stdout.printf("You must supply a reverse read file.\n");
+			return 1;
+		}
+
+		reader = Panda.open_bz2(forward_file, reverse_file, logger);
+	}
+	if (reader == null) {
 		stdout.printf("Could not open input sequences.\n");
 		return 1;
 	}
@@ -71,7 +83,7 @@ public int main(string[] args) {
 	var total = 0;
 	Panda.identifier id;
 	stdout.printf("Old Assembler: %p\n", old_assembler);
-	while (fastq_reader(out id, out forward, out reverse)) {
+	while (reader(out id, out forward, out reverse)) {
 		total++;
 		unowned Panda.result_seq? old_result = old_assembler.assemble(id, forward, reverse);
 		unowned Panda.result_seq? new_result = assemble(id, forward, reverse);
