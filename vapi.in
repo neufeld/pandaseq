@@ -1579,7 +1579,7 @@ file);
 	 * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
 	 * @param policy method to handle unbarcoded sequences
 	 */
-	[CCode(cname = "panda_assembler_create_fastq_reader")]
+	[CCode(cname = "panda_create_fastq_reader")]
 	public static NextSeq create_fastq_reader(owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
