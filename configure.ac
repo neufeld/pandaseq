@@ -105,6 +105,10 @@ PANDA_LIBS="$LIBS"
 AC_SUBST(PANDA_CPPFLAGS)
 AC_SUBST(PANDA_CFLAGS)
 AC_SUBST(PANDA_LIBS)
+
+LIBCURL_CHECK_CONFIG(, , [have_curl=true], [have_curl=false])
+AM_CONDITIONAL([LIBCURL], [test x$have_curl = xtrue])
+
 CPPFLAGS="$ORIG_CPPFLAGS"
 CFLAGS="$ORIG_CFLAGS"
 LIBS="$ORIG_LIBS"
@@ -119,6 +123,8 @@ AC_SUBST(LIB_VER)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES(${LIB_NAME}.pc:pc.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES(${LIB_NAME}.vapi:vapi.in, [], [LIB_NAME=$LIB_NAME])
+AC_CONFIG_FILES(${LIB_NAME}-url.pc:pc-url.in, [], [LIB_NAME=$LIB_NAME])
+AC_CONFIG_FILES(${LIB_NAME}-url.vapi:vapi-url.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES([pandaxs:pandaxs.in], [chmod +x pandaxs])
 AC_CONFIG_FILES([build-macos-pkg:build-macos-pkg.in], [chmod +x build-macos-pkg])
 AC_OUTPUT

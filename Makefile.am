@@ -138,6 +138,28 @@ CLEANFILES = \
 	$(bin_SCRIPTS) \
 	mktable$(EXEEXT) \
 	$(NULL)
+if LIBCURL
+lib_LTLIBRARIES += libpandaseq-url.la
+library_include_HEADERS += pandaseq-url.h
+pkgconfig_DATA += $(LIB_NAME)-url.pc
+dist_vapi_DATA += $(LIB_NAME)-url.vapi
+libpandaseq_url_la_CPPFLAGS = \
+	$(PANDA_CPPFLAGS) \
+	$(PTHREAD_CFLAGS) \
+	$(LIBCURL_CPPFLAGS) \
+	-DPANDA_LIB_COMPILING \
+	-g \
+	$(NULL)
+libpandaseq_url_la_LDFLAGS = \
+	$(PANDA_LIBS) \
+	$(PTHREAD_LIBS) \
+	$(LIBCURL) \
+	-export-symbols-regex '^panda_' \
+	-version-info $(LIB_VER) \
+	$(NO_UNDEFINED) \
+	$(NULL)
+libpandaseq_url_la_SOURCES = curl_reader.c
+endif
 
 table.c table.h: mktable$(EXEEXT)
 	./mktable$(EXEEXT)

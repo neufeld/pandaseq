@@ -1,0 +1,14 @@
+/* vim: set filetype=vala: */
+/**
+ * PANDAseq @VERSION@ Illumina assembler: URL Opener
+ *
+ * Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
+ */
+namespace Panda {
+	/**
+	 * Open a URL and read the sequence.
+	 * @param url the URL, as understood by cURL.
+	 */
+	[CCode(cname = "panda_open_url", cheader_filename = "pandaseq-url.h")]
+	public BufferRead? open_url(string url, LogProxy logger);
+}
