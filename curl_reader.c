@@ -96,7 +96,7 @@ static bool read_curl(
 		SwitchToFiber(data->curl_context);
 #else
 		if (swapcontext(&data->read_context, &data->curl_context) != 0) {
-			panda_log_proxy_write_f(data->logger, "%s: swapcontext: %s", data->url, strerror(errno));
+			panda_log_proxy_write_f(data->logger, "%s: swapcontext to curl: %s", data->url, strerror(errno));
 			*read = 0;
 			return false;
 		}
@@ -129,7 +129,7 @@ static size_t data_ready(
 	SwitchToFiber(data->read_context);
 #else
 	if (swapcontext(&data->curl_context, &data->read_context) != 0) {
-		perror("cURL data ready: swapcontext:");
+		panda_log_proxy_write_f(data->logger, "%s: swapcontext to read: %s", url, strerror(errno));
 		return 0;
 	}
 #endif
@@ -200,7 +200,7 @@ PandaBufferRead panda_open_url(
 	union data_ints passed;
 	struct rlimit stack_size;
 	if (getrlimit(RLIMIT_STACK, &stack_size) != 0) {
-		perror("getrlimit(RLIMIT_STACK):");
+		panda_log_proxy_write_f(data->logger, "%s: getrlimit(RLIMIT_STACK): %s", url, strerror(errno));
 		return NULL;
 	}
 #endif
