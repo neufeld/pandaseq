@@ -118,8 +118,10 @@ AC_SUBST(LIB_NAME)
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 LIB_MAJOR=3
 LIB_VER=${LIB_MAJOR}:0:0
+LIB_URL_VER=0:0:0
 AC_SUBST(LIB_MAJOR)
 AC_SUBST(LIB_VER)
+AC_SUBST(LIB_URL_VER)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES(${LIB_NAME}.pc:pc.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES(${LIB_NAME}.vapi:vapi.in, [], [LIB_NAME=$LIB_NAME])

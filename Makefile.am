@@ -156,7 +156,7 @@ libpandaseq_url_la_LDFLAGS = \
 	$(PTHREAD_LIBS) \
 	$(LIBCURL) \
 	-export-symbols-regex '^panda_' \
-	-version-info $(LIB_VER) \
+	-version-info $(LIB_URL_VER) \
 	$(NO_UNDEFINED) \
 	$(NULL)
 libpandaseq_url_la_SOURCES = curl_reader.c
