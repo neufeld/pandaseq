@@ -1,6 +1,7 @@
 #define _XOPEN_SOURCE 500
 
 #include "config.h"
+#include <curl/curl.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -8,13 +9,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#include <sys/resource.h>
-#include <ucontext.h>
+#ifdef _WIN32
+#        include <windows.h>
+typedef void *ucontext_t;
+#else
+#        include <sys/resource.h>
+#        include <ucontext.h>
+#endif
 #ifdef HAVE_PTHREAD
 #        include <pthread.h>
 #endif
 
-#include <curl/curl.h>
 #include "pandaseq.h"
 #include "pandaseq-url.h"
 
@@ -87,11 +92,15 @@ static bool read_curl(
 			*read = 0;
 			return false;
 		}
+#ifdef _WIN32
+		SwitchToFiber(data->curl_context);
+#else
 		if (swapcontext(&data->read_context, &data->curl_context) != 0) {
 			panda_log_proxy_write_f(data->logger, "%s: swapcontext: %s", data->url, strerror(errno));
 			*read = 0;
 			return false;
 		}
+#endif
 		if (data->curl_memory_length == 0) {
 			*read = 0;
 			return true;
@@ -116,40 +125,57 @@ static size_t data_ready(
 	struct curl_data *data) {
 	data->curl_memory = contents;
 	data->curl_memory_length = size * nmemb;
+#ifdef _WIN32
+	SwitchToFiber(data->read_context);
+#else
 	if (swapcontext(&data->curl_context, &data->read_context) != 0) {
 		perror("cURL data ready: swapcontext:");
 		return 0;
 	}
+#endif
 	if (data->please_exit) {
 		return 0;
 	}
 	return size * nmemb;
 }
 
+#ifdef _WIN32
+static void start_curl(
+	struct curl_data *data) {
+#else
 static void start_curl(
 	int i0,
 	int i1) {
 	union data_ints passed;
+	struct curl_data *data;
+#endif
 	CURLcode res;
+#ifndef _WIN32
 	passed.ints[0] = i0;
 	passed.ints[1] = i1;
-	res = curl_easy_perform(passed.data->curl_handle);
+	data = passed.data;
+#endif
+	res = curl_easy_perform(data->curl_handle);
 
-	if (res != CURLE_OK && (res != CURLE_WRITE_ERROR || !passed.data->please_exit)) {
-		panda_log_proxy_write_f(passed.data->logger, "%s: %s", passed.data->url, curl_easy_strerror(res));
+	if (res != CURLE_OK && (res != CURLE_WRITE_ERROR || !data->please_exit)) {
+		panda_log_proxy_write_f(data->logger, "%s: %s", data->url, curl_easy_strerror(res));
 	}
 
-	curl_easy_cleanup(passed.data->curl_handle);
-	passed.data->exited = true;
+	curl_easy_cleanup(data->curl_handle);
+	data->exited = true;
 }
 
 void destroy_curl(
 	struct curl_data *data) {
 	if (!data->exited) {
 		data->please_exit = true;
+#ifdef _WIN32
+		SwitchToFiber(data->curl_context);
+#else
 		if (swapcontext(&data->read_context, &data->curl_context) != 0) {
 			panda_log_proxy_write_f(data->logger, "%s: swapcontext: %s", data->url, strerror(errno));
 		}
+#endif
 	}
 	if (!data->exited)
 		curl_easy_cleanup(data->curl_handle);
@@ -167,15 +193,17 @@ PandaBufferRead panda_open_url(
 	PandaLogProxy logger,
 	void **out_data,
 	PandaDestroy *destroy) {
-	union data_ints passed;
 	struct curl_data *data = NULL;
 	CURL *curl_handle;
 	CURLcode res;
+#ifndef _WIN32
+	union data_ints passed;
 	struct rlimit stack_size;
 	if (getrlimit(RLIMIT_STACK, &stack_size) != 0) {
 		perror("getrlimit(RLIMIT_STACK):");
 		return NULL;
 	}
+#endif
 
 	if (!ref_curl())
 		return NULL;
@@ -196,6 +224,20 @@ PandaBufferRead panda_open_url(
 	data->exited = false;
 	data->please_exit = false;
 	data->curl_memory_length = 0;
+#ifdef _WIN32
+	data->read_context = ConvertThreadToFiber(data);
+	if (data->read_context == NULL) {
+		panda_log_proxy_write_f(logger, "%s: ConvertThreadToFiber error (%d)", url, GetLastError());
+		return NULL;
+	}
+
+	data->curl_context = CreateFiber(0, (LPFIBER_START_ROUTINE) start_curl, data);
+
+	if (data->curl_context == NULL) {
+		panda_log_proxy_write_f(logger, "%s: CreateFiber error (%d)\n", url, GetLastError());
+		return NULL;
+	}
+#else
 	passed.data = data;
 	getcontext(&data->curl_context);
 	data->stack = malloc(stack_size.rlim_cur);
@@ -203,7 +245,7 @@ PandaBufferRead panda_open_url(
 	data->curl_context.uc_stack.ss_size = stack_size.rlim_cur;
 	data->curl_context.uc_link = &data->read_context;
 	makecontext(&data->curl_context, (void (*)(void)) start_curl, 2, passed.ints[0], passed.ints[1]);
-
+#endif
 	*out_data = data;
 	*destroy = (PandaDestroy) destroy_curl;
 	return (PandaBufferRead) read_curl;
