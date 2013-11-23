@@ -28,7 +28,7 @@ static volatile int curl_count = 0;
 static pthread_mutex_t ref_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-static bool ref_curl(
+bool panda_curl_ref(
 	void) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
@@ -49,7 +49,7 @@ static bool ref_curl(
 	return true;
 }
 
-static void unref_curl(
+void panda_curl_unref(
 	void) {
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&ref_lock);
@@ -183,10 +183,10 @@ void destroy_curl(
 	free(data->url);
 	panda_log_proxy_unref(data->logger);
 	free(data);
-	unref_curl();
+	panda_curl_unref();
 }
 
-#define SET_OPT(opt, value)  if ((res = curl_easy_setopt(curl_handle, (opt), (value))) != CURLE_OK) { panda_log_proxy_write_f(logger, "%s: %s", data->url, curl_easy_strerror(res)); curl_easy_cleanup(curl_handle); unref_curl(); if (data != NULL) free(data); return NULL; }
+#define SET_OPT(opt, value)  if ((res = curl_easy_setopt(curl_handle, (opt), (value))) != CURLE_OK) { panda_log_proxy_write_f(logger, "%s: %s", data->url, curl_easy_strerror(res)); curl_easy_cleanup(curl_handle); panda_curl_unref(); if (data != NULL) free(data); return NULL; }
 
 PandaBufferRead panda_open_url(
 	const char *url,
@@ -205,7 +205,7 @@ PandaBufferRead panda_open_url(
 	}
 #endif
 
-	if (!ref_curl())
+	if (!panda_curl_ref())
 		return NULL;
 	curl_handle = curl_easy_init();
 	if (curl_handle == NULL) {

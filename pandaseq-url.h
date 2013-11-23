@@ -27,3 +27,21 @@ PandaBufferRead panda_open_url(
 	PandaLogProxy logger,
 	void **data,
 	PandaDestroy *destroy);
+
+/**
+ * Increment the reference count on the cURL library.
+ *
+ * Since cURL needs to be initialised, PANDAseq will do this automatically when a URL is opened and automatically call the matching clean up when all readers have been disposed.
+ *
+ * If the program wishes to use cURL, it should call this method to increment the reference count on PANDAseq's internal counter, such that it will not clean up the cURL library while in use.
+ *
+ * Returns: whether the library was successfully initialised.
+ */
+bool panda_curl_ref(
+	void);
+
+/**
+ * Decrement the reference count on the cURL library.
+ */
+void panda_curl_unref(
+	void);

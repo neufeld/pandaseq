@@ -11,4 +11,24 @@ namespace Panda {
 	 */
 	[CCode(cname = "panda_open_url", cheader_filename = "pandaseq-url.h")]
 	public BufferRead? open_url(string url, LogProxy logger);
+
+	namespace cURL {
+		/**
+		 * Increment the reference count on the cURL library.
+		 *
+		 * Since cURL needs to be initialised, PANDAseq will do this automatically when a URL is opened and automatically call the matching clean up when all readers have been disposed.
+		 *
+		 * If the program wishes to use cURL, it should call this method to increment the reference count on PANDAseq's internal counter, such that it will not clean up the cURL library while in use.
+		 *
+		 * @return whether the library was successfully initialised.
+		 */
+		[CCode(cname = "panda_curl_ref")]
+		public bool @ref();
+
+		/**
+		 * Decrement the reference count on the cURL library.
+		 */
+		[CCode(cname = "panda_curl_unref")]
+		public void unref();
+	}
 }
