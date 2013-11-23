@@ -125,7 +125,7 @@ min_phred_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_L
 min_phred_la_LIBADD = libpandaseq.la
 pear_test_la_CFLAGS = -DPANDASEQ_MODULE=pear_test -g
 pear_test_la_SOURCES = plugin_pear_test.c panda_api.c
-pear_test_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+pear_test_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS) -lm
 pear_test_la_LIBADD = libpandaseq.la
 validtag_la_CFLAGS = -DPANDASEQ_MODULE=validtag -g
 validtag_la_SOURCES = plugin_validtag.c panda_api.c
