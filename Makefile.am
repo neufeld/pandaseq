@@ -150,6 +150,7 @@ libpandaseq_url_la_CPPFLAGS = \
 	-DPANDA_LIB_COMPILING \
 	-g \
 	$(NULL)
+libpandaseq_url_la_LIBADD = libpandaseq.la
 libpandaseq_url_la_LDFLAGS = \
 	$(PANDA_LIBS) \
 	$(PTHREAD_LIBS) \
