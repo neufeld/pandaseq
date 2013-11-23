@@ -1,9 +1,9 @@
 language: c
 env:
   - OPTIONS= GET_WIN=
-  - OPTIONS="--host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
+  - OPTIONS="--host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared --with-libcurl=./win" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
   - OPTIONS=--disable-threads GET_WIN=
-  - OPTIONS="--disable-threads --host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
+  - OPTIONS="--disable-threads --host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared --with-libcurl=./win" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
 before_script:
   - test "x$GET_WIN" = x || wget -O- http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-windeps.tar.bz2 | tar xj
   - ./autogen.sh
