@@ -1,2 +1,2 @@
-usr/lib/*.so.*
+usr/lib/libpandaseq.so.*
 usr/lib/pandaseq*/*.so*
