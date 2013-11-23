@@ -1,4 +1,5 @@
 *.a
+*.deps
 *.exe
 *.la
 *.lo
