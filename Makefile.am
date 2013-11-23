@@ -147,7 +147,7 @@ libpandaseq_url_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
 	$(LIBCURL_CPPFLAGS) \
-	-DPANDA_LIB_COMPILING \
+	-I. \
 	-g \
 	$(NULL)
 libpandaseq_url_la_LIBADD = libpandaseq.la
