@@ -129,7 +129,7 @@ static size_t data_ready(
 	SwitchToFiber(data->read_context);
 #else
 	if (swapcontext(&data->curl_context, &data->read_context) != 0) {
-		panda_log_proxy_write_f(data->logger, "%s: swapcontext to read: %s", url, strerror(errno));
+		panda_log_proxy_write_f(data->logger, "%s: swapcontext to read: %s", data->url, strerror(errno));
 		return 0;
 	}
 #endif
