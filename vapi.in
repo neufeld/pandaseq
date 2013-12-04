@@ -4,14 +4,14 @@
  *
  * Assemble paired FASTQ Illumina reads and strip the region between amplification primers.
  */
-[CCode(cheader_filename = "pandaseq.h")]
+[CCode (cheader_filename = "pandaseq.h")]
 namespace Panda {
 	/**
 	 * Codes used for logging conditions during the assembly
 	 *
 	 * Some of these are errors and some are informational.
 	 */
-	[CCode(cname = "PandaCode", has_type_id = false, cprefix = "PANDA_CODE_")]
+	[CCode (cname = "PandaCode", has_type_id = false, cprefix = "PANDA_CODE_")]
 	public enum Code {
 		/**
 		 * Invalid character in nucleotide data
@@ -126,13 +126,13 @@ namespace Panda {
 		 * The PHRED offset should probably be 64, not 33.
 		 */
 		PHRED_OFFSET;
-		[CCode(cname = "panda_code_str")]
-		public unowned string to_string();
+		[CCode (cname = "panda_code_str")]
+		public unowned string to_string ();
 	}
 	/**
 	 * Decide what kinds of messages are passed to the logger.
 	 */
-	[CCode(cname = "PandaDebug", has_type_id = false, cprefix = "PANDA_DEBUG_")]
+	[CCode (cname = "PandaDebug", has_type_id = false, cprefix = "PANDA_DEBUG_")]
 	[Flags]
 	public enum Debug {
 		/**
@@ -160,31 +160,31 @@ namespace Panda {
 		 */
 		MISMATCH,
 		DEFAULT;
-		[CCode(cname = "panda_debug_flags &= ~")]
-		public void disable();
-		[CCode(cname = "panda_debug_flags |= ")]
-		public void enable();
-		[CCode(cname = "panda_debug_flags = ")]
-		public void set();
+		[CCode (cname = "panda_debug_flags &= ~")]
+		public void disable ();
+		[CCode (cname = "panda_debug_flags |= ")]
+		public void enable ();
+		[CCode (cname = "panda_debug_flags = ")]
+		public void set ();
 	}
 
 	/**
 	 * FASTQ header format
 	 */
-	[CCode(cname = "PandaIdFmt", has_type_id = false, cprefix = "PANDA_IDFMT_")]
+	[CCode (cname = "PandaIdFmt", has_type_id = false, cprefix = "PANDA_IDFMT_")]
 	public enum IdFormat {
 		UNKNOWN,
 		SRA,
 		CASAVA_1_4,
 		CASAVA_1_7;
-		[CCode(cname = "panda_idfmt_str")]
-		public unowned string to_string();
+		[CCode (cname = "panda_idfmt_str")]
+		public unowned string to_string ();
 	}
 
 	/**
 	 * A single nucleotide
 	 */
-	[CCode(cname = "panda_nt", has_type_id = false, cprefix = "PANDA_NT_")]
+	[CCode (cname = "panda_nt", has_type_id = false, cprefix = "PANDA_NT_")]
 	[Flags]
 	public enum Nt {
 		/**
@@ -210,33 +210,33 @@ namespace Panda {
 		/**
 		 * Is nucleotide degenerate?
 		 */
-		[CCode(cname = "PANDA_NT_IS_DEGN")]
-		public bool is_degenerate();
+		[CCode (cname = "PANDA_NT_IS_DEGN")]
+		public bool is_degenerate ();
 		/**
 		 * Is nucleotide all possible values?
 		 */
-		[CCode(cname = "PANDA_NT_IS_N")]
-		public bool is_n();
+		[CCode (cname = "PANDA_NT_IS_N")]
+		public bool is_n ();
 		/**
 		 * Get the nucleotide code for an ASCII character in IUPAC
 		 */
-		[CCode(cname = "panda_nt_from_ascii")]
-		public static Nt from_ascii(char c);
+		[CCode (cname = "panda_nt_from_ascii")]
+		public static Nt from_ascii (char c);
 		/**
 		 * Get the complement nucleotide code for an ASCII character in IUPAC
 		 */
-		[CCode(cname = "panda_nt_from_ascii_complement")]
-		public static Nt from_ascii_complement(char c);
+		[CCode (cname = "panda_nt_from_ascii_complement")]
+		public static Nt from_ascii_complement (char c);
 		/**
 		 * Convert a nucleotide to an IUPAC representation
 		 */
-		[CCode(cname = "panda_nt_to_ascii")]
-		public char to_ascii();
+		[CCode (cname = "panda_nt_to_ascii")]
+		public char to_ascii ();
 	}
 	/**
 	 * The policy for Illumina tags/barcodes in sequence names.
 	 */
-	[CCode(cname = "PandaTagging", has_type_id = false, cprefix = "PANDA_TAG_")]
+	[CCode (cname = "PandaTagging", has_type_id = false, cprefix = "PANDA_TAG_")]
 	public enum Tagging {
 		/**
 		 * The parsing should return an error if the sequence does not have a tag.
@@ -252,28 +252,28 @@ namespace Panda {
 		OPTIONAL,
 	}
 
-	[CCode(cname = "struct panda_algorithm", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+	[CCode (cname = "struct panda_algorithm", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
 	[Compact]
 	public class Algorithm {
-		[CCode(cname = "panda_algorithm_simple_bayes")]
+		[CCode (cname = "panda_algorithm_simple_bayes")]
 		public const algorithm_class<void> simple_bayes_class;
-		[CCode(cname = "panda_algorithm_pear")]
+		[CCode (cname = "panda_algorithm_pear")]
 		public const algorithm_class<void> pear_class;
-		[CCode(cname = "panda_algorithms", array_length_cexpr = "panda_algorithms_length", array_length_type = "size_t")]
+		[CCode (cname = "panda_algorithms", array_length_cexpr = "panda_algorithms_length", array_length_type = "size_t")]
 		public const algorithm_class<bool>[] algorithms;
 		/**
 		 * Construct a new algorithm from a string of arguments
 		 */
-		[CCode(cname = "PandaAlgorithmCreate")]
-		public delegate Algorithm Create(string? args);
+		[CCode (cname = "PandaAlgorithmCreate")]
+		public delegate Algorithm Create (string? args);
 
 		/**
 		 * The log probability of a random base match.
 		 */
 		double pear_random_base_log_p {
-			[CCode(cname = "panda_algorithm_pear_get_random_base_log_p")]
+			[CCode (cname = "panda_algorithm_pear_get_random_base_log_p")]
 			get;
-			[CCode(cname = "panda_algorithm_pear_set_random_base_log_p")]
+			[CCode (cname = "panda_algorithm_pear_set_random_base_log_p")]
 			set;
 		}
 
@@ -281,9 +281,9 @@ namespace Panda {
 		 * The minimum error estimation in the sequence data (epsilon)
 		 */
 		public double simple_bayes_error_estimation {
-			[CCode(cname = "panda_algorithm_simple_bayes_get_error_estimation")]
+			[CCode (cname = "panda_algorithm_simple_bayes_get_error_estimation")]
 			get;
-			[CCode(cname = "simple_bayes_set_error_estimation")]
+			[CCode (cname = "simple_bayes_set_error_estimation")]
 			set;
 		}
 
@@ -292,71 +292,71 @@ namespace Panda {
 		 *
 		 * @param clazz the structure holding the callbacks.
 		 */
-		[CCode(cname = "panda_algorithm_new", simple_generics = true)]
-		public static Algorithm create<T>(algorithm_class<T> clazz);
+		[CCode (cname = "panda_algorithm_new", simple_generics = true)]
+		public static Algorithm create<T> (algorithm_class<T> clazz);
 
 		/**
 		 * Create a PEAR algorithm.
 		 */
-		[CCode(cname = "panda_algorithm_pear_new")]
-		public Algorithm.pear();
+		[CCode (cname = "panda_algorithm_pear_new")]
+		public Algorithm.pear ();
 
 		/**
 		 * Create a simple Bayesian algorithm.
 		 */
-		[CCode(cname = "panda_algorithm_simple_bayes_new")]
-		public Algorithm.simple_bayes();
+		[CCode (cname = "panda_algorithm_simple_bayes_new")]
+		public Algorithm.simple_bayes ();
 
 		/**
 		 * Compute the log probability of bases matching or mismatching with the supplied PHRED scores.
 		 */
-		[CCode(cname = "panda_quality_compare")]
-		double compare(qual one, qual other);
+		[CCode (cname = "panda_quality_compare")]
+		double compare (qual one, qual other);
 
 		/**
 		 * Get the underlying algorithm class.
 		 */
-		[CCode(cname = "panda_algorithm_class", simple_generics = true)]
-		public algorithm_class<T> get_class<T>();
+		[CCode (cname = "panda_algorithm_class", simple_generics = true)]
+		public algorithm_class<T> get_class<T> ();
 
 		/**
 		 * Checks if an algorithm is a member of a particular class.
 		 */
-		[CCode(cname = "panda_algorithm_is_a", simple_generics = true)]
-		public bool is_a<T>(algorithm_class<T> clazz);
+		[CCode (cname = "panda_algorithm_is_a", simple_generics = true)]
+		public bool is_a<T> (algorithm_class<T> clazz);
 
 		/**
 		 * Increase the reference count on an algorithm.
 		 */
-		[CCode(cname = "panda_algorithm_ref")]
-		public void @ref();
+		[CCode (cname = "panda_algorithm_ref")]
+		public void @ref ();
 
 		/**
 		 * Decrease the reference count on an algorithm.
 		 */
-		[CCode(cname = "panda_algorithm_unref")]
-		public void unref();
+		[CCode (cname = "panda_algorithm_unref")]
+		public void unref ();
 	}
 	/**
 	 * The manager for an assembly
 	 */
-	[CCode(cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
+	[CCode (cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
 	[Compact]
 	public class Assembler {
 		/**
 		 * The algorithm used in overlap selection.
 		 */
 		public Algorithm algorithm {
-			[CCode(cname = "panda_assembler_get_algorithm")]
+			[CCode (cname = "panda_assembler_get_algorithm")]
 			get;
-			[CCode(cname = "panda_assembler_set_algorithm")]
+			[CCode (cname = "panda_assembler_set_algorithm")]
 			set;
 		}
 		/**
 		 * The number of sequences rejected because the reads are unsatisfactory in some way.
 		 */
 		public long bad_read_count {
-			[CCode(cname = "panda_assembler_get_bad_read_count")]
+			[CCode (cname = "panda_assembler_get_bad_read_count")]
 			get;
 		}
 
@@ -364,7 +364,7 @@ namespace Panda {
 		 * The number of sequences processed so far.
 		 */
 		public long count {
-			[CCode(cname = "panda_assembler_get_count")]
+			[CCode (cname = "panda_assembler_get_count")]
 			get;
 		}
 
@@ -372,7 +372,7 @@ namespace Panda {
 		 * The number of sequences rejected because the overlap could not be determined.
 		 */
 		public long failed_alignment_count {
-			[CCode(cname = "panda_assembler_get_failed_alignment_count")]
+			[CCode (cname = "panda_assembler_get_failed_alignment_count")]
 			get;
 		}
 
@@ -382,9 +382,9 @@ namespace Panda {
 		 * This is mutually exclusive with {@link forward_trim}
 		 */
 		public Nt[]? forward_primer {
-			[CCode(cname = "panda_assembler_get_forward_primer")]
+			[CCode (cname = "panda_assembler_get_forward_primer")]
 			get;
-			[CCode(cname = "panda_assembler_set_forward_primer")]
+			[CCode (cname = "panda_assembler_set_forward_primer")]
 			set;
 		}
 
@@ -394,14 +394,14 @@ namespace Panda {
 		 * This is mutually exclusive with {@link forward_primer}
 		 */
 		public size_t forward_trim {
-			[CCode(cname = "panda_assembler_get_forward_trim")]
+			[CCode (cname = "panda_assembler_get_forward_trim")]
 			get;
-			[CCode(cname = "panda_assembler_set_forward_trim")]
+			[CCode (cname = "panda_assembler_set_forward_trim")]
 			set;
 		}
 
 		public LogProxy logger {
-			[CCode(cname = "panda_assembler_get_logger")]
+			[CCode (cname = "panda_assembler_get_logger")]
 			get;
 		}
 
@@ -409,7 +409,7 @@ namespace Panda {
 		 * The number of sequences rejected because the quality score is too low.
 		 */
 		public long low_quality_count {
-			[CCode(cname = "panda_assembler_get_low_quality_count")]
+			[CCode (cname = "panda_assembler_get_low_quality_count")]
 			get;
 		}
 
@@ -417,9 +417,9 @@ namespace Panda {
 		 * The minimum overlap two sequences must have to be accepted. It must be greater than one.
 		 */
 		public int minimum_overlap {
-			[CCode(cname = "panda_assembler_get_minimum_overlap")]
+			[CCode (cname = "panda_assembler_get_minimum_overlap")]
 			get;
-			[CCode(cname = "panda_assembler_set_minimum_overlap")]
+			[CCode (cname = "panda_assembler_set_minimum_overlap")]
 			set;
 		}
 
@@ -427,9 +427,9 @@ namespace Panda {
 		 * The assembler's name in logging output.
 		 */
 		public string? name {
-			[CCode(cname = "panda_assembler_get_name")]
+			[CCode (cname = "panda_assembler_get_name")]
 			get;
-			[CCode(cname = "panda_assembler_set_name")]
+			[CCode (cname = "panda_assembler_set_name")]
 			set;
 		}
 
@@ -437,7 +437,7 @@ namespace Panda {
 		 * The number of sequences rejected because the forward primer could not be aligned.
 		 */
 		public long no_forward_primer_count {
-			[CCode(cname = "panda_assembler_get_no_forward_primer_count")]
+			[CCode (cname = "panda_assembler_get_no_forward_primer_count")]
 			get;
 		}
 
@@ -445,7 +445,7 @@ namespace Panda {
 		 * The number of sequences rejected because the reverse primer could not be aligned.
 		 */
 		public long no_reverse_primer_count {
-			[CCode(cname = "panda_assembler_get_no_reverse_primer_count")]
+			[CCode (cname = "panda_assembler_get_no_reverse_primer_count")]
 			get;
 		}
 
@@ -453,7 +453,7 @@ namespace Panda {
 		 * The size of the k-mer table in this assembler.
 		 */
 		public size_t num_kmer {
-			[CCode(cname = "panda_assembler_get_num_kmer")]
+			[CCode (cname = "panda_assembler_get_num_kmer")]
 			get;
 		}
 
@@ -461,7 +461,7 @@ namespace Panda {
 		 * The number of sequences accepted.
 		 */
 		public long ok_count {
-			[CCode(cname = "panda_assembler_get_ok_count")]
+			[CCode (cname = "panda_assembler_get_ok_count")]
 			get;
 		}
 
@@ -469,7 +469,7 @@ namespace Panda {
 		 * The distribution of overlaps produced so far.
 		 */
 		public Overlaps overlaps {
-			[CCode(cname = "")]
+			[CCode (cname = "")]
 			get;
 		}
 
@@ -479,9 +479,9 @@ namespace Panda {
 		 * Stripping before is faster, but means that there can be no primer sequence in the opposite read.
 		 */
 		public bool primers_after {
-			[CCode(cname = "panda_assembler_get_primers_after")]
+			[CCode (cname = "panda_assembler_get_primers_after")]
 			get;
-			[CCode(cname = "panda_assembler_set_primers_after")]
+			[CCode (cname = "panda_assembler_set_primers_after")]
 			set;
 		}
 
@@ -491,9 +491,9 @@ namespace Panda {
 		 * This is mutually exclusive with {@link reverse_trim}
 		 */
 		public Nt[]? reverse_primer {
-			[CCode(cname = "panda_assembler_get_reverse_primer")]
+			[CCode (cname = "panda_assembler_get_reverse_primer")]
 			get;
-			[CCode(cname = "panda_assembler_set_reverse_primer")]
+			[CCode (cname = "panda_assembler_set_reverse_primer")]
 			set;
 		}
 
@@ -503,9 +503,9 @@ namespace Panda {
 		 * This is mutually exclusive with {@link reverse_primer}
 		 */
 		public size_t reverse_trim {
-			[CCode(cname = "panda_assembler_get_reverse_trim")]
+			[CCode (cname = "panda_assembler_get_reverse_trim")]
 			get;
-			[CCode(cname = "panda_assembler_set_reverse_trim")]
+			[CCode (cname = "panda_assembler_set_reverse_trim")]
 			set;
 		}
 
@@ -513,16 +513,16 @@ namespace Panda {
 		 * The numer of sequences where all possible overlaps had to be examined, instead of a quick hashing.
 		 */
 		public long slow_count {
-			[CCode(cname = "panda_assembler_get_slow_count")]
+			[CCode (cname = "panda_assembler_get_slow_count")]
 			get;
 		}
 		/**
-		* The minimum quality threshold to have an assembly accepted. Must be between 0 and 1, exclusive.
-		*/
+		 * The minimum quality threshold to have an assembly accepted. Must be between 0 and 1, exclusive.
+		 */
 		public double threshold {
-			[CCode(cname = "panda_assembler_get_threshold")]
+			[CCode (cname = "panda_assembler_get_threshold")]
 			get;
-			[CCode(cname = "panda_assembler_set_threshold")]
+			[CCode (cname = "panda_assembler_set_threshold")]
 			set;
 		}
 
@@ -531,16 +531,16 @@ namespace Panda {
 		 *
 		 * @see create_fastq_reader
 		 */
-		[CCode(cname = "panda_assembler_open_bz2")]
-		public static Assembler? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		[CCode (cname = "panda_assembler_open_bz2")]
+		public static Assembler? open_bz2 (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Open a pair of gzipped (or uncompressed files) for assembly.
 		 *
 		 * @see create_fastq_reader
 		 */
-		[CCode(cname = "panda_assembler_open_gz")]
-		public static Assembler? open_gz(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		[CCode (cname = "panda_assembler_open_gz")]
+		public static Assembler? open_gz (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Create a new assembler from a sequence source.
@@ -548,8 +548,8 @@ namespace Panda {
 		 * @param next the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may use them until the next call or destruction. If not provided, you may use {@link assemble} but not {@link next}
 		 * @param logger the function to call to report information to the user.
 		 */
-		[CCode(cname = "panda_assembler_new")]
-		public Assembler(owned NextSeq? next, LogProxy logger);
+		[CCode (cname = "panda_assembler_new")]
+		public Assembler (owned NextSeq? next, LogProxy logger);
 
 		/**
 		 * Create a new assembler from a sequence source with a custom //k//-mer table size.
@@ -557,14 +557,14 @@ namespace Panda {
 		 * @param num_kmers the number of sequence locations for a particular //k//-mer. This should be small (no more than 10), or the //k//-mer table will be extremely large.
 		 * @see Assembler
 		 */
-		[CCode(cname = "panda_assembler_new_kmer")]
-		public Assembler.kmer(owned NextSeq? next, LogProxy logger, size_t num_kmers = 2);
+		[CCode (cname = "panda_assembler_new_kmer")]
+		public Assembler.kmer (owned NextSeq? next, LogProxy logger, size_t num_kmers = 2);
 
 		/**
 		 * Create a new assembler for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
-		[CCode(cname = "panda_assembler_new_fastq_reader")]
+		[CCode (cname = "panda_assembler_new_fastq_reader")]
 		public Assembler.fastq (owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
@@ -572,8 +572,8 @@ namespace Panda {
 		 *
 		 * This works exactly like {@link next}, but instead of asking the {@link NextSeq} for the data, it expects this information to be provided.
 		 */
-		[CCode(cname = "panda_assembler_assemble")]
-		public unowned result_seq? assemble(identifier id, qual[] forward, qual[] reverse);
+		[CCode (cname = "panda_assembler_assemble")]
+		public unowned result_seq? assemble (identifier id, qual[] forward, qual[] reverse);
 
 		/**
 		 * Add a module to this assembly process.
@@ -581,36 +581,36 @@ namespace Panda {
 		 * Sequences will be checked using this module.
 		 * @return true if the module was successfully initialised and added
 		 */
-		[CCode(cname = "panda_assembler_add_module")]
-		public bool add_module(Module module);
+		[CCode (cname = "panda_assembler_add_module")]
+		public bool add_module (Module module);
 
 		/**
 		 * Add a collection of modules to this assembly process.
 		 * @return the index of the last successfully added module
 		 */
-		[CCode(cname = "panda_assembler_add_modules")]
-		public size_t add_modules([CCode(array_length_type = "size_t")] Module[] modules);
+		[CCode (cname = "panda_assembler_add_modules")]
+		public size_t add_modules ([CCode (array_length_type = "size_t")] Module[] modules);
 
 		/**
 		 * Clone the configuration of one assembler to another.
 		 *
 		 * This does not affect the sequence source or logging. Only the primers, trimming, and modules. The recorded statistics are separate.
 		 */
-		[CCode(cname = "panda_assembler_copy_configuration")]
-		public void copy_configuration(Assembler src);
+		[CCode (cname = "panda_assembler_copy_configuration")]
+		public void copy_configuration (Assembler src);
 
 		/**
 		 * Review all the modules associated with an assembler.
 		 * @return true if callback has seen each module
 		 */
-		[CCode(cname = "panda_assembler_foreach_module")]
-		public bool for_each_module(ModuleCallback callback);
+		[CCode (cname = "panda_assembler_foreach_module")]
+		public bool for_each_module (ModuleCallback callback);
 
 		/**
 		 * Log the number of sequences rejected by each module.
 		 */
-		[CCode(cname = "panda_assembler_module_stats")]
-		public void module_stats();
+		[CCode (cname = "panda_assembler_module_stats")]
+		public void module_stats ();
 
 		/**
 		 * Assemble the next sequence from the input
@@ -618,46 +618,46 @@ namespace Panda {
 		 * This function will process sequences until one is assembled successfully or no more sequences are available from the input stream, after which it will return null.
 		 * The returned sequence becomes invalid after the next call.
 		 */
-		[CCode(cname = "panda_assembler_next")]
-		public unowned result_seq? next();
+		[CCode (cname = "panda_assembler_next")]
+		public unowned result_seq? next ();
 
 		/**
 		 * Increment reference count.
 		 */
-		[CCode(cname = "panda_assembler_ref")]
-		public unowned Assembler @ref();
+		[CCode (cname = "panda_assembler_ref")]
+		public unowned Assembler @ref ();
 		/**
 		 * Attached a callback for every sequence that fails to have an overlap.
 		 *
 		 * This will be called when a sequence fails to have an overlap computed. This does not include sequences that are missing primers or sequences that are assembled and discarded by modules.
 		 */
-		[CCode(cname = "panda_assembler_set_fail_alignment")]
-		public void set_fail_alignment(owned FailAlign? handler);
+		[CCode (cname = "panda_assembler_set_fail_alignment")]
+		public void set_fail_alignment (owned FailAlign? handler);
 		/**
 		 * Decrement reference count.
 		 */
-		[CCode(cname = "panda_assembler_unref")]
-		public void unref();
+		[CCode (cname = "panda_assembler_unref")]
+		public void unref ();
 	}
 
 	/**
 	 * Iterate over a sequence presenting all //k//-mers without ''N''s or other denegerate bases.
 	 */
-	[CCode(cname = "struct panda_iter", free_function = "panda_iter_free")]
+	[CCode (cname = "struct panda_iter", free_function = "panda_iter_free")]
 	[Compact]
 	public class Iterator {
 		/**
 		 * The number of useful bits in the output.
 		 */
 		public size_t bits {
-			[CCode(cname = "panda_iter_bits")]
+			[CCode (cname = "panda_iter_bits")]
 			get;
 		}
 		/**
 		 * The //k//-mer length.
 		 */
 		public int k {
-			[CCode(cname = "panda_iter_k")]
+			[CCode (cname = "panda_iter_k")]
 			get;
 		}
 
@@ -667,57 +667,57 @@ namespace Panda {
 		 * @param reverse true to iterate from the end of the sequence rather than the beginning
 		 * @param k the length of the output words. This must range between 1 and 4 * sizeof(size_t). Any other values will be converted to the standard //k//-mer length of 8.
 		 */
-		[CCode(cname = "panda_iterate_nt")]
-		public Iterator.nt([CCode(array_length_type = "size_t")] Nt[] seq, bool reverse = false, int k = 0);
+		[CCode (cname = "panda_iterate_nt")]
+		public Iterator.nt ([CCode (array_length_type = "size_t")] Nt[] seq, bool reverse = false, int k = 0);
 		/**
 		 * Iterate over probability-annotated sequence.
 		 * @see Iterator.Iterator.nt
 		 */
-		[CCode(cname = "panda_iterate_qual")]
-		public Iterator.qual([CCode(array_length_type = "size_t")] qual[] seq, bool reverse = false, int k = 0);
+		[CCode (cname = "panda_iterate_qual")]
+		public Iterator.qual ([CCode (array_length_type = "size_t")] qual[] seq, bool reverse = false, int k = 0);
 		/**
 		 * Iterate over probability-annotated sequence.
 		 * @see Iterator.Iterator.nt
 		 */
-		[CCode(cname = "panda_iterate_result")]
-		public Iterator.result([CCode(array_length_type = "size_t")] result[] seq, bool reverse = false, int k = 0);
+		[CCode (cname = "panda_iterate_result")]
+		public Iterator.result ([CCode (array_length_type = "size_t")] result[] seq, bool reverse = false, int k = 0);
 
 		/**
 		 * Copy an iterator to a new one, preserving its current state.
 		 */
-		[CCode(cname = "panda_iter_dup")]
-		public Iterator iterator();
+		[CCode (cname = "panda_iter_dup")]
+		public Iterator iterator ();
 		/**
 		 * Advance to the next position in the sequence.
 		 * @return if null, there are no more //k//-mers in the sequence
 		 */
-		[CCode(cname = "panda_iter_next")]
-		public unowned kmer? next();
+		[CCode (cname = "panda_iter_next")]
+		public unowned kmer? next ();
 		/**
 		 * Set an iterator back to the beginning of the sequence.
 		 */
-		[CCode(cname = "panda_iter_reset")]
-		public void reset();
+		[CCode (cname = "panda_iter_reset")]
+		public void reset ();
 	}
-	[CCode(cname = "struct panda_linebuf", free_function = "panda_linebuf_free")]
+	[CCode (cname = "struct panda_linebuf", free_function = "panda_linebuf_free")]
 	[Compact]
 	public class LineBuf {
 		/**
 		 * Create a new line reader from a buffer reading source.
 		 */
-		[CCode(cname = "panda_linebuf_new")]
-		public LineBuf(owned BufferRead read);
+		[CCode (cname = "panda_linebuf_new")]
+		public LineBuf (owned BufferRead read);
 		/**
 		 * Read the next line.
 		 * Returns: (transfer none) (allow-none): the next line in the file. This is only valid until the next call.
 		 */
-		[CCode(cname = "panda_linebuf_next")]
-		public unowned string? next_value();
+		[CCode (cname = "panda_linebuf_next")]
+		public unowned string? next_value ();
 	}
 	/**
 	 * Logging proxy
 	 */
-	[CCode(cname = "struct panda_log_proxy", ref_function = "panda_log_proxy_ref", unref_function = "panda_log_proxy_unref")]
+	[CCode (cname = "struct panda_log_proxy", ref_function = "panda_log_proxy_ref", unref_function = "panda_log_proxy_unref")]
 	[Compact]
 	public class LogProxy {
 		/**
@@ -725,120 +725,114 @@ namespace Panda {
 		 * @param filename The file to write.
 		 * @param bzip Write BZipped text rather than plain text.
 		 */
-		[CCode(cname = "panda_log_proxy_open_file")]
-		public LogProxy? open_file(string filename, bool bzip);
+		[CCode (cname = "panda_log_proxy_open_file")]
+		public LogProxy? open_file (string filename, bool bzip);
 
 		/**
 		 * Create a new proxy with a callback.
 		 */
-		[CCode(cname = "panda_log_proxy_new")]
-		public LogProxy(Writer writer);
+		[CCode (cname = "panda_log_proxy_new")]
+		public LogProxy (Writer writer);
 		/**
 		 * Write the log to an open file.
 		 */
-		[CCode(cname = "panda_log_proxy_new_file")]
-		public LogProxy.file(owned
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
+		[CCode (cname = "panda_log_proxy_new_file")]
+		public LogProxy.file (owned GLib.FileStream file);
 		/**
 		 * Create a new proxy to standard error.
 		 */
-		[CCode(cname = "panda_log_proxy_new_stderr")]
-		public LogProxy.stderr();
+		[CCode (cname = "panda_log_proxy_new_stderr")]
+		public LogProxy.stderr ();
 
 		public Writer writer {
-			[CCode(cname = "panda_log_proxy_get_writer")]
+			[CCode (cname = "panda_log_proxy_get_writer")]
 			get;
 		}
 
 		/**
 		 * Increase the reference count on a proxy.
 		 */
-		[CCode(cname = "panda_log_proxy_ref")]
-		public unowned LogProxy @ref();
+		[CCode (cname = "panda_log_proxy_ref")]
+		public unowned LogProxy @ref ();
 		/**
 		 * Decrease the reference count on a proxy.
 		 */
-		[CCode(cname = "panda_log_proxy_unref")]
-		public void unref();
+		[CCode (cname = "panda_log_proxy_unref")]
+		public void unref ();
 
 		/**
 		 * Print a message to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_write")]
-		public void write(Code code, Assembler? assembler, identifier? id, string message);
+		[CCode (cname = "panda_log_proxy_write")]
+		public void write (Code code, Assembler? assembler, identifier? id, string message);
 
 		/**
 		 * Put a printf-like message in the log.
 		 */
-		[CCode(cname = "panda_log_proxy_write_f")]
+		[CCode (cname = "panda_log_proxy_write_f")]
 		[PrintfFormat]
-		public void write_f(string format, ...);
+		public void write_f (string format, ...);
 
 		/**
 		 * Print the overlap histogram of an assember to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_write_overlap")]
-		public void write_overlap(Assembler assembler);
+		[CCode (cname = "panda_log_proxy_write_overlap")]
+		public void write_overlap (Assembler assembler);
 
 		/**
 		 * Print a string to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_write_str")]
-		public void write_str(string str);
+		[CCode (cname = "panda_log_proxy_write_str")]
+		public void write_str (string str);
 
 		/**
 		 * Print a double with a STAT header to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_stat_double")]
-		public void stat_double(Assembler assembler, string name, double @value);
+		[CCode (cname = "panda_log_proxy_stat_double")]
+		public void stat_double (Assembler assembler, string name, double @value);
 
 		/**
 		 * Print a double with a STAT header to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_stat_long")]
-		public void stat_long(Assembler assembler, string name, long @value);
+		[CCode (cname = "panda_log_proxy_stat_long")]
+		public void stat_long (Assembler assembler, string name, long @value);
 
 		/**
 		 * Print a size_t with a STAT header to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_stat_size_t")]
-		public void stat_size_t(Assembler assembler, string name, size_t @value);
+		[CCode (cname = "panda_log_proxy_stat_size_t")]
+		public void stat_size_t (Assembler assembler, string name, size_t @value);
 
 		/**
 		 * Print a string with a STAT header to the log.
 		 *
 		 * This method is thread-safe.
 		 */
-		[CCode(cname = "panda_log_proxy_stat_str")]
-		public void stat_str(Assembler assembler, string name, string @value);
+		[CCode (cname = "panda_log_proxy_stat_str")]
+		public void stat_str (Assembler assembler, string name, string @value);
 	}
 
 	/**
 	 * Sequence validity checker
 	 */
-	[CCode(cname = "struct panda_module", ref_function = "panda_module_ref", unref_function = "panda_module_unref")]
+	[CCode (cname = "struct panda_module", ref_function = "panda_module_ref", unref_function = "panda_module_unref")]
 	public class Module {
 		/**
 		 * The current module API version
 		 */
-		[CCode(cname = "PANDA_API")]
+		[CCode (cname = "PANDA_API")]
 		public const int API;
 
 		/**
@@ -847,7 +841,7 @@ file);
 		 * This is only appropriate for loaded modules. Modules constructed by {@link create} will always return {@link API}.
 		 */
 		public int api {
-			[CCode(cname = "panda_module_get_api")]
+			[CCode (cname = "panda_module_get_api")]
 			get;
 		}
 
@@ -857,7 +851,7 @@ file);
 		 * This is only appropriate for loaded modules.
 		 */
 		public string? args {
-			[CCode(cname = "panda_module_get_args")]
+			[CCode (cname = "panda_module_get_args")]
 			get;
 		}
 
@@ -867,7 +861,7 @@ file);
 		 * This is only appropriate for loaded modules.
 		 */
 		public string? description {
-			[CCode(cname = "panda_module_get_description")]
+			[CCode (cname = "panda_module_get_description")]
 			get;
 		}
 
@@ -875,7 +869,7 @@ file);
 		 * The name of a module.
 		 */
 		public string name {
-			[CCode(cname = "panda_module_get_name")]
+			[CCode (cname = "panda_module_get_name")]
 			get;
 		}
 
@@ -885,7 +879,7 @@ file);
 		 * This is only appropriate for loaded modules.
 		 */
 		public string? usage {
-			[CCode(cname = "panda_module_get_usage")]
+			[CCode (cname = "panda_module_get_usage")]
 			get;
 		}
 
@@ -895,20 +889,20 @@ file);
 		 * This is only appropriate for loaded modules.
 		 */
 		public string? version {
-			[CCode(cname = "panda_module_get_version")]
+			[CCode (cname = "panda_module_get_version")]
 			get;
 		}
 
 		/**
 		 * Check a sequence after reconstruction for validity.
 		 */
-		[CCode(cname = "PandaCheck", has_target = false, simple_generics = true)]
-		public delegate bool Check<T>(LogProxy logger, result_seq sequence, T data);
+		[CCode (cname = "PandaCheck", has_target = false, simple_generics = true)]
+		public delegate bool Check<T> (LogProxy logger, result_seq sequence, T data);
 		/**
 		 * Check a sequence before reconstruction for validity.
 		 */
-		[CCode(cname = "PandaPreCheck", has_target = false, simple_generics = true)]
-		public delegate bool PreCheck<T>(LogProxy logger, identifier id, qual[] forward, qual[] reverse, T data);
+		[CCode (cname = "PandaPreCheck", has_target = false, simple_generics = true)]
+		public delegate bool PreCheck<T> (LogProxy logger, identifier id, qual[] forward, qual[] reverse, T data);
 
 		/**
 		 * Create a module given sequence checking parameters.
@@ -917,45 +911,45 @@ file);
 		 * @param check the check function, which must not be null
 		 * @param precheck an optional check to be done before the module
 		 */
-		[CCode(cname = "panda_module_new", simple_generics = true)]
-		public static Module create<T>(string name, Check<T>? check, PreCheck<T>? precheck, owned T user);
+		[CCode (cname = "panda_module_new", simple_generics = true)]
+		public static Module create<T> (string name, Check<T>? check, PreCheck<T>? precheck, owned T user);
 
 		/**
 		 * Load a module from a string containg the module name and arguments.
 		 *
 		 * @param path the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
 		 */
-		[CCode(cname = "panda_module_load")]
-		public static Module load(string path);
+		[CCode (cname = "panda_module_load")]
+		public static Module load (string path);
 
 		/**
 		 * Increment reference count.
 		 */
-		[CCode(cname = "panda_module_ref")]
-		public unowned Module @ref();
+		[CCode (cname = "panda_module_ref")]
+		public unowned Module @ref ();
 		/**
 		 * Decrement reference count.
 		 */
-		[CCode(cname = "panda_module_unref")]
-		public void unref();
+		[CCode (cname = "panda_module_unref")]
+		public void unref ();
 	}
 
 	/**
 	 * A threading-safe wrapper to allow multiple assemblers to share a single data source.
 	 */
-	[CCode(cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref")]
+	[CCode (cname = "struct panda_mux", ref_function = "panda_mux_ref", unref_function = "panda_module_unref")]
 	[Compact]
 	public class Mux {
 		/**
 		 * Get the number of assemblers created so far.
 		 */
 		public size_t child_count {
-			[CCode(cname = "panda_mux_get_child_count")]
+			[CCode (cname = "panda_mux_get_child_count")]
 			get;
 		}
 
 		public LogProxy logger {
-			[CCode(cname = "panda_mux_get_loggger")]
+			[CCode (cname = "panda_mux_get_loggger")]
 			get;
 		}
 
@@ -963,46 +957,46 @@ file);
 		 * Open a pair of gzipped files for multi-threaded assembled.
 		 * @see Assembler.open_gz
 		 */
-		[CCode(cname = "panda_mux_open_gz")]
-		public static Mux? open_gz(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		[CCode (cname = "panda_mux_open_gz")]
+		public static Mux? open_gz (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Open a pair of zipped for multi-threaded assembly.
 		 *
 		 * @see Assembler.open_bz2
 		 */
-		[CCode(cname = "panda_mux_open_bz2")]
-		public static Mux? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		[CCode (cname = "panda_mux_open_bz2")]
+		public static Mux? open_bz2 (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new multiplexed data source from a sequence callback.
 		 *
 		 * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
 		 */
-		[CCode(cname = "PandaMux")]
-		public Mux(owned NextSeq next, LogProxy logger);
+		[CCode (cname = "PandaMux")]
+		public Mux (owned NextSeq next, LogProxy logger);
 		/**
 		 * Create a new multiplexed reader for given to FASTQ streams.
 		 * @see create_fastq_reader
 		 */
-		public Mux.fastq(owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		public Mux.fastq (owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new assembler using the multiplexer as it sequence source.
 		 *
 		 * The new assembler will draw sequences from the original source in a thread-safe way. Each assembler is not thread-safe. This means that, to use the interface correctly, one creates a sequence source, wraps it in a multiplexer, then creates an assembler for every thread. Each assembler should be accessed in only one thread. It may be advisable to create a single assembler and set its configuration, then copy the settings to subsequently created assemblers.
 		 * @see Assembler.copy_configuration
 		 */
-		[CCode(cname = "panda_mux_create_assembler")]
-		public Assembler create_assembler();
+		[CCode (cname = "panda_mux_create_assembler")]
+		public Assembler create_assembler ();
 		/**
 		 * Create a new assembler using the multiplexer as it sequence source with a custom //k//-mer table size.
 		 * @see Assembler.Assembler.kmer
 		 */
-		[CCode(cname = "panda_mux_create_assembler_kmer")]
-		public Assembler create_assembler_kmer(size_t num_kmers);
+		[CCode (cname = "panda_mux_create_assembler_kmer")]
+		public Assembler create_assembler_kmer (size_t num_kmers);
 		/**
 		 * Increase the reference count on a multiplexer.
 		 */
-		[CCode(cname = "panda_mux_ref")]
-		public unowned Mux @ref();
+		[CCode (cname = "panda_mux_ref")]
+		public unowned Mux @ref ();
 		/**
 		 * Attached a callback for every sequence that fails to have an overlap.
 		 *
@@ -1010,80 +1004,80 @@ file);
 		 *
 		 * Synchronisation is the resonsibility of the callee. This function must be re-entrant.
 		 */
-		[CCode(cname = "panda_mux_set_fail_alignment")]
-		public void set_fail_alignment(owned FailAlign? handler);
+		[CCode (cname = "panda_mux_set_fail_alignment")]
+		public void set_fail_alignment (owned FailAlign? handler);
 		/**
 		 * Decrease the reference count on a multiplexer.
 		 */
-		[CCode(cname = "panda_mux_unref")]
-		public void unref();
+		[CCode (cname = "panda_mux_unref")]
+		public void unref ();
 	}
 
-	[CCode(cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
+	[CCode (cname = "struct panda_assembler", ref_function = "panda_assembler_ref", unref_function = "panda_assembler_unref")]
 	[Compact]
 	public class Overlaps {
 		/**
 		 * The longest overlap assembled so far.
 		 */
 		public size_t size {
-			[CCode(cname = "panda_assembler_get_longest_overlap")]
+			[CCode (cname = "panda_assembler_get_longest_overlap")]
 			get;
 		}
 
 		/**
 		 * Report the number of sequences that have been assembled with the overlap specified.
 		 */
-		[CCode(cname = "panda_assembler_get_overlap_count")]
-		public long get(size_t overlap);
+		[CCode (cname = "panda_assembler_get_overlap_count")]
+		public long get (size_t overlap);
 	}
 
 	/**
 	 * A set of sequence identifiers against which to match.
 	 */
-	[CCode(cname = "struct panda_idset", ref_function = "panda_idset_ref", unref_function = "panda_idset_unref")]
+	[CCode (cname = "struct panda_idset", ref_function = "panda_idset_ref", unref_function = "panda_idset_unref")]
 	[Compact]
 	public class Set {
 
 		/**
 		 * Create a new, empty set.
 		 */
-		[CCode(cname = "panda_idset_new")]
-		public Set();
+		[CCode (cname = "panda_idset_new")]
+		public Set ();
 
 		/**
 		 * Add a sequence identifier to a set.
 		 */
-		[CCode(cname = "panda_idset_add")]
-		public void add(identifier id);
+		[CCode (cname = "panda_idset_add")]
+		public void add (identifier id);
 		/**
 		 * Parse a sequence identifier and add it to the set.
 		 * @return true on success
 		 * @see identifier.parse_fail
 		 */
-		[CCode(cname = "panda_idset_add_str")]
-		public bool add_str(string id, Tagging policy = Tagging.OPTIONAL, out IdFormat detected_format = null, out unowned string end = null);
+		[CCode (cname = "panda_idset_add_str")]
+		public bool add_str (string id, Tagging policy = Tagging.OPTIONAL, out IdFormat detected_format = null, out unowned string end = null);
 
 		/**
 		 * Check if a sequence identifier has been added to the set.
 		 */
-		[CCode(cname = "panda_idset_contains")]
-		public bool contains(identifier id);
+		[CCode (cname = "panda_idset_contains")]
+		public bool contains (identifier id);
 
 		/**
 		 * Increase the reference count on a set.
 		 *
 		 * This is thread-safe.
 		 */
-		[CCode(cname = "panda_idset_ref")]
-		public unowned Set @ref();
+		[CCode (cname = "panda_idset_ref")]
+		public unowned Set @ref ();
 
 		/**
 		 * Decrease the reference count on a set.
 		 *
 		 * This is thread-safe.
 		 */
-		[CCode(cname = "panda_idset_unref")]
-		public void unref();
+		[CCode (cname = "panda_idset_unref")]
+		public void unref ();
 	}
 	/**
 	 * A transaction stream writer to improve output throughtput while using threads.
@@ -1092,7 +1086,7 @@ file);
 	 * groups to an output source. This is mean to alleviate contention since each
 	 * thread need not obtain an output lock for every write.
 	 */
-	[CCode(cname = "struct panda_writer", ref_function = "panda_writer_ref", unref_function = "panda_writer_unref")]
+	[CCode (cname = "struct panda_writer", ref_function = "panda_writer_ref", unref_function = "panda_writer_unref")]
 	[Compact]
 	public class Writer {
 		/**
@@ -1100,34 +1094,28 @@ file);
 		 * @param filename The file to write.
 		 * @param bzip Write BZipped text rather than plain text.
 		 */
-		[CCode(cname = "panda_writer_open_file")]
-		public static Writer? open_file(string filename, bool bzip);
+		[CCode (cname = "panda_writer_open_file")]
+		public static Writer? open_file (string filename, bool bzip);
 		/**
 		 * Create a new writer, backed by some target.
 		 */
-		[CCode(cname = "panda_writer_new")]
-		public Writer(owned BufferWrite write);
+		[CCode (cname = "panda_writer_new")]
+		public Writer (owned BufferWrite write);
 		/**
 		 * Create a new writer, backed by an open file.
 		 */
-		[CCode(cname = "panda_writer_new_file")]
-		public Writer.file(owned
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
+		[CCode (cname = "panda_writer_new_file")]
+		public Writer.file (owned GLib.FileStream file);
 		/**
 		 * Create a new writer, backed by standard error.
 		 */
-		[CCode(cname = "panda_writer_new_stderr")]
-		public Writer.stderr();
+		[CCode (cname = "panda_writer_new_stderr")]
+		public Writer.stderr ();
 		/**
 		 * Create a new writer, backed by standard output.
 		 */
-		[CCode(cname = "panda_writer_new_stdout")]
-		public Writer.stdout();
+		[CCode (cname = "panda_writer_new_stdout")]
+		public Writer.stdout ();
 
 		/**
 		 * A target write to be commited at the same time as this one.
@@ -1136,84 +1124,84 @@ file);
 		 * {@link commit} is called on this writer.
 		 */
 		public Writer? slave {
-			[CCode(cname = "panda_writer_get_slave")]
+			[CCode (cname = "panda_writer_get_slave")]
 			get;
-			[CCode(cname = "panda_writer_set_slave")]
+			[CCode (cname = "panda_writer_set_slave")]
 			set;
 		}
 
 		/**
 		 * Write a printf-like formatted string to the output.
 		 */
-		[CCode(cname = "panda_writer_append")]
+		[CCode (cname = "panda_writer_append")]
 		[PrintfFormat]
-		public void append(string format, ...);
+		public void append (string format, ...);
 		/**
 		 * Write a printf-like formatted string to the output.
 		 */
-		[CCode(cname = "panda_writer_append_v")]
+		[CCode (cname = "panda_writer_append_v")]
 		[PrintfFormat]
-		public void append_v(string format, va_list va);
+		public void append_v (string format, va_list va);
 
 		/**
 		 * Write a single character to the output.
 		 */
-		[CCode(cname = "panda_writer_append_c")]
-		public void append_c(char c);
+		[CCode (cname = "panda_writer_append_c")]
+		public void append_c (char c);
 		/**
 		 * Write a sequence identifier to the output.
 		 */
-		[CCode(cname = "panda_writer_append_id")]
-		public void append_id(identifier id);
+		[CCode (cname = "panda_writer_append_id")]
+		public void append_id (identifier id);
 		/**
 		 * End the current transaction and start another.
 		 *
 		 * This will consider the appending done so far to this writer to be a unit
 		 * that can be passed to the output when necessary.
 		 */
-		[CCode(cname = "panda_writer_commit")]
-		public void commit();
+		[CCode (cname = "panda_writer_commit")]
+		public void commit ();
 
 		/**
 		 * Force writing all buffered data to the output.
 		 *
 		 * This requires getting a lock and happens automatically under normal circumstances.
 		 */
-		[CCode(cname = "panda_writer_flush")]
-		public void flush();
+		[CCode (cname = "panda_writer_flush")]
+		public void flush ();
 
 		/**
 		 * Increase the reference count on a writer.
 		 *
 		 * This is thread-safe.
 		 */
-		[CCode(cname = "panda_writer_ref")]
-		public unowned Writer @ref();
+		[CCode (cname = "panda_writer_ref")]
+		public unowned Writer @ref ();
 		/**
 		 * Decrease the reference count on a writer.
 		 *
 		 * This is thread-safe.
 		 */
-		[CCode(cname = "panda_writer_unref")]
-		public void unref();
+		[CCode (cname = "panda_writer_unref")]
+		public void unref ();
 
 		/**
 		 * Write an unassembled sequence to a FASTA file as a concatenated pair.
 		 */
-		[CCode(cname = "panda_output_fail", instance_pos = -1)]
-		public void write_fail(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
+		[CCode (cname = "panda_output_fail", instance_pos = -1)]
+		public void write_fail (Assembler assembler, identifier id, [CCode (array_length_type = "size_t")] qual[] forward, [CCode (array_length_type = "size_t")] qual[] reverse);
 
 		/**
 		 * Write an unassembled sequence to a FASTQ file as a concatenated pair.
 		 */
-		[CCode(cname = "panda_output_fail_qual", instance_pos = -1)]
-		public void write_fail_qual(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
+		[CCode (cname = "panda_output_fail_qual", instance_pos = -1)]
+		public void write_fail_qual (Assembler assembler, identifier id, [CCode (array_length_type = "size_t")] qual[] forward, [CCode (array_length_type = "size_t")] qual[] reverse);
 	}
 
 	/**
 	 * The base structure for an assembly algorithm.
 	 */
-	[CCode(cname = "struct panda_algorithm_class", destroy_function = "")]
+	[CCode (cname = "struct panda_algorithm_class", destroy_function = "")]
 	public struct algorithm_class<T> {
 		/**
 		 * The number of bytes to allocate for the private data.
@@ -1230,7 +1218,7 @@ file);
 	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
-	[CCode(cname = "panda_seq_identifier", copy_function = "panda_seqid_copy", has_type_id = false, destroy_function = "")]
+	[CCode (cname = "panda_seq_identifier", copy_function = "panda_seqid_copy", has_type_id = false, destroy_function = "")]
 	public struct identifier {
 		string flowcell;
 		string instrument;
@@ -1240,57 +1228,51 @@ file);
 		int tile;
 		int x;
 		int y;
-		[CCode(cname = "panda_seqid_clear")]
-		public identifier();
+		[CCode (cname = "panda_seqid_clear")]
+		public identifier ();
 		/**
 		 * Parse an Illumina header
 		 *
 		 * @return the direction of the sequence (1 for forward, 2 or 3 for reverse) or 0 if an error occurs. Sequences from the Short Read Archive are always 1.
 		 */
-		[CCode(cname = "panda_seqid_parse")]
-		public static int parse(out identifier id, string input, Tagging policy);
+		[CCode (cname = "panda_seqid_parse")]
+		public static int parse (out identifier id, string input, Tagging policy);
 		/**
 		 * Parse an Illumina header with failure information
 		 *
 		 * @param end the remainder of the string if parsing failed.
 		 * @see parse
 		 */
-		[CCode(cname = "panda_seqid_parse_fail")]
-		public static int parse_fail(out identifier id, string input, Tagging policy, out IdFormat detected_format, out unowned string end);
+		[CCode (cname = "panda_seqid_parse_fail")]
+		public static int parse_fail (out identifier id, string input, Tagging policy, out IdFormat detected_format, out unowned string end);
 		/**
 		 * Compare two Illumina headers
 		 */
-		[CCode(cname = "panda_seqid_equal")]
-		public bool equal(identifier other);
+		[CCode (cname = "panda_seqid_equal")]
+		public bool equal (identifier other);
 		/**
 		 * Write the Illumina header to a printf-like function
 		 */
-		[CCode(cname = "panda_seqid_xprint")]
-		public void print(PrintfFunc func);
+		[CCode (cname = "panda_seqid_xprint")]
+		public void print (PrintfFunc func);
 		/**
 		 * Write an Illumina header for a sequence identifier to a file
 		 */
-		[CCode(cname = "panda_seqid_print")]
-		public void to_file(
-#if POSIX
-Posix.FILE
-#else
-GLib.FileStream
-#endif
-file);
+		[CCode (cname = "panda_seqid_print")]
+		public void to_file (GLib.FileStream file);
 		/**
 		 * Create an Illumina header for a sequence identifier
 		 *
 		 * The return string must not be freed and subsequent calls will obliterate the previously returned string.
 		 */
-		[CCode(cname = "panda_seqid_str")]
-		 public unowned string to_string();
+		[CCode (cname = "panda_seqid_str")]
+		public unowned string to_string ();
 	}
 
 	/**
 	 * A //k//-mer and its position in the original sequence.
-	 */ 
-	[CCode(cname = "panda_kmer", has_type_id = false)]
+	 */
+	[CCode (cname = "panda_kmer", has_type_id = false)]
 	[SimpleType]
 	public struct kmer {
 		public size_t kmer;
@@ -1300,7 +1282,7 @@ file);
 	/**
 	 * A single nucleotide with quality information
 	 */
-	[CCode(cname = "panda_qual", has_type_id = false)]
+	[CCode (cname = "panda_qual", has_type_id = false)]
 	public struct qual {
 		/**
 		 * The nucleotide
@@ -1316,20 +1298,20 @@ file);
 		 * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
 		 * @return 0 if the sequence is not found, or one more than the offset.
 		 */
-		[CCode(cname = "panda_compute_offset_qual")]
-		public static size_t compute_offset(double threshold, bool reverse, [CCode(array_length_type = "size_t")] qual[] haystack, [CCode(array_length_type = "size_t")] Nt[] needle);
+		[CCode (cname = "panda_compute_offset_qual")]
+		public static size_t compute_offset (double threshold, bool reverse, [CCode (array_length_type = "size_t")] qual[] haystack, [CCode (array_length_type = "size_t")] Nt[] needle);
 		/**
 		 * Convert the PHRED quality score to a log probability.
 		 */
 		public double log_probability {
-			[CCode(cname = "panda_quality_log_probability")]
+			[CCode (cname = "panda_quality_log_probability")]
 			get;
 		}
 		/**
 		 * Convert the PHRED quality score to a probability.
 		 */
 		public double probability {
-			[CCode(cname = "panda_quality_probability")]
+			[CCode (cname = "panda_quality_probability")]
 			get;
 		}
 	}
@@ -1337,7 +1319,7 @@ file);
 	/**
 	 * A reconstructed nucleotide
 	 */
-	[CCode(cname = "panda_result", has_type_id = false)]
+	[CCode (cname = "panda_result", has_type_id = false)]
 	public struct result {
 		/**
 		 * The nucleotide
@@ -1351,7 +1333,7 @@ file);
 		 * Convert the probability to a PHRED quality score.
 		 */
 		public int8 phred {
-			[CCode(cname = "panda_result_phred")]
+			[CCode (cname = "panda_result_phred")]
 			get;
 		}
 		/**
@@ -1360,14 +1342,14 @@ file);
 		 * @param reverse if false, scan the sequence from start to finish, else, scan in the opposite direction
 		 * @return 0 if the sequence is not found, or one more than the offset.
 		 */
-		[CCode(cname = "panda_compute_offset_result")]
-		public static size_t compute_offset(double threshold, bool reverse, [CCode(array_length_type = "size_t")] result[] haystack, [CCode(array_length_type = "size_t")] Nt[] needle);
+		[CCode (cname = "panda_compute_offset_result")]
+		public static size_t compute_offset (double threshold, bool reverse, [CCode (array_length_type = "size_t")] result[] haystack, [CCode (array_length_type = "size_t")] Nt[] needle);
 	}
 
 	/**
 	 * A reconstructed sequence with meta information
 	 */
-	[CCode(cname = "panda_result_seq", has_type_id = false, destroy_function = "")]
+	[CCode (cname = "panda_result_seq", has_type_id = false, destroy_function = "")]
 	public struct result_seq {
 		/**
 		 * Number of uncalled bases in the sequence.
@@ -1377,7 +1359,7 @@ file);
 		/**
 		 * The original forward sequence
 		 */
-		[CCode(array_length_cname = "forward_length")]
+		[CCode (array_length_cname = "forward_length")]
 		public qual[] forward;
 
 		/**
@@ -1400,13 +1382,13 @@ file);
 		/**
 		 * The reconstructed sequence with quality information
 		 */
-		[CCode(array_length_cname = "sequence_length")]
+		[CCode (array_length_cname = "sequence_length")]
 		public result[] sequence;
 
 		/**
 		 * The original reverse sequence
 		 */
-		[CCode(array_length_cname = "reverse_length")]
+		[CCode (array_length_cname = "reverse_length")]
 		public qual[] reverse;
 
 		/**
@@ -1423,7 +1405,7 @@ file);
 		 * The first base in the result sequence in the overlap.
 		 */
 		public size_t overlap_offset {
-			[CCode(cname = "PANDA_RESULT_OVERLAP_OFFSET")]
+			[CCode (cname = "PANDA_RESULT_OVERLAP_OFFSET")]
 			get;
 		}
 
@@ -1431,7 +1413,7 @@ file);
 		 * The first base in the forward sequence in the overlap.
 		 */
 		public size_t overlap_forward_offset {
-			[CCode(cname = "PANDA_RESULT_OVERLAP_FORWARD_OFFSET")]
+			[CCode (cname = "PANDA_RESULT_OVERLAP_FORWARD_OFFSET")]
 			get;
 		}
 
@@ -1439,7 +1421,7 @@ file);
 		 * The first base in the reverse sequence in the overlap.
 		 */
 		public size_t overlap_reverse_offset {
-			[CCode(cname = "PANDA_RESULT_OVERLAP_REVERSE_OFFSET")]
+			[CCode (cname = "PANDA_RESULT_OVERLAP_REVERSE_OFFSET")]
 			get;
 		}
 
@@ -1456,13 +1438,13 @@ file);
 		/**
 		 * Write an assembly to a FASTA file.
 		 */
-		[CCode(cname = "panda_output_fasta")]
-		public bool write_fasta(Writer writer);
+		[CCode (cname = "panda_output_fasta")]
+		public bool write_fasta (Writer writer);
 		/**
 		 * Write an assembly to a FASTQ file.
 		 */
-		[CCode(cname = "panda_output_fastq")]
-		public bool write_fastq(Writer writer);
+		[CCode (cname = "panda_output_fastq")]
+		public bool write_fastq (Writer writer);
 	}
 
 	/**
@@ -1470,13 +1452,13 @@ file);
 	 *
 	 * When attempting to align the sequences, the {@link Assembler} will store the location of every //k//-mer in a table. If the same //k//-mer is present multiple times, only the first ones will be store until the table is full. If the sequences are highly repetitive, lost positions can prevent good alignments.
 	 */
-	[CCode(cname = "PANDA_DEFAULT_NUM_KMERS")]
+	[CCode (cname = "PANDA_DEFAULT_NUM_KMERS")]
 	public const size_t DEFAULT_NUM_KMERS;
 
 	/**
 	 * Maximum length of a sequence
 	 */
-	[CCode(cname = "PANDA_MAX_LEN")]
+	[CCode (cname = "PANDA_MAX_LEN")]
 	public const int MAX_LEN;
 
 	/**
@@ -1487,15 +1469,15 @@ file);
 	 * @param read the number of bytes read into the buffer
 	 * @return true if no error occurred
 	 */
-	[CCode(cname = "PandaBufferRead")]
-	public delegate bool BufferRead([CCode(array_length_type = "size_t")] uint8[] buffer, out size_t read);
+	[CCode (cname = "PandaBufferRead")]
+	public delegate bool BufferRead ([CCode (array_length_type = "size_t")] uint8[] buffer, out size_t read);
 
 	/**
 	 * Write data to an output stream.
 	 * @param buffer the buffer to write
 	 */
-	[CCode(cname = "PandaBufferWrite")]
-	public delegate void BufferWrite([CCode(array_length_type = "size_t")] uint8[] buffer);
+	[CCode (cname = "PandaBufferWrite")]
+	public delegate void BufferWrite ([CCode (array_length_type = "size_t")] uint8[] buffer);
 	/**
 	 * Compute the probability of a match or mismatch given two quality scores.
 	 *
@@ -1505,8 +1487,8 @@ file);
 	 * @param b the PHRED score of the other base
 	 * @return the log probability the match.
 	 */
-	[CCode(cname = "PandaComputeMatch", simple_generics = true, has_target = false)]
-	public delegate double ComputeMatch<T>(T data, bool match, char a, char b);
+	[CCode (cname = "PandaComputeMatch", simple_generics = true, has_target = false)]
+	public delegate double ComputeMatch<T> (T data, bool match, char a, char b);
 
 	/**
 	 * Compute the probability of an offset being a good one.
@@ -1517,11 +1499,11 @@ file);
 	 * @overlap: the overlap length to check
 	 * Return: the log probability the overlap is correct.
 	 */
-	[CCode(cname = "PandaComputeOverlap", simple_generics = true, has_target = false)]
-	public delegate double ComputeOverlap<T>(T data, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse, size_t overlap);
+	[CCode (cname = "PandaComputeOverlap", simple_generics = true, has_target = false)]
+	public delegate double ComputeOverlap<T> (T data, [CCode (array_length_type = "size_t")] qual[] forward, [CCode (array_length_type = "size_t")] qual[] reverse, size_t overlap);
 
-	[CCode(cname = "PandaDestroy", simple_generics = true, has_target = false)]
-	public delegate void Destroy<T>(owned T data);
+	[CCode (cname = "PandaDestroy", simple_generics = true, has_target = false)]
+	public delegate void Destroy<T> (owned T data);
 
 	/**
 	 * Handle a failed alignment
@@ -1532,8 +1514,8 @@ file);
 	 * @param forward the forward read
 	 * @param reverse the reverse read
 	 */
-	[CCode(cname = "PandaFailAlign", has_type_id = false)]
-	public delegate void FailAlign(Assembler assembler, identifier id, [CCode(array_length_type = "size_t")] qual[] forward, [CCode(array_length_type = "size_t")] qual[] reverse);
+	[CCode (cname = "PandaFailAlign", has_type_id = false)]
+	public delegate void FailAlign (Assembler assembler, identifier id, [CCode (array_length_type = "size_t")] qual[] forward, [CCode (array_length_type = "size_t")] qual[] reverse);
 
 	/**
 	 * A callback for iterating over the current modules.
@@ -1542,8 +1524,8 @@ file);
 	 * @param rejected the number of sequences rejected by this module in the context of the current assembler
 	 * @return true to continue iterating, false to stop
 	 */
-	[CCode(cname = "PandaModuleCallback")]
-	public delegate bool ModuleCallback(Assembler assembler, Module module, size_t rejected);
+	[CCode (cname = "PandaModuleCallback")]
+	public delegate bool ModuleCallback (Assembler assembler, Module module, size_t rejected);
 
 	/**
 	 * Get the next sequence pair.
@@ -1553,22 +1535,22 @@ file);
 	 * @param forward the location of the parsed sequence data of the forward read.
 	 * @param reverse the location of the parsed sequence data of the reverse read.
 	 */
-	[CCode(cname = "PandaNextSeq")]
-	public delegate bool NextSeq(out identifier id, [CCode(array_length_type = "size_t")] out unowned qual[] forward, [CCode(array_length_type = "size_t")] out unowned qual[] reverse);
+	[CCode (cname = "PandaNextSeq")]
+	public delegate bool NextSeq (out identifier id, [CCode (array_length_type = "size_t")] out unowned qual[] forward, [CCode (array_length_type = "size_t")] out unowned qual[] reverse);
 
 	/**
 	 * Write a finsihed sequence to an appropriate place.
 	 * @param sequence the sequence from assembly
 	 */
-	[CCode(cname = "PandaOutputSeq")]
-	public delegate bool OutputSeq(result_seq sequence);
+	[CCode (cname = "PandaOutputSeq")]
+	public delegate bool OutputSeq (result_seq sequence);
 
-	[CCode(cname = "PandaPrintf", instance_pos = 0)]
+	[CCode (cname = "PandaPrintf", instance_pos = 0)]
 	[PrintfFormat]
-	public delegate void PrintfFunc(string format, ...);
+	public delegate void PrintfFunc (string format, ...);
 
-	[CCode(cname = "panda_create_async_reader")]
-	public static NextSeq create_async_reader(owned NextSeq next, size_t length);
+	[CCode (cname = "panda_create_async_reader")]
+	public static NextSeq create_async_reader (owned NextSeq next, size_t length);
 
 	/**
 	 * Create an object to read sequences from two character streams of FASTQ data
@@ -1579,56 +1561,56 @@ file);
 	 * @param qualmin the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA version)
 	 * @param policy method to handle unbarcoded sequences
 	 */
-	[CCode(cname = "panda_create_fastq_reader")]
-	public static NextSeq create_fastq_reader(owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	[CCode (cname = "panda_create_fastq_reader")]
+	public static NextSeq create_fastq_reader (owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * The current module API version of the running library
 	 */
-	[CCode(cname = "panda_api_version")]
-	public int get_api_version();
+	[CCode (cname = "panda_api_version")]
+	public int get_api_version ();
 
 	/**
 	 * Get the number of worker threads that should be created given the number of processors in this system, if that can be determined.
 	 */
-	[CCode(cname = "panda_get_default_worker_threads")]
-	public int get_default_worker_threads();
+	[CCode (cname = "panda_get_default_worker_threads")]
+	public int get_default_worker_threads ();
 
 	/**
 	 * The current version string
 	 */
-	[CCode(cname = "panda_version")]
-	public unowned string get_version();
+	[CCode (cname = "panda_version")]
+	public unowned string get_version ();
 
 	/**
 	 * Write an unassembled sequence to a FASTA file as a concatenated pair.
 	 */
-	[CCode(cname = "PANDA_FAIL")]
-	public FailAlign? create_fail_writer(string file, bool append);
+	[CCode (cname = "PANDA_FAIL")]
+	public FailAlign? create_fail_writer (string file, bool append);
 
 	/**
 	 * Compute log(1 - exp(p)) efficiently.
 	 *
 	 * See [[http://cran.r-project.org/web/packages/Rmpfr/vignettes/log1mexp-note.pdf|Mächler, 2012]].
 	 */
-	[CCode(cname = "panda_log1mexp")]
-	public double log1mexp(double p);
+	[CCode (cname = "panda_log1mexp")]
+	public double log1mexp (double p);
 
 	/**
 	 * Open a pair of gzipped (or uncompressed files).
 	 *
 	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
 	 */
-	[CCode(cname = "panda_open_gz")]
-	public NextSeq? open_gz(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	[CCode (cname = "panda_open_gz")]
+	public NextSeq? open_gz (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * Open a pair of bzipped files.
 	 *
 	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
 	 */
-	[CCode(cname = "panda_open_bz2")]
-	public NextSeq? open_bz2(string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	[CCode (cname = "panda_open_bz2")]
+	public NextSeq? open_bz2 (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * Spawn threads and assemble sequences.
@@ -1637,8 +1619,8 @@ file);
 	 * @param mux the multiplexer to use. If null, no threads will be created. The provided assembler must be a product of this multiplexer.
 	 * @param output the delegate that will write assembled sequences to where they belong.
 	 */
-	[CCode(cname = "panda_run_pool")]
-	public bool run_pool(int threads, owned Assembler assembler, owned Mux? mux, owned OutputSeq output);
+	[CCode (cname = "panda_run_pool")]
+	public bool run_pool (int threads, owned Assembler assembler, owned Mux? mux, owned OutputSeq output);
 
 	/**
 	 * Wraps an existing stream of reads and clips off reads that have the too-long overlap problem.
@@ -1648,65 +1630,65 @@ file);
 	 * @param skip whether to try to assemble sequences that don't contain a trim sequence.
 	 * @param threshold a log probability threshold for cut-off alignment
 	 */
-	[CCode(cname = "panda_trim_overhangs")]
-	public NextSeq trim_overhangs(owned NextSeq inner, [CCode(array_length = "size_t")] Nt[] forward, [CCode(array_length = "size_t")] Nt[] reverse, bool skip, double threshold);
+	[CCode (cname = "panda_trim_overhangs")]
+	public NextSeq trim_overhangs (owned NextSeq inner, [CCode (array_length = "size_t")] Nt[] forward, [CCode (array_length = "size_t")] Nt[] reverse, bool skip, double threshold);
 
 	/**
 	 * The current flags used be the assember to report errors. Some errors are always reported.
 	 */
-	[CCode(cname = "panda_debug_flags")]
+	[CCode (cname = "panda_debug_flags")]
 	public Debug debug_flags;
 
 	namespace StdArgs {
 		/**
 		 * The standard list of assembler-only arguments for PANDAseq binaries.
 		 */
-		[CCode(cname = "panda_tweak_assembler", array_length_cexpr = "panda_stdargs_length", array_length_type = "size_t")]
-		public const Tweak.assembler?[] list;
+		[CCode (cname = "panda_tweak_assembler", array_length_cexpr = "panda_stdargs_length", array_length_type = "size_t")]
+		public const Tweak.assembler? [] list;
 		/**
 		 * The algorithm selection switch (-A).
 		 */
-		[CCode(cname = "panda_stdargs_algorithm")]
+		[CCode (cname = "panda_stdargs_algorithm")]
 		public const Tweak.assembler algorithm;
 		/**
 		 * The strip primers after switch (-a).
 		 */
-		[CCode(cname = "panda_stdargs_primers_after")]
+		[CCode (cname = "panda_stdargs_primers_after")]
 		public const Tweak.assembler primers_after;
 		/**
 		 * The minimum length filter switch (-l).
 		 */
-		[CCode(cname = "panda_stdargs_min_len")]
+		[CCode (cname = "panda_stdargs_min_len")]
 		public const Tweak.assembler min_len;
 		/**
 		 * The maximum length filter switch (-L).
 		 */
-		[CCode(cname = "panda_stdargs_max_len")]
+		[CCode (cname = "panda_stdargs_max_len")]
 		public const Tweak.assembler max_len;
 		/**
 		 * The no N's switch (-N).
 		 */
-		[CCode(cname = "panda_stdargs_degenerates")]
+		[CCode (cname = "panda_stdargs_degenerates")]
 		public const Tweak.assembler degenerates;
 		/**
 		 * The minimum overlap switch (-o).
 		 */
-		[CCode(cname = "panda_stdargs_min_overlap")]
+		[CCode (cname = "panda_stdargs_min_overlap")]
 		public const Tweak.assembler min_overlap;
 		/**
 		 * The forward primer filter switch (-p).
 		 */
-		[CCode(cname = "panda_stdargs_forward_primer")]
+		[CCode (cname = "panda_stdargs_forward_primer")]
 		public const Tweak.assembler forward_primer;
 		/**
 		 * The reverse primer filter switch (-q).
 		 */
-		[CCode(cname = "panda_stdargs_reverse_primer")]
+		[CCode (cname = "panda_stdargs_reverse_primer")]
 		public const Tweak.assembler reverse_primer;
 		/**
 		 * The threshold filter switch (-t).
 		 */
-		[CCode(cname = "panda_stdargs_threshold")]
+		[CCode (cname = "panda_stdargs_threshold")]
 		public const Tweak.assembler threshold;
 
 		/**
@@ -1714,75 +1696,75 @@ file);
 		 *
 		 * This is meant to wrap an existing arugment handler.
 		 */
-		[CCode(cname = "struct panda_args_hang", free_function = "panda_args_hang_free")]
+		[CCode (cname = "struct panda_args_hang", free_function = "panda_args_hang_free")]
 		[Compact]
 		public class HangArgs {
 			/**
 			 * Command line arguments for a pair of FASTQ files from Illumina.
 			 */
-			[CCode(cname = "panda_args_hang_args", array_length_type = "size_t")]
-			public static Tweak.general?[] args([CCode(array_length_type = "size_t")] Tweak.general?[] general_args);
+			[CCode (cname = "panda_args_hang_args", array_length_type = "size_t")]
+			public static Tweak.general? [] args ([CCode (array_length_type = "size_t")] Tweak.general? [] general_args);
 
 			/**
 			 * Create a new argument handler.
 			 */
-			[CCode(cname = "panda_args_hang_new", simple_generics = true)]
-			public static HangArgs create<T>(owned T user_data, Tweak.GeneralHandler<T> tweak, Tweak.Opener<T> opener, Tweak.Setup<T> setup);
+			[CCode (cname = "panda_args_hang_new", simple_generics = true)]
+			public static HangArgs create<T> (owned T user_data, Tweak.GeneralHandler<T> tweak, Tweak.Opener<T> opener, Tweak.Setup<T> setup);
 
 			/**
 			 * Process the command line arguments.
 			 */
-			[CCode(cname = "panda_args_hang_tweak")]
-			public bool tweak(char flag, string argument);
+			[CCode (cname = "panda_args_hang_tweak")]
+			public bool tweak (char flag, string argument);
 
 			/**
 			 * Initialise the sequence stream.
 			 */
-			[CCode(cname = "panda_args_hang_opener")]
-			public NextSeq? opener(LogProxy logger, out FailAlign? fail);
+			[CCode (cname = "panda_args_hang_opener")]
+			public NextSeq? opener (LogProxy logger, out FailAlign? fail);
 
 			/**
 			 * Do additional assembly setup for the FASTQ argument handler.
 			 */
-			[CCode(cname = "panda_args_hang_setup")]
-			public bool setup(Assembler assembler);
+			[CCode (cname = "panda_args_hang_setup")]
+			public bool setup (Assembler assembler);
 		}
 
 		/**
 		 * The standard argument handler for a pair of FASTQ files from Illumina.
 		 */
-		[CCode(cname = "struct panda_args_fastq", free_function = "panda_args_fastq_free")]
+		[CCode (cname = "struct panda_args_fastq", free_function = "panda_args_fastq_free")]
 		[Compact]
 		public class FastqArgs {
 			/**
 			 * Command line arguments for a pair of FASTQ files from Illumina.
 			 */
-			[CCode(cname = "panda_args_fastq_args", array_length_cexpr = "panda_args_fastq_args_length", array_length_type = "size_t")]
-			public const Tweak.general?[] args;
+			[CCode (cname = "panda_args_fastq_args", array_length_cexpr = "panda_args_fastq_args_length", array_length_type = "size_t")]
+			public const Tweak.general? [] args;
 
 			/**
 			 * Create a new argument handler.
 			 */
-			[CCode(cname = "panda_args_fastq_new")]
-			public FastqArgs();
+			[CCode (cname = "panda_args_fastq_new")]
+			public FastqArgs ();
 
 			/**
 			 * Process the command line arguments for the FASTQ argument handler.
 			 */
-			[CCode(cname = "panda_args_fastq_tweak")]
-			public bool tweak(char flag, string argument);
+			[CCode (cname = "panda_args_fastq_tweak")]
+			public bool tweak (char flag, string argument);
 
 			/**
 			 * Initialise the sequence stream for the FASTQ argument handler.
 			 */
-			[CCode(cname = "panda_args_fastq_opener")]
-			public NextSeq? opener(LogProxy logger, out FailAlign? fail);
+			[CCode (cname = "panda_args_fastq_opener")]
+			public NextSeq? opener (LogProxy logger, out FailAlign? fail);
 
 			/**
 			 * Do additional assembly setup for the FASTQ argument handler.
 			 */
-			[CCode(cname = "panda_args_fastq_setup")]
-			public bool setup(Assembler assembler);
+			[CCode (cname = "panda_args_fastq_setup")]
+			public bool setup (Assembler assembler);
 		}
 	}
 
@@ -1795,8 +1777,8 @@ file);
 		 * @param is_set whether the command line argument is given in the case of boolean flags.
 		 * @return whether the flag was parsed successfully
 		 */
-		[CCode(cname = "PandaTweakAssembler", has_type_id = false, has_target = false)]
-		public delegate bool AssemblerHandler(Assembler assembler, char flag, owned string? argument, bool is_set);
+		[CCode (cname = "PandaTweakAssembler", has_type_id = false, has_target = false)]
+		public delegate bool AssemblerHandler (Assembler assembler, char flag, owned string? argument, bool is_set);
 
 		/**
 		 * Process a command-line flag specified by the user.
@@ -1805,8 +1787,8 @@ file);
 		 * @param user_data the context
 		 * Returns: whether the flag was parsed succesfully
 		 */
-		[CCode(cname = "PandaTweakGeneral", has_type_id = false, has_target = false, simple_generics = true)]
-		public delegate bool GeneralHandler<T>(T user_data, char flag, string? argument);
+		[CCode (cname = "PandaTweakGeneral", has_type_id = false, has_target = false, simple_generics = true)]
+		public delegate bool GeneralHandler<T> (T user_data, char flag, string? argument);
 
 		/**
 		 * Create a sequence reader after argument parsing.
@@ -1818,33 +1800,33 @@ file);
 		 * @param help if true, the help text will be displayed when the function exits.
 		 * @return the sequence source, or null to indicate a failure
 		 */
-		[CCode(cname = "PandaOpener", has_type_id = false, has_target = false, simple_generics = true)]
-		public delegate NextSeq Opener<T>(T user_data, LogProxy logger, out FailAlign? fail);
+		[CCode (cname = "PandaOpener", has_type_id = false, has_target = false, simple_generics = true)]
+		public delegate NextSeq Opener<T> (T user_data, LogProxy logger, out FailAlign? fail);
 
 		/**
 		 * Perform any modifications to the assembler after creation.
 		 */
-		[CCode(cname = "PandaSetup", has_type_id = false, has_target = false, simple_generics = true)]
-		public delegate bool Setup<T>(T user_data, Assembler assembler);
+		[CCode (cname = "PandaSetup", has_type_id = false, has_target = false, simple_generics = true)]
+		public delegate bool Setup<T> (T user_data, Assembler assembler);
 
 		/**
 		 * Describes a command line option that can be applied to an assembler.
 		 */
-		[CCode(cname = "panda_tweak_assembler", has_type_id = false)]
+		[CCode (cname = "panda_tweak_assembler", has_type_id = false)]
 		public struct assembler {
 			/**
 			 * Construct a new list by combining existing lists.
 			 * @param array The storage location of the array. If the array is null, it will be allocated. It must be in reallocable memory.
 			 * @param additions The array whose items to copy.
 			 */
-			[CCode(cname = "panda_tweak_assembler_append")]
-			public static void append([CCode(array_length_type = "size_t")] ref assembler?[]? array, [CCode(array_length_type = "size_t")] assembler?[] additions);
+			[CCode (cname = "panda_tweak_assembler_append")]
+			public static void append ([CCode (array_length_type = "size_t")] ref assembler? []? array, [CCode (array_length_type = "size_t")] assembler? [] additions);
 
 			/**
 			 * Sort a list of arguments into flag order.
 			 */
-			[CCode(cname = "panda_tweak_assembler_sort")]
-			public static void sort([CCode(array_length_type = "size_t")] assembler?[] array);
+			[CCode (cname = "panda_tweak_assembler_sort")]
+			public static void sort ([CCode (array_length_type = "size_t")] assembler? [] array);
 
 			/**
 			 * The command line option.
@@ -1867,21 +1849,21 @@ file);
 		/**
 		 * Describes a command line option.
 		 */
-		[CCode(cname = "panda_tweak_general", has_type_id = false)]
+		[CCode (cname = "panda_tweak_general", has_type_id = false)]
 		public struct general {
 			/**
 			 * Construct a new list by combining existing lists.
 			 * @param array The storage location of the array. If the array is null, it will be allocated. It must be in reallocable memory.
 			 * @param additions The array whose items to copy.
 			 */
-			[CCode(cname = "panda_tweak_general_append")]
-			public static void append([CCode(array_length_type = "size_t")] ref general?[]? array, [CCode(array_length_type = "size_t")] general?[] additions);
+			[CCode (cname = "panda_tweak_general_append")]
+			public static void append ([CCode (array_length_type = "size_t")] ref general? []? array, [CCode (array_length_type = "size_t")] general? [] additions);
 
 			/**
 			 * Sort a list of arguments into flag order.
 			 */
-			[CCode(cname = "panda_tweak_general_sort")]
-			public static void sort([CCode(array_length_type = "size_t")] general?[] array);
+			[CCode (cname = "panda_tweak_general_sort")]
+			public static void sort ([CCode (array_length_type = "size_t")] general? [] array);
 
 			/**
 			 * The command line option.
@@ -1920,8 +1902,8 @@ file);
 		 * @param threads the number of threads the user wishes to use
 		 * @return whether command line parsing was successful and the output parameters have been populated
 		 */
-		[CCode(cname = "panda_parse_args", simple_generics = true)]
-		public bool parse_args<T>(string[] args, [CCode(array_length_type = "size_t")] Tweak.general?[] general_args, [CCode(array_length_type = "size_t")] Tweak.assembler?[] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? assembler, out Mux? mux, out int threads, out OutputSeq output);
+		[CCode (cname = "panda_parse_args", simple_generics = true)]
+		public bool parse_args<T> (string[] args, [CCode (array_length_type = "size_t")] Tweak.general? [] general_args, [CCode (array_length_type = "size_t")] Tweak.assembler? [] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? assembler, out Mux? mux, out int threads, out OutputSeq output);
 		/**
 		 * Parse a list of comma separated separated key=value keys.
 		 *
@@ -1929,16 +1911,15 @@ file);
 		 * @param key_parsed invoked for each key-value pair.
 		 * @return whether parsing was successful.
 		 */
-		[CCode(cname = "panda_parse_key_values")]
-		public bool parse_key_values(string? str, KeyParsed key_parsed);
+		[CCode (cname = "panda_parse_key_values")]
+		public bool parse_key_values (string? str, KeyParsed key_parsed);
 
 		/**
 		 * Process a key-value pair.
 		 *
 		 * Returns: whether processing was successful.
 		 */
-		[CCode(cname = "PandaKeyParsed", has_type_id = false)]
-		public delegate bool KeyParsed(string key, string @value);
-
+		[CCode (cname = "PandaKeyParsed", has_type_id = false)]
+		public delegate bool KeyParsed (string key, string @value);
 	}
 }
