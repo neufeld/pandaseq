@@ -80,9 +80,6 @@ FAQ
 ### Can I insist that PANDAseq only assembler perfect sequences?
 Yes, but you shouldn't want to do it. The whole point is to fix sequences which are probably good. There is no quality setting that will achieve this effect. You can use the plugin `completely_miss_the_point`, but this really does miss the point. Moreover, assuming that the sequencer is right in the overlap region and in the non-overlapping regions requires an unsound leap in statistics.
 
-### Can PANDAseq use multiple core/threads?
-Yes, but you shouldn't turn it on until you've checked you need it. In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with `top`; watch the CPU% for the PANDAseq process and the overall system CPU waiting time (`%wa` in the banner at the top). If waiting time is low and CPU% is very high, then multi-threading may increase speed. If the CPU waiting time is high, threading will simply not help.
-
 ### Can I use SAM/BAM files as input without converting them to FASTQ?
 Yes. [PANDAseq-sam](https://github.com/neufeld/pandaseq-sam) extends PANDAseq to do this. SAM/BAM files do not guarantee that sequences will be in the right order, so files may be slower and PANDAseq will use more memory.
 
