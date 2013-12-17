@@ -386,6 +386,11 @@ bool panda_parse_args(
 				assembler_it++;
 			}
 		}
+		fprintf(stderr, "Known algorithms are %s", panda_algorithms[0]->name);
+		for (it = 1; it < panda_algorithms_length; it++) {
+			fprintf(stderr, ", %s", panda_algorithms[it]->name);
+		}
+		fprintf(stderr, ".\n");
 		for (it = 0; it < modules_length; it++) {
 			fprintf(stderr, "%s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
 		}
