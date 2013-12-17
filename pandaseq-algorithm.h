@@ -74,6 +74,8 @@ bool panda_algorithm_is_a(
 	PandaAlgorithm algo,
 	PandaAlgorithmClass clazz);
 
+#        define PANDA_ALGORITHM_IS_A(algo, clazz) panda_algorithm_is_a(algo, (PandaAlgorithmClass) ((size_t)&class_ ## clazz 1))
+
 /**
  * Increase the reference count on an algorithm.
  */
@@ -87,9 +89,13 @@ PandaAlgorithm panda_algorithm_ref(
 void panda_algorithm_unref(
 	PandaAlgorithm algo);
 
+typedef struct panda_algorithm panda_algorithm;
+
 /* === Simple Bayes === */
 
-PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_simple_bayes;
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_simple_bayes_class;
+#        define class_panda_algorithm_simple_bayes panda_algorithm_simple_bayes_class
+typedef struct panda_algorithm panda_algorithm_simple_bayes;
 
 /**
  * Create a simple Bayesian algorithm.
@@ -108,7 +114,9 @@ void panda_algorithm_simple_bayes_set_error_estimation(
 
 /* === PEAR === */
 
-PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_pear;
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_pear_class;
+#        define class_panda_algorithm_pear panda_algorithm_pear_class
+typedef struct panda_algorithm panda_algorithm_pear;
 
 /**
  * Create a PEAR algorithm from Zhang 2013.

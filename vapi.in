@@ -252,78 +252,57 @@ namespace Panda {
 		OPTIONAL,
 	}
 
-	[CCode (cname = "struct panda_algorithm", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+	[CCode (cname = "panda_algorithm", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
 	[Compact]
 	public class Algorithm {
-		[CCode (cname = "panda_algorithm_simple_bayes")]
-		public const algorithm_class<void> simple_bayes_class;
-		[CCode (cname = "panda_algorithm_pear")]
-		public const algorithm_class<void> pear_class;
-		[CCode (cname = "panda_algorithms", array_length_cexpr = "panda_algorithms_length", array_length_type = "size_t")]
-		public const algorithm_class<bool>[] algorithms;
-		/**
-		 * Construct a new algorithm from a string of arguments
-		 */
-		[CCode (cname = "PandaAlgorithmCreate")]
-		public delegate Algorithm Create (string? args);
+		[CCode (cname = "panda_algorithm_pear", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class Pear : Algorithm {
+			/**
+			 * The log probability of a random base match.
+			 */
+			double random_base_log_p {
+				[CCode (cname = "panda_algorithm_pear_get_random_base_log_p")]
+				get;
+				[CCode (cname = "panda_algorithm_pear_set_random_base_log_p")]
+				set;
+			}
 
-		/**
-		 * The log probability of a random base match.
-		 */
-		double pear_random_base_log_p {
-			[CCode (cname = "panda_algorithm_pear_get_random_base_log_p")]
-			get;
-			[CCode (cname = "panda_algorithm_pear_set_random_base_log_p")]
-			set;
+			/**
+			 * Create a PEAR algorithm.
+			 */
+			[CCode (cname = "panda_algorithm_pear_new")]
+			public Pear ();
 		}
+		[CCode (cname = "panda_algorithm_simple_bayes", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class SimpleBayes : Algorithm {
+			/**
+			 * The minimum error estimation in the sequence data (epsilon)
+			 */
+			public double error_estimation {
+				[CCode (cname = "panda_algorithm_simple_bayes_get_error_estimation")]
+				get;
+				[CCode (cname = "simple_bayes_set_error_estimation")]
+				set;
+			}
 
-		/**
-		 * The minimum error estimation in the sequence data (epsilon)
-		 */
-		public double simple_bayes_error_estimation {
-			[CCode (cname = "panda_algorithm_simple_bayes_get_error_estimation")]
-			get;
-			[CCode (cname = "simple_bayes_set_error_estimation")]
-			set;
+			/**
+			 * Create a simple Bayesian algorithm.
+			 */
+			[CCode (cname = "panda_algorithm_simple_bayes_new")]
+			public SimpleBayes ();
 		}
-
-		/**
-		 * Create a new algorithm with the specified amount of storage for the private user data.
-		 *
-		 * @param clazz the structure holding the callbacks.
-		 */
-		[CCode (cname = "panda_algorithm_new", simple_generics = true)]
-		public static Algorithm create<T> (algorithm_class<T> clazz);
-
-		/**
-		 * Create a PEAR algorithm.
-		 */
-		[CCode (cname = "panda_algorithm_pear_new")]
-		public Algorithm.pear ();
-
-		/**
-		 * Create a simple Bayesian algorithm.
-		 */
-		[CCode (cname = "panda_algorithm_simple_bayes_new")]
-		public Algorithm.simple_bayes ();
 
 		/**
 		 * Compute the log probability of bases matching or mismatching with the supplied PHRED scores.
 		 */
-		[CCode (cname = "panda_quality_compare")]
-		double compare (qual one, qual other);
-
-		/**
-		 * Get the underlying algorithm class.
-		 */
-		[CCode (cname = "panda_algorithm_class", simple_generics = true)]
-		public algorithm_class<T> get_class<T> ();
+		[CCode (cname = "panda_algorithm_quality_compare")]
+		public double compare (qual one, qual other);
 
 		/**
 		 * Checks if an algorithm is a member of a particular class.
 		 */
-		[CCode (cname = "panda_algorithm_is_a", simple_generics = true)]
-		public bool is_a<T> (algorithm_class<T> clazz);
+		[CCode (cname = "PANDA_ALGORITHM_IS_A", generic_type_pos = 1.1)]
+		public bool is_a<T> ();
 
 		/**
 		 * Increase the reference count on an algorithm.
@@ -1199,23 +1178,6 @@ namespace Panda {
 	}
 
 	/**
-	 * The base structure for an assembly algorithm.
-	 */
-	[CCode (cname = "struct panda_algorithm_class", destroy_function = "")]
-	public struct algorithm_class<T> {
-		/**
-		 * The number of bytes to allocate for the private data.
-		 */
-		public size_t data_size;
-		public string name;
-		public Algorithm.Create create;
-		public Destroy<T> data_destroy;
-		public ComputeOverlap<T> overlap_probability;
-		public ComputeMatch<T> match_probability;
-		public double prob_unpaired;
-	}
-
-	/**
 	 * Illumina sequence information from the FASTQ header
 	 */
 	[CCode (cname = "panda_seq_identifier", copy_function = "panda_seqid_copy", has_type_id = false, destroy_function = "")]
@@ -1478,32 +1440,6 @@ namespace Panda {
 	 */
 	[CCode (cname = "PandaBufferWrite")]
 	public delegate void BufferWrite ([CCode (array_length_type = "size_t")] uint8[] buffer);
-	/**
-	 * Compute the probability of a match or mismatch given two quality scores.
-	 *
-	 * @param data the private data for the algorithm
-	 * @param match do the nucleotides match
-	 * @param a the PHRED score of one base
-	 * @param b the PHRED score of the other base
-	 * @return the log probability the match.
-	 */
-	[CCode (cname = "PandaComputeMatch", simple_generics = true, has_target = false)]
-	public delegate double ComputeMatch<T> (T data, bool match, char a, char b);
-
-	/**
-	 * Compute the probability of an offset being a good one.
-	 *
-	 * @private_data: (closure): the private data for the algorithm
-	 * @forward: (array length=forward_length): the forward read
-	 * @reverse: (array length=reverse_length): the reverse read
-	 * @overlap: the overlap length to check
-	 * Return: the log probability the overlap is correct.
-	 */
-	[CCode (cname = "PandaComputeOverlap", simple_generics = true, has_target = false)]
-	public delegate double ComputeOverlap<T> (T data, [CCode (array_length_type = "size_t")] qual[] forward, [CCode (array_length_type = "size_t")] qual[] reverse, size_t overlap);
-
-	[CCode (cname = "PandaDestroy", simple_generics = true, has_target = false)]
-	public delegate void Destroy<T> (owned T data);
 
 	/**
 	 * Handle a failed alignment

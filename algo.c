@@ -94,8 +94,8 @@ PandaAlgorithm panda_algorithm_new(
 }
 
 const PandaAlgorithmClass panda_algorithms[] = {
-	&panda_algorithm_simple_bayes,
-	&panda_algorithm_pear
+	&panda_algorithm_simple_bayes_class,
+	&panda_algorithm_pear_class,
 };
 
 const size_t panda_algorithms_length = sizeof(panda_algorithms) / sizeof(PandaAlgorithmClass);

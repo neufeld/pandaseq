@@ -97,7 +97,7 @@ static PandaAlgorithm from_string(
 	return algo;
 }
 
-const struct panda_algorithm_class panda_algorithm_simple_bayes = {
+const struct panda_algorithm_class panda_algorithm_simple_bayes_class = {
 	.data_size = sizeof(struct simple_bayes),
 	.name = "simple_bayesian",
 	.create = from_string,
@@ -109,14 +109,14 @@ const struct panda_algorithm_class panda_algorithm_simple_bayes = {
 
 PandaAlgorithm panda_algorithm_simple_bayes_new(
 	void) {
-	PandaAlgorithm algo = panda_algorithm_new(&panda_algorithm_simple_bayes);
+	PandaAlgorithm algo = panda_algorithm_new(&panda_algorithm_simple_bayes_class);
 	panda_algorithm_simple_bayes_set_error_estimation(algo, 0.36);
 	return algo;
 }
 
 double panda_algorithm_simple_bayes_get_error_estimation(
 	PandaAlgorithm algorithm) {
-	if (panda_algorithm_is_a(algorithm, &panda_algorithm_simple_bayes)) {
+	if (panda_algorithm_is_a(algorithm, &panda_algorithm_simple_bayes_class)) {
 		return ((struct simple_bayes *) panda_algorithm_data(algorithm))->q;
 	} else {
 		return -1;
@@ -126,7 +126,7 @@ double panda_algorithm_simple_bayes_get_error_estimation(
 void panda_algorithm_simple_bayes_set_error_estimation(
 	PandaAlgorithm algorithm,
 	double q) {
-	if (q > 0 && q < 1 && panda_algorithm_is_a(algorithm, &panda_algorithm_simple_bayes)) {
+	if (q > 0 && q < 1 && panda_algorithm_is_a(algorithm, &panda_algorithm_simple_bayes_class)) {
 		struct simple_bayes *data = panda_algorithm_data(algorithm);
 		data->q = q;
 		data->pmatch = log(0.25 * (1 - 2 * q + q * q));

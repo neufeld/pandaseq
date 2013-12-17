@@ -89,7 +89,7 @@ static PandaAlgorithm from_string(
 	return algo;
 }
 
-const struct panda_algorithm_class panda_algorithm_pear = {
+const struct panda_algorithm_class panda_algorithm_pear_class = {
 	.data_size = sizeof(struct pear),
 	.name = "pear",
 	.create = from_string,
@@ -101,7 +101,7 @@ const struct panda_algorithm_class panda_algorithm_pear = {
 
 PandaAlgorithm panda_algorithm_pear_new(
 	void) {
-	PandaAlgorithm algo = panda_algorithm_new(&panda_algorithm_pear);
+	PandaAlgorithm algo = panda_algorithm_new(&panda_algorithm_pear_class);
 	panda_algorithm_pear_set_random_base_log_p(algo, log(0.25));
 	return algo;
 }
@@ -109,14 +109,14 @@ PandaAlgorithm panda_algorithm_pear_new(
 void panda_algorithm_pear_set_random_base_log_p(
 	PandaAlgorithm algorithm,
 	double log_p) {
-	if (panda_algorithm_is_a(algorithm, &panda_algorithm_pear)) {
+	if (panda_algorithm_is_a(algorithm, &panda_algorithm_pear_class)) {
 		((struct pear *) panda_algorithm_data(algorithm))->random_base = log_p;
 	}
 }
 
 double panda_algorithm_pear_get_random_base_log_p(
 	PandaAlgorithm algorithm) {
-	if (panda_algorithm_is_a(algorithm, &panda_algorithm_pear)) {
+	if (panda_algorithm_is_a(algorithm, &panda_algorithm_pear_class)) {
 		return ((struct pear *) panda_algorithm_data(algorithm))->random_base;
 	} else {
 		return 1;
