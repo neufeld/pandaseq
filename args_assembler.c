@@ -29,20 +29,24 @@ static bool set_algorithm(
 	char flag,
 	char *argument,
 	bool is_set) {
-	char *end;
+	char *extra;
 	size_t it;
 	if (argument == NULL)
 		return true;
-	end = strchr(argument, LT_PATHSEP_CHAR);
+	extra = strchr(argument, LT_PATHSEP_CHAR);
+	if (extra != NULL) {
+		*extra = '\0';
+		extra++;
+	}
 	for (it = 0; it < panda_algorithms_length; it++) {
-		if (strncmp(argument, panda_algorithms[it]->name, (end == NULL) ? strlen(argument) : end - argument) == 0) {
+		if (strcmp(argument, panda_algorithms[it]->name) == 0) {
 			PandaAlgorithm algo;
 			if (panda_algorithms[it]->create == NULL) {
 				fprintf(stderr, "It seems that no one wrote the code to use this algorithm properly.\n");
 				free(argument);
 				return false;
 			}
-			algo = panda_algorithms[it]->create((end == NULL || *end == '\0') ? NULL : end + 1);
+			algo = panda_algorithms[it]->create(extra);
 			if (algo == NULL) {
 				fprintf(stderr, "Unable to initialise requested algorithm.\n");
 				free(argument);
