@@ -27,52 +27,53 @@ const OptionEntry[] options = {
 	{ null }
 };
 
-[CCode(array_length_type = "size_t")]
+[CCode (array_length_type = "size_t")]
 unowned Panda.qual[]? forward = null;
-[CCode(array_length_type = "size_t")]
+[CCode (array_length_type = "size_t")]
 unowned Panda.qual[]? reverse = null;
 
-public int main(string[] args) {
+public int main (string[] args) {
 	try {
-		var opt_context = new OptionContext("- PANDAseq Diff");
-		opt_context.set_help_enabled(true);
-		opt_context.add_main_entries(options, null);
-		if (!opt_context.parse(ref args)) {
-			stdout.printf("Problem parsing arguments.\n");
+		var opt_context = new OptionContext ("- PANDAseq Diff");
+		opt_context.set_help_enabled (true);
+		opt_context.add_main_entries (options, null);
+		if (!opt_context.parse (ref args)) {
+			stdout.printf ("Problem parsing arguments.\n");
 			return 1;
 		}
 	} catch (OptionError e) {
-		stdout.printf("%s\n", e.message);
-		stdout.printf("Run '%s --help' to see a full list of available command line options.\n", args[0]);
+		stdout.printf ("%s\n", e.message);
+		stdout.printf ("Run '%s --help' to see a full list of available command line options.\n", args[0]);
 		return 1;
 	}
-	var logger = new Panda.LogProxy(new Panda.Writer((data) => { }));
+	var logger = new Panda.LogProxy (new Panda.Writer ((data) => {}));
 	Panda.NextSeq reader;
 	if (web) {
-		var forward = Panda.open_url(URL.printf(1), logger);
-		var reverse = Panda.open_url(URL.printf(2), logger);
-		if (forward == null || reverse == null)
+		var forward = Panda.open_url (URL.printf (1), logger);
+		var reverse = Panda.open_url (URL.printf (2), logger);
+		if (forward == null || reverse == null) {
 			return 1;
-		reader = Panda.create_fastq_reader((owned) forward, (owned) reverse, logger);
+		}
+		reader = Panda.create_fastq_reader ((owned) forward, (owned) reverse, logger);
 	} else {
 		if (forward_file == null) {
-			stdout.printf("You must supply a forward read file.\n");
+			stdout.printf ("You must supply a forward read file.\n");
 			return 1;
 		}
 		if (reverse_file == null) {
-			stdout.printf("You must supply a reverse read file.\n");
+			stdout.printf ("You must supply a reverse read file.\n");
 			return 1;
 		}
 
-		reader = Panda.open_bz2(forward_file, reverse_file, logger);
+		reader = Panda.open_bz2 (forward_file, reverse_file, logger);
 	}
 	if (reader == null) {
-		stdout.printf("Could not open input sequences.\n");
+		stdout.printf ("Could not open input sequences.\n");
 		return 1;
 	}
 
-	var old_assembler = new Panda.Assembler(null, logger);
-	var assemble = create_assembler(logger);
+	var old_assembler = new Panda.Assembler (null, logger);
+	var assemble = create_assembler (logger);
 	if (assemble == null) {
 		return 1;
 	}
@@ -82,44 +83,45 @@ public int main(string[] args) {
 	var lost = 0;
 	var total = 0;
 	Panda.identifier id;
-	stdout.printf("Old Assembler: %p\n", old_assembler);
-	while (reader(out id, out forward, out reverse)) {
+	stdout.printf ("Old Assembler: %p\n", old_assembler);
+	while (reader (out id, out forward, out reverse)) {
 		total++;
-		unowned Panda.result_seq? old_result = old_assembler.assemble(id, forward, reverse);
-		unowned Panda.result_seq? new_result = assemble(id, forward, reverse);
+		unowned Panda.result_seq? old_result = old_assembler.assemble (id, forward, reverse);
+		unowned Panda.result_seq? new_result = assemble (id, forward, reverse);
 		if (old_result == null && new_result == null) {
 			/* Both fail. That's a match. */
 		} else if (old_result == null || new_result == null) {
 			var is_new = old_result == null;
-			id.to_file(stdout);
+			id.to_file (stdout);
 			if (is_new) {
 				gained++;
-				stdout.printf(" has been gained.\n");
+				stdout.printf (" has been gained.\n");
 			} else {
 				lost++;
-				stdout.printf(" has been lost.\n");
+				stdout.printf (" has been lost.\n");
 			}
 		} else if (new_result.sequence.length != old_result.sequence.length) {
 			diffs++;
-			id.to_file(stdout);
-			stdout.printf(" differ in length %d → %d.\n", old_result.sequence.length, new_result.sequence.length);
+			id.to_file (stdout);
+			stdout.printf (" differ in length %d → %d.\n", old_result.sequence.length, new_result.sequence.length);
 		} else {
 			bool nt_diff = false;
 			for (var it = 0; it < new_result.sequence.length; it++) {
 				if (old_result.sequence[it].nt != new_result.sequence[it].nt) {
-					id.to_file(stdout);
-					stdout.printf(" differ at nucleotide %d, %c → %c.\n", it, old_result.sequence[it].nt.to_ascii(), new_result.sequence[it].nt.to_ascii());
+					id.to_file (stdout);
+					stdout.printf (" differ at nucleotide %d, %c → %c.\n", it, old_result.sequence[it].nt.to_ascii (), new_result.sequence[it].nt.to_ascii ());
 					nt_diff = true;
 				} else if (old_result.sequence[it].p != new_result.sequence[it].p) {
-					id.to_file(stdout);
-					stdout.printf(" differ at nucleotide %d, quality %f → %f.\n", it, old_result.sequence[it].p, new_result.sequence[it].p);
+					id.to_file (stdout);
+					stdout.printf (" differ at nucleotide %d, quality %f → %f.\n", it, old_result.sequence[it].p, new_result.sequence[it].p);
 					nt_diff = true;
 				}
 			}
-			if (nt_diff)
+			if (nt_diff) {
 				diffs++;
+			}
 		}
 	}
-	stdout.printf("%d sequences compared.\n%d changed.\n%d gained.\n%d lost.\n", total, diffs, gained, lost);
+	stdout.printf ("%d sequences compared.\n%d changed.\n%d gained.\n%d lost.\n", total, diffs, gained, lost);
 	return (total == 0 || diffs > 0 || gained > 0 || lost > 0) ? 2 : 0;
 }
