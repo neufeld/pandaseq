@@ -15,33 +15,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#include "test_wrapper.h"
+#ifndef _PANDA_TEST_WRAPPER
+#        define _PANDA_TEST_WRAPPER
+#        include <pandaseq.h>
 
-extern PandaAssembler xxpanda_assembler_new(
-	PandaNextSeq next,
-	void *next_data,
-	PandaDestroy next_destroy,
-	PandaLogProxy logger);
-
-extern void xxpanda_assembler_unref(
-	PandaAssembler assembler);
-
-extern const panda_result_seq *xxpanda_assembler_assemble(
-	PandaAssembler assembler,
+typedef const panda_result_seq *(
+	*Assemble) (
+	PandaAssembler assemble,
 	panda_seq_identifier *id,
 	const panda_qual *forward,
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length);
-
-Assemble panda_assembler_new_from_file(
-	PandaLogProxy logger,
-	void ** data
-, PandaDestroy *destroy) {
-
-	*data = xxpanda_assembler_new(NULL, NULL, NULL, logger);
-	printf("New Assembler: %p\n", *data);
-	*destroy = (PandaDestroy)xxpanda_assembler_unref;
-	return xxpanda_assembler_assemble;
-}
-
+#endif

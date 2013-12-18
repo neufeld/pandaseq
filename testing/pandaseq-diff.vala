@@ -46,7 +46,7 @@ public int main(string[] args) {
 		stdout.printf("Run '%s --help' to see a full list of available command line options.\n", args[0]);
 		return 1;
 	}
-	var logger = new Panda.LogProxy.stderr();
+	var logger = new Panda.LogProxy(new Panda.Writer((data) => { }));
 	Panda.NextSeq reader;
 	if (web) {
 		var forward = Panda.open_url(URL.printf(1), logger);
@@ -72,7 +72,7 @@ public int main(string[] args) {
 	}
 
 	var old_assembler = new Panda.Assembler(null, logger);
-	var assemble = panda_assembler_new_from_file(logger);
+	var assemble = create_assembler(logger);
 	if (assemble == null) {
 		return 1;
 	}

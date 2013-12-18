@@ -15,19 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#ifndef _PANDA_DYNL
-#define _PANDA_DYNL
-#include <pandaseq.h>
-
-typedef const panda_result_seq *(*Assemble) (PandaAssembler assemble,
-		panda_seq_identifier *id,
-		const panda_qual *forward,
-		size_t forward_length,
-		const panda_qual *reverse,
-		size_t reverse_length);
-
-Assemble panda_assembler_new_from_file(
-	PandaLogProxy logger,
-	void ** data
-, PandaDestroy *destroy);
-#endif
+public Assemble create_assembler(Panda.LogProxy logger) {
+	var assembler = new Panda.Assembler(null, logger);
+	stdout.printf("New Assembler: %p\n", assembler);
+	return assembler.assemble;
+}
