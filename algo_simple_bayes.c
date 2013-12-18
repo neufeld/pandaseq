@@ -59,7 +59,7 @@ static double overlap_probability(
 		}
 	}
 
-	if (overlap > forward_length && overlap > reverse_length) {
+	if (overlap >= forward_length && overlap >= reverse_length) {
 		return (qual_nn_simple_bayesian * unknowns + matches * data->pmatch + mismatches * data->pmismatch);
 	} else {
 		return (qual_nn_simple_bayesian * (forward_length + reverse_length - 2 * overlap + unknowns) + matches * data->pmatch + mismatches * data->pmismatch);
