@@ -18,11 +18,13 @@
 string? forward_file = null;
 string? reverse_file = null;
 bool web = false;
+bool supress_quality_diffs = false;
 const string URL = "http://neufeldserver.uwaterloo.ca/~apmasell/mcbath-small_%d.fastq";
 
 const OptionEntry[] options = {
 	{ "forward", 'f', 0, OptionArg.FILENAME, ref forward_file, "Forward read FASTQ file.", "forward.fastq.bz2" },
 	{ "reverse", 'r', 0, OptionArg.FILENAME, ref reverse_file, "Reverse read FASTQ file.", "reverse.fastq.bz2" },
+	{ "suppress-quality", 'Q', 0, OptionArg.NONE, ref supress_quality_diffs, "Ignore differences in quality scores of output bases.", null },
 	{ "web", 'W', 0, OptionArg.NONE, ref web, "Get files from the web.", null },
 	{ null }
 };
@@ -111,7 +113,7 @@ public int main (string[] args) {
 					id.to_file (stdout);
 					stdout.printf (" differ at nucleotide %d, %c → %c.\n", it, old_result.sequence[it].nt.to_ascii (), new_result.sequence[it].nt.to_ascii ());
 					nt_diff = true;
-				} else if (old_result.sequence[it].p != new_result.sequence[it].p) {
+				} else if (old_result.sequence[it].p != new_result.sequence[it].p && !supress_quality_diffs) {
 					id.to_file (stdout);
 					stdout.printf (" differ at nucleotide %d, quality %f → %f.\n", it, old_result.sequence[it].p, new_result.sequence[it].p);
 					nt_diff = true;
