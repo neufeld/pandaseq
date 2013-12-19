@@ -1341,9 +1341,7 @@ namespace Panda {
 		public identifier name;
 
 		/**
-		 * Calculated quality score as the geometric mean of the product of the Illumina quality scores of the included bases.
-		 *
-		 * It will always be between 0 and 1.
+		 * Calculated quality score as the log of the geometric mean of the product of the Illumina quality scores of the included bases.
 		 */
 		public double quality;
 
