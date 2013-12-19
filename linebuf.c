@@ -76,7 +76,7 @@ const char *panda_linebuf_next(
 		}
 		linebuf->data_length += new_bytes;
 	}
-	if (end == NULL || *end == '\0' || linebuf->data_length == 0) {
+	if (end == NULL || linebuf->data_length == 0 || *end == '\0') {
 		return NULL;
 	}
 	*end = '\0';
