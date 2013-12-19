@@ -466,10 +466,6 @@ bool panda_parse_args(
 	if (it != modules_length) {
 		fprintf(stderr, "Problem with %s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
 		CLEANUP();
-		panda_assembler_unref(assembler);
-#if HAVE_PTHREAD
-		panda_mux_unref(mux);
-#endif
 		return false;
 	}
 	if (out_mux) {
