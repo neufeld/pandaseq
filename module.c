@@ -265,7 +265,7 @@ PandaModule panda_module_load(
 	api = lt_dlsym(handle, "api");
 	if (api == NULL || *api != PANDA_API) {
 		lt_dlclose(handle);
-		fprintf(stderr, "Invalid API in %s. Are you sure this module was compiled for this version of PANDAseq?\n", name);
+		fprintf(stderr, "Invalid API in %s (%d != %d). Are you sure this module was compiled for this version of PANDAseq?\n", name, api == NULL ? -1 : *api, PANDA_API);
 		free(name);
 		unref_ltdl();
 		return NULL;
