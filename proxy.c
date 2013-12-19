@@ -16,8 +16,10 @@
 
  */
 #include "config.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #ifdef HAVE_PTHREAD
 #        include <pthread.h>
 #endif
@@ -99,6 +101,18 @@ void panda_log_proxy_unref(
 #endif
 		free(proxy);
 	}
+}
+
+void panda_log_proxy_perror(
+	PandaLogProxy proxy,
+	const char *prefix) {
+	const char *message = strerror(errno);
+	if (prefix == NULL) {
+		panda_writer_append(proxy->writer, "%s\n", message);
+	} else {
+		panda_writer_append(proxy->writer, "%s: %s\n", prefix, message);
+	}
+	panda_writer_commit(proxy->writer);
 }
 
 void panda_log_proxy_write(

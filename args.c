@@ -407,7 +407,7 @@ bool panda_parse_args(
 		panda_writer_append(writer_err, "INFO\tUNAME\t%s %s %s %s\n", uname_info.sysname, uname_info.release, uname_info.version, uname_info.machine);
 		panda_writer_commit(writer_err);
 	} else {
-		perror("uname");
+		panda_log_proxy_perror(logger, "uname");
 	}
 #endif
 	panda_writer_unref(writer_err);

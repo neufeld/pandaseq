@@ -729,6 +729,12 @@ namespace Panda {
 		}
 
 		/**
+		 * Writes an error message to the log with the same semantics as the POSIX perror function.
+		 */
+		[CCode(cname = "panda_log_proxy_perror")]
+		public void perror(string? prefix);
+
+		/**
 		 * Increase the reference count on a proxy.
 		 */
 		[CCode (cname = "panda_log_proxy_ref")]

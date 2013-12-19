@@ -79,6 +79,13 @@ void panda_log_proxy_unref(
 	PandaLogProxy proxy);
 
 /**
+ * Writes an error message to the log with the same semantics as the POSIX perror function.
+ */
+void panda_log_proxy_perror(
+	PandaLogProxy proxy,
+	const char *prefix);
+
+/**
  * Print a message to the log.
  *
  * This method is thread-safe.

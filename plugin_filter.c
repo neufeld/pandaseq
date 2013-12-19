@@ -23,7 +23,7 @@ INIT {
 	} else {
 		file = fopen(args, "r");
 		if (file == NULL) {
-			perror(args);
+			panda_log_proxy_perror(logger, args);
 			return false;
 		}
 	}
@@ -41,7 +41,7 @@ INIT {
 		}
 	}
 	if (ferror(file)) {
-		perror(args);
+		panda_log_proxy_perror(logger, args);
 		if (close)
 			fclose(file);
 		return false;

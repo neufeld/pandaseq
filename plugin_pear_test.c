@@ -49,7 +49,7 @@ bool parse_argument(
 	errno = 0;
 	*output = strtod(value, &remainder);
 	if (errno != 0) {
-		perror(arg_name);
+		panda_log_proxy_perror(logger, arg_name);
 		return false;
 	} else if (*remainder != '\0') {
 		panda_log_proxy_write_f(logger, "%s: trailing garbage: %s\n", arg_name, remainder);
