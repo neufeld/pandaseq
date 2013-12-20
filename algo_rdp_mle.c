@@ -26,29 +26,18 @@
 #include "prob.h"
 #include "table.h"
 
-#define LOGRDM log(0.25)
-#define ERRORTOQUALSCORE(errorprob) ( (int) floor(-10.0 * log10(errorprob) + 0.5) )
-
 static double match_probability(
 	void *data,
 	bool match,
 	char a,
 	char b) {
-	/* the error rate of the overlapping base */
-	double base_overlap_errorprob;
 
 	/* when two bases match, the assumption that the forward and reverse bases are from independent observations doesn't work with the MiSeq mock community data we tested. Instead, the higher score of the two raw base q scores is close to the predicated error rate */
 	if (match) {
-		if (a >= b) {
-			base_overlap_errorprob = PROBABILITY(a);
-		} else {
-			base_overlap_errorprob = PROBABILITY(b);
-		}
+		return qual_score[(a >= b) ? a : b];
 	} else {
-		base_overlap_errorprob = errorprob_mismatch_rdp_mle[PHREDCLAMP(a)][PHREDCLAMP(b)];
+		return qual_mismatch_rdp_mle[PHREDCLAMP(a)][PHREDCLAMP(b)];
 	}
-	int q = PHREDCLAMP(ERRORTOQUALSCORE(base_overlap_errorprob));
-	return qual_score[q];
 }
 
 static double overlap_probability(
@@ -70,7 +59,7 @@ static double overlap_probability(
 		panda_nt f = forward[findex].nt;
 		panda_nt r = reverse[rindex].nt;
 		bool ismatch = ((f & r) != 0);
-		probability += match_probability(data, ismatch, forward[findex].qual, reverse[rindex].qual) - LOGRDM;
+		probability += match_probability(data, ismatch, forward[findex].qual, reverse[rindex].qual) - qual_nn_simple_bayesian;
 	}
 	return probability;
 }
