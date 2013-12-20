@@ -235,6 +235,7 @@ static bool align(
 	result->quality = (fquality + rquality + oquality) / len;
 
 	result->overlap = bestoverlap;
+	result->estimated_overlap_probability = bestprobability;
 
 	return true;
 }

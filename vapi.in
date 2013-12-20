@@ -1378,6 +1378,11 @@ namespace Panda {
 		public size_t overlap;
 
 		/**
+		 * The probability of the overlap region being the correct one by the original estimation.
+		 */
+		public double estimated_overlap_probability;
+
+		/**
 		 * The first base in the result sequence in the overlap.
 		 */
 		public size_t overlap_offset {

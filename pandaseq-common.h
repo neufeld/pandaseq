@@ -317,6 +317,10 @@ typedef struct {
 	 * The overlap chosen.
 	 */
 	size_t overlap;
+	/**
+	 * The probability of the overlap region being the correct one by the original estimation.
+	 */
+	double estimated_overlap_probability;
 } panda_result_seq;
 
 /* === Function Pointers === */
