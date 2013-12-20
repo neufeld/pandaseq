@@ -193,9 +193,9 @@ static bool align(
 		if (findex >= unmasked_forward_length && rindex >= unmasked_reverse_length) {
 			q = qual_nn;
 		} else if (findex >= unmasked_forward_length) {
-			q = ismatch ? rpr : qual_nn;
+			q = rpr;
 		} else if (rindex >= unmasked_reverse_length) {
-			q = ismatch ? fpr : qual_nn;
+			q = fpr;
 		} else {
 			q = match_probability(algo_data, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
 		}
