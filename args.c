@@ -29,6 +29,7 @@
 #endif
 #include "pandaseq.h"
 #include "misc.h"
+#include "module.h"
 
 #define MAX_OPT_LIST 53
 #define MAX_MODULES 100
@@ -395,6 +396,7 @@ bool panda_parse_args(
 			fprintf(stderr, "%s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
 		}
 		CLEANUP();
+		module_show_all();
 		return false;
 	}
 #ifdef HAVE_PTHREAD

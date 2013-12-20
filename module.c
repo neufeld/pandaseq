@@ -16,6 +16,7 @@
 
  */
 #include "config.h"
+#include <libgen.h>
 #include <ltdl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -407,4 +408,28 @@ const char *panda_module_get_usage(
 	info = lt_dlgetinfo(module->handle);
 	val = lt_dlsym(module->handle, "usage");
 	return val == NULL ? NULL : *val;
+}
+
+static int show_module(
+	const char *filename,
+	void *data) {
+	char buffer[2048];
+	char *base_filename;
+	PandaModule module = panda_module_load(filename);
+	strncpy(buffer, filename, sizeof(buffer));
+	buffer[sizeof(buffer) - 1] = '\0';
+	base_filename = basename(buffer);
+	if (module == NULL) {
+		fprintf(stderr, "%s: unknown module type\n", filename);
+		return 0;
+	}
+	fprintf(stderr, "%s (%s): %s\n\tUsage: %s\n", base_filename, panda_module_get_version(module), panda_module_get_description(module), panda_module_get_usage(module));
+	panda_module_unref(module);
+	return 0;
+}
+
+void module_show_all(
+	) {
+	fprintf(stderr, "\nKnown modules:\n");
+	lt_dlforeachfile(STR(PKGLIBDIR), show_module, NULL);
 }

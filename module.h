@@ -39,4 +39,7 @@ extern void module_cleanup(
 	PandaAssembler assembler);
 extern void module_destroy(
 	PandaAssembler assembler);
+
+extern void module_show_all(
+	void);
 #endif
