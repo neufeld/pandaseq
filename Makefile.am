@@ -106,6 +106,7 @@ pkglibx_LTLIBRARIES = \
 	completely_miss_the_point.la \
 	filter.la \
 	min_phred.la \
+	min_readqscore.la \
 	pear_test.la \
 	validtag.la \
 	$(NULL)
@@ -129,6 +130,10 @@ min_phred_la_CFLAGS = -DPANDASEQ_MODULE=min_phred -g
 min_phred_la_SOURCES = plugin_min_phred.c panda_api.c
 min_phred_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 min_phred_la_LIBADD = libpandaseq.la
+min_readqscore_la_CFLAGS = -DPANDASEQ_MODULE=min_readqscore -g
+min_readqscore_la_SOURCES = plugin_min_readqscore.c panda_api.c
+min_readqscore_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
+min_readqscore_la_LIBADD = libpandaseq.la
 pear_test_la_CFLAGS = -DPANDASEQ_MODULE=pear_test -g
 pear_test_la_SOURCES = plugin_pear_test.c panda_api.c
 pear_test_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS) -lm
