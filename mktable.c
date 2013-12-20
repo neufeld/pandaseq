@@ -16,6 +16,7 @@
 
  */
 
+#include <float.h>
 #include <math.h>
 #include "pandaseq-tablebuilder.h"
 
@@ -62,6 +63,17 @@ static double score_err(
 	return log(p);
 }
 
+/*
+* calculate the error rate of the assembled base when two bases do not match
+*/
+static double assembled_mismatch(
+	double p,
+	double q,
+	void *data) {
+	double min = p <= q ? p : q;
+	return (min - p * q / 3.0) / (p + q - 4.0 / 3.0 * p * q);
+}
+
 int main(
 	int argc,
 	char **argv) {
@@ -79,6 +91,7 @@ int main(
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_pear", mismatch_pear, NULL, true);
 	panda_tbld_array_prob(t_bld, "qual_score", score, NULL, false);
 	panda_tbld_array_prob(t_bld, "qual_score_err", score_err, NULL, false);
+	panda_tbld_matrix_prob(t_bld, "errorprob_mismatch_rdp_mle", assembled_mismatch, NULL, false);
 
 	panda_tbld_free(t_bld);
 	return 0;

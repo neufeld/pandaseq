@@ -66,6 +66,7 @@ libpandaseq_la_SOURCES = \
 	algo.c \
 	algo_pear.c \
 	algo_simple_bayes.c \
+	algo_rdp_mle.c \
 	args.c \
 	args_array.c \
 	args_assembler.c \

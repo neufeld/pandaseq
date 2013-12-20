@@ -140,5 +140,23 @@ double panda_algorithm_pear_get_random_base_log_p(
 void panda_algorithm_pear_set_random_base_log_p(
 	PandaAlgorithm algorithm,
 	double log_p);
+
+/* === RDP Maximum Likehood === */
+
+/**
+ * This algorithm uses a maximum likelihood approach to find the best overlap
+ * region, and calculates an assembled Q score for each base in the overlap
+ * region 
+ */
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_rdp_mle_class;
+#        define class_panda_algorithm_rdp_mle panda_algorithm_rdp_mle_class;
+typedef struct panda_algorithm panda_algorithm_rdp_mle;
+
+/**
+ * Create a modified bayesian algorithm from RDP.
+ */
+PandaAlgorithm panda_algorithm_rdp_mle_new(
+	void);
+
 EXTERN_C_END
 #endif
