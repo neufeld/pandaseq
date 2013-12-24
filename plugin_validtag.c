@@ -1,4 +1,3 @@
-#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<pandaseq-plugin.h>
@@ -30,7 +29,7 @@ INIT {
 	char *wit;
 	char **currtag;
 	if (args == NULL) {
-		fprintf(stderr, "ERR\tVALTAG\tNOTAGS\n");
+		panda_log_proxy_write_f(logger, "ERR\tVALTAG\tNOTAGS\n");
 		return false;
 	}
 	while (*it != '\0' && *it != ':') {
@@ -38,7 +37,7 @@ INIT {
 		it++;
 	}
 	if (taglen == 0) {
-		fprintf(stderr, "ERR\tVALTAG\tNOTAGS\n");
+		panda_log_proxy_write_f(logger, "ERR\tVALTAG\tNOTAGS\n");
 		return false;
 	}
 
@@ -54,7 +53,7 @@ INIT {
 			if (*it == ':')
 				it++;
 			if (currtaglen != taglen) {
-				fprintf(stderr, "ERR\tVALTAG\tBADTLEN\t%d != %d %s\n", currtaglen, taglen, it - currtaglen);
+				panda_log_proxy_write_f(logger, "ERR\tVALTAG\tBADTLEN\t%d != %d %s\n", currtaglen, taglen, it - currtaglen);
 				return false;
 			}
 		}

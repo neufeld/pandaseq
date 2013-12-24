@@ -20,9 +20,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
-#ifdef HAVE_PTHREAD
-#        include <pthread.h>
-#endif
 #include "pandaseq.h"
 #include "prob.h"
 #include "table.h"

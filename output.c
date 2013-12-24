@@ -19,7 +19,6 @@
 #include <math.h>
 #include "pandaseq.h"
 #include "buffer.h"
-#include "table.h"
 
 const char *const panda_code_str(
 	PandaCode code) {

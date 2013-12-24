@@ -23,9 +23,6 @@
 #include<stdlib.h>
 #include<string.h>
 #include "config.h"
-#ifdef HAVE_PTHREAD
-#        include<pthread.h>
-#endif
 #include "pandaseq.h"
 #include "misc.h"
 

@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
 #include<pandaseq-plugin.h>
 
 HELP("Include only sequences in the one before the provided sequence", "before:sequenceid");

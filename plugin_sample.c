@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
 #include<pandaseq-plugin.h>
 
 /* Adding a validation plugin:
@@ -45,7 +43,7 @@ CHECK {
  * At least one of this function or CHECK is required.
  */
 PRECHECK {
-	fprintf(stderr, "INFO\tSAMPLE\tPRECHECK\n");
+	panda_log_proxy_write_f(logger, "INFO\tSAMPLE\tPRECHECK\n");
 	return true;
 }
 

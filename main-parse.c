@@ -17,14 +17,10 @@
  */
 #define _POSIX_C_SOURCE 2
 #include<ctype.h>
-#include<errno.h>
-#include<float.h>
-#include<limits.h>
 #include<stdbool.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<time.h>
 #include<unistd.h>
 #include "config.h"
 #include "pandaseq.h"

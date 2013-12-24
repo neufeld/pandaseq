@@ -15,13 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#define _POSIX_C_SOURCE 2
-#include<stdio.h>
-#include<stdlib.h>
 #include "config.h"
-#ifdef HAVE_PTHREAD
-#        include<pthread.h>
-#endif
 #include "pandaseq.h"
 #include "misc.h"
 

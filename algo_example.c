@@ -16,14 +16,8 @@
 
  */
 #include "config.h"
-#include <errno.h>
-#include <math.h>
 #include <stdlib.h>
 #include "pandaseq.h"
-#include "algo.h"
-#include "prob.h"
-#include "table.h"
-#include <stdio.h>
 
 /*
  * To create a new scoring algorithm:

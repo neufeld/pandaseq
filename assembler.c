@@ -20,14 +20,8 @@
 #include <limits.h>
 #include <math.h>
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#ifdef HAVE_PTHREAD
-#        include <pthread.h>
-#endif
 #include "pandaseq.h"
 #include "algo.h"
 #include "assembler.h"

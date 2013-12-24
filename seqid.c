@@ -17,7 +17,6 @@
  */
 
 #include "config.h"
-#include <ctype.h>
 #include <string.h>
 #include "pandaseq.h"
 #include "buffer.h"

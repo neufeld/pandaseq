@@ -15,13 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#define _POSIX_C_SOURCE 2
+#include "config.h"
 #include<ctype.h>
 #include<errno.h>
 #include<ltdl.h>
 #include<stdlib.h>
 #include<string.h>
-#include "config.h"
 #include "pandaseq.h"
 
 static bool set_algorithm(

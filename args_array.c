@@ -15,12 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-#define _POSIX_C_SOURCE 2
 #include "config.h"
 #include <stdlib.h>
-#ifdef HAVE_PTHREAD
-#        include<pthread.h>
-#endif
 #include "pandaseq.h"
 
 int panda_tweak_general_compare(

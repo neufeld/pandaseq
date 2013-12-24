@@ -17,12 +17,12 @@
  */
 #include "config.h"
 #include <stdlib.h>
+#include <string.h>
 #ifdef HAVE_PTHREAD
 #        include <pthread.h>
 #endif
 #include "pandaseq.h"
 #include "algo.h"
-#include "prob.h"
 
 double panda_algorithm_quality_compare(
 	PandaAlgorithm algorithm,

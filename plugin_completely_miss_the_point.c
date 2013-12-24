@@ -1,6 +1,4 @@
-#define _POSIX_C_SOURCE 2
 #include<errno.h>
-#include<stdio.h>
 #include<stdlib.h>
 #include<pandaseq-plugin.h>
 

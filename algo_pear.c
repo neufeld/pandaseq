@@ -18,12 +18,12 @@
 #include "config.h"
 #include <errno.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "pandaseq.h"
 #include "algo.h"
 #include "prob.h"
 #include "table.h"
-#include <stdio.h>
 
 struct pear {
 	double random_base;

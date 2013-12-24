@@ -1,5 +1,4 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include<pandaseq-plugin.h>
 
 HELP("Filters sequences based on the contents of a file of ids, one sequence ID per line.", "filter[:file]");
