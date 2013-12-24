@@ -30,8 +30,16 @@
 #        include <stdbool.h>
 EXTERN_C_BEGIN
 /* === Constants === */
-PANDA_EXTERN const PandaAlgorithmClass panda_algorithms[];
-PANDA_EXTERN const size_t panda_algorithms_length;
+PANDA_EXTERN PandaAlgorithmClass *panda_algorithms;
+PANDA_EXTERN size_t panda_algorithms_length;
+
+/**
+ * Add a new algorithm to the system.
+ *
+ * The class information must be in constant memory, as there is no way to unload an algorithm.
+ */
+void panda_algorithm_register(
+	PandaAlgorithmClass clazz);
 
 /* === Constructors === */
 /**

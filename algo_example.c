@@ -23,7 +23,7 @@
  * To create a new scoring algorithm:
  * 1. Make a copy of this file with the name of your algorithm.
  * 2. Edit `Makefile.am` and include the new file in the `libpandaseq_la_SOURCES` list.
- * 3. Edit `algo.c` and include your algorithm in the `panda_algorithms` list.
+ * 3. Edit `algo.c` and include your algorithm in the `panda_algorithm_register` list.
  * 4. Edit `pandaseq-algorithm.h` and add a new section for your algorithm and the weird 3-line definition stanza.
  * 5. Fill in this file, renaming "example" to the name of your algorithm.
  * 6. Compile and test.

@@ -93,9 +93,36 @@ PandaAlgorithm panda_algorithm_new(
 	return instance;
 }
 
-const PandaAlgorithmClass panda_algorithms[] = {
-	&panda_algorithm_simple_bayes_class,
-	&panda_algorithm_pear_class,
-};
+PandaAlgorithmClass *panda_algorithms = NULL;
+size_t panda_algorithms_length = 0;
+static size_t algorithms_size = 10;
 
-const size_t panda_algorithms_length = sizeof(panda_algorithms) / sizeof(PandaAlgorithmClass);
+static int algorithm_compare(
+	const void *a,
+	const void *b) {
+	return strcmp(((*(PandaAlgorithmClass *) a))->name, (*((PandaAlgorithmClass *) b))->name);
+}
+
+void panda_algorithm_register(
+	PandaAlgorithmClass clazz) {
+	size_t it;
+	for (it = 0; it < panda_algorithms_length; it++) {
+		if (panda_algorithms[it] == clazz) {
+			return;
+		}
+	}
+	if (panda_algorithms_length == algorithms_size) {
+		algorithms_size *= 2;
+		panda_algorithms = realloc(panda_algorithms, algorithms_size * sizeof(PandaAlgorithmClass));
+	}
+	panda_algorithms[panda_algorithms_length++] = clazz;
+	qsort(panda_algorithms, panda_algorithms_length, sizeof(PandaAlgorithmClass), algorithm_compare);
+}
+
+__attribute__ ((constructor))
+static void lib_init(
+	void) {
+	panda_algorithms = calloc(sizeof(PandaAlgorithmClass), algorithms_size);
+	panda_algorithm_register(&panda_algorithm_simple_bayes_class);
+	panda_algorithm_register(&panda_algorithm_pear_class);
+}
