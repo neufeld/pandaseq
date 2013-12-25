@@ -12,7 +12,7 @@ Binary packages are available for recent versions of Windows, MacOS and Linux. I
 
 Development packages for zlib and libbz2 are needed, as is a standard compiler environment. On Ubuntu, this can be installed via
 
-	sudo apt-get install build-essentials libtool automake zlib1g-dev libbz2-dev
+	sudo apt-get install build-essential libtool automake zlib1g-dev libbz2-dev
 
 On MacOS, the Apple Developer tools and Fink (or MacPorts or Brew) must be installed, then
 
