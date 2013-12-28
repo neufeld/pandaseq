@@ -48,9 +48,13 @@ typedef unsigned int bitstype;
 static bool align(
 	PandaAssembler assembler,
 	panda_result_seq *result) {
-	double qual_nn = assembler->algo->clazz->prob_unpaired;
 	ssize_t i, j;
 	ssize_t df, dr;
+	/* Cache all algorithm information. */
+	double qual_nn = assembler->algo->clazz->prob_unpaired;
+	void *algo_data = panda_algorithm_data(assembler->algo);
+	PandaComputeOverlap overlap_probability = assembler->algo->clazz->overlap_probability;
+	PandaComputeMatch match_probability = assembler->algo->clazz->match_probability;
 	/* For determining overlap. */
 	size_t maxoverlap = result->forward_length + result->reverse_length - assembler->minoverlap - result->forward_offset - result->reverse_offset - 1;
 	double bestprobability = qual_nn * (result->forward_length + result->reverse_length);
@@ -109,8 +113,7 @@ static bool align(
 	FOR_BITS_IN_LIST(posn, counter) {
 		double probability;
 		size_t overlap = counter + assembler->minoverlap;
-
-		probability = assembler->algo->clazz->overlap_probability(panda_algorithm_data(assembler->algo), result->forward, result->forward_length, result->reverse, result->reverse_length, overlap);
+		probability = overlap_probability(algo_data, result->forward, result->forward_length, result->reverse, result->reverse_length, overlap);
 
 		LOGV(PANDA_DEBUG_RECON, PANDA_CODE_OVERLAP_POSSIBILITY, "overlap = %zd probability = %f", overlap, probability);
 		if (probability > bestprobability && overlap >= assembler->minoverlap) {
@@ -194,7 +197,7 @@ static bool align(
 		} else if (rindex >= unmasked_reverse_length) {
 			q = ismatch ? fpr : qual_nn;
 		} else {
-			q = assembler->algo->clazz->match_probability(&assembler->algo->end, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
+			q = match_probability(algo_data, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
 		}
 
 		if (ismatch) {
