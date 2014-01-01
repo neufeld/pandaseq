@@ -57,22 +57,10 @@ PandaMux panda_mux_new_fastq_reader(
 	PandaTagging policy);
 
 /**
- * Open a pair of bzipped files for multi-threaded assembly.
- *
- * @see panda_assembler_open_bz2
+ * Open a pair of FASTQ files for multi-threaded assembled.
+ * @see panda_assembler_open_fastq
  */
-PandaMux panda_mux_open_bz2(
-	const char *forward,
-	const char *reverse,
-	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy);
-
-/**
- * Open a pair of gzipped files for multi-threaded assembled.
- * @see panda_assembler_open_gz
- */
-PandaMux panda_mux_open_gz(
+PandaMux panda_mux_open_fastq(
 	const char *forward,
 	const char *reverse,
 	PandaLogProxy logger,

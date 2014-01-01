@@ -514,12 +514,14 @@ namespace Panda {
 		public static Assembler? open_bz2 (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
-		 * Open a pair of gzipped (or uncompressed files) for assembly.
+		 * Open a pair of FASTQ files for assembly.
+		 *
+		 * File may be plain text, or compressed with gzip or bzip2.
 		 *
 		 * @see create_fastq_reader
 		 */
-		[CCode (cname = "panda_assembler_open_gz")]
-		public static Assembler? open_gz (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		[CCode (cname = "panda_assembler_open")]
+		public static Assembler? open (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 		/**
 		 * Create a new assembler from a sequence source.
@@ -939,18 +941,11 @@ namespace Panda {
 		}
 
 		/**
-		 * Open a pair of gzipped files for multi-threaded assembled.
-		 * @see Assembler.open_gz
+		 * Open a pair of FASTQ files for multi-threaded assembled.
+		 * @see Assembler.open
 		 */
-		[CCode (cname = "panda_mux_open_gz")]
-		public static Mux? open_gz (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
-		/**
-		 * Open a pair of zipped for multi-threaded assembly.
-		 *
-		 * @see Assembler.open_bz2
-		 */
-		[CCode (cname = "panda_mux_open_bz2")]
-		public static Mux? open_bz2 (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+		[CCode (cname = "panda_mux_open")]
+		public static Mux? open (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 		/**
 		 * Create a new multiplexed data source from a sequence callback.
 		 *
@@ -1537,20 +1532,20 @@ namespace Panda {
 	public double log1mexp (double p);
 
 	/**
-	 * Open a pair of gzipped (or uncompressed files).
-	 *
-	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+	 * Open a file that might be uncompressed or compressed with gzip or bzip2.
 	 */
-	[CCode (cname = "panda_open_gz")]
-	public NextSeq? open_gz (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	[CCode(cname = "panda_open_buffer")]
+	public BufferRead? open_buffer(string file_name, LogProxy logger);
 
 	/**
-	 * Open a pair of bzipped files.
+	 * Open a pair of FASTQ files.
+	 *
+	 * Compression is detected automatically.
 	 *
 	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
 	 */
-	[CCode (cname = "panda_open_bz2")]
-	public NextSeq? open_bz2 (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	[CCode (cname = "panda_open_fastq")]
+	public NextSeq? open_fastq (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
 
 	/**
 	 * Spawn threads and assemble sequences.

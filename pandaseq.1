@@ -38,8 +38,6 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .B \-G
 .I log.txt.bz2
 ] [
-.B \-j 
-] [ 
 .B \-k
 .I kmers
 ] [ 
@@ -126,11 +124,7 @@ The location of the forward reads in FASTQ format. The file may be plain FASTQ, 
 .BR gzip (1)
 or
 .BR bzip2 (1).
-Files compressed with gzip are automatically detected. Files compressed with
-.BR bzip2 (1)
-will only be decompressed with the
-.B -j
-option.
+File compression is automatically detected.
 .TP
 \-F
 Normally, output will be as a FASTA even though per-base quality information is available. To retain this quality information, this option will output the sequence and the quality information in FASTQ format with quality scores encoded as PHRED + 33 (even if the input scores are PHRED + 64). The meaning of the quality score is conceptually different from the input quality scores for the overlap region, but this may not matter depending on your downstream application. If you intend to use this information for further quality filtering, especially by a program expecting Illumina reads, you are not using this data correctly.
@@ -144,12 +138,13 @@ Log all output to a
 compressed text file, \fIlog.txt.bz2\fR, instead of standard error.
 .TP
 \-j
-Input files specified be
+This option is ignored. It used to indicate that input files specified by
 .B -f
 and 
 .B -r
 are compressed by
 .BR bzip2 (1).
+This is automatically detected now.
 .TP
 \-k kmers
 Sets the number of sequence locations for a particular \fIk\fR-mer. When attempting to align the sequences, the assembler will store the location of every \fIk\fR-mer in a table. If the same \fIk\fR-mer is present multiple times, only the first ones will be stored until the table is full; when this occurs, an \fBFML\fR error is emitted. If the sequences are highly repetitive, lost positions can prevent good alignments; this can be alleviated by increasing this amount. This should be small (no more than 10), or the \fIk\fR-mer table will be extremely large, using a large amount of RAM per thread. Try increasing the value until \fBFML\fR errors go away.

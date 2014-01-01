@@ -86,23 +86,14 @@ PandaAssembler panda_assembler_new_fastq_reader(
 	PandaTagging policy);
 
 /**
- * Open a pair of bzipped files for assembly.
+ * Open a pair of FASTQ files for assembly.
  *
- * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
- */
-PandaAssembler panda_assembler_open_bz2(
-	const char *forward,
-	const char *reverse,
-	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy);
-
-/**
- * Open a pair of gzipped (or uncompressed files) for assembly.
+ * File may be plain text, or compressed with gzip or bzip2.
+ *
  * @logger: The proxy for error logging.
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  */
-PandaAssembler panda_assembler_open_gz(
+PandaAssembler panda_assembler_open(
 	const char *forward,
 	const char *reverse,
 	PandaLogProxy logger,

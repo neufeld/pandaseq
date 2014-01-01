@@ -22,7 +22,6 @@
 
 struct panda_args_fastq {
 	bool fastq;
-	bool bzip;
 	const char *forward_filename;
 	bool no_algn_qual;
 	PandaWriter no_algn_writer;
@@ -34,7 +33,6 @@ struct panda_args_fastq {
 PandaArgsFastq panda_args_fastq_new(
 	) {
 	PandaArgsFastq data = malloc(sizeof(struct panda_args_fastq));
-	data->bzip = false;
 	data->forward_filename = NULL;
 	data->no_algn_qual = false;
 	data->no_algn_writer = NULL;
@@ -66,7 +64,7 @@ bool panda_args_fastq_tweak(
 		data->forward_filename = argument;
 		return true;
 	case 'j':
-		data->bzip = true;
+		fprintf(stderr, "-j option is no longer necessary. Compression is auto-detected.\n");
 		return true;
 	case 'r':
 		data->reverse_filename = argument;
@@ -88,7 +86,7 @@ static const panda_tweak_general fastq_phred = { '6', true, NULL, "Use PHRED+64 
 static const panda_tweak_general fastq_barcoded = { 'B', true, NULL, "Allow unbarcoded sequences (try this for BADID errors)." };
 static const panda_tweak_general fastq_unalign_qual = { 'U', true, "unaligned.txt", "File to write unalignable read pairs with quality scores." };
 static const panda_tweak_general fastq_forward = { 'f', false, "forward.fastq", "Input FASTQ file containing forward reads." };
-static const panda_tweak_general fastq_bzip = { 'j', true, NULL, "Input files are bzipped." };
+static const panda_tweak_general fastq_bzip = { 'j', true, NULL, "Input files are bzipped. (Deprecated.)" };
 static const panda_tweak_general fastq_reverse = { 'r', false, "reverse.fastq", "Input FASTQ file containing reverse reads." };
 static const panda_tweak_general fastq_unalign = { 'u', true, "unaligned.txt", "File to write unalignable read pairs." };
 
@@ -126,7 +124,7 @@ PandaNextSeq panda_args_fastq_opener(
 		*fail_data = NULL;
 		*fail_destroy = NULL;
 	}
-	return data->bzip ? panda_open_bz2(data->forward_filename, data->reverse_filename, logger, data->qualmin, data->policy, next_data, next_destroy) : panda_open_gz(data->forward_filename, data->reverse_filename, logger, data->qualmin, data->policy, next_data, next_destroy);
+	return panda_open_fastq(data->forward_filename, data->reverse_filename, logger, data->qualmin, data->policy, next_data, next_destroy);
 }
 
 bool panda_args_fastq_setup(

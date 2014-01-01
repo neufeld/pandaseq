@@ -17,7 +17,9 @@
  */
 #include "config.h"
 #include <bzlib.h>
+#include <fcntl.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <zlib.h>
 #if HAVE_PTHREAD
 #        include <pthread.h>
@@ -41,66 +43,6 @@ static bool buff_read_gz(
 	return true;
 }
 
-PandaNextSeq panda_open_gz(
-	const char *forward,
-	const char *reverse,
-	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy,
-	void **user_data,
-	PandaDestroy *destroy) {
-	gzFile *forward_file;
-	gzFile *reverse_file;
-	*user_data = NULL;
-	*destroy = NULL;
-
-	forward_file = gzopen(forward, "r");
-	if (forward_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, forward);
-		return NULL;
-	}
-	reverse_file = gzopen(reverse, "r");
-	if (reverse_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, reverse);
-		gzclose(forward_file);
-		return NULL;
-	}
-	return panda_create_fastq_reader(buff_read_gz, forward_file, (PandaDestroy) gzclose, buff_read_gz, reverse_file, (PandaDestroy) gzclose, logger, qualmin, policy, user_data, destroy);
-}
-
-PandaAssembler panda_assembler_open_gz(
-	const char *forward,
-	const char *reverse,
-	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy) {
-	PandaNextSeq next;
-	void *next_data;
-	PandaDestroy next_destroy;
-	if ((next = panda_open_gz(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
-		return NULL;
-	}
-	return panda_assembler_new(next, next_data, next_destroy, logger);
-}
-
-#ifdef HAVE_PTHREAD
-PandaMux panda_mux_open_gz(
-	const char *forward,
-	const char *reverse,
-	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy) {
-	PandaNextSeq next;
-	void *next_data;
-	PandaDestroy next_destroy;
-	if ((next = panda_open_gz(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
-		return NULL;
-	}
-
-	return panda_mux_new(next, next_data, next_destroy, logger);
-}
-#endif
-
 static bool buff_read_bz2(
 	char *buf,
 	size_t buf_len,
@@ -112,7 +54,47 @@ static bool buff_read_bz2(
 	return bzerror == BZ_OK || bzerror == BZ_STREAM_END;
 }
 
-PandaNextSeq panda_open_bz2(
+PandaBufferRead panda_open_buffer(
+	const char *file_name,
+	PandaLogProxy logger,
+	void **user_data,
+	PandaDestroy *destroy) {
+	char buffer[2];
+	int fd;
+	*user_data = NULL;
+	*destroy = NULL;
+
+	fd = open(file_name, O_RDONLY);
+	if (fd < 0 || read(fd, &buffer, 2) != 2 || lseek(fd, 0, SEEK_SET) != 0) {
+		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, file_name);
+		return NULL;
+	}
+	if (buffer[0] == 'B' && buffer[1] == 'Z') {
+		BZFILE *bz_file;
+		bz_file = BZ2_bzdopen(fd, "r");
+		if (bz_file == NULL) {
+			panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, file_name);
+			close(fd);
+			return NULL;
+		}
+		*user_data = bz_file;
+		*destroy = BZ2_bzclose;
+		return buff_read_bz2;
+	} else {
+		gzFile *gz_file;
+		gz_file = gzdopen(fd, "r");
+		if (gz_file == NULL) {
+			panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, file_name);
+			close(fd);
+			return NULL;
+		}
+		*user_data = gz_file;
+		*destroy = (PandaDestroy) gzclose;
+		return buff_read_gz;
+	}
+}
+
+PandaNextSeq panda_open_fastq(
 	const char *forward,
 	const char *reverse,
 	PandaLogProxy logger,
@@ -120,23 +102,29 @@ PandaNextSeq panda_open_bz2(
 	PandaTagging policy,
 	void **user_data,
 	PandaDestroy *destroy) {
-	BZFILE *forward_file;
-	BZFILE *reverse_file;
-	forward_file = BZ2_bzopen(forward, "r");
+	MANAGED_STACK(PandaBufferRead,
+		forward_file);
+	MANAGED_STACK(PandaBufferRead,
+		reverse_file);
+
+	*user_data = NULL;
+	*destroy = NULL;
+
+	forward_file = panda_open_buffer(forward, logger, &forward_file_data, &forward_file_destroy);
 	if (forward_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, forward);
 		return NULL;
 	}
-	reverse_file = BZ2_bzopen(reverse, "r");
+
+	reverse_file = panda_open_buffer(reverse, logger, &reverse_file_data, &reverse_file_destroy);
 	if (reverse_file == NULL) {
-		panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, reverse);
-		BZ2_bzclose(forward_file);
+		DESTROY_STACK(forward_file);
 		return NULL;
 	}
-	return panda_create_fastq_reader(buff_read_bz2, forward_file, BZ2_bzclose, buff_read_bz2, reverse_file, BZ2_bzclose, logger, qualmin, policy, user_data, destroy);
+
+	return panda_create_fastq_reader(forward_file, forward_file_data, forward_file_destroy, reverse_file, reverse_file_data, reverse_file_destroy, logger, qualmin, policy, user_data, destroy);
 }
 
-PandaAssembler panda_assembler_open_bz2(
+PandaAssembler panda_assembler_open_fastq(
 	const char *forward,
 	const char *reverse,
 	PandaLogProxy logger,
@@ -145,7 +133,7 @@ PandaAssembler panda_assembler_open_bz2(
 	PandaNextSeq next;
 	void *next_data;
 	PandaDestroy next_destroy;
-	if ((next = panda_open_bz2(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
+	if ((next = panda_open_fastq(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
 		return NULL;
 	}
 
@@ -153,7 +141,7 @@ PandaAssembler panda_assembler_open_bz2(
 }
 
 #ifdef HAVE_PTHREAD
-PandaMux panda_mux_open_bz2(
+PandaMux panda_mux_open_fastq(
 	const char *forward,
 	const char *reverse,
 	PandaLogProxy logger,
@@ -162,7 +150,7 @@ PandaMux panda_mux_open_bz2(
 	PandaNextSeq next;
 	void *next_data;
 	PandaDestroy next_destroy;
-	if ((next = panda_open_bz2(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
+	if ((next = panda_open_fastq(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
 
 		return NULL;
 	}

@@ -204,25 +204,22 @@ char panda_result_phred(
 /* === I/O Methods === */
 
 /**
- * Open a pair of gzipped (or uncompressed files).
+ * Open a file that might be uncompressed or compressed with gzip or bzip2.
  *
- * @forward: the forward filename
- * @reverse: the reverse filename
- * @logger: the logging function to use during assembly.
- * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
- * Returns: (closure user_data) (scope notified): The function to call.
+ * @file_name: the file to open
+ * @logger: the logger to write data
+ * Returns: (scope notified) (closure user_data): the buffer read function to use.
  */
-PandaNextSeq panda_open_gz(
-	const char *forward,
-	const char *reverse,
+PandaBufferRead panda_open_buffer(
+	const char *file_name,
 	PandaLogProxy logger,
-	unsigned char qualmin,
-	PandaTagging policy,
 	void **user_data,
 	PandaDestroy *destroy);
 
 /**
- * Open a pair of bzipped files.
+ * Open a pair of FASTQ files for reading.
+ *
+ * Files may be uncompressed, or compressed with gzip or bzip2.
  *
  * @forward: the forward filename
  * @reverse: the reverse filename
@@ -230,7 +227,7 @@ PandaNextSeq panda_open_gz(
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
  * Returns: (closure user_data) (scope notified): The function to call.
  */
-PandaNextSeq panda_open_bz2(
+PandaNextSeq panda_open_fastq(
 	const char *forward,
 	const char *reverse,
 	PandaLogProxy logger,
