@@ -93,6 +93,11 @@ libpandaseq_la_SOURCES = \
 	table.c \
 	writer.c \
 	$(NULL)
+if IS_WINDOWS
+libpandaseq_la_SOURCES += lib.rc
+.rc.lo:
+	$(LIBTOOL) --tag=RC --mode=compile $(RC) $< -o $@
+endif
 pkglibxdir = $(pkglibdir)$(LIB_MAJOR)
 pkglibx_LTLIBRARIES = \
 	after.la \

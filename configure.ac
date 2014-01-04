@@ -18,6 +18,7 @@ AM_PROG_AR
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 LT_INIT
+LT_PROG_RC
 AX_CHECK_CFLAGS([-std=c99 -pedantic])
 AC_HEADER_STDC
 
@@ -46,11 +47,13 @@ MODULE_CPPFLAGS="$CPPFLAGS"
 MODULE_CFLAGS="$CFLAGS"
 MODULE_LIBS="$LIBS libpandaseq.la"
 AC_MSG_CHECKING([for module flags])
+is_windows=false
 case "$host" in
 *-mingw*)
 	NO_UNDEFINED='-no-undefined'
 	MODULE_LDFLAGS="$LDFLAGS -Wl,-static"
 	MOD_LIBTOOL=libtool
+	is_windows=true
 	;;
 *openbsd*|*freebsd*)
 	NO_UNDEFINED=''
@@ -109,6 +112,8 @@ AC_SUBST(PANDA_LIBS)
 LIBCURL_CHECK_CONFIG(, , [have_curl=true], [have_curl=false])
 AM_CONDITIONAL([LIBCURL], [test x$have_curl = xtrue])
 
+AM_CONDITIONAL([IS_WINDOWS], [test x$is_windows = xtrue])
+
 CPPFLAGS="$ORIG_CPPFLAGS"
 CFLAGS="$ORIG_CFLAGS"
 LIBS="$ORIG_LIBS"
@@ -117,8 +122,11 @@ LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
 AC_SUBST(LIB_NAME)
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 LIB_MAJOR=3
-LIB_VER=${LIB_MAJOR}:0:0
+LIB_MINOR=0
+LIB_VER=${LIB_MAJOR}:${LIB_MINOR}:0
 LIB_URL_VER=0:0:0
+AC_DEFINE_UNQUOTED(LIB_MAJOR, ${LIB_MAJOR}, [Library major version number.])
+AC_DEFINE_UNQUOTED(LIB_MINOR, ${LIB_MINOR}, [Library minor version number.])
 AC_SUBST(LIB_MAJOR)
 AC_SUBST(LIB_VER)
 AC_SUBST(LIB_URL_VER)
