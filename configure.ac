@@ -120,6 +120,15 @@ LIBS="$ORIG_LIBS"
 
 LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
 AC_SUBST(LIB_NAME)
+
+VERSION_MAJOR=$(echo $PACKAGE_VERSION | cut -f 1 -d . )
+VERSION_MINOR=$(echo $PACKAGE_VERSION | cut -f 2 -d . )
+AC_DEFINE_UNQUOTED(VERSION_MAJOR, ${VERSION_MAJOR}, [Package major version number.])
+AC_DEFINE_UNQUOTED(VERSION_MINOR, ${VERSION_MINOR}, [Package minor version number.])
+
+LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
+AC_SUBST(LIB_NAME)
+
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 LIB_MAJOR=3
 LIB_MINOR=0
@@ -130,6 +139,7 @@ AC_DEFINE_UNQUOTED(LIB_MINOR, ${LIB_MINOR}, [Library minor version number.])
 AC_SUBST(LIB_MAJOR)
 AC_SUBST(LIB_VER)
 AC_SUBST(LIB_URL_VER)
+
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES(${LIB_NAME}.pc:pc.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES(${LIB_NAME}.vapi:vapi.in, [], [LIB_NAME=$LIB_NAME])
