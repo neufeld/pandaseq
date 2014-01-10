@@ -1087,6 +1087,11 @@ namespace Panda {
 		[CCode (cname = "panda_writer_new_file")]
 		public Writer.file (owned GLib.FileStream file);
 		/**
+		 * Create a writer which discards all writes.
+		 */
+		[CCode (cname = "panda_writer_new_null")]
+		public Writer.null ();
+		/**
 		 * Create a new writer, backed by standard error.
 		 */
 		[CCode (cname = "panda_writer_new_stderr")]

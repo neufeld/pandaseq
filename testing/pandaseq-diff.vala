@@ -48,7 +48,7 @@ public int main (string[] args) {
 		stdout.printf ("Run '%s --help' to see a full list of available command line options.\n", args[0]);
 		return 1;
 	}
-	var logger = new Panda.LogProxy (new Panda.Writer ((data) => {}));
+	var logger = new Panda.LogProxy (new Panda.Writer.null ());
 	Panda.NextSeq reader;
 	if (web) {
 		var forward = Panda.bz_decompress (Panda.open_url (URL.printf (1), logger));

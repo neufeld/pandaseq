@@ -128,6 +128,17 @@ PandaWriter panda_writer_new_file(
 	return panda_writer_new((PandaBufferWrite) file_write, file, (PandaDestroy) fclose);
 }
 
+static void null_write(
+	const char *buffer,
+	size_t buffer_length,
+	void *data) {
+}
+
+PandaWriter panda_writer_new_null(
+	) {
+	return panda_writer_new(null_write, NULL, NULL);
+}
+
 PandaWriter panda_writer_open_file(
 	const char *filename,
 	bool bzip) {

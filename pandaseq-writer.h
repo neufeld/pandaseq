@@ -44,6 +44,11 @@ PandaWriter panda_writer_new(
 PandaWriter panda_writer_new_file(
 	FILE *file);
 /**
+ * Create a writer which discards all writes.
+ */
+PandaWriter panda_writer_new_null(
+	void);
+/**
  * Create a new writer, backed by standard error.
  */
 PandaWriter panda_writer_new_stderr(
