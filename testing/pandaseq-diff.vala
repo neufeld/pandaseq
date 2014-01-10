@@ -19,7 +19,7 @@ string? forward_file = null;
 string? reverse_file = null;
 bool web = false;
 bool supress_quality_diffs = false;
-const string URL = "http://neufeldserver.uwaterloo.ca/~apmasell/mcbath-small_%d.fastq";
+const string URL = "http://neufeldserver.uwaterloo.ca/~apmasell/mcbath-small_%d.fastq.bz2";
 
 const OptionEntry[] options = {
 	{ "forward", 'f', 0, OptionArg.FILENAME, ref forward_file, "Forward read FASTQ file.", "forward.fastq.bz2" },
@@ -51,8 +51,8 @@ public int main (string[] args) {
 	var logger = new Panda.LogProxy (new Panda.Writer ((data) => {}));
 	Panda.NextSeq reader;
 	if (web) {
-		var forward = Panda.open_url (URL.printf (1), logger);
-		var reverse = Panda.open_url (URL.printf (2), logger);
+		var forward = Panda.bz_decompress (Panda.open_url (URL.printf (1), logger));
+		var reverse = Panda.bz_decompress (Panda.open_url (URL.printf (2), logger));
 		if (forward == null || reverse == null) {
 			return 1;
 		}
