@@ -27,6 +27,20 @@
 #        endif
 EXTERN_C_BEGIN
 /**
+ * Decompress BZipped data.
+ * @source: (closure source_data) (scope notified) (allow-none): the underlying stream to decompress.
+ * @verbosity: the BZip logging level.
+ * Returns:(closure data) (scope notified) (allow-none): the read function.
+ */
+PandaBufferRead panda_bz_decompress(
+	PandaBufferRead source,
+	void *source_data,
+	PandaDestroy source_destroy,
+	int verbosity,
+	void **user_data,
+	PandaDestroy *destroy);
+
+/**
  * Open a URL and read the sequence.
  * @url: the URL, as understood by cURL.
  * Returns:(closure data) (scope notified) (allow-none): the read function.

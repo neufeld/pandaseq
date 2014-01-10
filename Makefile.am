@@ -164,7 +164,10 @@ libpandaseq_url_la_LDFLAGS = \
 	-version-info $(LIB_URL_VER) \
 	$(NO_UNDEFINED) \
 	$(NULL)
-libpandaseq_url_la_SOURCES = curl_reader.c
+libpandaseq_url_la_SOURCES = \
+	bzstream.c \
+	curl_reader.c \
+	$(NULL)
 endif
 
 table.c table.h: mktable$(EXEEXT)

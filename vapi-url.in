@@ -6,6 +6,14 @@
  */
 namespace Panda {
 	/**
+	 * Decompress BZipped data.
+	 * @param source the underlying stream to decompress.
+	 * @param verbosity the BZip logging level.
+	 */
+	[CCode (cname = "panda_bz_decompress")]
+	public BufferRead? bz_decompress (owned BufferRead? source, int verbosity = 0);
+
+	/**
 	 * Open a URL and read the sequence.
 	 * @param url the URL, as understood by cURL.
 	 */
