@@ -9,8 +9,8 @@ namespace Panda {
 	 * Open a URL and read the sequence.
 	 * @param url the URL, as understood by cURL.
 	 */
-	[CCode(cname = "panda_open_url", cheader_filename = "pandaseq-url.h")]
-	public BufferRead? open_url(string url, LogProxy logger);
+	[CCode (cname = "panda_open_url", cheader_filename = "pandaseq-url.h")]
+	public BufferRead? open_url (string url, LogProxy logger);
 
 	namespace cURL {
 		/**
@@ -22,13 +22,13 @@ namespace Panda {
 		 *
 		 * @return whether the library was successfully initialised.
 		 */
-		[CCode(cname = "panda_curl_ref")]
-		public bool @ref();
+		[CCode (cname = "panda_curl_ref")]
+		public bool @ref ();
 
 		/**
 		 * Decrement the reference count on the cURL library.
 		 */
-		[CCode(cname = "panda_curl_unref")]
-		public void unref();
+		[CCode (cname = "panda_curl_unref")]
+		public void unref ();
 	}
 }

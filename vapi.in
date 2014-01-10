@@ -733,8 +733,8 @@ namespace Panda {
 		/**
 		 * Writes an error message to the log with the same semantics as the POSIX perror function.
 		 */
-		[CCode(cname = "panda_log_proxy_perror")]
-		public void perror(string? prefix);
+		[CCode (cname = "panda_log_proxy_perror")]
+		public void perror (string? prefix);
 
 		/**
 		 * Increase the reference count on a proxy.
@@ -1534,8 +1534,8 @@ namespace Panda {
 	/**
 	 * Open a file that might be uncompressed or compressed with gzip or bzip2.
 	 */
-	[CCode(cname = "panda_open_buffer")]
-	public BufferRead? open_buffer(string file_name, LogProxy logger);
+	[CCode (cname = "panda_open_buffer")]
+	public BufferRead? open_buffer (string file_name, LogProxy logger);
 
 	/**
 	 * Open a pair of FASTQ files.
