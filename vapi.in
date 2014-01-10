@@ -690,7 +690,7 @@ namespace Panda {
 		public LineBuf (owned BufferRead read);
 		/**
 		 * Read the next line.
-		 * Returns: (transfer none) (allow-none): the next line in the file. This is only valid until the next call.
+		 * @return the next line in the file. This is only valid until the next call.
 		 */
 		[CCode (cname = "panda_linebuf_next")]
 		public unowned string? next_value ();
@@ -707,7 +707,7 @@ namespace Panda {
 		 * @param bzip Write BZipped text rather than plain text.
 		 */
 		[CCode (cname = "panda_log_proxy_open_file")]
-		public LogProxy? open_file (string filename, bool bzip);
+		public static LogProxy? open_file (string filename, bool bzip);
 
 		/**
 		 * Create a new proxy with a callback.
@@ -1244,7 +1244,7 @@ namespace Panda {
 	[SimpleType]
 	public struct kmer {
 		public size_t kmer;
-		public ssize_t posn;
+		public size_t posn;
 	}
 
 	/**
