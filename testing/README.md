@@ -11,7 +11,7 @@ This is an experimental tool for determining if changes to PANDAseq affect the o
 
 		./pandaseq-diff -f mcbath_1.fastq.bz2 -r mcbath_2.fastq.bz2
 
-The input files must be BZipped. Each read pair will be assembled by both the existing and new assemblers, and the results compared.
+Each read pair will be assembled by both the existing and new assemblers, and the results compared.
 
 The recommended data set is the sample dataset provided at [McBath dataset](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_sampledata.tar) or [a small subset](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_sampledata_small.tar) that was used in the original publication. You can use the `-W` option to download and use these sequences automatically.
 

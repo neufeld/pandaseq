@@ -67,7 +67,7 @@ public int main (string[] args) {
 			return 1;
 		}
 
-		reader = Panda.open_bz2 (forward_file, reverse_file, logger);
+		reader = Panda.open_fastq (forward_file, reverse_file, logger);
 	}
 	if (reader == null) {
 		stdout.printf ("Could not open input sequences.\n");
