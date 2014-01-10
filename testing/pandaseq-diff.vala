@@ -81,6 +81,8 @@ public int main (string[] args) {
 	}
 
 	var diffs = 0;
+	var diffs_better_score = 0;
+	var diffs_worse_score = 0;
 	var gained = 0;
 	var lost = 0;
 	var total = 0;
@@ -107,6 +109,12 @@ public int main (string[] args) {
 			id.to_file (stdout);
 			stdout.printf (" differ in length %d → %d.\n", old_result.sequence.length, new_result.sequence.length);
 		} else {
+			if (old_result.quality < new_result.quality) {
+				diffs_better_score++;
+			} else if (old_result.quality > new_result.quality) {
+				diffs_worse_score++;
+			}
+
 			bool nt_diff = false;
 			for (var it = 0; it < new_result.sequence.length; it++) {
 				if (old_result.sequence[it].nt != new_result.sequence[it].nt) {
@@ -124,6 +132,6 @@ public int main (string[] args) {
 			}
 		}
 	}
-	stdout.printf ("%d sequences compared.\n%d changed.\n%d gained.\n%d lost.\n", total, diffs, gained, lost);
+	stdout.printf ("%d sequences compared.\n%d changed (%d scored better, %d scored worse).\n%d gained.\n%d lost.\n", total, diffs, diffs_better_score, diffs_worse_score, gained, lost);
 	return (total == 0 || diffs > 0 || gained > 0 || lost > 0) ? 2 : 0;
 }
