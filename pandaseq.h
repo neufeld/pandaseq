@@ -123,7 +123,7 @@ PandaNextSeq panda_create_fastq_reader(
  * @reverse:(array length=reverse_length): the sequence to trim from the reverse read.
  * @skip: whether to try to assemble sequences that don't contain a trim sequence.
  * @threshold: a log probability threshold for cut-off alignment
- * Returns: (scope notified): the sequence stream
+ * Returns: (closure next_data) (scope notified): the sequence stream
  */
 PandaNextSeq panda_trim_overhangs(
 	PandaNextSeq inner,

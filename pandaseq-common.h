@@ -516,7 +516,7 @@ typedef void (
  * @logger: The logging proxy to use, if needed.
  * @fail: (closure fail_data) (transfer full) (allow-none) (out callee-allocates) (scope notified): the handler for any sequences which do not align, if desired.
  * @user_data:(closure): the context
- * Returns: (scope notified) (allow-none): the sequence source, or null to indicate a failure
+ * Returns: (closure next_data) (scope notified) (allow-none): the sequence source, or null to indicate a failure
  */
 typedef PandaNextSeq (
 	*PandaOpener) (

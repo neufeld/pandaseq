@@ -28,7 +28,8 @@
 EXTERN_C_BEGIN
 /**
  * Open a URL and read the sequence.
- * @param url the URL, as understood by cURL.
+ * @url: the URL, as understood by cURL.
+ * Returns:(closure data) (scope notified) (allow-none): the read function.
  */
 PandaBufferRead panda_open_url(
 	const char *url,
