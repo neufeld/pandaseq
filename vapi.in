@@ -1259,7 +1259,8 @@ namespace Panda {
 		/**
 		 * The quality score as a PHRED score
 		 */
-		char qual;
+		[CCode (cname = "qual")]
+		char phred;
 		/**
 		 * Find the best offset of a small sequence in a large sequence.
 		 * @param threshold the minimum log probability to match
@@ -1296,13 +1297,22 @@ namespace Panda {
 		/**
 		 * The quality score as a log probability
 		 */
-		public double p;
+		[CCode (cname = "p")]
+		public double log_probability;
 		/**
 		 * Convert the probability to a PHRED quality score.
 		 */
 		public int8 phred {
 			[CCode (cname = "panda_result_phred")]
 			get;
+		}
+		/**
+		 * The quality score as a probability
+		 */
+		public double probability {
+			get {
+				return GLib.Math.exp (log_probability);
+			}
 		}
 		/**
 		 * Find the best offset of a small sequence in a large sequence.

@@ -113,9 +113,9 @@ public int main (string[] args) {
 					id.to_file (stdout);
 					stdout.printf (" differ at nucleotide %d, %c → %c.\n", it, old_result.sequence[it].nt.to_ascii (), new_result.sequence[it].nt.to_ascii ());
 					nt_diff = true;
-				} else if (old_result.sequence[it].p != new_result.sequence[it].p && !supress_quality_diffs) {
+				} else if (old_result.sequence[it].log_probability != new_result.sequence[it].log_probability && !supress_quality_diffs) {
 					id.to_file (stdout);
-					stdout.printf (" differ at nucleotide %d, quality %f → %f.\n", it, old_result.sequence[it].p, new_result.sequence[it].p);
+					stdout.printf (" differ at nucleotide %d, quality %f → %f.\n", it, old_result.sequence[it].probability, new_result.sequence[it].probability);
 					nt_diff = true;
 				}
 			}
