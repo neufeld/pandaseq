@@ -80,7 +80,8 @@ public int main (string[] args) {
 		return 1;
 	}
 
-	var diffs = 0;
+	var length_diffs = 0;
+	var nt_diffs = 0;
 	var diffs_better_score = 0;
 	var diffs_worse_score = 0;
 	var gained = 0;
@@ -94,6 +95,7 @@ public int main (string[] args) {
 		unowned Panda.result_seq? new_result = assemble (id, forward, reverse);
 		if (old_result == null && new_result == null) {
 			/* Both fail. That's a match. */
+			continue;
 		} else if (old_result == null || new_result == null) {
 			var is_new = old_result == null;
 			id.to_file (stdout);
@@ -104,17 +106,20 @@ public int main (string[] args) {
 				lost++;
 				stdout.printf (" has been lost.\n");
 			}
-		} else if (new_result.sequence.length != old_result.sequence.length) {
-			diffs++;
+			continue;
+		}
+
+		if (old_result.quality < new_result.quality) {
+			diffs_better_score++;
+		} else if (old_result.quality > new_result.quality) {
+			diffs_worse_score++;
+		}
+
+		if (new_result.sequence.length != old_result.sequence.length) {
+			length_diffs++;
 			id.to_file (stdout);
 			stdout.printf (" differ in length %d → %d.\n", old_result.sequence.length, new_result.sequence.length);
 		} else {
-			if (old_result.quality < new_result.quality) {
-				diffs_better_score++;
-			} else if (old_result.quality > new_result.quality) {
-				diffs_worse_score++;
-			}
-
 			bool nt_diff = false;
 			for (var it = 0; it < new_result.sequence.length; it++) {
 				if (old_result.sequence[it].nt != new_result.sequence[it].nt) {
@@ -128,10 +133,10 @@ public int main (string[] args) {
 				}
 			}
 			if (nt_diff) {
-				diffs++;
+				nt_diffs++;
 			}
 		}
 	}
-	stdout.printf ("%d sequences compared.\n%d changed (%d scored better, %d scored worse).\n%d gained.\n%d lost.\n", total, diffs, diffs_better_score, diffs_worse_score, gained, lost);
-	return (total == 0 || diffs > 0 || gained > 0 || lost > 0) ? 2 : 0;
+	stdout.printf ("%d sequences compared.\n%d scored better\n%d scored worse.\n%d changed (%d length changed, %d sequence changed).\n%d gained.\n%d lost.\n", total, diffs_better_score, diffs_worse_score, nt_diffs + length_diffs, length_diffs, nt_diffs, gained, lost);
+	return (total == 0 || length_diffs > 0 || nt_diffs > 0 || gained > 0 || lost > 0) ? 2 : 0;
 }
