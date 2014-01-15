@@ -1,3 +1,17 @@
+pandaseq (2.6~ppa0) precise; urgency=low
+
+  * New alignment algorithms: RDP maximum likehood and PEAR
+  * New filters: PEAR statistical test, the bits saved in the overlap region,
+    the read Q score, and the minimum PHRED quality score
+  * Detect compression automatically.
+  * Allow writing failed alignments with quality information (-U).
+  * Parse sequence headers from the Short Read Archive
+  * Make sure to preserve custom k-mer table size when threaded.
+  * Fix LTDL unreferencing bug where non-loaded modules would incorrectly decrement
+    the LTDL reference count, causing breakage of still-loaded modules.
+
+ -- Andre Masella <andre@masella.name>  Tue, 14 Jan 2014 21:08:34 -0800
+
 pandaseq (2.5~ppa0) lucid; urgency=low
 
   * Add support for output and log files via Writer
