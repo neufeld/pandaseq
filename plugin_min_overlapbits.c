@@ -22,11 +22,13 @@ CHECK {
 
 INIT {
 	char *remainder = NULL;
+	double orig_value;
+
 	if (args == NULL) {
 		return true;
 	}
 	errno = 0;
-	double orig_value = strtod(args, &remainder);
+	orig_value = strtod(args, &remainder);
 	bits_saved = orig_value * M_LN2;	// change from bits to nats
 
 	if (errno != 0) {

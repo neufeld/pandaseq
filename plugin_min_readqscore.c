@@ -11,13 +11,14 @@ static int min_score;
 
 CHECK {
 	size_t it;
+	int readqscore;
 	/* sum of the error probabilities of the assembled bases */
 
 	double errorsum = 0;
 	for (it = 0; it < sequence->sequence_length; it++) {
 		errorsum += -sequence->sequence[it].p;
 	}
-	int readqscore = (int) floor(-10.0 * log10(errorsum / sequence->sequence_length));
+	readqscore = (int) floor(-10.0 * log10(errorsum / sequence->sequence_length));
 	if (readqscore < min_score) {
 		return false;
 	}
