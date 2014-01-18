@@ -21,9 +21,8 @@
 #include "pandaseq.h"
 #include "misc.h"
 
-#define BUFF_SIZE (10*MAX_LEN)
 struct panda_linebuf {
-	char data[BUFF_SIZE];
+	char data[10 * MAX_LEN];
 	size_t data_length;
 	size_t offset;
 	 MANAGED_MEMBER(
@@ -62,9 +61,9 @@ const char *panda_linebuf_next(
 		linebuf->offset = 0;
 	}
 
-	while ((end = memchr(linebuf->data, '\n', linebuf->data_length)) == NULL && linebuf->data_length < BUFF_SIZE) {
+	while ((end = memchr(linebuf->data, '\n', linebuf->data_length)) == NULL && linebuf->data_length < sizeof(linebuf->data)) {
 		size_t new_bytes = 0;
-		if (!linebuf->read(linebuf->data + linebuf->data_length, BUFF_SIZE - linebuf->data_length, &new_bytes, linebuf->read_data)) {
+		if (!linebuf->read(linebuf->data + linebuf->data_length, sizeof(linebuf->data) - linebuf->data_length, &new_bytes, linebuf->read_data)) {
 			return NULL;
 		}
 		if (new_bytes == 0) {

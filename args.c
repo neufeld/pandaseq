@@ -414,10 +414,9 @@ bool panda_parse_args(
 #endif
 	panda_writer_unref(writer_err);
 
-#define BSIZE 2048
 	for (it = 0; it < args_length; it++) {
-		char buf[BSIZE];
-		if (snprintf(buf, BSIZE, "ARG[%d]\t%s", (int) it, args[it]) < BSIZE) {
+		char buf[2048];
+		if (snprintf(buf, sizeof(buf), "ARG[%d]\t%s", (int) it, args[it]) < sizeof(buf)) {
 			panda_log_proxy_write_str(logger, buf);
 		}
 	}

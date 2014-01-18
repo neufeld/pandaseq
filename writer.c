@@ -39,13 +39,11 @@ struct panda_writer {
 #endif
 };
 
-#define UNCOMMITTED_BUFF_SIZE 2048
 #ifdef HAVE_PTHREAD
-#        define COMMITTED_BUFF_SIZE 20480
 struct write_buffer {
-	char uncommitted[UNCOMMITTED_BUFF_SIZE];
+	char uncommitted[2048];
 	size_t uncommitted_length;
-	char committed[COMMITTED_BUFF_SIZE];
+	char committed[20480];
 	size_t committed_length;
 	PandaWriter owner;
 	struct write_buffer *next;
@@ -217,7 +215,7 @@ void panda_writer_append_c(
 	char c) {
 #ifdef HAVE_PTHREAD
 	struct write_buffer *data = get_write_buffer(writer);
-	if (data->uncommitted_length < UNCOMMITTED_BUFF_SIZE) {
+	if (data->uncommitted_length < sizeof(data->uncommitted)) {
 		data->uncommitted[data->uncommitted_length] = c;
 		data->uncommitted_length++;
 	}
@@ -238,11 +236,11 @@ void panda_writer_append_v(
 	va_list va) {
 #ifdef HAVE_PTHREAD
 	struct write_buffer *data = get_write_buffer(writer);
-	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, UNCOMMITTED_BUFF_SIZE - data->uncommitted_length, format, va);
+	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, sizeof(data->uncommitted) - data->uncommitted_length, format, va);
 #else
-	char buffer[UNCOMMITTED_BUFF_SIZE];
+	char buffer[sizeof(data->uncommitted)];
 	size_t buffer_length;
-	buffer_length = vsnprintf(buffer, UNCOMMITTED_BUFF_SIZE, format, va);
+	buffer_length = vsnprintf(buffer, sizeof(data->uncommitted), format, va);
 	writer->write(buffer, buffer_length, writer->write_data);
 #endif
 }
@@ -251,7 +249,7 @@ void panda_writer_commit(
 	PandaWriter writer) {
 #ifdef HAVE_PTHREAD
 	struct write_buffer *data = get_write_buffer(writer);
-	if (COMMITTED_BUFF_SIZE - data->committed_length < data->uncommitted_length) {
+	if (sizeof(data->committed) - data->committed_length < data->uncommitted_length) {
 		flush_buffer(writer, data);
 	} else {
 		memcpy(data->committed + data->committed_length, data->uncommitted, data->uncommitted_length);

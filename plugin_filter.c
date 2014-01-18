@@ -5,8 +5,7 @@ HELP("Filters sequences based on the contents of a file of ids, one sequence ID 
 
 VER_INFO("1.0");
 
-#define BUFF_SIZE 1024
-char buffer[BUFF_SIZE];
+char buffer[1024];
 PandaSet set;
 
 PRECHECK {
@@ -27,7 +26,7 @@ INIT {
 		}
 	}
 	set = panda_idset_new();
-	while (fgets(buffer, BUFF_SIZE, file) != NULL) {
+	while (fgets(buffer, sizeof(buffer), file) != NULL) {
 		int it;
 		for (it = 0; buffer[it] != '\n'; it++) ;
 		buffer[it] = '\0';
