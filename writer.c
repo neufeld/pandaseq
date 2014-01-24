@@ -238,9 +238,9 @@ void panda_writer_append_v(
 	struct write_buffer *data = get_write_buffer(writer);
 	data->uncommitted_length += vsnprintf(data->uncommitted + data->uncommitted_length, sizeof(data->uncommitted) - data->uncommitted_length, format, va);
 #else
-	char buffer[sizeof(data->uncommitted)];
+	char buffer[2048];
 	size_t buffer_length;
-	buffer_length = vsnprintf(buffer, sizeof(data->uncommitted), format, va);
+	buffer_length = vsnprintf(buffer, sizeof(buffer), format, va);
 	writer->write(buffer, buffer_length, writer->write_data);
 #endif
 }
