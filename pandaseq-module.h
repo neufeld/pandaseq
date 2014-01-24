@@ -57,6 +57,7 @@ PandaModule panda_module_new(
  * @path: the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
  */
 PandaModule panda_module_load(
+	PandaLogProxy logger,
 	const char *path);
 
 /* === Methods === */

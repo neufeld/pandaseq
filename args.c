@@ -83,6 +83,8 @@ bool panda_parse_args(
 	bool help = false;
 	size_t it;
 	PandaLogProxy logger = NULL;
+	size_t module_args_length = 0;
+	const char *module_args[MAX_MODULES];
 	size_t modules_length = 0;
 	PandaModule modules[MAX_MODULES];
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
@@ -158,14 +160,13 @@ bool panda_parse_args(
 	while ((c = getopt(args_length, args, optlist)) != -1) {
 		switch (c) {
 		case 'C':
-			if (modules_length == MAX_MODULES || (modules[modules_length] = panda_module_load(optarg)) == NULL) {
-				if (modules_length == MAX_MODULES) {
-					fprintf(stderr, "Too many modules.\n");
-				}
+			if (module_args_length == MAX_MODULES) {
+				fprintf(stderr, "Too many modules.\n");
 				CLEANUP();
 				return false;
 			}
-			modules_length++;
+			module_args[module_args_length] = optarg;
+			module_args_length++;
 			break;
 		case 'd':
 			for (it = 0; it < strlen(optarg); it++) {
@@ -287,6 +288,14 @@ bool panda_parse_args(
 		}
 	}
 
+	logger = panda_log_proxy_new(writer_err);
+	for (it = 0; it < module_args_length; it++) {
+		if ((modules[it] = panda_module_load(logger, module_args[it])) == NULL) {
+			CLEANUP();
+			return false;
+		}
+		modules_length++;
+	}
 	if (version) {
 		fprintf(stderr, "%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
 		for (it = 0; it < modules_length; it++) {
@@ -295,7 +304,6 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
-	logger = panda_log_proxy_new(writer_err);
 	panda_writer_set_slave(writer_out, writer_err);
 
 	if (help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {

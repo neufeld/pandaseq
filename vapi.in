@@ -915,7 +915,7 @@ namespace Panda {
 		 * @param path the name or path to a module separated by LT_PATHSEP_CHAR and any arguments to the initialisation function of that module
 		 */
 		[CCode (cname = "panda_module_load")]
-		public static Module load (string path);
+		public static Module load (LogProxy logger, string path);
 
 		/**
 		 * Increment reference count.

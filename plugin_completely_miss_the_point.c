@@ -6,13 +6,15 @@ HELP("Filter out sequences that have mismatches in the overlap region.", "comple
 
 VER_INFO("1.0");
 
-int mismatches;
-
-CHECK {
-	return sequence->overlap_mismatches <= mismatches;
+static bool check_func(
+	PandaLogProxy logger,
+	const panda_result_seq *sequence,
+	void *user_data) {
+	return sequence->overlap_mismatches <= *(int *) user_data;
 }
 
-INIT {
+OPEN {
+	int mismatches;
 	if (args == NULL || *args == '\0') {
 		panda_log_proxy_write_str(logger, "Please supply the maximum allowed mismatches.\n");
 		return false;
@@ -23,5 +25,8 @@ INIT {
 		panda_log_proxy_write_str(logger, "Bad maximum allowed mismatches.\n");
 		return false;
 	}
+	*check = check_func;
+	*user_data = PANDA_STRUCT_DUP(&mismatches);
+	*destroy = free;
 	return true;
 }

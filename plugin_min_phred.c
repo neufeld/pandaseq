@@ -5,19 +5,20 @@ HELP("Ensure the minimum score of all the output bases is above a certain PHRED 
 
 VER_INFO("1.0");
 
-static char min_score;
-
-CHECK {
+static bool check_func(
+	PandaLogProxy logger,
+	const panda_result_seq *sequence,
+	void *user_data) {
 	size_t it;
 	for (it = 0; it < sequence->sequence_length; it++) {
-		if (panda_result_phred(&sequence->sequence[it]) < min_score) {
+		if (panda_result_phred(&sequence->sequence[it]) < *(int *) user_data) {
 			return false;
 		}
 	}
 	return true;
 }
 
-INIT {
+OPEN {
 	long int value;
 	char *endptr;
 	if (args == NULL || *args == '\0') {
@@ -30,6 +31,8 @@ INIT {
 		panda_log_proxy_write_str(logger, "PHRED score must be a number between 0 and 127.\n");
 		return false;
 	}
-	min_score = value;
+	*check = check_func;
+	*user_data = PANDA_STRUCT_DUP(&value);
+	*destroy = free;
 	return true;
 }

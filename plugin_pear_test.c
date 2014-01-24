@@ -1,41 +1,49 @@
 #include<errno.h>
 #include<math.h>
+#include<stddef.h>
 #include<stdlib.h>
 #include<string.h>
 #include<pandaseq-plugin.h>
 
-double alpha = 1;
-double beta = -1;
-double cutoff = 0.01;
+struct data {
+	double alpha;
+	double beta;
+	double cutoff;
+};
 
 HELP("Use the statistical test from PEAR (Zhang 2013)", "pear_test:alpha=1.0,beta=-1.0,cutoff=0.01");
 
 VER_INFO("1.0");
 
-CHECK {
+static bool check_func(
+	PandaLogProxy logger,
+	const panda_result_seq *sequence,
+	void *user_data) {
+
+	struct data *data = (struct data *) user_data;
 	double product = 1;
 	size_t i;
-	double oes = alpha * (sequence->overlap - sequence->overlap_mismatches) + beta * sequence->overlap_mismatches;
+	double oes = data->alpha * (sequence->overlap - sequence->overlap_mismatches) + data->beta * sequence->overlap_mismatches;
 	for (i = sequence->overlap; i < sequence->forward_length && i < sequence->reverse_length; i++) {
 		double sum = 0;
 		size_t k;
-		size_t l_i = ceil((oes - beta * i) / (alpha - beta)) - 1;
+		size_t l_i = ceil((oes - data->beta * i) / (data->alpha - data->beta)) - 1;
 		for (k = 0; k < l_i; k++) {
 			double i_choose_k = lgamma(i + 1) - lgamma(k + 1) - lgamma(i - k + 1);
 			sum += exp(i_choose_k + k * log(0.25) + (i - k) * log(0.75));
 		}
 		product *= sum;
 	}
-	return cutoff > 1 - product * product;
+	return data->cutoff > 1 - product * product;
 }
 
 struct {
 	const char *name;
-	double *holder;
+	size_t holder;
 } const token[] = {
-	{.name = "alpha",.holder = &alpha},
-	{.name = "beta",.holder = &beta},
-	{.name = "cutoff",.holder = &cutoff},
+	{.name = "alpha",.holder = offsetof(struct data, alpha)},
+	{.name = "beta",.holder = offsetof(struct data, beta)},
+	{.name = "cutoff",.holder = offsetof(struct data, cutoff)},
 	{NULL}
 };
 
@@ -64,19 +72,28 @@ static bool key_processor(
 	size_t it;
 	for (it = 0; token[it].name != NULL; it++) {
 		if (strcmp(key, token[it].name) == 0) {
-			return parse_argument((PandaLogProxy) data, value, token[it].name, token[it].holder);
+			return parse_argument((PandaLogProxy) data, value, token[it].name, (double *) ((char *) data + token[it].holder));
 		}
 	}
 	panda_log_proxy_write_f((PandaLogProxy) data, "Unknown setting: /%s/\n", key);
 }
 
-INIT {
+OPEN {
 	char *value;
+	struct data data;
+
+	data.alpha = 1;
+	data.beta = -1;
+	data.cutoff = 0.01;
+
 	if (!panda_parse_key_values(args, key_processor, logger))
 		return false;
-	if (cutoff < 0 || cutoff > 1) {
-		panda_log_proxy_write_f(logger, "Value %f out of range for p-value cut-off.", cutoff);
+	if (data.cutoff < 0 || data.cutoff > 1) {
+		panda_log_proxy_write_f(logger, "Value %f out of range for p-value cut-off.", data.cutoff);
 		return false;
 	}
+	*check = check_func;
+	*user_data = PANDA_STRUCT_DUP(&data);
+	*destroy = free;
 	return true;
 }

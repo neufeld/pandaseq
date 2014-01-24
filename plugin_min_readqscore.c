@@ -7,9 +7,10 @@ HELP("Ensure the minimum read Q score of an assembled read is above certain valu
 
 VER_INFO("1.0");
 
-static int min_score;
-
-CHECK {
+static bool check_func(
+	PandaLogProxy logger,
+	const panda_result_seq *sequence,
+	void *user_data) {
 	size_t it;
 	int readqscore;
 	/* sum of the error probabilities of the assembled bases */
@@ -19,13 +20,13 @@ CHECK {
 		errorsum += -sequence->sequence[it].p;
 	}
 	readqscore = (int) floor(-10.0 * log10(errorsum / sequence->sequence_length));
-	if (readqscore < min_score) {
+	if (readqscore < *(int *) user_data) {
 		return false;
 	}
 	return true;
 }
 
-INIT {
+OPEN {
 	long int value;
 	char *endptr;
 	if (args == NULL || *args == '\0') {
@@ -38,6 +39,8 @@ INIT {
 		panda_log_proxy_write_str(logger, "Read Q score must be a number greater than 0.\n");
 		return false;
 	}
-	min_score = value;
+	*check = check_func;
+	*user_data = PANDA_STRUCT_DUP(&value);
+	*destroy = false;
 	return true;
 }

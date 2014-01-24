@@ -5,16 +5,22 @@ HELP("Filters sequences based on the contents of a file of ids, one sequence ID 
 
 VER_INFO("1.0");
 
-char buffer[1024];
-PandaSet set;
-
-PRECHECK {
-	return panda_idset_contains(set, id);
+static bool precheck_func(
+	PandaLogProxy logger,
+	const panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length,
+	void *user_data) {
+	return panda_idset_contains((PandaSet) user_data, id);
 }
 
-INIT {
-	FILE *file;
+OPEN {
+	char buffer[1024];
 	bool close = false;
+	FILE *file;
+	PandaSet set;
 
 	if (args == NULL || *args == '\0') {
 		file = stdin;
@@ -46,10 +52,8 @@ INIT {
 	}
 	if (close)
 		fclose(file);
+	*precheck = precheck_func;
+	*user_data = set;
+	*destroy = (PandaDestroy) panda_idset_unref;
 	return true;
-}
-
-CLEANUP {
-	panda_idset_unref(set);
-	return;
 }

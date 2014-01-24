@@ -84,10 +84,6 @@ static void unref_ltdl(
 struct panda_module {
 	volatile size_t refcnt;
 
-	bool (
-		*init) (
-		char *args,
-		PandaLogProxy logger);
 	PandaCheck check;
 	PandaPreCheck precheck;
 	PandaDestroy destroy;
@@ -161,23 +157,9 @@ bool module_precheckseq(
 bool panda_assembler_add_module(
 	PandaAssembler assembler,
 	PandaModule module) {
-	bool init = true;
 	if (module == NULL) {
 		return false;
 	}
-#ifdef HAVE_PTHREAD
-	pthread_mutex_lock(&ref_lock);
-#endif
-	if (module->init != NULL) {
-		init = module->init(module->args, assembler->logger);
-		if (init)
-			module->init = NULL;
-	}
-#ifdef HAVE_PTHREAD
-	pthread_mutex_unlock(&ref_lock);
-#endif
-	if (!init)
-		return false;
 #ifdef HAVE_PTHREAD
 	pthread_mutex_lock(&assembler->mutex);
 #endif
@@ -234,12 +216,25 @@ void panda_assembler_module_stats(
 	}
 }
 
+typedef bool (
+	*PandaPluginOpen) (
+	PandaLogProxy logger,
+	const char *args,
+	PandaPreCheck *precheck,
+	PandaCheck *check,
+	void **user_data,
+	PandaDestroy *destroy);
+
 PandaModule panda_module_load(
+	PandaLogProxy logger,
 	const char *path) {
 	PandaModule m;
 	lt_dlhandle handle;
-	PandaCheck check;
-	PandaPreCheck precheck;
+	PandaPluginOpen opener;
+	PandaCheck check = NULL;
+	PandaPreCheck precheck = NULL;
+	void *user_data;
+	PandaDestroy destroy;
 	size_t name_length;
 	int *api;
 	char **version;
@@ -272,36 +267,33 @@ PandaModule panda_module_load(
 		return NULL;
 	}
 
-	*(void **) (&check) = lt_dlsym(handle, "check");
-	*(void **) (&precheck) = lt_dlsym(handle, "precheck");
-	if (check == NULL && precheck == NULL) {
+	*(void **) (&opener) = lt_dlsym(handle, "opener");
+	if (opener == NULL) {
 		lt_dlclose(handle);
-		fprintf(stderr, "Could not find check or precheck function in %s\n", name);
+		fprintf(stderr, "Could not find opener function in %s\n", name);
 		free(name);
 		unref_ltdl();
 		return NULL;
 	}
 
-	m = malloc(sizeof(struct panda_module));
-	m->api = *api;
-	if (path[name_length] == LT_PATHSEP_CHAR) {
-		size_t len = strlen(path + name_length + 1) + 1;
-		m->args = malloc(len);
-		memcpy(m->args, path + name_length + 1, len);
-	} else {
-		m->args = NULL;
-	}
-	m->check = check;
-	m->precheck = precheck;
-	m->handle = handle;
-	m->name = name;
-	m->refcnt = 1;
-	m->user_data = NULL;
-	m->version = lt_dlsym(handle, "version");
-	*(void **) (&m->destroy) = lt_dlsym(handle, "destroy");
-	*(void **) (&m->init) = lt_dlsym(handle, "init");
+	if ((*opener) (logger, (path[name_length] == LT_PATHSEP_CHAR) ? (path + name_length + 1) : NULL, &precheck, &check, &user_data, &destroy) && (precheck != NULL || check != NULL)) {
+		m = malloc(sizeof(struct panda_module));
+		m->api = *api;
+		m->check = check;
+		m->precheck = precheck;
+		m->handle = handle;
+		m->name = name;
+		m->refcnt = 1;
+		m->user_data = user_data;
+		m->destroy = destroy;
+		m->version = lt_dlsym(handle, "version");
 
-	return m;
+		return m;
+	} else {
+		free(name);
+		unref_ltdl();
+		return NULL;
+	}
 }
 
 PandaModule panda_module_new(
@@ -319,7 +311,6 @@ PandaModule panda_module_new(
 	m->check = check;
 	m->destroy = cleanup;
 	m->handle = NULL;
-	m->init = NULL;
 	m->name = malloc(strlen(name) + 1);
 	memcpy(m->name, name, strlen(name) + 1);
 	m->precheck = precheck;
@@ -415,7 +406,7 @@ static int show_module(
 	void *data) {
 	char buffer[2048];
 	char *base_filename;
-	PandaModule module = panda_module_load(filename);
+	PandaModule module = panda_module_load(NULL, filename);
 	strncpy(buffer, filename, sizeof(buffer));
 	buffer[sizeof(buffer) - 1] = '\0';
 	base_filename = basename(buffer);

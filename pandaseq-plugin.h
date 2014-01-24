@@ -26,11 +26,11 @@
 #                define EXTERN_C_END
 #        endif
 #        include <pandaseq.h>
+#        include <stdlib.h>
+#        include <string.h>
 EXTERN_C_BEGIN
-#        define PRECHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_precheck) (PandaLogProxy logger, const panda_seq_identifier *id, panda_qual *forward, size_t forward_length, panda_qual *reverse, size_t reverse_length)
-#        define CHECK bool PANDACONCAT(PANDASEQ_MODULE,_LTX_check) (PandaLogProxy logger, const panda_result_seq *sequence)
-#        define INIT bool PANDACONCAT(PANDASEQ_MODULE,_LTX_init)(const char *args, PandaLogProxy logger)
-#        define CLEANUP void PANDACONCAT(PANDASEQ_MODULE,_LTX_destroy)(void)
+#        define PANDA_STRUCT_DUP(item) memcpy(malloc(sizeof(*item)), item, sizeof(*item))
+#        define OPEN bool PANDACONCAT(PANDASEQ_MODULE,_LTX_opener) (PandaLogProxy logger, const char *args, PandaPreCheck *precheck, PandaCheck *check, void **user_data, PandaDestroy *destroy)
 #        define HELP(desc, usage) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_desc) = desc; const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_usage) = usage
 #        define VER_INFO(version) const char *PANDACONCAT(PANDASEQ_MODULE,_LTX_version) = version
 	EXTERN_C_END
