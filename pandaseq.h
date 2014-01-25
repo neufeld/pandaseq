@@ -117,6 +117,23 @@ PandaNextSeq panda_create_fastq_reader(
 	PandaDestroy *destroy);
 
 /**
+ * Compare sequences assembled by two different assemblers.
+ *
+ * @reader: (closure reader_data): the source of the sequences.
+ * @control: (closure control_data): the control assembly process.
+ * @experiment: (closure experiment_data): the experiment assembly process.
+ * @supress_quality_diffs: consider nucleotides that have different quality scores to be identical.
+ */
+bool panda_diff(
+	PandaNextSeq reader,
+	void *reader_data,
+	PandaAssemble control,
+	void *control_data,
+	PandaAssemble experiment,
+	void *experiment_data,
+	bool supress_quality_diffs);
+
+/**
  * Wraps an existing stream of reads and clips off reads that have the too-long overlap problem.
  * @inner:(closure inner_data) (scope notified): the stream to wrap.
  * @forward:(array length=forward_length): the sequence to trim from the forward read.

@@ -334,6 +334,20 @@ typedef PandaAlgorithm (
 	const char *args);
 
 /**
+ * Assemble a sequence from read pairs.
+ *
+ * This is normally panda_assembler_next while doing diffs, but it can be mocked out if needed.
+ */
+typedef const panda_result_seq *(
+	*PandaAssemble) (
+	void *user_data,
+	panda_seq_identifier *id,
+	const panda_qual *forward,
+	size_t forward_length,
+	const panda_qual *reverse,
+	size_t reverse_length);
+
+/**
  * Check a sequence after reconstruction for validity.
  */
 typedef bool (

@@ -126,7 +126,7 @@ size_t panda_assembler_add_modules(
 /**
  * Assemble a single sequence pair not drawn from the sequence stream.
  *
- * This works exactly like panda_assembler_next, but instead of asking the PandaSeqNext for the data, it expects this information to be provided.
+ * This works exactly like panda_assembler_next, but instead of asking the PandaNextSeq for the data, it expects this information to be provided.
  * @id: the sequence identifier for this read pair
  * @forward: (array length=forward_length): the forward read
  * @reverse: (array length=reverse_length): the reverse read
