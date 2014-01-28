@@ -1628,6 +1628,11 @@ namespace Panda {
 		[CCode (cname = "panda_stdargs_primers_after")]
 		public const Tweak.assembler primers_after;
 		/**
+		 * The filter plugin loader (-C).
+		 */
+		[CCode(cname = "panda_stdargs_module")]
+		public const Tweak.assembler module;
+		/**
 		 * The minimum length filter switch (-l).
 		 */
 		[CCode (cname = "panda_stdargs_min_len")]
@@ -1746,11 +1751,10 @@ namespace Panda {
 		 * @param assembler the assembler to which to make the adjustments
 		 * @param flag the command line flag specified
 		 * @param argument the command line argument, or null if not set.
-		 * @param is_set whether the command line argument is given in the case of boolean flags.
 		 * @return whether the flag was parsed successfully
 		 */
 		[CCode (cname = "PandaTweakAssembler", has_type_id = false, has_target = false)]
-		public delegate bool AssemblerHandler (Assembler assembler, char flag, owned string? argument, bool is_set);
+		public delegate bool AssemblerHandler (Assembler assembler, char flag, owned string? argument);
 
 		/**
 		 * Process a command-line flag specified by the user.

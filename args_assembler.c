@@ -26,8 +26,7 @@
 static bool set_algorithm(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
+	char *argument) {
 	char *extra;
 	size_t it;
 	if (argument == NULL)
@@ -67,9 +66,8 @@ const panda_tweak_assembler panda_stdargs_algorithm = { 'A', "algorithm:paramete
 static bool set_primers_after(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
-	panda_assembler_set_primers_after(assembler, is_set);
+	char *argument) {
+	panda_assembler_set_primers_after(assembler, true);
 	return true;
 }
 
@@ -83,16 +81,34 @@ bool no_n_check(
 	return sequence->degenerates == 0;
 }
 
+static bool add_module(
+	PandaAssembler assembler,
+	char flag,
+	char *argument) {
+	PandaModule module;
+
+	if (argument == NULL) {
+		return true;
+	}
+	module = panda_module_load(panda_assembler_get_logger(assembler), argument);
+	free(argument);
+	if (module == NULL) {
+		return false;
+	}
+	panda_assembler_add_module(assembler, module);
+	panda_module_unref(module);
+	return true;
+}
+
+const panda_tweak_assembler panda_stdargs_module = { 'C', "filter", "Load a pluggable filter module.", add_module };
+
 static bool set_degenerates(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
-	if (is_set) {
-		PandaModule m = panda_module_new("DEGENERATE", no_n_check, NULL, NULL, NULL);
-		panda_assembler_add_module(assembler, m);
-		panda_module_unref(m);
-	}
+	char *argument) {
+	PandaModule m = panda_module_new("DEGENERATE", no_n_check, NULL, NULL, NULL);
+	panda_assembler_add_module(assembler, m);
+	panda_module_unref(m);
 	return true;
 }
 
@@ -101,8 +117,7 @@ const panda_tweak_assembler panda_stdargs_degenerates = { 'N', NULL, "Eliminate 
 static bool set_threshold(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
+	char *argument) {
 	double threshold = 0.6;
 	if (argument != NULL) {
 		errno = 0;
@@ -161,8 +176,7 @@ static bool set_primer(
 static bool set_primer_group(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
+	char *argument) {
 	if (flag == 'p') {
 		return set_primer(assembler, argument, "forward", panda_assembler_set_forward_trim, panda_assembler_set_forward_primer, panda_nt_from_ascii);
 	} else if (flag == 'q') {
@@ -187,8 +201,7 @@ bool short_check(
 static bool set_short_check(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
+	char *argument) {
 	size_t minlen;
 	PandaModule m;
 
@@ -222,8 +235,7 @@ bool long_check(
 static bool set_long_check(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
+	char *argument) {
 	size_t maxlen;
 	PandaModule m;
 
@@ -250,8 +262,7 @@ const panda_tweak_assembler panda_stdargs_max_len = { 'L', "length", "Maximum le
 static bool set_minimum_overlap(
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set) {
+	char *argument) {
 	int min_overlap;
 
 	if (argument == NULL) {
@@ -274,6 +285,7 @@ const panda_tweak_assembler panda_stdargs_min_overlap = { 'o', "length", "Minumu
 
 const panda_tweak_assembler *const panda_stdargs[] = {
 	&panda_stdargs_algorithm,
+	&panda_stdargs_module,
 	&panda_stdargs_max_len,
 	&panda_stdargs_degenerates,
 	&panda_stdargs_primers_after,

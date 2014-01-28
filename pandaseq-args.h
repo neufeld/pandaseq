@@ -147,6 +147,10 @@ PANDA_EXTERN const panda_tweak_assembler panda_stdargs_algorithm;
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_primers_after;
 /**
+ * The filter plugin loader (-C).
+ */
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_module;
+/**
  * The minimum length filter switch (-l).
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_min_len;

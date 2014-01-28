@@ -48,7 +48,7 @@ int compare_assembler(
 	return *((int *) key) - (*tweak)->flag;
 }
 
-#define BASE_CLEANUP() for (it = 0; it < modules_length; it++) panda_module_unref(modules[it]); for (it = 0; it < assembler_args_length; it++) if(opt_assembler_args[it] > (char*)1) free(opt_assembler_args[it]); DESTROY_STACK(next); DESTROY_STACK(fail); panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(writer_out)
+#define BASE_CLEANUP() for (it = 0; it < opt_assembler_args_length; it++) if(opt_assembler_args[it].arg != NULL) free(opt_assembler_args[it].arg); DESTROY_STACK(next); DESTROY_STACK(fail); panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(writer_out)
 #ifdef HAVE_PTHREAD
 #        define CLEANUP() BASE_CLEANUP(); panda_mux_unref(mux)
 #else
@@ -83,13 +83,13 @@ bool panda_parse_args(
 	bool help = false;
 	size_t it;
 	PandaLogProxy logger = NULL;
-	size_t module_args_length = 0;
-	const char *module_args[MAX_MODULES];
-	size_t modules_length = 0;
-	PandaModule modules[MAX_MODULES];
 	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
 	char optlist[MAX_OPT_LIST + 1];
-	char *opt_assembler_args[assembler_args_length];
+	struct {
+		const panda_tweak_assembler *tweak;
+		char *arg;
+	} opt_assembler_args[50];
+	size_t opt_assembler_args_length = 0;
 	const panda_tweak_general **general_tweak;
 	const panda_tweak_assembler **assembler_tweak;
 	size_t opt_it;
@@ -117,9 +117,9 @@ bool panda_parse_args(
 	MAYBE(output_data) = NULL;
 	MAYBE(output_destroy) = NULL;
 
-	memset(&opt_assembler_args, 0, assembler_args_length * sizeof(char *));
+	memset(&opt_assembler_args, 0, sizeof(opt_assembler_args));
 	optlist[0] = '\0';
-	strncat(optlist, "C:d:Fg:G:hk:vw:W:", MAX_OPT_LIST);
+	strncat(optlist, "d:Fg:G:hk:vw:W:", MAX_OPT_LIST);
 #ifdef HAVE_PTHREAD
 	strncat(optlist, "T:", MAX_OPT_LIST);
 #endif
@@ -159,15 +159,6 @@ bool panda_parse_args(
 	/* Process command line arguments. */
 	while ((c = getopt(args_length, args, optlist)) != -1) {
 		switch (c) {
-		case 'C':
-			if (module_args_length == MAX_MODULES) {
-				fprintf(stderr, "Too many modules.\n");
-				CLEANUP();
-				return false;
-			}
-			module_args[module_args_length] = optarg;
-			module_args_length++;
-			break;
 		case 'd':
 			for (it = 0; it < strlen(optarg); it++) {
 				PandaDebug flag = 0;
@@ -273,12 +264,18 @@ bool panda_parse_args(
 					return false;
 				}
 			} else if ((assembler_tweak = BSEARCH(&c, assembler)) != NULL) {
-				it = assembler_tweak - assembler_args;
+				it = opt_assembler_args_length++;
+				if (it >= (sizeof(opt_assembler_args) / sizeof(opt_assembler_args[0]))) {
+					fprintf(stderr, "Too many command line arguments.\n");
+					CLEANUP();
+					return false;
+				}
+				opt_assembler_args[it].tweak = *assembler_tweak;
 				if ((*assembler_tweak)->takes_argument != NULL) {
-					opt_assembler_args[it] = malloc(strlen(optarg) + 1);
-					memcpy(opt_assembler_args[it], optarg, strlen(optarg) + 1);
+					opt_assembler_args[it].arg = malloc(strlen(optarg) + 1);
+					memcpy(opt_assembler_args[it].arg, optarg, strlen(optarg) + 1);
 				} else {
-					opt_assembler_args[it] = (void *) 1;
+					opt_assembler_args[it].arg = NULL;
 				}
 			} else {
 				fprintf(stderr, "Unhandled command line argument -%c. This is a bug.\n", (int) c);
@@ -289,18 +286,8 @@ bool panda_parse_args(
 	}
 
 	logger = panda_log_proxy_new(writer_err);
-	for (it = 0; it < module_args_length; it++) {
-		if ((modules[it] = panda_module_load(logger, module_args[it])) == NULL) {
-			CLEANUP();
-			return false;
-		}
-		modules_length++;
-	}
 	if (version) {
 		fprintf(stderr, "%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
-		for (it = 0; it < modules_length; it++) {
-			fprintf(stderr, "%s %s\n", panda_module_get_name(modules[it]), panda_module_get_version(modules[it]));
-		}
 		CLEANUP();
 		return false;
 	}
@@ -318,7 +305,6 @@ bool panda_parse_args(
 				fprintf(stderr, " -%c %s", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
 			}
 		}
-		fprintf(stderr, " [-C module1 -C module2 ...]");
 		fprintf(stderr, " [-d flags]");
 		fprintf(stderr, " [-k kmers]");
 		fprintf(stderr, " [-F]");
@@ -355,7 +341,6 @@ bool panda_parse_args(
 			}
 		}
 		fprintf(stderr, "\n");
-		fprintf(stderr, "\t-C module\tLoad a sequence validation module.\n");
 		fprintf(stderr, "\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n");
 		fprintf(stderr, "\t\t(R)econstruction detail.\n");
 		fprintf(stderr, "\t\tSequence (b)uilding information.\n");
@@ -400,9 +385,6 @@ bool panda_parse_args(
 			fprintf(stderr, ", %s", panda_algorithms[it]->name);
 		}
 		fprintf(stderr, ".\n");
-		for (it = 0; it < modules_length; it++) {
-			fprintf(stderr, "%s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
-		}
 		CLEANUP();
 		module_show_all();
 		return false;
@@ -449,10 +431,10 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
-	for (it = 0; it < assembler_args_length; it++) {
-		char *arg = opt_assembler_args[it];
-		opt_assembler_args[it] = NULL;
-		if (!assembler_args[it]->setup(assembler, assembler_args[it]->flag, (assembler_args[it]->takes_argument != NULL) ? arg : NULL, arg != NULL)) {
+	for (it = 0; it < opt_assembler_args_length; it++) {
+		char *arg = opt_assembler_args[it].arg;
+		opt_assembler_args[it].arg = NULL;
+		if (!(opt_assembler_args[it].tweak->setup) (assembler, opt_assembler_args[it].tweak->flag, arg)) {
 			CLEANUP();
 			return false;
 		}
@@ -470,12 +452,6 @@ bool panda_parse_args(
 		fail = NULL;
 		fail_data = NULL;
 		fail_destroy = NULL;
-	}
-	it = panda_assembler_add_modules(assembler, modules, modules_length);
-	if (it != modules_length) {
-		fprintf(stderr, "Problem with %s(%s) %s\n\t%s\n", panda_module_get_name(modules[it]), panda_module_get_description(modules[it]), panda_module_get_version(modules[it]), panda_module_get_usage(modules[it]));
-		CLEANUP();
-		return false;
 	}
 	if (out_mux) {
 #if HAVE_PTHREAD

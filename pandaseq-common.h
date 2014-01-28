@@ -559,15 +559,13 @@ typedef bool (
  * @assembler: the assembler to which to make the adjustments
  * @flag: the command line flag specified
  * @argument: (transfer full) (allow-none): the command line argument, or null if not set.
- * @is_set: whether the command line argument is given in the case of boolean flags.
  * Returns: whether the flag was parsed successfully
  */
 typedef bool (
 	*PandaTweakAssembler) (
 	PandaAssembler assembler,
 	char flag,
-	char *argument,
-	bool is_set);
+	char *argument);
 
 /**
  * Process a command-line flag specified by the user.
