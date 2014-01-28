@@ -20,7 +20,7 @@ static bool check_func(
 		errorsum += -sequence->sequence[it].p;
 	}
 	readqscore = (int) floor(-10.0 * log10(errorsum / sequence->sequence_length));
-	if (readqscore < *(int *) user_data) {
+	if (readqscore < *(long int *) user_data) {
 		return false;
 	}
 	return true;
@@ -41,6 +41,6 @@ OPEN {
 	}
 	*check = check_func;
 	*user_data = PANDA_STRUCT_DUP(&value);
-	*destroy = false;
+	*destroy = free;
 	return true;
 }
