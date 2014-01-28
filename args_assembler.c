@@ -52,6 +52,7 @@ static bool set_algorithm(
 				return false;
 			}
 			panda_assembler_set_algorithm(assembler, algo);
+			panda_algorithm_unref(algo);
 			free(argument);
 			return true;
 		}
