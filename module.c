@@ -91,7 +91,6 @@ struct panda_module {
 
 	lt_dlhandle handle;
 	char *name;
-	char *args;
 
 	int api;
 	char **version;
@@ -116,7 +115,7 @@ void module_init(
 		PandaModule module = assembler->modules[it];
 		if (module->handle != NULL) {
 			const lt_dlinfo *info = lt_dlgetinfo(module->handle);
-			LOGV(PANDA_CODE_MOD_INFO, "%s(%s:%d)\t%s", info == NULL ? "unknown" : info->name, module->version == NULL ? "?" : *(module->version), module->api, module->args);
+			LOGV(PANDA_CODE_MOD_INFO, "%s(%s:%d)", info == NULL ? "unknown" : info->name, module->version == NULL ? "?" : *(module->version), module->api);
 			assembler->rejected[it] = 0;
 		}
 	}
@@ -307,7 +306,6 @@ PandaModule panda_module_new(
 		return NULL;
 	m = malloc(sizeof(struct panda_module));
 	m->api = PANDA_API;
-	m->args = NULL;
 	m->check = check;
 	m->destroy = cleanup;
 	m->handle = NULL;
@@ -349,19 +347,12 @@ void panda_module_unref(
 			module->destroy(module->user_data);
 		if (module->name != NULL)
 			free(module->name);
-		if (module->args != NULL)
-			free(module->args);
 		if (module->handle != NULL) {
 			lt_dlclose(module->handle);
 			unref_ltdl();
 		}
 		free(module);
 	}
-}
-
-const char *panda_module_get_args(
-	PandaModule module) {
-	return module->args;
 }
 
 int panda_module_get_api(

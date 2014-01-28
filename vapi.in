@@ -841,16 +841,6 @@ namespace Panda {
 		}
 
 		/**
-		 * The arguments passed on loading of a module of a module.
-		 *
-		 * This is only appropriate for loaded modules.
-		 */
-		public string? args {
-			[CCode (cname = "panda_module_get_args")]
-			get;
-		}
-
-		/**
 		 * The description of a module.
 		 *
 		 * This is only appropriate for loaded modules.
