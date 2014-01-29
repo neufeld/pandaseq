@@ -31,8 +31,12 @@ static double match_probability(
 	bool match,
 	char a,
 	char b) {
-	int max = (a >= b) ? a : b;
-	return qual_score[PHREDCLAMP(max)];
+	if (match) {
+		char max = (a >= b) ? a : b;
+		return qual_score[PHREDCLAMP(max)];
+	} else {
+		return qual_mismatch_assembled_rdp_mle[PHREDCLAMP(a)][PHREDCLAMP(b)];
+	}
 }
 
 static double overlap_probability(
@@ -59,9 +63,9 @@ static double overlap_probability(
 
 		/* when two bases match, the assumption that the forward and reverse bases are from independent observations doesn't work with the MiSeq mock community data we tested. Instead, the higher score of the two raw base q scores is close to the predicated error rate */
 		if (ismatch) {
-			probability += qual_score[(fqual >= rqual) ? fqual : rqual] - qual_nn_simple_bayesian;
+			probability += qual_match_simple_bayesian[fqual][rqual] - qual_nn_simple_bayesian;
 		} else {
-			return qual_mismatch_rdp_mle[fqual][rqual] - qual_nn_simple_bayesian;
+			probability += qual_mismatch_rdp_mle[fqual][rqual] - qual_nn_simple_bayesian;
 		}
 	}
 	return probability;

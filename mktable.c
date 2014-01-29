@@ -67,6 +67,13 @@ double mismatch_rdp(
 	double p,
 	double q,
 	void *data) {
+	return ((1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9);
+}
+
+double mismatch_rdp_assembled(
+	double p,
+	double q,
+	void *data) {
 
 	double min = p <= q ? p : q;
 	return (min - p * q / 3.0) / (p + q - 4.0 / 3.0 * p * q);
@@ -88,6 +95,7 @@ int main(
 	panda_tbld_matrix_prob(t_bld, "qual_match_pear", match_pear, NULL, true);
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_pear", mismatch_pear, NULL, true);
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_rdp_mle", mismatch_rdp, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_mismatch_assembled_rdp_mle", mismatch_rdp_assembled, NULL, true);
 	panda_tbld_array_prob(t_bld, "qual_score", score, NULL, false);
 	panda_tbld_array_prob(t_bld, "qual_score_err", score_err, NULL, false);
 
