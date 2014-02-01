@@ -75,8 +75,9 @@ double mismatch_rdp_assembled(
 	double q,
 	void *data) {
 
-	double min = p <= q ? p : q;
-	return (min - p * q / 3.0) / (p + q - 4.0 / 3.0 * p * q);
+	double min = (p <= q) ? p : q;
+	double value = 1 - (min - p * q / 3.0) / (p + q - 4.0 / 3.0 * p * q);
+	return (value == 0) ? DBL_MIN : value;
 }
 
 int main(
