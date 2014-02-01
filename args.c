@@ -48,15 +48,10 @@ int compare_assembler(
 	return *((int *) key) - (*tweak)->flag;
 }
 
-#define BASE_CLEANUP() for (it = 0; it < opt_assembler_args_length; it++) if(opt_assembler_args[it].arg != NULL) free(opt_assembler_args[it].arg); DESTROY_STACK(next); DESTROY_STACK(fail); panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(writer_out)
-#ifdef HAVE_PTHREAD
-#        define CLEANUP() BASE_CLEANUP(); panda_mux_unref(mux)
-#else
-#        define CLEANUP() BASE_CLEANUP()
-#endif
-
+#define CLEANUP() for (it = 0; it < *options_used; it++) if(options[it].arg != NULL) free(options[it].arg); *options_used = 0;
 #define BSEARCH(item, type) bsearch(item, PANDACONCAT(type, _args), PANDACONCAT(type, _args_length), sizeof(PANDACONCAT(panda_tweak_, type) *), PANDACONCAT(compare_, type))
-bool panda_parse_args(
+
+bool panda_dispatch_args(
 	char *const *args,
 	int args_length,
 	const panda_tweak_assembler *const *const assembler_args,
@@ -64,67 +59,21 @@ bool panda_parse_args(
 	const panda_tweak_general *const *const general_args,
 	size_t general_args_length,
 	PandaTweakGeneral tweak,
-	PandaOpener opener,
-	PandaSetup assembler_setup,
 	void *user_data,
-	PandaAssembler *out_assembler,
-	PandaMux *out_mux,
-	int *out_threads,
-	PandaOutputSeq * output,
-	void **output_data,
-	PandaDestroy *output_destroy) {
-	MANAGED_STACK(PandaNextSeq,
-		next);
-	MANAGED_STACK(PandaFailAlign,
-		fail);
-	PandaAssembler assembler = NULL;
+	panda_tweak_assembler_opt * options,
+	size_t options_length,
+	size_t *options_used) {
+
 	int c;
-	bool fastq = false;
 	bool help = false;
 	size_t it;
-	PandaLogProxy logger = NULL;
-	size_t num_kmers = PANDA_DEFAULT_NUM_KMERS;
 	char optlist[MAX_OPT_LIST + 1];
-	struct {
-		const panda_tweak_assembler *tweak;
-		char *arg;
-	} opt_assembler_args[50];
-	size_t opt_assembler_args_length = 0;
 	const panda_tweak_general **general_tweak;
 	const panda_tweak_assembler **assembler_tweak;
 	size_t opt_it;
-	bool version = false;
-	PandaWriter writer_err;
-	PandaWriter writer_out;
-#ifdef HAVE_PTHREAD
-	PandaMux mux = NULL;
-	int threads = panda_get_default_worker_threads();
-#endif
-#if HAVE_UNAME_SYSCALL
-	struct utsname uname_info;
-#endif
-	writer_out = panda_writer_new_stdout();
-	writer_err = panda_writer_new_stderr();
 
-	MAYBE(out_mux) = NULL;
-	MAYBE(out_assembler) = NULL;
-#ifdef HAVE_PTHREAD
-	MAYBE(out_threads) = threads;
-#else
-	MAYBE(out_threads) = 1;
-#endif
-	MAYBE(output) = NULL;
-	MAYBE(output_data) = NULL;
-	MAYBE(output_destroy) = NULL;
-
-	memset(&opt_assembler_args, 0, sizeof(opt_assembler_args));
-	optlist[0] = '\0';
-	strncat(optlist, "d:Fg:G:hk:vw:W:", MAX_OPT_LIST);
-#ifdef HAVE_PTHREAD
-	strncat(optlist, "T:", MAX_OPT_LIST);
-#endif
-
-	opt_it = strlen(optlist);
+	opt_it = 0;
+	*options_used = 0;
 
 	c = '\0';
 	for (it = 0; it < general_args_length; it++) {
@@ -158,90 +107,7 @@ bool panda_parse_args(
 
 	/* Process command line arguments. */
 	while ((c = getopt(args_length, args, optlist)) != -1) {
-		switch (c) {
-		case 'd':
-			for (it = 0; it < strlen(optarg); it++) {
-				PandaDebug flag = 0;
-				switch (tolower(optarg[it])) {
-				case 'b':
-					flag = PANDA_DEBUG_BUILD;
-					break;
-				case 'f':
-					flag = PANDA_DEBUG_FILE;
-					break;
-				case 's':
-					flag = PANDA_DEBUG_STAT;
-					break;
-				case 'k':
-					flag = PANDA_DEBUG_KMER;
-					break;
-				case 'r':
-					flag = PANDA_DEBUG_RECON;
-					break;
-				case 'm':
-					flag = PANDA_DEBUG_MISMATCH;
-					break;
-				default:
-					fprintf(stderr, "Ignoring unknown debug flag `%c'.\n", (int) optarg[it]);
-					continue;
-				}
-				if (islower(optarg[it])) {
-					panda_debug_flags &= ~flag;
-				} else {
-					panda_debug_flags |= flag;
-				}
-			}
-			break;
-		case 'F':
-			fastq = true;
-			break;
-		case 'g':
-		case 'G':
-			panda_writer_unref(writer_err);
-			writer_err = panda_writer_open_file(optarg, isupper(c));
-			if (writer_err == NULL) {
-				perror(optarg);
-				CLEANUP();
-				return false;
-			}
-			break;
-		case 'h':
-			help = true;
-			break;
-		case 'k':
-			errno = 0;
-			num_kmers = (size_t) strtol(optarg, NULL, 10);
-			if (errno != 0 || num_kmers < 0 || num_kmers > PANDA_MAX_LEN) {
-				fprintf(stderr, "Bad k-mer list length.\n");
-				CLEANUP();
-				return false;
-			}
-			break;
-#ifdef HAVE_PTHREAD
-		case 'T':
-			errno = 0;
-			threads = (size_t) strtol(optarg, NULL, 10);
-			if (errno != 0 || threads < 1) {
-				fprintf(stderr, "Bad number of threads.\n");
-				CLEANUP();
-				return false;
-			}
-			break;
-#endif
-		case 'w':
-		case 'W':
-			panda_writer_unref(writer_out);
-			writer_out = panda_writer_open_file(optarg, isupper(c));
-			if (writer_out == NULL) {
-				perror(optarg);
-				CLEANUP();
-				return false;
-			}
-			break;
-		case 'v':
-			version = true;
-			break;
-		case '?':
+		if (c == '?') {
 			if (strchr(optlist, optopt) != NULL) {
 				if ((general_tweak = BSEARCH(&optopt, general)) != NULL) {
 					fprintf(stderr, "Option -%c requires an argument %s.\n", optopt, (*general_tweak)->takes_argument);
@@ -257,25 +123,25 @@ bool panda_parse_args(
 			}
 			CLEANUP();
 			return false;
-		default:
+		} else {
 			if ((general_tweak = BSEARCH(&c, general)) != NULL) {
 				if (!tweak(user_data, c, (*general_tweak)->takes_argument != NULL ? optarg : NULL)) {
 					CLEANUP();
 					return false;
 				}
 			} else if ((assembler_tweak = BSEARCH(&c, assembler)) != NULL) {
-				it = opt_assembler_args_length++;
-				if (it >= (sizeof(opt_assembler_args) / sizeof(opt_assembler_args[0]))) {
+				it = (*options_used)++;
+				if (it >= options_length) {
 					fprintf(stderr, "Too many command line arguments.\n");
 					CLEANUP();
 					return false;
 				}
-				opt_assembler_args[it].tweak = *assembler_tweak;
+				options[it].tweak = *assembler_tweak;
 				if ((*assembler_tweak)->takes_argument != NULL) {
-					opt_assembler_args[it].arg = malloc(strlen(optarg) + 1);
-					memcpy(opt_assembler_args[it].arg, optarg, strlen(optarg) + 1);
+					options[it].arg = malloc(strlen(optarg) + 1);
+					memcpy(options[it].arg, optarg, strlen(optarg) + 1);
 				} else {
-					opt_assembler_args[it].arg = NULL;
+					options[it].arg = NULL;
 				}
 			} else {
 				fprintf(stderr, "Unhandled command line argument -%c. This is a bug.\n", (int) c);
@@ -284,125 +150,313 @@ bool panda_parse_args(
 			}
 		}
 	}
+	return true;
+}
 
-	logger = panda_log_proxy_new(writer_err);
-	if (version) {
+#undef CLEANUP
+
+void panda_args_help(
+	const char *binary_name,
+	const panda_tweak_assembler *const *const assembler_args,
+	size_t assembler_args_length,
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length) {
+	size_t it;
+	size_t general_it = 0;
+	size_t assembler_it = 0;
+
+	fprintf(stderr, "%s <%s>\nUsage: %s", PACKAGE_STRING, PACKAGE_BUGREPORT, binary_name);
+	for (general_it = 0; general_it < general_args_length; general_it++) {
+		if (general_args[general_it]->takes_argument != NULL && !general_args[general_it]->optional) {
+			fprintf(stderr, " -%c %s", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
+		}
+	}
+	general_it = 0;
+	while (general_it < general_args_length || assembler_it < assembler_args_length) {
+		if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
+			assembler_it++;
+			continue;
+		}
+		if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
+
+			if (general_args[general_it]->takes_argument != NULL) {
+				if (general_args[general_it]->optional) {
+					fprintf(stderr, " [-%c %s]", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
+				}
+			} else {
+				fprintf(stderr, " [-%c]", (int) general_args[general_it]->flag);
+			}
+			general_it++;
+		} else {
+			if (assembler_args[assembler_it]->takes_argument != NULL) {
+				fprintf(stderr, " [-%c %s]", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument);
+			} else {
+				fprintf(stderr, " [-%c]", (int) assembler_args[assembler_it]->flag);
+			}
+			assembler_it++;
+		}
+	}
+	fprintf(stderr, "\n");
+	general_it = 0;
+	assembler_it = 0;
+	while (general_it < general_args_length || assembler_it < assembler_args_length) {
+		if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
+			assembler_it++;
+			continue;
+		}
+		if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
+			if (general_args[general_it]->takes_argument != NULL) {
+				fprintf(stderr, "\t-%c %s\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help);
+			} else {
+				fprintf(stderr, "\t-%c\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->help);
+			}
+			general_it++;
+		} else {
+			if (assembler_args[assembler_it]->takes_argument != NULL) {
+				fprintf(stderr, "\t-%c %s\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument, assembler_args[assembler_it]->help);
+			} else {
+				fprintf(stderr, "\t-%c\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->help);
+			}
+			assembler_it++;
+		}
+	}
+	fprintf(stderr, "Known algorithms are %s", panda_algorithms[0]->name);
+	for (it = 1; it < panda_algorithms_length; it++) {
+		fprintf(stderr, ", %s", panda_algorithms[it]->name);
+	}
+	fprintf(stderr, ".\n");
+	module_show_all();
+}
+
+struct data {
+	bool fastq;
+	bool help;
+	size_t num_kmers;
+	bool version;
+	PandaWriter writer_err;
+	PandaWriter writer_out;
+#ifdef HAVE_PTHREAD
+	int threads;
+#endif
+	PandaTweakGeneral general;
+	void *general_data;
+};
+
+static const panda_tweak_general logging = {.flag = 'd',.optional = true,.takes_argument = "flags",.help = "Control the logging messages. Capital to enable; small to disable.\n\t\t(R)econstruction detail.\n\t\tSequence (b)uilding information.\n\t\t(F)ile processing.\n\t\t(k)-mer table construction.\n\t\tShow every (m)ismatch.\n\t\tOptional (s)tatistics." };
+static const panda_tweak_general kmers = {.flag = 'k',.optional = true,.takes_argument = "kmers",.help = "The number of k-mers in the table." };
+static const panda_tweak_general fastq = {.flag = 'F',.optional = true,.takes_argument = NULL,.help = "Output FASTQ instead of FASTA." };
+static const panda_tweak_general logfile = {.flag = 'g',.optional = true,.takes_argument = "log.txt",.help = "Output log to a text file." };
+static const panda_tweak_general logfile_bz = {.flag = 'G',.optional = true,.takes_argument = "log.txt.bz2",.help = "Output log to a BZip2-compressed text file." };
+
+#		ifdef HAVE_PTHREAD
+static const panda_tweak_general threads = {.flag = 'T',.optional = true,.takes_argument = "threads",.help = "Run with a number of parallel threads." };
+#		endif
+static const panda_tweak_general outputfile = {.flag = 'w',.optional = true,.takes_argument = "output.fasta",.help = "Output seqences to a FASTA (or FASTQ) file." };
+static const panda_tweak_general outputfile_bz = {.flag = 'W',.optional = true,.takes_argument = "output.fasta.bz2",.help = "Output seqences to a BZip2-compressed FASTA (or FASTQ) file." };
+static const panda_tweak_general help = {.flag = 'h',.optional = true,.takes_argument = NULL,.help = "Show this delightful nonsense." };
+static const panda_tweak_general version = {.flag = 'v',.optional = true,.takes_argument = NULL,.help = "Show version and exit." };
+
+static const panda_tweak_general *common_args[] = { &logging, &kmers, &fastq, &logfile, &logfile_bz,
+#		ifdef HAVE_PTHREAD
+	&threads,
+#		endif
+	&outputfile,
+	&outputfile_bz, &help, &version
+};
+
+static bool common_tweak_general(
+	void *user_data,
+	char flag,
+	const char *argument) {
+
+	struct data *data = (struct data *) user_data;
+	size_t it;
+
+	switch (flag) {
+	case 'd':
+		for (it = 0; it < strlen(argument); it++) {
+			PandaDebug flag = 0;
+			switch (tolower(argument[it])) {
+			case 'b':
+				flag = PANDA_DEBUG_BUILD;
+				break;
+			case 'f':
+				flag = PANDA_DEBUG_FILE;
+				break;
+			case 's':
+				flag = PANDA_DEBUG_STAT;
+				break;
+			case 'k':
+				flag = PANDA_DEBUG_KMER;
+				break;
+			case 'r':
+				flag = PANDA_DEBUG_RECON;
+				break;
+			case 'm':
+				flag = PANDA_DEBUG_MISMATCH;
+				break;
+			default:
+				fprintf(stderr, "Ignoring unknown debug flag `%c'.\n", (int) argument[it]);
+				continue;
+			}
+			if (islower(argument[it])) {
+				panda_debug_flags &= ~flag;
+			} else {
+				panda_debug_flags |= flag;
+			}
+		}
+		return true;
+	case 'F':
+		data->fastq = true;
+		return true;
+	case 'g':
+	case 'G':
+		panda_writer_unref(data->writer_err);
+		data->writer_err = panda_writer_open_file(argument, isupper(flag));
+		if (data->writer_err == NULL) {
+			perror(argument);
+			return false;
+		}
+		return true;
+	case 'h':
+		data->help = true;
+		return true;
+	case 'k':
+		errno = 0;
+		data->num_kmers = (size_t) strtol(argument, NULL, 10);
+		if (errno != 0 || data->num_kmers < 0 || data->num_kmers > PANDA_MAX_LEN) {
+			fprintf(stderr, "Bad k-mer list length.\n");
+			return false;
+		}
+		return true;
+#ifdef HAVE_PTHREAD
+	case 'T':
+		errno = 0;
+		data->threads = (size_t) strtol(argument, NULL, 10);
+		if (errno != 0 || data->threads < 1) {
+			fprintf(stderr, "Bad number of threads.\n");
+			return false;
+		}
+		return true;
+#endif
+	case 'w':
+	case 'W':
+		panda_writer_unref(data->writer_out);
+		data->writer_out = panda_writer_open_file(argument, isupper(flag));
+		if (data->writer_out == NULL) {
+			perror(argument);
+			return false;
+		}
+		return true;
+	case 'v':
+		data->version = true;
+		return true;
+	default:
+		return data->general(data->general_data, flag, argument);
+	}
+}
+
+#define BASE_CLEANUP() for (it = 0; it < options_used; it++) if(options[it].arg != NULL) free(options[it].arg); DESTROY_STACK(next); DESTROY_STACK(fail); panda_assembler_unref(assembler); panda_log_proxy_unref(logger); panda_writer_unref(data.writer_out); panda_writer_unref(data.writer_err); free(combined_general_args)
+#ifdef HAVE_PTHREAD
+#        define CLEANUP() BASE_CLEANUP(); panda_mux_unref(mux)
+#else
+#        define CLEANUP() BASE_CLEANUP()
+#endif
+
+bool panda_parse_args(
+	char *const *args,
+	int args_length,
+	const panda_tweak_assembler *const *const assembler_args,
+	size_t assembler_args_length,
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length,
+	PandaTweakGeneral tweak,
+	PandaOpener opener,
+	PandaSetup assembler_setup,
+	void *user_data,
+	PandaAssembler *out_assembler,
+	PandaMux *out_mux,
+	int *out_threads,
+	PandaOutputSeq * output,
+	void **output_data,
+	PandaDestroy *output_destroy) {
+
+	PandaAssembler assembler = NULL;
+	const panda_tweak_general **combined_general_args = NULL;
+	size_t combined_general_args_length = 0;
+	struct data data;
+	PandaLogProxy logger = NULL;
+	size_t it;
+#ifdef HAVE_PTHREAD
+	PandaMux mux = NULL;
+#endif
+	MANAGED_STACK(PandaFailAlign,
+		fail);
+	MANAGED_STACK(PandaNextSeq,
+		next);
+	panda_tweak_assembler_opt options[50];
+	size_t options_used;
+#if HAVE_UNAME_SYSCALL
+	struct utsname uname_info;
+#endif
+
+	data.general = tweak;
+	data.general_data = user_data;
+	data.fastq = false;
+	data.help = false;
+	data.num_kmers = PANDA_DEFAULT_NUM_KMERS;
+	data.version = false;
+	data.writer_out = panda_writer_new_stdout();
+	data.writer_err = panda_writer_new_stderr();
+#ifdef HAVE_PTHREAD
+	data.threads = panda_get_default_worker_threads();
+#endif
+
+	MAYBE(out_mux) = NULL;
+	MAYBE(out_assembler) = NULL;
+#ifdef HAVE_PTHREAD
+	MAYBE(out_threads) = data.threads;
+#else
+	MAYBE(out_threads) = 1;
+#endif
+	MAYBE(output) = NULL;
+	MAYBE(output_data) = NULL;
+	MAYBE(output_destroy) = NULL;
+
+	/* Process command line arguments. */
+	panda_tweak_general_append(&combined_general_args, &combined_general_args_length, general_args, general_args_length);
+	panda_tweak_general_append(&combined_general_args, &combined_general_args_length, common_args, sizeof(common_args) / sizeof(common_args[0]));
+	if (!panda_dispatch_args(args, args_length, assembler_args, assembler_args_length, combined_general_args, combined_general_args_length, common_tweak_general, &data, options, sizeof(options) / sizeof(options[0]), &options_used)) {
+		CLEANUP();
+		return false;
+	}
+
+	logger = panda_log_proxy_new(data.writer_err);
+	if (data.version) {
 		fprintf(stderr, "%s <%s>\n", PACKAGE_STRING, PACKAGE_BUGREPORT);
 		CLEANUP();
 		return false;
 	}
-	panda_writer_set_slave(writer_out, writer_err);
+	panda_writer_set_slave(data.writer_out, data.writer_err);
 
-	if (help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
-		size_t general_it = 0;
-		size_t assembler_it = 0;
-
-		panda_writer_unref(writer_err);
-
-		fprintf(stderr, "%s <%s>\nUsage: %s", PACKAGE_STRING, PACKAGE_BUGREPORT, args[0]);
-		for (general_it = 0; general_it < general_args_length; general_it++) {
-			if (general_args[general_it]->takes_argument != NULL && !general_args[general_it]->optional) {
-				fprintf(stderr, " -%c %s", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
-			}
-		}
-		fprintf(stderr, " [-d flags]");
-		fprintf(stderr, " [-k kmers]");
-		fprintf(stderr, " [-F]");
-		fprintf(stderr, " [-g log.txt]");
-		fprintf(stderr, " [-G log.txt.bz2]");
-#		ifdef HAVE_PTHREAD
-		fprintf(stderr, " [-T threads]");
-#		endif
-		fprintf(stderr, " [-w output.fasta]");
-		fprintf(stderr, " [-W output.fasta.bz2]");
-		general_it = 0;
-		while (general_it < general_args_length || assembler_it < assembler_args_length) {
-			if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
-				assembler_it++;
-				continue;
-			}
-			if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
-
-				if (general_args[general_it]->takes_argument != NULL) {
-					if (general_args[general_it]->optional) {
-						fprintf(stderr, " [-%c %s]", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument);
-					}
-				} else {
-					fprintf(stderr, " [-%c]", (int) general_args[general_it]->flag);
-				}
-				general_it++;
-			} else {
-				if (assembler_args[assembler_it]->takes_argument != NULL) {
-					fprintf(stderr, " [-%c %s]", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument);
-				} else {
-					fprintf(stderr, " [-%c]", (int) assembler_args[assembler_it]->flag);
-				}
-				assembler_it++;
-			}
-		}
-		fprintf(stderr, "\n");
-		fprintf(stderr, "\t-d flags\tControl the logging messages. Capital to enable; small to disable.\n");
-		fprintf(stderr, "\t\t(R)econstruction detail.\n");
-		fprintf(stderr, "\t\tSequence (b)uilding information.\n");
-		fprintf(stderr, "\t\t(F)ile processing.\n");
-		fprintf(stderr, "\t\t(k)-mer table construction.\n");
-		fprintf(stderr, "\t\tShow every (m)ismatch.\n");
-		fprintf(stderr, "\t\tOptional (s)tatistics.\n");
-		fprintf(stderr, "\t-k kmers\tThe number of k-mers in the table.\n");
-		fprintf(stderr, "\t-F\tOutput FASTQ instead of FASTA.\n");
-		fprintf(stderr, "\t-g log.txt\tOutput log to a text file.\n");
-		fprintf(stderr, "\t-G log.txt.bz2\tOutput log to a BZip2-compressed text file.\n");
-#		ifdef HAVE_PTHREAD
-		fprintf(stderr, "\t-T thread\tRun with a number of parallel threads.\n");
-#		endif
-		fprintf(stderr, "\t-w output.fasta\tOutput seqences to a FASTA (or FASTQ) file.\n");
-		fprintf(stderr, "\t-W output.fasta.bz2\tOutput seqences to a BZip2-compressed FASTA (or FASTQ) file.\n");
-		general_it = 0;
-		assembler_it = 0;
-		while (general_it < general_args_length || assembler_it < assembler_args_length) {
-			if (general_it < general_args_length && assembler_it < assembler_args_length && general_args[general_it]->flag == assembler_args[assembler_it]->flag) {
-				assembler_it++;
-				continue;
-			}
-			if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
-				if (general_args[general_it]->takes_argument != NULL) {
-					fprintf(stderr, "\t-%c %s\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help);
-				} else {
-					fprintf(stderr, "\t-%c\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->help);
-				}
-				general_it++;
-			} else {
-				if (assembler_args[assembler_it]->takes_argument != NULL) {
-					fprintf(stderr, "\t-%c %s\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument, assembler_args[assembler_it]->help);
-				} else {
-					fprintf(stderr, "\t-%c\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->help);
-				}
-				assembler_it++;
-			}
-		}
-		fprintf(stderr, "Known algorithms are %s", panda_algorithms[0]->name);
-		for (it = 1; it < panda_algorithms_length; it++) {
-			fprintf(stderr, ", %s", panda_algorithms[it]->name);
-		}
-		fprintf(stderr, ".\n");
+	if (data.help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
+		panda_args_help(args[0], assembler_args, assembler_args_length, combined_general_args, combined_general_args_length);
 		CLEANUP();
-		module_show_all();
 		return false;
 	}
 #ifdef HAVE_PTHREAD
-	next = panda_create_async_reader(next, next_data, next_destroy, threads, &next_data, &next_destroy);
+	next = panda_create_async_reader(next, next_data, next_destroy, data.threads, &next_data, &next_destroy);
 #endif
 	panda_log_proxy_write_str(logger, "INFO\tVER\t" PACKAGE_STRING " <" PACKAGE_BUGREPORT ">");
 
 #if HAVE_UNAME_SYSCALL
 	if (uname(&uname_info) == 0) {
-		panda_writer_append(writer_err, "INFO\tUNAME\t%s %s %s %s\n", uname_info.sysname, uname_info.release, uname_info.version, uname_info.machine);
-		panda_writer_commit(writer_err);
+		panda_writer_append(data.writer_err, "INFO\tUNAME\t%s %s %s %s\n", uname_info.sysname, uname_info.release, uname_info.version, uname_info.machine);
+		panda_writer_commit(data.writer_err);
 	} else {
 		panda_log_proxy_perror(logger, "uname");
 	}
 #endif
-	panda_writer_unref(writer_err);
 
 	for (it = 0; it < args_length; it++) {
 		char buf[2048];
@@ -418,7 +472,7 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
-	assembler = panda_mux_create_assembler_kmer(mux, num_kmers);
+	assembler = panda_mux_create_assembler_kmer(mux, data.num_kmers);
 
 #else
 	assembler = panda_assembler_new_kmer(next, next_data, next_destroy, logger, num_kmers);
@@ -431,10 +485,10 @@ bool panda_parse_args(
 		CLEANUP();
 		return false;
 	}
-	for (it = 0; it < opt_assembler_args_length; it++) {
-		char *arg = opt_assembler_args[it].arg;
-		opt_assembler_args[it].arg = NULL;
-		if (!(opt_assembler_args[it].tweak->setup) (assembler, opt_assembler_args[it].tweak->flag, arg)) {
+	for (it = 0; it < options_used; it++) {
+		char *arg = options[it].arg;
+		options[it].arg = NULL;
+		if (!(options[it].tweak->setup) (assembler, options[it].tweak->flag, arg)) {
 			CLEANUP();
 			return false;
 		}
@@ -467,14 +521,14 @@ bool panda_parse_args(
 		assembler = NULL;
 	}
 #if HAVE_PTHREAD
-	MAYBE(out_threads) = threads;
+	MAYBE(out_threads) = data.threads;
 #else
 	MAYBE(out_threads) = 1;
 #endif
-	MAYBE(output) = (PandaOutputSeq) (fastq ? panda_output_fastq : panda_output_fasta);
-	MAYBE(output_data) = writer_out;
+	MAYBE(output) = (PandaOutputSeq) (data.fastq ? panda_output_fastq : panda_output_fasta);
+	MAYBE(output_data) = data.writer_out;
 	MAYBE(output_destroy) = (PandaDestroy) panda_writer_unref;
-	writer_out = NULL;
+	data.writer_out = NULL;
 
 	CLEANUP();
 	return true;

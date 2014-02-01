@@ -1630,7 +1630,7 @@ namespace Panda {
 		/**
 		 * The filter plugin loader (-C).
 		 */
-		[CCode(cname = "panda_stdargs_module")]
+		[CCode (cname = "panda_stdargs_module")]
 		public const Tweak.assembler module;
 		/**
 		 * The minimum length filter switch (-l).
@@ -1860,6 +1860,37 @@ namespace Panda {
 			 */
 			string help;
 		}
+		/**
+		 * An assembler-specific argument value.
+		 */
+		[CCode (cname = "panda_tweak_assembler_opt", has_type_id = false, has_destroy_func = false)]
+		public struct {
+			public unowned assembler? tweak;
+			public string? arg;
+		}
+		/**
+		 * Read all the arguments and dispatch the general ones to the handler, and save the assembler ones.
+		 *
+		 * @param args the command line arguments
+		 * @param assembler_args the assembler-specific arguments.
+		 * @param general_args the non-assembler-specific arguments.
+		 * @param tweak the call back for non-assembler-specific arguments.
+		 * @param options the buffer to hold assembler-specific arguments.
+		 * @param options_used the number of assembler-specific arguments found.
+		 * @return if all arguments were dispatched successfully
+		 */
+		[CCode (cname = "panda_dispatch_args", simple_generics = true)]
+		public bool dispatch<T> (string[] args, [CCode (array_length_type = "size_t")] assembler? [] assembler_args, [CCode (array_length_type = "size_t")] general? [] general_args, GeneralHandler<T> tweak, T user_data, [CCode (array_length_type = "size_t")] assembler_opt[] options, out size_t options_used);
+
+		/**
+		 * Display help text for arguments.
+		 *
+		 * @param binary_name the executable name.
+		 * @param assembler_args the assembler-specific arguments
+		 * @param general_args the non-assembler-specific arguments
+		 */
+		[CCode (cname = "panda_args_help")]
+		public void help (string binary_name, [CCode (array_length_type = "size_t")] assembler? [] assembler_args, [CCode (array_length_type = "size_t")] general? [] general_args);
 
 		/**
 		 * Parse command line arguments to in order to construct assemblers.

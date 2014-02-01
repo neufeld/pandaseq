@@ -619,5 +619,10 @@ typedef struct panda_tweak_assembler {
 	 */
 	PandaTweakAssembler setup;
 } panda_tweak_assembler;
+
+typedef struct {
+	const panda_tweak_assembler *tweak;
+	char *arg;
+} panda_tweak_assembler_opt;
 EXTERN_C_END
 #endif

@@ -28,6 +28,44 @@
 #        include <pandaseq-common.h>
 EXTERN_C_BEGIN
 /**
+ * Read all the arguments and dispatch the general ones to the handler, and save the assembler ones.
+ *
+ * @args: (array length=args_length): the command line arguments
+ * @assembler_args: (array length=assembler_args_length): the assembler-specific arguments.
+ * @general_args: (array length=general_args_length): the non-assembler-specific arguments.
+ * @tweak: (closure user_data): the call back for non-assembler-specific arguments.
+ * @options: (array length=options_length): the buffer to hold assembler-specific arguments.
+ * @options_used: (out caller-allocates): the number of assembler-specific arguments found.
+ * Returns: if all arguments were dispatched successfully
+ */
+bool panda_dispatch_args(
+	char *const *args,
+	int args_length,
+	const panda_tweak_assembler *const *const assembler_args,
+	size_t assembler_args_length,
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length,
+	PandaTweakGeneral tweak,
+	void *user_data,
+	panda_tweak_assembler_opt * options,
+	size_t options_length,
+	size_t *options_used);
+
+/**
+ * Display help text for arguments.
+ *
+ * @binary_name: the executable name.
+ * @assembler_args: (array length=assembler_args_length): the assembler-specific arguments
+ * @general_args: (array length=general_args_length): the non-assembler-specific arguments
+ */
+void panda_args_help(
+	const char *binary_name,
+	const panda_tweak_assembler *const *const assembler_args,
+	size_t assembler_args_length,
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length);
+
+/**
  * Get the number of worker threads that should be created given the number of processors in this system, if that can be determined.
  */
 int panda_get_default_worker_threads(
