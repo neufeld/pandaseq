@@ -1877,10 +1877,11 @@ namespace Panda {
 		 * @param tweak the call back for non-assembler-specific arguments.
 		 * @param options the buffer to hold assembler-specific arguments.
 		 * @param options_used the number of assembler-specific arguments found.
+		 * @param args_unused the index of the first argument in the original array that is not consumed by the dispatcher
 		 * @return if all arguments were dispatched successfully
 		 */
 		[CCode (cname = "panda_dispatch_args", simple_generics = true)]
-		public bool dispatch<T> (string[] args, [CCode (array_length_type = "size_t")] assembler? [] assembler_args, [CCode (array_length_type = "size_t")] general? [] general_args, GeneralHandler<T> tweak, T user_data, [CCode (array_length_type = "size_t")] assembler_opt[] options, out size_t options_used);
+		public bool dispatch<T> (string[] args, [CCode (array_length_type = "size_t")] assembler? [] assembler_args, [CCode (array_length_type = "size_t")] general? [] general_args, GeneralHandler<T> tweak, T user_data, [CCode (array_length_type = "size_t")] assembler_opt[] options, out size_t options_used, out int args_unused);
 
 		/**
 		 * Display help text for arguments.

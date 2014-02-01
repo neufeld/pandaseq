@@ -62,7 +62,8 @@ bool panda_dispatch_args(
 	void *user_data,
 	panda_tweak_assembler_opt * options,
 	size_t options_length,
-	size_t *options_used) {
+	size_t *options_used,
+	int *args_unused) {
 
 	int c;
 	bool help = false;
@@ -79,6 +80,7 @@ bool panda_dispatch_args(
 #endif
 	opt_it = 0;
 	*options_used = 0;
+	MAYBE(args_unused) = 0;
 
 	c = '\0';
 	for (it = 0; it < general_args_length; it++) {
@@ -155,6 +157,7 @@ bool panda_dispatch_args(
 			}
 		}
 	}
+	MAYBE(args_unused) = optind;
 	return true;
 }
 
@@ -408,6 +411,7 @@ bool panda_parse_args(
 		next);
 	panda_tweak_assembler_opt options[50];
 	size_t options_used;
+	int args_unused;
 #if HAVE_UNAME_SYSCALL
 	struct utsname uname_info;
 #endif
@@ -438,9 +442,13 @@ bool panda_parse_args(
 	/* Process command line arguments. */
 	panda_tweak_general_append(&combined_general_args, &combined_general_args_length, general_args, general_args_length);
 	panda_tweak_general_append(&combined_general_args, &combined_general_args_length, common_args, sizeof(common_args) / sizeof(common_args[0]));
-	if (!panda_dispatch_args(args, args_length, assembler_args, assembler_args_length, combined_general_args, combined_general_args_length, common_tweak_general, &data, options, sizeof(options) / sizeof(options[0]), &options_used)) {
+	if (!panda_dispatch_args(args, args_length, assembler_args, assembler_args_length, combined_general_args, combined_general_args_length, common_tweak_general, &data, options, sizeof(options) / sizeof(options[0]), &options_used, &args_unused)) {
 		CLEANUP();
 		return false;
+	}
+
+	if (args_unused < args_length) {
+		fprintf(stderr, "Ignoring extra arguments passed.\n");
 	}
 
 	logger = panda_log_proxy_new(data.writer_err);

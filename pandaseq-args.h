@@ -36,6 +36,7 @@ EXTERN_C_BEGIN
  * @tweak: (closure user_data): the call back for non-assembler-specific arguments.
  * @options: (array length=options_length): the buffer to hold assembler-specific arguments.
  * @options_used: (out caller-allocates): the number of assembler-specific arguments found.
+ * @args_unused: the index of the first argument in the original array that is not consumed by the dispatcher.
  * Returns: if all arguments were dispatched successfully
  */
 bool panda_dispatch_args(
@@ -49,7 +50,8 @@ bool panda_dispatch_args(
 	void *user_data,
 	panda_tweak_assembler_opt * options,
 	size_t options_length,
-	size_t *options_used);
+	size_t *options_used,
+	int *args_unused);
 
 /**
  * Display help text for arguments.
