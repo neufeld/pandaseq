@@ -323,14 +323,14 @@ Something truly unexpected has happened. This probably involves an validation mo
 .SH EXAMPLES
 This will assemble a data from a run in lane 7:
 
-.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 > s_7.fasta
+.B pandaseq -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 > s_7.fasta
 
 This will assemble data from lane 7, stripping conserved regions around the prokaryotic 16S V3 region and store the results in
 .B s_7.fasta.bz2
 and store the logging output
 .B s_7.log.bz2.
 
-.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG -G s_7.log.bz2 | bzip2 > s_7.fasta.bz2
+.B pandaseq -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG -G s_7.log.bz2 | bzip2 > s_7.fasta.bz2
 .SH VALIDATON MODULES
 Validation modules are capable of making decisions about whether or not to keep output sequences. For example, one could write a module to check secondary structure of a RNA, or that a coding sequence contains no stop codons. To create a module, please see
 .BR pandaxs (1).
@@ -338,7 +338,7 @@ Invoking a module can be done using the
 .B -C
 option on the command line. As many modules as desired may be added. The path to the module may be followed by a colon (on Windows, a semicolon) and arguments. For example, the following will include all sequences after \fBHWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\fR in the input file:
 
-.B pandaseq -j -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C \(dqafter:HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\(dq > s_7.fasta
+.B pandaseq -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C \(dqafter:HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA\(dq > s_7.fasta
 .SH INCLUDED MODULES
 There are some included modules:
 .TP
