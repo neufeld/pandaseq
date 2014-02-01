@@ -473,9 +473,8 @@ bool panda_parse_args(
 		return false;
 	}
 	assembler = panda_mux_create_assembler_kmer(mux, data.num_kmers);
-
 #else
-	assembler = panda_assembler_new_kmer(next, next_data, next_destroy, logger, num_kmers);
+	assembler = panda_assembler_new_kmer(next, next_data, next_destroy, logger, data.num_kmers);
 #endif
 	next = NULL;
 	next_data = NULL;
