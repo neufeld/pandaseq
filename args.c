@@ -256,12 +256,19 @@ static const panda_tweak_general outputfile_bz = {.flag = 'W',.optional = true,.
 static const panda_tweak_general help = {.flag = 'h',.optional = true,.takes_argument = NULL,.help = "Show this delightful nonsense." };
 static const panda_tweak_general version = {.flag = 'v',.optional = true,.takes_argument = NULL,.help = "Show version and exit." };
 
-static const panda_tweak_general *common_args[] = { &logging, &kmers, &fastq, &logfile, &logfile_bz,
+static const panda_tweak_general *common_args[] = {
+	&fastq,
+	&help,
+	&kmers,
+	&logfile,
+	&logfile_bz,
+	&logging,
+	&outputfile,
+	&outputfile_bz,
 #		ifdef HAVE_PTHREAD
 	&threads,
 #		endif
-	&outputfile,
-	&outputfile_bz, &help, &version
+	&version
 };
 
 static bool common_tweak_general(
