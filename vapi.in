@@ -1912,6 +1912,25 @@ namespace Panda {
 		 */
 		[CCode (cname = "panda_parse_args", simple_generics = true)]
 		public bool parse_args<T> (string[] args, [CCode (array_length_type = "size_t")] Tweak.general? [] general_args, [CCode (array_length_type = "size_t")] Tweak.assembler? [] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? assembler, out Mux? mux, out int threads, out OutputSeq output);
+
+		/**
+		 * Parse args, but for doing a diff run.
+		 *
+		 * @args:(array length=args_length): the strings from the command line
+		 * @assembler_args:(array length=assembler_args_length): descriptors of all the assembler-only command line arguments
+		 * @general_args:(array length=general_args_length): descriptors of all the command line arguments userstood by the callbacks
+		 * @tweak:(closure user_data): a callback for every command line argument matching a general argument
+		 * @opener:(closure user_data): a callback to open the sequence source
+		 * @assembler_setup:(closure user_data) (allow-none): a callback to configure the assembler
+		 * @out_control_assembler:(out callee-allocates) (transfer full): the control (left-side) assembler constructed after argument parsing
+		 * @out_experimental_assembler:(out callee-allocates) (transfer full): the experiment (right-side) assembler constructed after argument parsing
+		 * @out_next:(out callee-allocates) (closure next_data) (scope notified) (transfer full): the sequence reader
+		 * @out_suppress_quality_diffs:(out callee-allocates): whether to show differences in quality scores
+		 * Returns: whether command line parsing was successful and the output parameters have been populated
+		 */
+		[CCode (cname = "panda_diff_parse_args", simple_generics = true)]
+		public bool panda_diff_parse_args (string[] args, [CCode (array_length_type = "size_t")] Tweak.general? [] general_args, [CCode (array_length_type = "size_t")] Tweak.assembler? [] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? control_assembler, out Assembler? experimental_assembler, out NextSeq next, out bool suppress_quality_diffs);
+
 		/**
 		 * Parse a list of comma separated separated key=value keys.
 		 *

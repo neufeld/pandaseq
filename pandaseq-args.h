@@ -109,6 +109,39 @@ bool panda_parse_args(
 	PandaDestroy *output_destroy);
 
 /**
+ * Parse args, but for doing a diff run.
+ *
+ * @args:(array length=args_length): the strings from the command line
+ * @assembler_args:(array length=assembler_args_length): descriptors of all the assembler-only command line arguments
+ * @general_args:(array length=general_args_length): descriptors of all the command line arguments userstood by the callbacks
+ * @tweak:(closure user_data): a callback for every command line argument matching a general argument
+ * @opener:(closure user_data): a callback to open the sequence source
+ * @assembler_setup:(closure user_data) (allow-none): a callback to configure the assembler
+ * @out_control_assembler:(out callee-allocates) (transfer full): the control (left-side) assembler constructed after argument parsing
+ * @out_experimental_assembler:(out callee-allocates) (transfer full): the experiment (right-side) assembler constructed after argument parsing
+ * @out_next:(out callee-allocates) (closure next_data) (scope notified) (transfer full): the sequence reader
+ * @out_suppress_quality_diffs:(out callee-allocates): whether to show differences in quality scores
+ * Returns: whether command line parsing was successful and the output parameters have been populated
+ */
+bool panda_diff_parse_args(
+	char *const *args,
+	int args_length,
+	const panda_tweak_assembler *const *const assembler_args,
+	size_t assembler_args_length,
+	const panda_tweak_general *const *const general_args,
+	size_t general_args_length,
+	PandaTweakGeneral tweak,
+	PandaOpener opener,
+	PandaSetup assembler_setup,
+	void *user_data,
+	PandaAssembler *out_control_assembler,
+	PandaAssembler *out_experimental_assembler,
+	PandaNextSeq *next,
+	void **next_data,
+	PandaDestroy *next_destroy,
+	bool *out_suppress_quality_diffs);
+
+/**
  * Parse a list of comma separated separated key=value keys.
  *
  * @str: the string containing the arguments
