@@ -44,8 +44,6 @@ pkgroot
 stamp-h1
 table.c
 table.h
-testing/access_new_library.c
-testing/access_new_library.h
-testing/access_new_library.vapi
-testing/pandaseq-diff
-testing/pandaseq-diff.c
+testing/reg-test
+testing/reg-test.c
+testing/setup.c

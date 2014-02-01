@@ -7,9 +7,9 @@ This is an experimental tool for determining if changes to PANDAseq affect the o
 
 	If PANDAseq has been installed somewhere that pkg-config, and Vala are not looking, set the `PREFIX` in the Makefile.
 
-5. Run PANDAseq-Diff on a sample dataset:
+5. Run regression test on a sample dataset:
 
-		./pandaseq-diff -f mcbath_1.fastq.bz2 -r mcbath_2.fastq.bz2
+		./reg-test -f mcbath_1.fastq.bz2 -r mcbath_2.fastq.bz2
 
 Each read pair will be assembled by both the existing and new assemblers, and the results compared.
 
@@ -17,4 +17,4 @@ The recommended data set is the sample dataset provided at [McBath dataset](http
 
 This code makes use of strange `objcopy` behaviour and so requires that methods are not called on the assembler and that no ABI changes have occured. It also is probably very non-portable, but does work on Linux.
 
-The tool will compile `access_new_library.vala` in such a way that it will only link against the library just compiled. The main file, `pandaseq-diff.vala` will be compiled against the installed library.
+By default, the test suite will only compare the most basic setup of an assembler with no options. To compare other conditions, edit `setup.vala` to prepare the assembler in the desired way. The same configuration will be used for both the new and old library.

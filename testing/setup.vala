@@ -15,8 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-public Assemble create_assembler (Panda.LogProxy logger) {
+public Panda.Assemble create_assembler (Panda.LogProxy logger) {
 	var assembler = new Panda.Assembler (null, logger);
-	stdout.printf ("New Assembler: %p\n", assembler);
 	return assembler.assemble;
 }
