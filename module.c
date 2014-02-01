@@ -395,23 +395,58 @@ const char *panda_module_get_usage(
 static int show_module(
 	const char *filename,
 	void *data) {
+
+	int *api;
 	char buffer[2048];
 	char *base_filename;
-	PandaModule module = panda_module_load(NULL, filename);
+	const char **description;
+	lt_dlhandle handle;
+	const char **usage;
+	const char **version;
+
+	handle = lt_dlopenext(filename);
+	if (handle == NULL) {
+		return 0;
+	}
+
 	strncpy(buffer, filename, sizeof(buffer));
 	buffer[sizeof(buffer) - 1] = '\0';
 	base_filename = basename(buffer);
-	if (module == NULL) {
-		fprintf(stderr, "%s: unknown module type\n", filename);
+
+	api = lt_dlsym(handle, "api");
+	if (api == NULL || *api != PANDA_API) {
+		fprintf(stderr, "Invalid API in %s (%d != %d).\n", base_filename, api == NULL ? -1 : *api, PANDA_API);
+		lt_dlclose(handle);
 		return 0;
 	}
-	fprintf(stderr, "%s (%s): %s\n\tUsage: %s\n", base_filename, panda_module_get_version(module), panda_module_get_description(module), panda_module_get_usage(module));
-	panda_module_unref(module);
+
+	fprintf(stderr, "%s", base_filename);
+	version = lt_dlsym(handle, "version");
+	if (version != NULL && *version != NULL) {
+		fprintf(stderr, "(%s)", *version);
+	}
+	description = lt_dlsym(handle, "description");
+	if (description != NULL && *description != NULL) {
+		fprintf(stderr, ": %s\n", *description);
+	} else {
+		fprintf(stderr, "\n");
+	}
+
+	usage = lt_dlsym(handle, "usage");
+	if (usage != NULL && *usage != NULL) {
+		fprintf(stderr, "\tUsage: %s\n", *usage);
+	}
+
+	lt_dlclose(handle);
 	return 0;
 }
 
 void module_show_all(
 	) {
+	if (!ref_ltdl()) {
+		return;
+	}
 	fprintf(stderr, "\nKnown modules:\n");
 	lt_dlforeachfile(STR(PKGLIBDIR), show_module, NULL);
+	unref_ltdl();
 }
