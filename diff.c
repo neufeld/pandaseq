@@ -26,7 +26,7 @@ bool panda_diff(
 	void *control_data,
 	PandaAssemble experiment,
 	void *experiment_data,
-	bool supress_quality_diffs) {
+	bool suppress_quality_diffs) {
 
 	size_t length_diffs = 0;
 	size_t nt_diffs = 0;
@@ -79,7 +79,7 @@ bool panda_diff(
 					panda_seqid_print(&id, stdout);
 					fprintf(stdout, " differ at nucleotide %zd, %c → %c.\n", it, panda_nt_to_ascii(control_result->sequence[it].nt), panda_nt_to_ascii(experiment_result->sequence[it].nt));
 					nt_diff = true;
-				} else if (control_result->sequence[it].p != experiment_result->sequence[it].p && !supress_quality_diffs) {
+				} else if (control_result->sequence[it].p != experiment_result->sequence[it].p && !suppress_quality_diffs) {
 					panda_seqid_print(&id, stdout);
 					fprintf(stdout, " differ at nucleotide %zd (%c), quality %f → %f.\n", it, (int) panda_nt_to_ascii(control_result->sequence[it].nt), exp(control_result->sequence[it].p), exp(experiment_result->sequence[it].p));
 					nt_diff = true;
@@ -90,6 +90,6 @@ bool panda_diff(
 			}
 		}
 	}
-	fprintf(stdout, "%zd sequences compared.\n%zd scored better\n%zd scored worse.\n%zd changed (%zd length changed, %zd sequence changed).\n%zd gained.\n%zd lost.\n", total, diffs_better_score, diffs_worse_score, nt_diffs + length_diffs, length_diffs, nt_diffs, gained, lost);
+	fprintf(stdout, "%zd sequences compared.\n%zd scored better.\n%zd scored worse.\n%zd changed (%zd length changed, %zd sequence changed).\n%zd gained.\n%zd lost.\n", total, diffs_better_score, diffs_worse_score, nt_diffs + length_diffs, length_diffs, nt_diffs, gained, lost);
 	return (total == 0 || length_diffs > 0 || nt_diffs > 0 || gained > 0 || lost > 0);
 }

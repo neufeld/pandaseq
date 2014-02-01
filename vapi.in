@@ -1555,10 +1555,10 @@ namespace Panda {
 	 * @param reader the source of the sequences.
 	 * @param control the control assembly process.
 	 * @param experiment the experiment assembly process.
-	 * @param supress_quality_diffs consider nucleotides that have different quality scores to be identical.
+	 * @param suppress_quality_diffs consider nucleotides that have different quality scores to be identical.
 	 */
 	[CCode (cname = "panda_diff")]
-	public bool diff (NextSeq reader, Assemble control, Assemble experiment, bool supress_quality_diffs);
+	public bool diff (NextSeq reader, Assemble control, Assemble experiment, bool suppress_quality_diffs);
 
 	/**
 	 * Compute log(1 - exp(p)) efficiently.
