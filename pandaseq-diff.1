@@ -1,0 +1,37 @@
+'\" e
+.\" Authors: Andre Masella
+.EQ
+delim $$
+.EN
+.EQ
+.EN
+.TH pandaseq-diff 1 "February 2014" "2.7" "USER COMMANDS"
+.SH NAME 
+pandaseq-diff \- PAired-eND Assembler for DNA sequences Comparison
+.SH SYNOPSIS
+.B pandaseq-diff
+common
+.B --
+control
+.B --
+experimental
+.SH DESCRIPTION
+PANDASEQ has many knobs to adjust to try to produce the ideal sequence output. To facilitate selecting parameters, PANDASEQ-DIFF allows running experiments to see how different parameters affect assembly.
+.SH OPTIONS
+The options are largely the same as
+.BR pandaseq (1)
+except that no output is generated, so all options for writing data are not present. Options are given in three groups: options that will be used for both control and experiment, options only for the control, and options only for the experiment. All options related to input data must be in the common options pool.
+
+Normal logging is suppressed, so the option should first be tested with 
+.BR pandaseq (1).
+
+.TP
+\-v
+When individual output base qualities are different, show the bases that are different and the differing quality scores.
+.SH EXAMPLES
+
+.B pandaseq-diff -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -- -t 0.9 -- -A rdp_mle 
+
+This will assemble data from lane 7, comparing the original PANDAseq algorithm, with the output quality above 0.9, against the RDP MLE, using the default quality cut-off.
+.SH SEE ALSO
+.BR pandaseq (1).

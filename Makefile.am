@@ -26,7 +26,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(LIB_NAME).pc
 vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = $(LIB_NAME).vapi
-man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1 pandaseq-hang.1
+man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1 pandaseq-diff.1 pandaseq-hang.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugin_sample.c
 
