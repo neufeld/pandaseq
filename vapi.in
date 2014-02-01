@@ -1864,7 +1864,7 @@ namespace Panda {
 		 * An assembler-specific argument value.
 		 */
 		[CCode (cname = "panda_tweak_assembler_opt", has_type_id = false, has_destroy_func = false)]
-		public struct {
+		public struct assembler_opt {
 			public unowned assembler? tweak;
 			public string? arg;
 		}
@@ -1929,7 +1929,7 @@ namespace Panda {
 		 * Returns: whether command line parsing was successful and the output parameters have been populated
 		 */
 		[CCode (cname = "panda_diff_parse_args", simple_generics = true)]
-		public bool panda_diff_parse_args (string[] args, [CCode (array_length_type = "size_t")] Tweak.general? [] general_args, [CCode (array_length_type = "size_t")] Tweak.assembler? [] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? control_assembler, out Assembler? experimental_assembler, out NextSeq next, out bool suppress_quality_diffs);
+		public bool panda_diff_parse_args<T> (string[] args, [CCode (array_length_type = "size_t")] Tweak.general? [] general_args, [CCode (array_length_type = "size_t")] Tweak.assembler? [] assembler_args, GeneralHandler<T> tweak, Opener<T> opener, Setup<T> assembler_setup, T user_data, out Assembler? control_assembler, out Assembler? experimental_assembler, out NextSeq next, out bool suppress_quality_diffs);
 
 		/**
 		 * Parse a list of comma separated separated key=value keys.
