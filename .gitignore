@@ -37,6 +37,7 @@ missing
 mktable
 pandaseq
 pandaseq-checkid
+pandaseq-diff
 pandaseq-hang
 pandaxs
 pkgroot
