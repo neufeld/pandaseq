@@ -72,6 +72,11 @@ bool panda_dispatch_args(
 	const panda_tweak_assembler **assembler_tweak;
 	size_t opt_it;
 
+#ifdef __GLIBC__
+	optind = 0;
+#else
+	optind = 1;
+#endif
 	opt_it = 0;
 	*options_used = 0;
 
