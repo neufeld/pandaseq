@@ -447,7 +447,7 @@ bool panda_parse_args(
 		return false;
 	}
 
-	if (args_unused < args_length) {
+	if (args_length - args_unused > 1) {
 		fprintf(stderr, "Ignoring extra arguments passed.\n");
 	}
 
