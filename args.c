@@ -459,8 +459,14 @@ bool panda_parse_args(
 	}
 	panda_writer_set_slave(data.writer_out, data.writer_err);
 
-	if (data.help || (next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
+	if (data.help) {
 		panda_args_help(args[0], assembler_args, assembler_args_length, combined_general_args, combined_general_args_length);
+		CLEANUP();
+		return false;
+	}
+	if ((next = opener(user_data, logger, &fail, &fail_data, &fail_destroy, &next_data, &next_destroy)) == NULL) {
+		panda_writer_append(data.writer_err, "Too confused to continue.\nTry -h for help.\n");
+		panda_writer_commit(data.writer_err);
 		CLEANUP();
 		return false;
 	}
