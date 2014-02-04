@@ -115,6 +115,9 @@ char panda_result_phred(
 
 	while (lower < upper) {
 		char mid = lower + (upper - lower) / 2;
+		if (qual_score[mid] == r->p) {
+			return mid;
+		}
 		if (mid == lower) {
 			return lower;
 		} else if (qual_score[mid] > r->p) {
