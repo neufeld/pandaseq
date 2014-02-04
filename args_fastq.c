@@ -111,8 +111,10 @@ PandaNextSeq panda_args_fastq_opener(
 	void **next_data,
 	PandaDestroy *next_destroy) {
 
-	if (data->forward_filename == NULL || data->reverse_filename == NULL)
+	if (data->forward_filename == NULL || data->reverse_filename == NULL) {
+		panda_log_proxy_write_f(logger, "You must supply both forward and reverse reads.\n");
 		return NULL;
+	}
 
 	if (data->no_algn_writer != NULL) {
 		*fail = (PandaFailAlign) (data->no_algn_qual ? panda_output_fail_qual : panda_output_fail);
