@@ -127,3 +127,9 @@ static void lib_init(
 	panda_algorithm_register(&panda_algorithm_pear_class);
 	panda_algorithm_register(&panda_algorithm_rdp_mle_class);
 }
+
+__attribute__ ((destructor))
+static void lib_destroy(
+	void) {
+	free(panda_algorithms);
+}
