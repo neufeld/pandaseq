@@ -75,6 +75,12 @@ const char *panda_linebuf_next(
 	if (end == NULL || linebuf->data_length == 0 || *end == '\0') {
 		return NULL;
 	}
+
+	/* White out any carriage returns if we get DOS-formatted files. */
+	if (end[-1] == '\r') {
+		end[-1] = '\0';
+	}
+
 	*end = '\0';
 	linebuf->offset = end - linebuf->data + 1;
 	return linebuf->data;
