@@ -35,7 +35,7 @@ PandaDebug panda_debug_flags = PANDA_DEBUG_DEFAULT;
 __attribute__ ((constructor))
 static void lib_init(
 	void) {
-#        define BUFFER(name, type, size) pthread_key_create(&PANDACONCAT(name, _key), &free);
+#        define BUFFER(name, type, size) pthread_key_create(&PANDACONCAT(name, _key), free);
 #        include "buffer.list"
 #        undef BUFFER
 }
@@ -43,7 +43,7 @@ static void lib_init(
 __attribute__ ((destructor))
 void lib_destroy(
 	void) {
-#        define BUFFER(name, type, size) pthread_key_delete(PANDACONCAT(name, _key));
+#        define BUFFER(name, type, size) free(pthread_getspecific(PANDACONCAT(name, _key))); pthread_key_delete(PANDACONCAT(name, _key));
 #        include "buffer.list"
 #        undef BUFFER
 }
