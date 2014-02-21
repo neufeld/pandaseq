@@ -76,6 +76,7 @@ static bool key_processor(
 		}
 	}
 	panda_log_proxy_write_f((PandaLogProxy) data, "Unknown setting: /%s/\n", key);
+	return false;
 }
 
 OPEN {
