@@ -316,6 +316,7 @@ static bool common_tweak_general(
 
 	struct data *data = (struct data *) user_data;
 	size_t it;
+	long int value;
 
 	switch (flag) {
 	case 'd':
@@ -368,11 +369,12 @@ static bool common_tweak_general(
 		return true;
 	case 'k':
 		errno = 0;
-		data->num_kmers = (size_t) strtol(argument, NULL, 10);
-		if (errno != 0 || data->num_kmers < 0 || data->num_kmers > PANDA_MAX_LEN) {
+		value = strtol(argument, NULL, 10);
+		if (errno != 0 || value < 0 || value > PANDA_MAX_LEN) {
 			fprintf(stderr, "Bad k-mer list length.\n");
 			return false;
 		}
+		data->num_kmers = (size_t) value;
 		return true;
 #ifdef HAVE_PTHREAD
 	case 'T':

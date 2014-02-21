@@ -202,7 +202,7 @@ static bool set_short_check(
 	PandaAssembler assembler,
 	char flag,
 	char *argument) {
-	size_t minlen;
+	long int minlen;
 	PandaModule m;
 
 	if (argument == NULL) {
@@ -215,7 +215,7 @@ static bool set_short_check(
 		free(argument);
 		return false;
 	}
-	m = panda_module_new("SHORT", short_check, NULL, (void *) minlen, NULL);
+	m = panda_module_new("SHORT", short_check, NULL, (void *) (size_t)minlen, NULL);
 	panda_assembler_add_module(assembler, m);
 	panda_module_unref(m);
 	free(argument);

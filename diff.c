@@ -123,6 +123,7 @@ static bool common_tweak_general(
 	const char *argument) {
 
 	struct data *data = (struct data *) user_data;
+	long int value;
 
 	switch (flag) {
 	case 'h':
@@ -130,11 +131,12 @@ static bool common_tweak_general(
 		return true;
 	case 'k':
 		errno = 0;
-		data->num_kmers = (size_t) strtol(argument, NULL, 10);
-		if (errno != 0 || data->num_kmers < 0 || data->num_kmers > PANDA_MAX_LEN) {
+		value = strtol(argument, NULL, 10);
+		if (errno != 0 || value < 0 || value > PANDA_MAX_LEN) {
 			fprintf(stderr, "Bad k-mer list length.\n");
 			return false;
 		}
+		data->num_kmers = (size_t) value;
 		return true;
 	case 'v':
 		data->verbose = true;
