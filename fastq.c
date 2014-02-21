@@ -144,7 +144,7 @@ static bool stream_next_seq(
 		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", buffer);
 		return false;
 	}
-	if (!panda_seqid_equal(id, &rid) || format != PANDA_IDFMT_SRA && rdir == fdir) {
+	if (!panda_seqid_equal(id, &rid) || (format != PANDA_IDFMT_SRA && rdir == fdir)) {
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
 		return false;
 	}

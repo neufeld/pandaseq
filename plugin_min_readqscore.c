@@ -35,7 +35,7 @@ OPEN {
 	}
 
 	value = strtol(args, &endptr, 10);
-	if (endptr != NULL && *endptr != '\0' || value < 0) {
+	if ((endptr != NULL && *endptr != '\0') || value < 0) {
 		panda_log_proxy_write_str(logger, "Read Q score must be a number greater than 0.\n");
 		return false;
 	}

@@ -27,7 +27,7 @@ OPEN {
 	}
 
 	value = strtol(args, &endptr, 10);
-	if (endptr != NULL && *endptr != '\0' || value < 0 || value > 127) {
+	if ((endptr != NULL && *endptr != '\0') || value < 0 || value > 127) {
 		panda_log_proxy_write_str(logger, "PHRED score must be a number between 0 and 127.\n");
 		return false;
 	}
