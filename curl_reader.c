@@ -72,7 +72,9 @@ struct curl_data {
 	CURL *curl_handle;
 	char *curl_memory;
 	size_t curl_memory_length;
+#ifndef WIN32
 	char *stack;
+#endif
 };
 
 union data_ints {
@@ -179,7 +181,9 @@ void destroy_curl(
 	}
 	if (!data->exited)
 		curl_easy_cleanup(data->curl_handle);
+#ifndef WIN32
 	free(data->stack);
+#endif
 	free(data->url);
 	panda_log_proxy_unref(data->logger);
 	free(data);
