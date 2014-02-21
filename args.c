@@ -244,14 +244,14 @@ void panda_args_help(
 		}
 		if (general_it < general_args_length && (assembler_it == assembler_args_length || general_args[general_it]->flag < assembler_args[assembler_it]->flag)) {
 			if (general_args[general_it]->takes_argument != NULL) {
-				fprintf(stderr, "\t-%c %s\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help);
+				fprintf(stderr, "\t-%c %s\t%s%s\n", (int) general_args[general_it]->flag, general_args[general_it]->takes_argument, general_args[general_it]->help, general_args[general_it]->repeatable ? " (May be repeated.)" : "");
 			} else {
 				fprintf(stderr, "\t-%c\t%s\n", (int) general_args[general_it]->flag, general_args[general_it]->help);
 			}
 			general_it++;
 		} else {
 			if (assembler_args[assembler_it]->takes_argument != NULL) {
-				fprintf(stderr, "\t-%c %s\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument, assembler_args[assembler_it]->help);
+				fprintf(stderr, "\t-%c %s\t%s%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->takes_argument, assembler_args[assembler_it]->help, assembler_args[assembler_it]->repeatable ? " (May be repeated.)" : "");
 			} else {
 				fprintf(stderr, "\t-%c\t%s\n", (int) assembler_args[assembler_it]->flag, assembler_args[assembler_it]->help);
 			}
