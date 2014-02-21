@@ -14,7 +14,6 @@ library_include_HEADERS = \
 	pandaseq-linebuf.h \
 	pandaseq-log.h \
 	pandaseq-module.h \
-	pandaseq-mux.h \
 	pandaseq-nt.h \
 	pandaseq-plugin.h \
 	pandaseq-seqid.h \
@@ -22,6 +21,9 @@ library_include_HEADERS = \
 	pandaseq-writer.h \
 	panda_api.c \
 	$(NULL)
+if PTHREAD
+library_include_HEADERS += pandaseq-mux.h
+endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(LIB_NAME).pc
 vapidir = $(datadir)/vala/vapi
@@ -91,7 +93,6 @@ libpandaseq_la_SOURCES = \
 	linebuf.c \
 	misc.c \
 	module.c \
-	mux.c \
 	nt.c \
 	offset.c \
 	output.c \
@@ -101,6 +102,10 @@ libpandaseq_la_SOURCES = \
 	table.c \
 	writer.c \
 	$(NULL)
+if PTHREAD
+libpandaseq_la_SOURCES += mux.c
+endif
+
 if IS_WINDOWS
 libpandaseq_la_SOURCES += lib.rc
 .rc.lo:

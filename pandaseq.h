@@ -325,7 +325,6 @@ PandaNextSeq panda_create_async_reader(
 #        include<pandaseq-linebuf.h>
 #        include<pandaseq-log.h>
 #        include<pandaseq-module.h>
-#        include<pandaseq-mux.h>
 #        include<pandaseq-nt.h>
 #        include<pandaseq-seqid.h>
 #        include<pandaseq-set.h>

@@ -949,7 +949,7 @@ namespace Panda {
 		 *
 		 * The interface will guarantee that only one call will be made at a time to the data source or the logger. However, the interface makes no guarantees in which thread the call will be made. Furthermore, the logger may be call multiple times by different assembly processes (i.e., the logging messages from different sequences may be interleaved).
 		 */
-		[CCode (cname = "PandaMux")]
+		[CCode (cname = "PandaMux", cheader_filename = "pandaseq-mux.h")]
 		public Mux (owned NextSeq next, LogProxy logger);
 		/**
 		 * Create a new multiplexed reader for given to FASTQ streams.
