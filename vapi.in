@@ -1820,6 +1820,10 @@ namespace Panda {
 			 * The callback to make the appropriate changes to the assembler.
 			 */
 			AssemblerHandler setup;
+			/**
+			 * If the argument can be repeated. This is only considered if is not a boolean flag.
+			 */
+			bool repeatable;
 		}
 
 		/**
@@ -1859,6 +1863,10 @@ namespace Panda {
 			 * The help information to display to the user.
 			 */
 			string help;
+			/**
+			 * If the argument can be repeated. This is only considered if is not a boolean flag.
+			 */
+			bool repeatable;
 		}
 		/**
 		 * An assembler-specific argument value.

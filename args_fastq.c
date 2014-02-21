@@ -82,13 +82,13 @@ bool panda_args_fastq_tweak(
 	}
 }
 
-static const panda_tweak_general fastq_phred = { '6', true, NULL, "Use PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+)." };
-static const panda_tweak_general fastq_barcoded = { 'B', true, NULL, "Allow unbarcoded sequences (try this for BADID errors)." };
-static const panda_tweak_general fastq_unalign_qual = { 'U', true, "unaligned.txt", "File to write unalignable read pairs with quality scores." };
-static const panda_tweak_general fastq_forward = { 'f', false, "forward.fastq", "Input FASTQ file containing forward reads." };
-static const panda_tweak_general fastq_bzip = { 'j', true, NULL, "Input files are bzipped. (Deprecated.)" };
-static const panda_tweak_general fastq_reverse = { 'r', false, "reverse.fastq", "Input FASTQ file containing reverse reads." };
-static const panda_tweak_general fastq_unalign = { 'u', true, "unaligned.txt", "File to write unalignable read pairs." };
+static const panda_tweak_general fastq_phred = { '6', true, NULL, "Use PHRED+64 (CASAVA 1.3-1.7) instead of PHRED+33 (CASAVA 1.8+).", false };
+static const panda_tweak_general fastq_barcoded = { 'B', true, NULL, "Allow unbarcoded sequences (try this for BADID errors).", false };
+static const panda_tweak_general fastq_unalign_qual = { 'U', true, "unaligned.txt", "File to write unalignable read pairs with quality scores.", false };
+static const panda_tweak_general fastq_forward = { 'f', false, "forward.fastq", "Input FASTQ file containing forward reads.", false };
+static const panda_tweak_general fastq_bzip = { 'j', true, NULL, "Input files are bzipped. (Deprecated.)", true };
+static const panda_tweak_general fastq_reverse = { 'r', false, "reverse.fastq", "Input FASTQ file containing reverse reads.", false };
+static const panda_tweak_general fastq_unalign = { 'u', true, "unaligned.txt", "File to write unalignable read pairs.", false };
 
 const panda_tweak_general *const panda_args_fastq_args[] = {
 	&fastq_phred,

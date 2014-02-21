@@ -263,6 +263,10 @@ typedef struct panda_tweak_general {
 	 * The help information to display to the user.
 	 */
 	const char *help;
+	/**
+	 * If the argument can be repeated. This is only considered if is not a boolean flag.
+	 */
+	bool repeatable;
 } panda_tweak_general;
 
 /**
@@ -618,6 +622,10 @@ typedef struct panda_tweak_assembler {
 	 * The callback to make the appropriate changes to the assembler.
 	 */
 	PandaTweakAssembler setup;
+	/**
+	 * If the argument can be repeated. This is only considered if is not a boolean flag.
+	 */
+	bool repeatable;
 } panda_tweak_assembler;
 
 typedef struct {

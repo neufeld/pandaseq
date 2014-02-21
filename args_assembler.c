@@ -61,7 +61,7 @@ static bool set_algorithm(
 	return false;
 }
 
-const panda_tweak_assembler panda_stdargs_algorithm = { 'A', "algorithm:parameters", "Select the algorithm to use for overlap selection and scoring.", set_algorithm };
+const panda_tweak_assembler panda_stdargs_algorithm = { 'A', "algorithm:parameters", "Select the algorithm to use for overlap selection and scoring.", set_algorithm, false };
 
 static bool set_primers_after(
 	PandaAssembler assembler,
@@ -71,7 +71,7 @@ static bool set_primers_after(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_primers_after = { 'a', NULL, "Strip the primers after assembly, rather than before.", set_primers_after };
+const panda_tweak_assembler panda_stdargs_primers_after = { 'a', NULL, "Strip the primers after assembly, rather than before.", set_primers_after, false };
 
 bool no_n_check(
 	PandaLogProxy logger,
@@ -100,7 +100,7 @@ static bool add_module(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_module = { 'C', "filter", "Load a pluggable filter module.", add_module };
+const panda_tweak_assembler panda_stdargs_module = { 'C', "filter", "Load a pluggable filter module.", add_module, true };
 
 static bool set_degenerates(
 	PandaAssembler assembler,
@@ -112,7 +112,7 @@ static bool set_degenerates(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_degenerates = { 'N', NULL, "Eliminate all sequences with unknown nucleotides in the output.", set_degenerates };
+const panda_tweak_assembler panda_stdargs_degenerates = { 'N', NULL, "Eliminate all sequences with unknown nucleotides in the output.", set_degenerates, false };
 
 static bool set_threshold(
 	PandaAssembler assembler,
@@ -133,7 +133,7 @@ static bool set_threshold(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_threshold = { 't', "threshold", "The minimum probability that a sequence must have to match a primer.", set_threshold };
+const panda_tweak_assembler panda_stdargs_threshold = { 't', "threshold", "The minimum probability that a sequence must have to match a primer.", set_threshold, false };
 
 static bool set_primer(
 	PandaAssembler assembler,
@@ -188,8 +188,8 @@ static bool set_primer_group(
 	return false;
 }
 
-const panda_tweak_assembler panda_stdargs_forward_primer = { 'p', "primer", "Forward primer sequence or number of bases to be removed.", set_primer_group };
-const panda_tweak_assembler panda_stdargs_reverse_primer = { 'q', "primer", "Reverse primer sequence or number of bases to be removed.", set_primer_group };
+const panda_tweak_assembler panda_stdargs_forward_primer = { 'p', "primer", "Forward primer sequence or number of bases to be removed.", set_primer_group, false };
+const panda_tweak_assembler panda_stdargs_reverse_primer = { 'q', "primer", "Reverse primer sequence or number of bases to be removed.", set_primer_group, false };
 
 bool short_check(
 	PandaLogProxy logger,
@@ -222,7 +222,7 @@ static bool set_short_check(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_min_len = { 'l', "length", "Minimum length for a sequence.", set_short_check };
+const panda_tweak_assembler panda_stdargs_min_len = { 'l', "length", "Minimum length for a sequence.", set_short_check, false };
 
 bool long_check(
 	PandaLogProxy logger,
@@ -257,7 +257,7 @@ static bool set_long_check(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_max_len = { 'L', "length", "Maximum length for a sequence.", set_long_check };
+const panda_tweak_assembler panda_stdargs_max_len = { 'L', "length", "Maximum length for a sequence.", set_long_check, false };
 
 static bool set_minimum_overlap(
 	PandaAssembler assembler,
@@ -281,7 +281,7 @@ static bool set_minimum_overlap(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_min_overlap = { 'o', "length", "Minumum overlap region length for a sequence.", set_minimum_overlap };
+const panda_tweak_assembler panda_stdargs_min_overlap = { 'o', "length", "Minumum overlap region length for a sequence.", set_minimum_overlap, false };
 
 const panda_tweak_assembler *const panda_stdargs[] = {
 	&panda_stdargs_algorithm,

@@ -69,6 +69,8 @@ bool panda_dispatch_args(
 	bool help = false;
 	size_t it;
 	char optlist[MAX_OPT_LIST + 1];
+	char seen_options[MAX_OPT_LIST + 1];
+	size_t seen_options_length = 0;
 	const panda_tweak_general **general_tweak;
 	const panda_tweak_assembler **assembler_tweak;
 	size_t opt_it;
@@ -132,11 +134,39 @@ bool panda_dispatch_args(
 			return false;
 		} else {
 			if ((general_tweak = BSEARCH(&c, general)) != NULL) {
+				if ((*general_tweak)->takes_argument != NULL || !(*general_tweak)->repeatable) {
+					if (memchr(seen_options, c, seen_options_length) != NULL) {
+						fprintf(stderr, "Command line argument -%c may not be repeated.\n", (int) c);
+						CLEANUP();
+						return false;
+					}
+					if (seen_options_length == MAX_OPT_LIST) {
+						fprintf(stderr, "Too many command line arguments.\n");
+						CLEANUP();
+						return false;
+					}
+					seen_options[seen_options_length++] = c;
+				}
+
 				if (!tweak(user_data, c, (*general_tweak)->takes_argument != NULL ? optarg : NULL)) {
 					CLEANUP();
 					return false;
 				}
 			} else if ((assembler_tweak = BSEARCH(&c, assembler)) != NULL) {
+				if ((*assembler_tweak)->takes_argument == NULL || !(*assembler_tweak)->repeatable) {
+					if (memchr(seen_options, c, seen_options_length) != NULL) {
+						fprintf(stderr, "Command line argument -%c may not be repeated.\n", (int) c);
+						CLEANUP();
+						return false;
+					}
+					if (seen_options_length == MAX_OPT_LIST) {
+						fprintf(stderr, "Too many command line arguments.\n");
+						CLEANUP();
+						return false;
+					}
+					seen_options[seen_options_length++] = c;
+				}
+
 				it = (*options_used)++;
 				if (it >= options_length) {
 					fprintf(stderr, "Too many command line arguments.\n");
