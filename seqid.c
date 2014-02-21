@@ -134,7 +134,6 @@ int panda_seqid_parse_fail(
 	PandaIdFmt *detected_format,
 	const char **endptr) {
 	char *dest;
-	bool has_tag;
 	const char *temp;
 	int value;
 
@@ -195,8 +194,7 @@ int panda_seqid_parse_fail(
 			}
 			(*endptr)++;
 		}
-		has_tag = id->tag[0] != '\0';
-		if (!has_tag && policy == PANDA_TAG_PRESENT || has_tag && policy == PANDA_TAG_ABSENT) {
+		if (policy != PANDA_TAG_OPTIONAL && policy != ((id->tag[0] == '\0') ? PANDA_TAG_ABSENT : PANDA_TAG_PRESENT)) {
 			return 0;
 		}
 		PARSE_INT;
@@ -255,8 +253,7 @@ int panda_seqid_parse_fail(
 			*dest++ = (**endptr);
 			*dest = '\0';
 		}
-		has_tag = id->tag[0] != '\0';
-		if (!has_tag && policy == PANDA_TAG_PRESENT || has_tag && policy == PANDA_TAG_ABSENT) {
+		if (policy != PANDA_TAG_OPTIONAL && policy != ((id->tag[0] == '\0') ? PANDA_TAG_ABSENT : PANDA_TAG_PRESENT)) {
 			return 0;
 		}
 		return mate;
