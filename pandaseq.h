@@ -167,7 +167,7 @@ double panda_log1mexp(
 /**
  * The current version string
  */
-const char *panda_version(
+char const *const panda_version(
 	void);
 
 /* === Flags === */
