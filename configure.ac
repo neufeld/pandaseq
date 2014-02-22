@@ -76,11 +76,11 @@ AC_SUBST(MODULE_CFLAGS)
 AC_SUBST(MODULE_LIBS)
 
 if test "$enable_threads" != no; then
-	ACX_PTHREAD([have_pthread=true], [have_pthread=false])
+	ACX_PTHREAD
 else
-	have_pthread=false
+	acx_pthread_ok=no
 fi
-AM_CONDITIONAL([PTHREAD], [test x$have_pthread = xtrue])
+AM_CONDITIONAL([PTHREAD], [test x$acx_pthread_ok = xyes])
 
 MAIN_CPPFLAGS="$CPPFLAGS"
 MAIN_CFLAGS="$CFLAGS"

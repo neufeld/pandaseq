@@ -26,6 +26,9 @@
 #endif
 #include "pandaseq.h"
 #include "misc.h"
+#ifdef HAVE_PTHREAD
+#        include"pandaseq-mux.h"
+#endif
 
 static bool buff_read_gz(
 	char *buf,

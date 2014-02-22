@@ -30,6 +30,9 @@
 #include "pandaseq.h"
 #include "misc.h"
 #include "module.h"
+#ifdef HAVE_PTHREAD
+#        include"pandaseq-mux.h"
+#endif
 
 #define MAX_OPT_LIST 53
 #define MAX_MODULES 100

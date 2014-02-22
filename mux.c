@@ -23,6 +23,7 @@
 #        include <stdlib.h>
 #        include <string.h>
 #        include "pandaseq.h"
+#        include "pandaseq-mux.h"
 #        include "assembler.h"
 #        include "buffer.h"
 

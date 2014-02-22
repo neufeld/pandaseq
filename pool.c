@@ -26,6 +26,9 @@
 #include "pandaseq.h"
 #include "assembler.h"
 #include "misc.h"
+#ifdef HAVE_PTHREAD
+#        include"pandaseq-mux.h"
+#endif
 
 struct shared_info {
 	MANAGED_MEMBER(
