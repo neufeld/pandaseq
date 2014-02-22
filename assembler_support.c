@@ -75,7 +75,7 @@ PandaAssembler panda_assembler_new_kmer(
 	assembler->post_primers = false;
 	assembler->threshold = log(0.6);
 	assembler->algo = panda_algorithm_simple_bayes_new();
-	memset(assembler->overlapcount, 0, PANDA_MAX_LEN * sizeof(long));
+	memset(assembler->overlapcount, 0, 2 * PANDA_MAX_LEN * sizeof(long));
 	assembler->longest_overlap = 0;
 	assembler->num_kmers = num_kmers;
 	assert(1 << (8 * sizeof(seqindex)) > PANDA_MAX_LEN);
@@ -312,7 +312,7 @@ long panda_assembler_get_ok_count(
 long panda_assembler_get_overlap_count(
 	PandaAssembler assembler,
 	size_t length) {
-	return (length < PANDA_MAX_LEN) ? assembler->overlapcount[length] : -1;
+	return (length < 2 * PANDA_MAX_LEN) ? assembler->overlapcount[length] : -1;
 }
 
 bool panda_assembler_get_primers_after(
