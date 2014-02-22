@@ -401,6 +401,16 @@ namespace Panda {
 		}
 
 		/**
+		 * The maximum overlap two sequences must have to be accepted.
+		 */
+		public int maximum_overlap {
+			[CCode (cname = "panda_assembler_get_maximum_overlap")]
+			get;
+			[CCode (cname = "panda_assembler_set_maximum_overlap")]
+			set;
+		}
+
+		/**
 		 * The minimum overlap two sequences must have to be accepted. It must be greater than one.
 		 */
 		public int minimum_overlap {
@@ -1652,6 +1662,11 @@ namespace Panda {
 		 */
 		[CCode (cname = "panda_stdargs_min_overlap")]
 		public const Tweak.assembler min_overlap;
+		/**
+		 * The maximum overlap switch (-O).
+		 */
+		[CCode (cname = "panda_stdargs_max_overlap")]
+		public const Tweak.assembler max_overlap;
 		/**
 		 * The forward primer filter switch (-p).
 		 */

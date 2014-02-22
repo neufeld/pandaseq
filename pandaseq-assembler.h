@@ -285,6 +285,15 @@ void panda_assembler_set_minimum_overlap(
 	int overlap);
 
 /**
+ * The maximum overlap two sequences must have to be accepted.
+ */
+int panda_assembler_get_maximum_overlap(
+	PandaAssembler assembler);
+void panda_assembler_set_maximum_overlap(
+	PandaAssembler assembler,
+	int overlap);
+
+/**
  * The name assoicated with this assembler.
  *
  * This is shown in logging output.

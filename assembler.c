@@ -70,6 +70,11 @@ static bool align(
 	double oquality = 0;
 	double rquality = 0;
 	ssize_t len;
+
+	if (maxoverlap > assembler->maxoverlap) {
+		maxoverlap = assembler->maxoverlap;
+	}
+
 	BITS_INIT(posn, assembler->minoverlap <= maxoverlap ? (maxoverlap - assembler->minoverlap + 1) : 1);
 
 	if (result->forward_length >= (1 << (8 * sizeof(seqindex)))) {

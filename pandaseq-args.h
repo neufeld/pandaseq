@@ -240,6 +240,10 @@ PANDA_EXTERN const panda_tweak_assembler panda_stdargs_degenerates;
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_min_overlap;
 /**
+ * The maximum overlap switch (-O).
+ */
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_max_overlap;
+/**
  * The forward primer filter switch (-p).
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_forward_primer;

@@ -126,6 +126,7 @@ void panda_assembler_copy_configuration(
 	dest->reverse_trim = src->reverse_trim;
 	dest->threshold = src->threshold;
 	dest->minoverlap = src->minoverlap;
+	dest->maxoverlap = src->maxoverlap;
 	dest->post_primers = src->post_primers;
 	panda_algorithm_unref(dest->algo);
 	dest->algo = panda_algorithm_ref(src->algo);
@@ -271,8 +272,21 @@ int panda_assembler_get_minimum_overlap(
 void panda_assembler_set_minimum_overlap(
 	PandaAssembler assembler,
 	int overlap) {
-	if (overlap > 1 && overlap < PANDA_MAX_LEN) {
+	if (overlap > 1 && overlap < 2 * PANDA_MAX_LEN) {
 		assembler->minoverlap = overlap;
+	}
+}
+
+int panda_assembler_get_maximum_overlap(
+	PandaAssembler assembler) {
+	return assembler->maxoverlap;
+}
+
+void panda_assembler_set_maximum_overlap(
+	PandaAssembler assembler,
+	int overlap) {
+	if (overlap > 1 && overlap < 2 * PANDA_MAX_LEN) {
+		assembler->maxoverlap = overlap;
 	}
 }
 
