@@ -117,6 +117,10 @@ static const panda_tweak_general *common_args[] = {
 	&verbose
 };
 
+static const panda_tweak_general *unique_args[] = {
+	&kmers,
+};
+
 static bool common_tweak_general(
 	void *user_data,
 	char flag,
@@ -154,8 +158,6 @@ static PandaAssembler prep_assembler(
 	int *args_length,
 	const panda_tweak_assembler *const *const assembler_args,
 	size_t assembler_args_length,
-	const panda_tweak_general *const *const general_args,
-	size_t general_args_length,
 	panda_tweak_assembler_opt * common_options,
 	size_t common_options_length,
 	size_t num_kmers,
@@ -170,7 +172,7 @@ static PandaAssembler prep_assembler(
 
 	data->num_kmers = 0;
 
-	if (!panda_dispatch_args(*args, *args_length, assembler_args, assembler_args_length, general_args, general_args_length, common_tweak_general, data, options, sizeof(options) / sizeof(options[0]), &options_used, &args_unused)) {
+	if (!panda_dispatch_args(*args, *args_length, assembler_args, assembler_args_length, unique_args, sizeof(unique_args) / sizeof(unique_args[0]), common_tweak_general, data, options, sizeof(options) / sizeof(options[0]), &options_used, &args_unused)) {
 		CLEANUP();
 		return NULL;
 	}
@@ -288,13 +290,13 @@ bool panda_diff_parse_args(
 	if (num_kmers == 0) {
 		num_kmers = PANDA_DEFAULT_NUM_KMERS;
 	}
-	assembler = prep_assembler("control", logger, &args, &args_length, assembler_args, assembler_args_length, general_args, general_args_length, options, options_used, num_kmers, &data, assembler_setup);
+	assembler = prep_assembler("control", logger, &args, &args_length, assembler_args, assembler_args_length, options, options_used, num_kmers, &data, assembler_setup);
 	if (assembler == NULL) {
 		CLEANUP();
 		return false;
 	}
 	MAYBE(out_control_assembler) = assembler;
-	assembler = prep_assembler("experimental", logger, &args, &args_length, assembler_args, assembler_args_length, general_args, general_args_length, options, options_used, num_kmers, &data, assembler_setup);
+	assembler = prep_assembler("experimental", logger, &args, &args_length, assembler_args, assembler_args_length, options, options_used, num_kmers, &data, assembler_setup);
 	if (assembler == NULL) {
 		CLEANUP();
 		return false;
