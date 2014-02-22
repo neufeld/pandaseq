@@ -106,10 +106,10 @@ struct data {
 	bool verbose;
 };
 
-static const panda_tweak_general kmers = {.flag = 'k',.optional = true,.takes_argument = "kmers",.help = "The number of k-mers in the table." };
+static const panda_tweak_general kmers = {.flag = 'k',.optional = true,.takes_argument = "kmers",.help = "The number of k-mers in the table.", false };
 
-static const panda_tweak_general help = {.flag = 'h',.optional = true,.takes_argument = NULL,.help = "Show this delightful nonsense." };
-static const panda_tweak_general verbose = {.flag = 'v',.optional = true,.takes_argument = NULL,.help = "Be more verbose and show differences in per-base quality." };
+static const panda_tweak_general help = {.flag = 'h',.optional = true,.takes_argument = NULL,.help = "Show this delightful nonsense.", false };
+static const panda_tweak_general verbose = {.flag = 'v',.optional = true,.takes_argument = NULL,.help = "Be more verbose and show differences in per-base quality.", false };
 
 static const panda_tweak_general *common_args[] = {
 	&help,
