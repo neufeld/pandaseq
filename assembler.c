@@ -71,7 +71,9 @@ static bool align(
 	double rquality = 0;
 	ssize_t len;
 
-	if (maxoverlap > assembler->maxoverlap) {
+	if (assembler->maxoverlap == 0) {
+		maxoverlap = result->forward_length < result->reverse_length ? result->forward_length : result->reverse_length;
+	} else if (maxoverlap > assembler->maxoverlap) {
 		maxoverlap = assembler->maxoverlap;
 	}
 

@@ -294,7 +294,7 @@ static bool set_maxiumum_overlap(
 	}
 	errno = 0;
 	max_overlap = strtol(argument, NULL, 10);
-	if (errno != 0 || max_overlap < 1 || max_overlap > 2 * PANDA_MAX_LEN) {
+	if (errno != 0 || max_overlap < 0 || max_overlap > 2 * PANDA_MAX_LEN) {
 		fprintf(stderr, "Bad overlap length.\n");
 		free(argument);
 		return false;
@@ -305,7 +305,7 @@ static bool set_maxiumum_overlap(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_max_overlap = { 'O', "length", "Maximum overlap region length for a sequence.", set_maxiumum_overlap, false };
+const panda_tweak_assembler panda_stdargs_max_overlap = { 'O', "length", "Maximum overlap region length for a sequence. (0 to use read length.)", set_maxiumum_overlap, false };
 
 const panda_tweak_assembler *const panda_stdargs[] = {
 	&panda_stdargs_algorithm,

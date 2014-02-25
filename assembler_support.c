@@ -92,6 +92,7 @@ PandaAssembler panda_assembler_new_kmer(
 	pthread_mutex_init(&assembler->mutex, NULL);
 #endif
 	memset(assembler->kmerseen, 0, KMERSEEN_SIZE(num_kmers));
+	panda_assembler_set_maximum_overlap(assembler, 0);
 	panda_assembler_set_minimum_overlap(assembler, 2);
 	return assembler;
 }
@@ -285,7 +286,7 @@ int panda_assembler_get_maximum_overlap(
 void panda_assembler_set_maximum_overlap(
 	PandaAssembler assembler,
 	int overlap) {
-	if (overlap > 1 && overlap < 2 * PANDA_MAX_LEN) {
+	if (overlap > 0 && overlap < 2 * PANDA_MAX_LEN) {
 		assembler->maxoverlap = overlap;
 	}
 }
