@@ -24,6 +24,7 @@
 #include<unistd.h>
 #include "config.h"
 #include "pandaseq.h"
+
 int main(
 	int argc,
 	char **argv) {
@@ -81,7 +82,7 @@ int main(
 			printf("^\n\tBAD\n");
 		} else {
 			panda_seqid_print(&id, stdout);
-			printf("\n\tGOOD\n\tdirection = %s\n\thastag = %s\n", dir == 1 ? "forward" : "reverse", id.tag[0] == '\0' ? "no" : "yes");
+			printf("\n\tGOOD\n\tdirection = %s\n\thastag = %s\n", panda_idfmt_has_direction(detected_format) ? (dir == 1 ? "forward" : "reverse") : "unknown", id.tag[0] == '\0' ? "no" : "yes");
 		}
 		printf("\tinstrument = \"%s\"\n\trun = %d\n\tflowcell = \"%s\"\n\tlane = %d\n\ttile = %d\n\tx = %d\n\ty = %d\n\ttag = \"%s\"\n\tgenerator = %s\n", id.instrument, id.run, id.flowcell, id.lane, id.tile, id.x, id.y, id.tag, panda_idfmt_str(detected_format));
 	}

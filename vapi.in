@@ -176,7 +176,10 @@ namespace Panda {
 		UNKNOWN,
 		SRA,
 		CASAVA_1_4,
-		CASAVA_1_7;
+		CASAVA_1_7,
+		EBI_SRA;
+		[CCode (cname = "panda_idfmt_no_direction")]
+		public bool has_no_direction ();
 		[CCode (cname = "panda_idfmt_str")]
 		public unowned string to_string ();
 	}

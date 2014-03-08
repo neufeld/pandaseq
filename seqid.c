@@ -24,6 +24,8 @@
 const char *panda_idfmt_str(
 	PandaIdFmt format) {
 	switch (format) {
+	case PANDA_IDFMT_EBI_SRA:
+		return "EBI Short Read Archive";
 	case PANDA_IDFMT_SRA:
 		return "NCBI Short Read Archive";
 	case PANDA_IDFMT_CASAVA_1_4:
@@ -33,6 +35,11 @@ const char *panda_idfmt_str(
 	default:
 		return "unknown";
 	}
+}
+
+bool panda_idfmt_has_direction(
+	PandaIdFmt format) {
+	return format != PANDA_IDFMT_EBI_SRA && format != PANDA_IDFMT_SRA;
 }
 
 void panda_seqid_clear(
@@ -141,15 +148,15 @@ int panda_seqid_parse_fail(
 		endptr = &temp;
 	*endptr = input;
 
-	if (strncmp(input, "SRR", 3) == 0) {
-		/* NCBI Short Read Archive. Most of the data is too mangled to get out. */
+	if (strlen(input) > 3 && (input[0] == 'E' || input[0] == 'S') && input[1] == 'R' && input[2] == 'R') {
+		/* Short Read Archive. Most of the data is too mangled to get out. */
 		if (detected_format != NULL)
-			*detected_format = PANDA_IDFMT_SRA;
+			*detected_format = (input[0] == 'S') ? PANDA_IDFMT_SRA : PANDA_IDFMT_EBI_SRA;
 		*endptr += 3;
 		panda_seqid_clear(id);
 		PARSE_SRA_INT;
 		(*endptr)++;
-		sprintf(id->instrument, "SRR%d", value);
+		sprintf(id->instrument, "%cRR%d", (int) input[0], value);
 		PARSE_SRA_INT;
 		(*endptr)++;
 		id->lane = value;

@@ -33,6 +33,14 @@ EXTERN_C_BEGIN
 const char *panda_idfmt_str(
 	PandaIdFmt format);
 
+/**
+ * Does the header format indicate the direction of the read (i.e., forward or reverse).
+ *
+ * Reads from the SRAs have the direction information mangled.
+ */
+bool panda_idfmt_has_direction(
+	PandaIdFmt format);
+
 /* === Constructors === */
 
 /**
