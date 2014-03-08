@@ -35,7 +35,7 @@ static bool buff_read_gz(
 	size_t buf_len,
 	size_t *read,
 	void *data) {
-	gzFile *file = (gzFile *) data;
+	gzFile file = (gzFile ) data;
 	int code;
 	code = gzread(file, buf, buf_len);
 	if (code < 1) {
@@ -84,7 +84,7 @@ PandaBufferRead panda_open_buffer(
 		*destroy = BZ2_bzclose;
 		return buff_read_bz2;
 	} else {
-		gzFile *gz_file;
+		gzFile gz_file;
 		gz_file = gzdopen(fd, "r");
 		if (gz_file == NULL) {
 			panda_log_proxy_write(logger, PANDA_CODE_NO_FILE, NULL, NULL, file_name);
