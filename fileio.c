@@ -35,7 +35,7 @@ static bool buff_read_gz(
 	size_t buf_len,
 	size_t *read,
 	void *data) {
-	gzFile file = (gzFile ) data;
+	gzFile file = (gzFile) data;
 	int code;
 	code = gzread(file, buf, buf_len);
 	if (code < 1) {
