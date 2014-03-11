@@ -286,7 +286,7 @@ int panda_assembler_get_maximum_overlap(
 void panda_assembler_set_maximum_overlap(
 	PandaAssembler assembler,
 	int overlap) {
-	if (overlap > 0 && overlap < 2 * PANDA_MAX_LEN) {
+	if (overlap >= 0 && overlap < 2 * PANDA_MAX_LEN) {
 		assembler->maxoverlap = overlap;
 	}
 }
