@@ -106,7 +106,7 @@ static void file_write(
 static void bzip_write(
 	const char *buffer,
 	size_t buffer_length,
-	BZFILE * file) {
+	BZFILE *file) {
 	int bzerror;
 	BZ2_bzWrite(&bzerror, file, (void *) buffer, buffer_length);
 }
