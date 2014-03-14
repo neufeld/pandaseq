@@ -36,7 +36,7 @@
 
 typedef unsigned int bitstype;
 #define FOR_BITS_IN_LIST(bits,index) for (index = 0; index < bits##_size; index++) if ((bits)[index / sizeof(bitstype) / 8] & (1 << (index % (8 * sizeof(bitstype)))))
-#define BIT_LIST_SET(bits,index) (bits)[(index) / sizeof(bitstype) / 8] |= (1 << ((index) % (8 * sizeof(bitstype))));
+#define BIT_LIST_SET(bits,index) do { if ((index) >= 0 && (index) < bits##_size) { (bits)[(index) / sizeof(bitstype) / 8] |= (1 << ((index) % (8 * sizeof(bitstype)))); } } while (0)
 #define BIT_LIST_GET(bits,index) ((bits)[(index) / sizeof(bitstype) / 8] & (1 << ((index) % (8 * sizeof(bitstype)))))
 #define BITS_INIT(bits,size) bitstype bits[(size) / 8 / sizeof(bitstype) + 1]; size_t bits##_size = (size); memset(&bits, 0, ((size) / 8 / sizeof(bitstype) + 1) * sizeof(bitstype))
 #define ALL_BITS_IF_NONE(bits) do { bitstype _all = 0; size_t _bitctr; for (_bitctr = 0; _bitctr < ((bits##_size) / 8 / sizeof(bitstype) + 1); _bitctr++) { _all |= (bits)[_bitctr]; } if (_all == 0) { memset(&bits, 0xFF, (bits##_size / 8 / sizeof(bitstype) + 1) * sizeof(bitstype)); }} while (0)
@@ -101,9 +101,7 @@ static bool align(
 		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] != (seqindex) 0; j++) {
 			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] - assembler->minoverlap - 1;
-			if (index >= 0) {
-				BIT_LIST_SET(posn, index);
-			}
+			BIT_LIST_SET(posn, index);
 		}
 	}
 
