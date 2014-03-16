@@ -100,7 +100,9 @@ static void file_write(
 	const char *buffer,
 	size_t buffer_length,
 	FILE *file) {
-	fwrite(buffer, 1, buffer_length, file);
+	if (fwrite(buffer, 1, buffer_length, file) != buffer_length) {
+		perror("writer");
+	}
 }
 
 static void bzip_write(
