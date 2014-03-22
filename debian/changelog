@@ -1,3 +1,17 @@
+pandaseq (2.7~ppa0) precise; urgency=low
+
+  * Supress warning about PHRED+64 when the header is CASAVA 1.7+
+  * Fix stack corruption causing crashes
+  * Add support for EBI SRA header formats
+  * Set the maximum overlap back to read length
+  * Allow restricting the maximum overlap length
+  * Deal with DOS formatted files gracefully
+  * Fix probability to PHRED conversion
+  * Add a program to compare differening conditions
+  * Fix RDP scoring algorithm
+
+ -- Andre Masella <andre@masella.name>  Sat, 22 Mar 2014 12:17:17 -0700
+
 pandaseq (2.6~ppa0) precise; urgency=low
 
   * New alignment algorithms: RDP maximum likehood and PEAR

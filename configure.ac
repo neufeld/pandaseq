@@ -1,4 +1,4 @@
-AC_INIT([pandaseq], [2.6], [andre@masella.name])
+AC_INIT([pandaseq], [2.7], [andre@masella.name])
 AC_PREREQ([2.60])
 AM_INIT_AUTOMAKE([-Wall foreign])
 AC_CONFIG_MACRO_DIR([m4])
@@ -134,7 +134,7 @@ LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
 AC_SUBST(LIB_NAME)
 
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
-LIB_MAJOR=4
+LIB_MAJOR=5
 LIB_MINOR=0
 LIB_VER=${LIB_MAJOR}:${LIB_MINOR}:0
 LIB_URL_VER=0:0:0
