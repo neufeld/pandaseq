@@ -152,7 +152,7 @@ are compressed by
 This is automatically detected now.
 .TP
 \-k kmers
-Sets the number of sequence locations for a particular \fIk\fR-mer. When attempting to align the sequences, the assembler will store the location of every \fIk\fR-mer in a table. If the same \fIk\fR-mer is present multiple times, only the first ones will be stored until the table is full; when this occurs, an \fBFML\fR error is emitted. If the sequences are highly repetitive, lost positions can prevent good alignments; this can be alleviated by increasing this amount. This should be small (no more than 10), or the \fIk\fR-mer table will be extremely large, using a large amount of RAM per thread. Try increasing the value until \fBFML\fR errors go away.
+Sets the number of sequence locations for a particular \fIk\fR-mer. When attempting to align the sequences, the assembler will store the location of every \fIk\fR-mer in a table. If the same \fIk\fR-mer is present multiple times, only the first ones will be stored until the table is full; when this occurs, an \fBFML\fR error is emitted. If the sequences are highly repetitive, lost positions can prevent good alignments; this can be alleviated by increasing this amount. This should be small (no more than 10; the default is 2), or the \fIk\fR-mer table will be extremely large, using a large amount of RAM per thread. Try increasing the value until \fBFML\fR errors go away.
 .TP
 \-l minlen
 Sets the minimum length for a sequence, after primers are removed. By default, all sequences are kept. With this option, sequences shorter than desired can be discarded.
