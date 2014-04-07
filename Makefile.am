@@ -120,6 +120,7 @@ pkglibx_LTLIBRARIES = \
 	min_phred.la \
 	min_overlapbits.la \
 	min_readqscore.la \
+	overlap_stat.la \
 	pear_test.la \
 	validtag.la \
 	$(NULL)
@@ -158,6 +159,11 @@ min_readqscore_la_CFLAGS = -DPANDASEQ_MODULE=min_readqscore -g
 min_readqscore_la_SOURCES = plugin_min_readqscore.c panda_api.c
 min_readqscore_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS)
 min_readqscore_la_LIBADD = libpandaseq.la
+overlap_stat_la_CPPFLAGS = -std=c99
+overlap_stat_la_CFLAGS = -DPANDASEQ_MODULE=overlap_stat -g
+overlap_stat_la_SOURCES = plugin_overlap_stat.c panda_api.c
+overlap_stat_la_LDFLAGS = -module -shared -avoid-version $(NO_UNDEFINED) $(MODULE_LIBS) -lm
+overlap_stat_la_LIBADD = libpandaseq.la
 pear_test_la_CPPFLAGS = -std=c99
 pear_test_la_CFLAGS = -DPANDASEQ_MODULE=pear_test -g
 pear_test_la_SOURCES = plugin_pear_test.c panda_api.c
