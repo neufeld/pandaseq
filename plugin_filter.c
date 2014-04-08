@@ -30,6 +30,7 @@ OPEN {
 			panda_log_proxy_perror(logger, args);
 			return false;
 		}
+		close = true;
 	}
 	set = panda_idset_new();
 	while (fgets(buffer, sizeof(buffer), file) != NULL) {
