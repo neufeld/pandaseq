@@ -17,7 +17,9 @@ static bool check_func(
 
 	struct data *data = (struct data *) user_data;
 
-	data->counts[sequence->overlaps_examined]++;
+	if (sequence->overlaps_examined > 0) {
+		data->counts[sequence->overlaps_examined - 1]++;
+	}
 	return true;
 }
 
@@ -26,10 +28,10 @@ static void cleanup(
 	size_t it;
 	size_t max;
 
-	for (max = PANDA_MAX_LEN; data->counts[max - 1] == 0; max--) ;
+	for (max = PANDA_MAX_LEN - 1; data->counts[max] == 0; max--) ;
 
 	panda_writer_append(data->writer, "STAT\tEXAMINED");
-	for (it = 0; it < max; it++) {
+	for (it = 0; it <= max; it++) {
 		panda_writer_append(data->writer, " %d", data->counts[it]);
 	}
 	panda_writer_append_c(data->writer, '\n');
@@ -47,8 +49,9 @@ OPEN {
 		return false;
 	}
 	data = malloc(sizeof(struct data) + sizeof(size_t) * PANDA_MAX_LEN);
-	for (it = 1; it < PANDA_MAX_LEN; it++)
+	for (it = 0; it < PANDA_MAX_LEN; it++) {
 		data->counts[it] = 0;
+	}
 	data->writer = panda_writer_ref(panda_log_proxy_get_writer(logger));
 	*precheck = NULL;
 	*check = check_func;
