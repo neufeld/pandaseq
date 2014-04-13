@@ -29,11 +29,13 @@ LO_FILES=""
 for each in @includedir@/@LIB_NAME@/panda_api.c $SRC
 do
 	LO="${MOD}-$(basename "${each}.lo")"
-	@MOD_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@LIB_NAME@ @CPPFLAGS@ @CFLAGS@ -c -o "$LO" "$each" $PT
+	@MOD_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@LIB_NAME@ @CPPFLAGS@ @CFLAGS@ -c -o "$LO" "$each" $PT || exit 1
 	LO_FILES="$LO_FILES $LO"
 done
-@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" $LO_FILES $PT @NO_UNDEFINED@
+@MOD_LIBTOOL@ --tag=CC --mode=link @CC@ @CFLAGS@ -avoid-version -module -shared -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" $LO_FILES $PT @NO_UNDEFINED@ || exit 1
 if [ -d "@libdir@/@PACKAGE@@LIB_MAJOR@" -a -w "@libdir@/@PACKAGE@@LIB_MAJOR@" ]
 then
 	@MOD_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@@LIB_MAJOR@/${MOD}.la"
+else
+	echo To install: sudo @MOD_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@@LIB_MAJOR@/${MOD}.la"
 fi
