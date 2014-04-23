@@ -133,7 +133,7 @@ static bool set_threshold(
 	return true;
 }
 
-const panda_tweak_assembler panda_stdargs_threshold = { 't', "threshold", "The minimum probability that a sequence must have to match a primer.", set_threshold, false };
+const panda_tweak_assembler panda_stdargs_threshold = { 't', "threshold", "The minimum probability that a sequence must have to assemble and, if used, match a primer.", set_threshold, false };
 
 static bool set_primer(
 	PandaAssembler assembler,

@@ -182,6 +182,7 @@ for more information.
 .TP
 \-t threshold
 The score, between zero and one, that a sequence must meet to be kept in the output. Any alignments lower than this will be discarded as low quality. Increasing this number will not necessarily prevent uncalled bases\ (Ns) from appearing in the final sequence.
+It is also used as the threshold to match primers, if primers are supplied. The default value is 0.6.
 .TP
 \-T threads
 The number of threads to spawn. This will only be avilable if PANDAseq was compiled with 
