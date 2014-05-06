@@ -364,6 +364,12 @@ Output only the sequences whose identifiers match those in the file specified, o
 min_phred:\fIvalue\fR
 Check the PHRED score of every base in the output sequence and make sure it is at least \fIvalue\fR. The threshold is based on the sequence as a whole, but this is based on the individual base scores, as they would be seen with the \fB-F\fR option.
 .TP
+min_overlapbits:\fIvalue\fR
+Check that the number of “bits saved” (Cole, et al. 2013) is above the provided value.
+.TP
+overlap_stat
+Produces a histogram of the number of overlaps that were examined for each of the sequences that assembled. This does not indicate the number of overlaps that were examined for discarded sequences.
+.TP
 pear
 Perform the false-positive test described in section 2.2 of Zhang 2013.
 .TP
