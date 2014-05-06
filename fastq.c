@@ -148,8 +148,8 @@ static bool stream_next_seq(
 		return false;
 	}
 	if (format == PANDA_IDFMT_CASAVA_1_7) {
-			/* We know that CASAVA 1.7+ is always PHRED+33, so supress the warning. */
-			data->seen_under_64 = true;
+		/* We know that CASAVA 1.7+ is always PHRED+33, so supress the warning. */
+		data->seen_under_64 = true;
 	}
 	if (!read_seq(id, data->forward_seq, MAX_LEN, data->forward, iupac_forward, data, forward_length)) {
 		*forward_length = 0;
