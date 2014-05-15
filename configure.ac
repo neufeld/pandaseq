@@ -101,8 +101,7 @@ AC_CHECK_HEADERS([sys/sysctl.h], [], [],
 #endif
 ]])
 
-AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([*** zlib.h is required, install zlib header files])])
-AC_CHECK_LIB([z], [gzopen], [], [AC_MSG_ERROR([*** gzopen is required, install zlib library files])])
+PKG_CHECK_MODULES(Z, [ zlib ])
 AC_CHECK_HEADER([bzlib.h], [], [AC_MSG_ERROR([*** bzlib.h is required, install bzip2 header files])])
 AC_CHECK_LIB([bz2], [BZ2_bzDecompressInit], [], [AC_MSG_ERROR([*** BZ2_bzDecompressInit is required, install bzip2 library files])])
 PANDA_CPPFLAGS="$CPPFLAGS"

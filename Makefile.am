@@ -58,6 +58,7 @@ pandaseq_hang_LDADD = libpandaseq.la
 libpandaseq_la_CPPFLAGS = \
 	$(PANDA_CPPFLAGS) \
 	$(PTHREAD_CFLAGS) \
+	$(Z_CFLAGS) \
 	-DPKGLIBDIR=$(pkglibdir)$(LIB_MAJOR) \
 	-DPANDA_LIB_COMPILING \
 	-std=c99 \
@@ -66,6 +67,7 @@ libpandaseq_la_CPPFLAGS = \
 libpandaseq_la_LDFLAGS = \
 	$(PANDA_LIBS) \
 	$(PTHREAD_LIBS) \
+	$(Z_LIBS) \
 	-export-symbols-regex '^panda_' \
 	-version-info $(LIB_VER) \
 	$(NO_UNDEFINED) \
