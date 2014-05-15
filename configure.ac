@@ -52,7 +52,7 @@ case "$host" in
 	is_windows=true
 	;;
 *darwin*|*Darwin*)
-	MODULE_LDFLAGS="$MOD_LIBTOOL -flat_namespace"
+	MODULE_LDFLAGS="$MODULE_LDFLAGS -flat_namespace"
 	MODULE_LIBTOOL=glibtool
 	;;
 esac
