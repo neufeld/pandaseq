@@ -18,6 +18,7 @@ AM_PROG_AR
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 LT_INIT
+LT_LIB_M
 LT_PROG_RC
 AX_CHECK_CFLAGS([-pedantic])
 AC_HEADER_STDC
@@ -40,40 +41,25 @@ fi
 AC_MSG_RESULT([$CC_FOR_BUILD])
 AC_ARG_VAR(CC_FOR_BUILD,[C compiler for building tools])
 
-ORIG_CPPFLAGS="$CPPFLAGS"
-ORIG_CFLAGS="$CFLAGS"
-ORIG_LIBS="$LIBS"
-MODULE_CPPFLAGS="$CPPFLAGS"
-MODULE_CFLAGS="$CFLAGS"
-MODULE_LIBS="$LIBS libpandaseq.la"
 AC_MSG_CHECKING([for module flags])
 is_windows=false
+MODULE_CFLAGS="$CFLAGS"
+MODULE_LDFLAGS="$LDFLAGS -no-undefined -avoid-version -shared"
+MODULE_LIBTOOL=libtool
 case "$host" in
 *-mingw*)
-	NO_UNDEFINED='-no-undefined'
-	MODULE_LDFLAGS="$LDFLAGS -Wl,-static"
-	MOD_LIBTOOL=libtool
+	MODULE_LDFLAGS="$MODULE_LDFLAGS -Wl,-static"
 	is_windows=true
 	;;
-*openbsd*|*freebsd*)
-	NO_UNDEFINED=''
-	MOD_LIBTOOL=libtool
-	;;
 *darwin*|*Darwin*)
-	NO_UNDEFINED='-no-undefined -flat_namespace'
-	MOD_LIBTOOL=glibtool
-	;;
-*)
-	NO_UNDEFINED='-no-undefined'
-	MOD_LIBTOOL=libtool
+	MODULE_LDFLAGS="$MOD_LIBTOOL -flat_namespace"
+	MODULE_LIBTOOL=glibtool
 	;;
 esac
-AC_MSG_RESULT([$NO_UNDEFINED])
-AC_SUBST(NO_UNDEFINED)
-AC_SUBST(MOD_LIBTOOL)
-AC_SUBST(MODULE_CPPFLAGS)
+AC_MSG_RESULT([$MODULE_LDFLAGS])
+AC_SUBST(MODULE_LIBTOOL)
 AC_SUBST(MODULE_CFLAGS)
-AC_SUBST(MODULE_LIBS)
+AC_SUBST(MODULE_LDFLAGS)
 
 if test "$enable_threads" != no; then
 	ACX_PTHREAD
@@ -82,17 +68,6 @@ else
 fi
 AM_CONDITIONAL([PTHREAD], [test x$acx_pthread_ok = xyes])
 
-MAIN_CPPFLAGS="$CPPFLAGS"
-MAIN_CFLAGS="$CFLAGS"
-MAIN_LIBS="$LIBS"
-AC_SUBST(MAIN_CPPFLAGS)
-AC_SUBST(MAIN_CFLAGS)
-AC_SUBST(MAIN_LIBS)
-
-AC_CHECK_LIB(ltdl, lt_dlinit,,AC_MSG_ERROR(Cannot link with libtool libs! (libltdl)))
-
-AC_CHECK_HEADERS([math.h])
-AC_CHECK_LIB([m],[pow])
 AG_CHECK_UNAME_SYSCALL
 AC_CHECK_HEADERS_ONCE([sys/param.h])
 AC_CHECK_HEADERS([sys/sysctl.h], [], [],
@@ -102,24 +77,12 @@ AC_CHECK_HEADERS([sys/sysctl.h], [], [],
 ]])
 
 PKG_CHECK_MODULES(Z, [ zlib ])
-AC_CHECK_HEADER([bzlib.h], [], [AC_MSG_ERROR([*** bzlib.h is required, install bzip2 header files])])
-AC_CHECK_LIB([bz2], [BZ2_bzDecompressInit], [], [AC_MSG_ERROR([*** BZ2_bzDecompressInit is required, install bzip2 library files])])
-PANDA_CPPFLAGS="$CPPFLAGS"
-PANDA_CFLAGS="$CFLAGS"
-PANDA_LIBS="$LIBS"
-
-AC_SUBST(PANDA_CPPFLAGS)
-AC_SUBST(PANDA_CFLAGS)
-AC_SUBST(PANDA_LIBS)
-
-LIBCURL_CHECK_CONFIG(, , [have_curl=true], [have_curl=false])
+PKG_CHECK_MODULES(CURL, [ libcurl ], [have_curl=true], [have_curl=false])
 AM_CONDITIONAL([LIBCURL], [test x$have_curl = xtrue])
+LEGACY_CHECK_MODULES(BZ, [bzlib.h], [bz2], [BZ2_bzDecompressInit], [], [], [AC_MSG_ERROR([*** bzip2 required, install bzip2 library])])
+LEGACY_CHECK_MODULES(LTDL, [ltdl.h], [ltdl], [lt_dlinit], [], [], [AC_MSG_ERROR([*** ltld required, install libtool library. ])])
 
 AM_CONDITIONAL([IS_WINDOWS], [test x$is_windows = xtrue])
-
-CPPFLAGS="$ORIG_CPPFLAGS"
-CFLAGS="$ORIG_CFLAGS"
-LIBS="$ORIG_LIBS"
 
 LIB_NAME=pandaseq-$(echo $PACKAGE_VERSION | sed -e 's/\..*$//g')
 AC_SUBST(LIB_NAME)
