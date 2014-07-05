@@ -1,10 +1,4 @@
-'\" e
 .\" Authors: Andre Masella
-.EQ
-delim $$
-.EN
-.EQ
-.EN
 .TH pandaseq 1 "June 2011" "2.0" "USER COMMANDS"
 .SH NAME 
 pandaseq \- PAired-eND Assembler for DNA sequences
@@ -103,7 +97,7 @@ Input files will have their quality encoded as PHRED + 64 instead of the PHRED +
 Set the algorithm used for assembly. Currently there are:
 .RS
 .IP simple_bayesian[:\fIerror_estimation\fR]
-Uses the formula described in the original paper (Masella 2012), optionally with an error estimation ($epsilon$) provided.
+Uses the formula described in the original paper (Masella 2012), optionally with an error estimation (\[*e]) provided.
 .IP pear[:\fIrandom_base\fR]
 Uses the formula described in the PEAR paper (Zhang 2013), optionally with the probability of a random base (q) provided.
 .IP rdp_bayesian
