@@ -69,7 +69,6 @@ bool panda_dispatch_args(
 	int *args_unused) {
 
 	int c;
-	bool help = false;
 	size_t it;
 	char optlist[MAX_OPT_LIST + 1];
 	char seen_options[MAX_OPT_LIST + 1];
@@ -378,7 +377,7 @@ static bool common_tweak_general(
 	case 'k':
 		errno = 0;
 		value = strtol(argument, NULL, 10);
-		if (errno != 0 || value < 0 || value > PANDA_MAX_LEN) {
+		if (errno != 0 || value < 0 || (size_t) value > PANDA_MAX_LEN) {
 			fprintf(stderr, "Bad k-mer list length.\n");
 			return false;
 		}
@@ -524,9 +523,9 @@ bool panda_parse_args(
 	}
 #endif
 
-	for (it = 0; it < args_length; it++) {
+	for (it = 0; it < (size_t) args_length; it++) {
 		char buf[2048];
-		if (snprintf(buf, sizeof(buf), "ARG[%d]\t%s", (int) it, args[it]) < sizeof(buf)) {
+		if (snprintf(buf, sizeof(buf), "ARG[%d]\t%s", (int) it, args[it]) < (int) sizeof(buf)) {
 			panda_log_proxy_write_str(logger, buf);
 		}
 	}

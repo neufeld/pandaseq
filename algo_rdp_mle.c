@@ -31,6 +31,7 @@ static double match_probability(
 	bool match,
 	char a,
 	char b) {
+	(void) data;
 	if (match) {
 		char max = (a >= b) ? a : b;
 		return qual_score[PHREDCLAMP(max)];
@@ -50,10 +51,11 @@ static double overlap_probability(
 	double probability = 0;
 	size_t i;
 
+	(void) data;
 	for (i = 0; i < overlap; i++) {
 		int findex = forward_length + i - overlap;
 		int rindex = reverse_length - i - 1;
-		if (findex < 0 || rindex < 0 || findex > forward_length || rindex > reverse_length)
+		if (findex < 0 || rindex < 0 || (size_t) findex > forward_length || (size_t) rindex > reverse_length)
 			continue;
 		panda_nt f = forward[findex].nt;
 		panda_nt r = reverse[rindex].nt;
@@ -63,9 +65,9 @@ static double overlap_probability(
 
 		/* when two bases match, the assumption that the forward and reverse bases are from independent observations doesn't work with the MiSeq mock community data we tested. Instead, the higher score of the two raw base q scores is close to the predicated error rate */
 		if (ismatch) {
-			probability += qual_match_simple_bayesian[fqual][rqual] - qual_nn_simple_bayesian;
+			probability += qual_match_simple_bayesian[(int) fqual][(int) rqual] - qual_nn_simple_bayesian;
 		} else {
-			probability += qual_mismatch_rdp_mle[fqual][rqual] - qual_nn_simple_bayesian;
+			probability += qual_mismatch_rdp_mle[(int) fqual][(int) rqual] - qual_nn_simple_bayesian;
 		}
 	}
 	return probability;
@@ -73,7 +75,6 @@ static double overlap_probability(
 
 static PandaAlgorithm from_string(
 	const char *argument) {
-	PandaAlgorithm algo;
 
 	if (argument == NULL || strlen(argument) == 0)
 		return panda_algorithm_rdp_mle_new();

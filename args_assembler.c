@@ -29,6 +29,7 @@ static bool set_algorithm(
 	char *argument) {
 	char *extra;
 	size_t it;
+	(void) flag;
 	if (argument == NULL)
 		return true;
 	extra = strchr(argument, LT_PATHSEP_CHAR);
@@ -67,6 +68,10 @@ static bool set_primers_after(
 	PandaAssembler assembler,
 	char flag,
 	char *argument) {
+
+	(void) flag;
+	(void) argument;
+
 	panda_assembler_set_primers_after(assembler, true);
 	return true;
 }
@@ -78,6 +83,9 @@ bool no_n_check(
 	const panda_result_seq *sequence,
 	void *user_data) {
 
+	(void) logger;
+	(void) user_data;
+
 	return sequence->degenerates == 0;
 }
 
@@ -86,6 +94,7 @@ static bool add_module(
 	char flag,
 	char *argument) {
 	PandaModule module;
+	(void) flag;
 
 	if (argument == NULL) {
 		return true;
@@ -107,8 +116,12 @@ static bool set_degenerates(
 	char flag,
 	char *argument) {
 	PandaModule m = panda_module_new("DEGENERATE", no_n_check, NULL, NULL, NULL);
+	(void) flag;
 	panda_assembler_add_module(assembler, m);
 	panda_module_unref(m);
+	if (argument != NULL) {
+		free(argument);
+	}
 	return true;
 }
 
@@ -119,6 +132,7 @@ static bool set_threshold(
 	char flag,
 	char *argument) {
 	double threshold = 0.6;
+	(void) flag;
 	if (argument != NULL) {
 		errno = 0;
 		threshold = strtod(argument, NULL);
@@ -195,6 +209,7 @@ bool short_check(
 	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data) {
+	(void) logger;
 	return sequence->sequence_length >= (size_t) user_data;
 }
 
@@ -204,13 +219,14 @@ static bool set_short_check(
 	char *argument) {
 	long int minlen;
 	PandaModule m;
+	(void) flag;
 
 	if (argument == NULL) {
 		return true;
 	}
 	errno = 0;
 	minlen = (size_t) strtol(argument, NULL, 10);
-	if (errno != 0 || minlen < 0 || minlen > 2 * PANDA_MAX_LEN) {
+	if (errno != 0 || minlen < 0 || (size_t) minlen > 2 * PANDA_MAX_LEN) {
 		fprintf(stderr, "Bad minimum length.\n");
 		free(argument);
 		return false;
@@ -229,7 +245,8 @@ bool long_check(
 	const panda_result_seq *sequence,
 	void *user_data) {
 	size_t length = (size_t) user_data;
-	return sequence->sequence_length <= (size_t) user_data;
+	(void) logger;
+	return sequence->sequence_length <= length;
 }
 
 static bool set_long_check(
@@ -239,6 +256,7 @@ static bool set_long_check(
 	size_t maxlen;
 	PandaModule m;
 
+	(void) flag;
 	if (argument == NULL) {
 		return true;
 	}
@@ -265,12 +283,13 @@ static bool set_minimum_overlap(
 	char *argument) {
 	int min_overlap;
 
+	(void) flag;
 	if (argument == NULL) {
 		return true;
 	}
 	errno = 0;
 	min_overlap = strtol(argument, NULL, 10);
-	if (errno != 0 || min_overlap < 1 || min_overlap > 2 * PANDA_MAX_LEN) {
+	if (errno != 0 || min_overlap < 1 || (size_t) min_overlap > 2 * PANDA_MAX_LEN) {
 		fprintf(stderr, "Bad overlap length.\n");
 		free(argument);
 		return false;
@@ -289,12 +308,13 @@ static bool set_maxiumum_overlap(
 	char *argument) {
 	int max_overlap;
 
+	(void) flag;
 	if (argument == NULL) {
 		return true;
 	}
 	errno = 0;
 	max_overlap = strtol(argument, NULL, 10);
-	if (errno != 0 || max_overlap < 0 || max_overlap > 2 * PANDA_MAX_LEN) {
+	if (errno != 0 || max_overlap < 0 || (size_t) max_overlap > 2 * PANDA_MAX_LEN) {
 		fprintf(stderr, "Bad overlap length.\n");
 		free(argument);
 		return false;

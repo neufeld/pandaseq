@@ -132,6 +132,9 @@ static void null_write(
 	const char *buffer,
 	size_t buffer_length,
 	void *data) {
+	(void) buffer;
+	(void) buffer_length;
+	(void) data;
 }
 
 PandaWriter panda_writer_new_null(

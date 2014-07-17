@@ -36,7 +36,6 @@ int main(
 	bool version = false;
 
 	while ((c = getopt(argc, argv, optlist)) != -1) {
-		char *endptr;
 		switch (c) {
 		case 'h':
 			help = true;

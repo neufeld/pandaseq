@@ -24,6 +24,11 @@ static bool precheck_func(
 
 	int it;
 	const char *tag = id->tag;
+	(void) logger;
+	(void) forward;
+	(void) forward_length;
+	(void) reverse;
+	(void) reverse_length;
 	if (tag == NULL)
 		return false;
 
@@ -48,6 +53,7 @@ OPEN {
 	char *wit;
 	char **currtag;
 
+	(void) check;
 	data.numtags = 1;
 	data.taglen = 0;
 

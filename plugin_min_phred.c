@@ -10,6 +10,9 @@ static bool check_func(
 	const panda_result_seq *sequence,
 	void *user_data) {
 	size_t it;
+
+	(void) logger;
+
 	for (it = 0; it < sequence->sequence_length; it++) {
 		if (panda_result_phred(&sequence->sequence[it]) < *(int *) user_data) {
 			return false;
@@ -21,6 +24,9 @@ static bool check_func(
 OPEN {
 	long int value;
 	char *endptr;
+
+	(void) precheck;
+
 	if (args == NULL || *args == '\0') {
 		panda_log_proxy_write_str(logger, "Need a number for a PHRED score.\n");
 		return false;

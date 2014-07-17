@@ -24,6 +24,9 @@ static double match(
 	double p,
 	double q,
 	void *data) {
+
+	(void) data;
+
 	return (1 - p) * (1 - q) + p * q / 3;
 }
 
@@ -31,6 +34,9 @@ static double mismatch(
 	double p,
 	double q,
 	void *data) {
+
+	(void) data;
+
 	return (1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9;
 }
 
@@ -38,6 +44,9 @@ static double match_pear(
 	double p,
 	double q,
 	void *data) {
+
+	(void) data;
+
 	return (1 - (1 - q) * p / 3 - (1 - p) * q / 3 - 2 * (1 - p) * (1 - q) / 9);
 }
 
@@ -45,12 +54,18 @@ static double mismatch_pear(
 	double p,
 	double q,
 	void *data) {
+
+	(void) data;
+
 	return (1 - p) * q / 3 + (1 - q) * p / 3 + p * q / 2;
 }
 
 static double score(
 	double p,
 	void *data) {
+
+	(void) data;
+
 	if (p == 1) {
 		return -2;
 	}
@@ -60,6 +75,9 @@ static double score(
 static double score_err(
 	double p,
 	void *data) {
+
+	(void) data;
+
 	return log(p);
 }
 
@@ -67,6 +85,9 @@ double mismatch_rdp(
 	double p,
 	double q,
 	void *data) {
+
+	(void) data;
+
 	return ((1 - p) * q / 3 + (1 - q) * p / 3 + 2 * p * q / 9);
 }
 
@@ -75,14 +96,15 @@ double mismatch_rdp_assembled(
 	double q,
 	void *data) {
 
+	(void) data;
+
 	double min = (p <= q) ? p : q;
 	double value = 1 - (min - p * q / 3.0) / (p + q - 4.0 / 3.0 * p * q);
 	return (value == 0) ? DBL_MIN : value;
 }
 
 int main(
-	int argc,
-	char **argv) {
+	void) {
 	PandaTBld t_bld;
 
 	t_bld = panda_tbld_open("table");

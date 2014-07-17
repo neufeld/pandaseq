@@ -29,7 +29,7 @@
 #        define free0(val) if ((val) != NULL) free(val); (val) = NULL
 
 typedef unsigned short seqindex;
-#        define KMER_LEN 8
+#        define KMER_LEN ((size_t) 8)
 #        define KMERSEEN_SIZE(num_kmers) (sizeof(seqindex) * (num_kmers) * (1 << (2 * KMER_LEN)))
 
 typedef struct {
@@ -37,8 +37,8 @@ typedef struct {
 	ssize_t posn;
 	ssize_t bad;
 } kmer_it;
-#        define _FOREACH_KMER(iterator,sequence,suffix,start,badstart,check,step,badreset) for ((iterator).posn = (start), (iterator).bad = badstart; (iterator).posn check; (iterator).posn step) if ((iterator).kmer = (((iterator).kmer << 2) | ((sequence)[(iterator).posn]suffix == PANDA_NT_T ? 3 : (sequence)[(iterator).posn]suffix == PANDA_NT_G ? 2 : (sequence)[(iterator).posn]suffix == PANDA_NT_C ? 1 : 0)) & ((1 << (2 * badreset)) - 1), PANDA_NT_IS_N((sequence)[(iterator).posn]suffix)) { (iterator).bad = badreset; } else if ((iterator).bad > 0) { (iterator).bad--; } else
-#        define FOREACH_KMER(iterator,sequence,suffix) _FOREACH_KMER(iterator, sequence, suffix, 0, KMER_LEN, < sequence ## _length, ++, KMER_LEN)
+#        define _FOREACH_KMER(iterator,sequence,suffix,start,badstart,check,step,badreset) for ((iterator).posn = (start), (iterator).kmer = 0, (iterator).bad = badstart; (iterator).posn check; (iterator).posn step) if ((iterator).kmer = (((iterator).kmer << 2) | ((sequence)[(iterator).posn]suffix == PANDA_NT_T ? 3 : (sequence)[(iterator).posn]suffix == PANDA_NT_G ? 2 : (sequence)[(iterator).posn]suffix == PANDA_NT_C ? 1 : 0)) & ((1 << (2 * badreset)) - 1), PANDA_NT_IS_N((sequence)[(iterator).posn]suffix)) { (iterator).bad = badreset; } else if ((iterator).bad > 0) { (iterator).bad--; } else
+#        define FOREACH_KMER(iterator,sequence,suffix) _FOREACH_KMER(iterator, sequence, suffix, 0, KMER_LEN, < (ssize_t)sequence ## _length, ++, KMER_LEN)
 #        define FOREACH_KMER_REVERSE(iterator,sequence,suffix) _FOREACH_KMER(iterator, sequence, suffix, sequence ## _length - 1, KMER_LEN, >= 0, --, KMER_LEN)
 #        define KMER(kmerit) ((kmerit).kmer)
 #        define KMER_POSITION(kmerit) ((kmerit).posn)

@@ -36,7 +36,7 @@
 
 typedef unsigned int bitstype;
 #define FOR_BITS_IN_LIST(bits,index) for (index = 0; index < bits##_size; index++) if ((bits)[index / sizeof(bitstype) / 8] & (1 << (index % (8 * sizeof(bitstype)))))
-#define BIT_LIST_SET(bits,index) do { if ((index) >= 0 && (index) < bits##_size) { (bits)[(index) / sizeof(bitstype) / 8] |= (1 << ((index) % (8 * sizeof(bitstype)))); } } while (0)
+#define BIT_LIST_SET(bits,index) do { if ((index) >= 0 && (size_t)(index) < bits##_size) { (bits)[(index) / sizeof(bitstype) / 8] |= (1 << ((index) % (8 * sizeof(bitstype)))); } } while (0)
 #define BIT_LIST_GET(bits,index) ((bits)[(index) / sizeof(bitstype) / 8] & (1 << ((index) % (8 * sizeof(bitstype)))))
 #define BITS_INIT(bits,size) bitstype bits[(size) / 8 / sizeof(bitstype) + 1]; size_t bits##_size = (size); memset(&bits, 0, ((size) / 8 / sizeof(bitstype) + 1) * sizeof(bitstype))
 #define ALL_BITS_IF_NONE(bits) do { bitstype _all = 0; size_t _bitctr; for (_bitctr = 0; _bitctr < ((bits##_size) / 8 / sizeof(bitstype) + 1); _bitctr++) { _all |= (bits)[_bitctr]; } if (_all == 0) { memset(&bits, 0xFF, (bits##_size / 8 / sizeof(bitstype) + 1) * sizeof(bitstype)); }} while (0)
@@ -48,7 +48,7 @@ typedef unsigned int bitstype;
 static bool align(
 	PandaAssembler assembler,
 	panda_result_seq *result) {
-	ssize_t i, j;
+	size_t i, j;
 	ssize_t df, dr;
 	/* Cache all algorithm information. */
 	double qual_nn = assembler->algo->clazz->prob_unpaired;
@@ -59,7 +59,6 @@ static bool align(
 	size_t maxoverlap = result->forward_length + result->reverse_length - assembler->minoverlap - result->forward_offset - result->reverse_offset - 1;
 	double bestprobability = qual_nn * (result->forward_length + result->reverse_length);
 	ssize_t bestoverlap = -1;
-	size_t overlap;
 	size_t counter;
 	kmer_it it;
 	size_t unmasked_forward_length;
@@ -144,7 +143,7 @@ static bool align(
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
 		return false;
 	}
-	if (len > 2 * PANDA_MAX_LEN) {
+	if ((size_t) len > 2 * PANDA_MAX_LEN) {
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_SEQUENCE_TOO_LONG);
 		return false;
 	}
@@ -155,7 +154,7 @@ static bool align(
 	dr = (ssize_t) result->reverse_length - (ssize_t) result->reverse_offset - bestoverlap;
 	/* Copy the unpaired forward sequence. */
 	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM, "bestoverlap = %zd, dforward = %zd, dreverse = %zd, len = %zd", bestoverlap, df, dr, len);
-	for (i = 0; i < VEEZ(df); i++) {
+	for (i = 0; i < (size_t) VEEZ(df); i++) {
 		int findex = i + result->forward_offset;
 		panda_nt fbits = result->forward[findex].nt;
 		double q = qual_score[PHREDCLAMP(result->forward[findex].qual)];
@@ -174,7 +173,7 @@ static bool align(
 
 	/* Copy the paired sequence adjusting the probabilities based on the quality information from both sequences. */
 	result->overlap_mismatches = 0;
-	for (i = 0; i < bestoverlap + WEDGEZ(df) + WEDGEZ(dr); i++) {
+	for (i = 0; i < (size_t) (bestoverlap + WEDGEZ(df) + WEDGEZ(dr)); i++) {
 		int index = VEEZ(df) + i;
 		int findex = result->forward_offset + VEEZ(df) + i;
 		int rindex = result->reverse_length - i - 1 + WEDGEZ(df);
@@ -184,22 +183,22 @@ static bool align(
 		double q;
 		char nt;
 
-		if (index < 0 || findex < 0 || rindex < 0 || findex >= result->forward_length || rindex >= result->reverse_length)
+		if (index < 0 || findex < 0 || rindex < 0 || (size_t) findex >= result->forward_length || (size_t) rindex >= result->reverse_length)
 			continue;
 
-		fpr = findex >= unmasked_forward_length ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
-		rpr = rindex >= unmasked_reverse_length ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
+		fpr = (size_t) findex >= unmasked_forward_length ? qual_nn : qual_score[PHREDCLAMP(result->forward[findex].qual)];
+		rpr = (size_t) rindex >= unmasked_reverse_length ? qual_nn : qual_score[PHREDCLAMP(result->reverse[rindex].qual)];
 
 		if (!ismatch) {
 			LOGV(PANDA_DEBUG_MISMATCH, PANDA_CODE_MISMATCHED_BASE, "(F[%d] = %c) != (R[%d] = %c)", findex, panda_nt_to_ascii(result->forward[findex].nt), rindex, panda_nt_to_ascii(result->reverse[rindex].nt));
 			result->overlap_mismatches++;
 		}
 
-		if (findex >= unmasked_forward_length && rindex >= unmasked_reverse_length) {
+		if ((size_t) findex >= unmasked_forward_length && (size_t) rindex >= unmasked_reverse_length) {
 			q = qual_nn;
-		} else if (findex >= unmasked_forward_length) {
+		} else if ((size_t) findex >= unmasked_forward_length) {
 			q = rpr;
-		} else if (rindex >= unmasked_reverse_length) {
+		} else if ((size_t) rindex >= unmasked_reverse_length) {
 			q = fpr;
 		} else {
 			q = match_probability(algo_data, ismatch, result->forward[findex].qual, result->reverse[rindex].qual);
@@ -224,7 +223,7 @@ static bool align(
 	}
 
 	/* Copy the unpaired reverse sequence. */
-	for (i = 0; i < VEEZ(dr); i++) {
+	for (i = 0; i < (size_t) VEEZ(dr); i++) {
 		int index = df + bestoverlap + i;
 		int rindex = result->reverse_length - bestoverlap - i - 1;
 		panda_nt rbits = result->reverse[rindex].nt;
@@ -368,7 +367,6 @@ const panda_result_seq *panda_assembler_assemble(
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length) {
-	size_t it;
 	assert(forward_length <= PANDA_MAX_LEN);
 	assert(reverse_length <= PANDA_MAX_LEN);
 	assembler->result.name = *id;

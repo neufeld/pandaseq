@@ -21,6 +21,12 @@ static bool precheck_func(
 
 	struct data *data = (struct data *) user_data;
 
+	(void) logger;
+	(void) forward;
+	(void) forward_length;
+	(void) reverse;
+	(void) reverse_length;
+
 	if (panda_seqid_equal(&data->marker_id, id)) {
 		data->state = true;
 	}
@@ -29,6 +35,8 @@ static bool precheck_func(
 
 OPEN {
 	struct data data;
+
+	(void) check;
 
 	if (args == NULL) {
 		panda_log_proxy_write_str(logger, "ERR\tAFTER\tNO ID\n");

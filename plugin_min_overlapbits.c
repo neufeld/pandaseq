@@ -18,6 +18,7 @@ static bool check_func(
 	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data) {
+	(void) logger;
 	return *(double *) user_data <= sequence->estimated_overlap_probability;
 }
 
@@ -25,6 +26,8 @@ OPEN {
 	double bits_saved = 15 * M_LN2;	// change from bits to nats
 	char *remainder = NULL;
 	double orig_value;
+
+	(void) precheck;
 
 	if (args != NULL) {
 		errno = 0;

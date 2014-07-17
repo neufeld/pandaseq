@@ -117,7 +117,7 @@ PandaAssembler panda_assembler_new_fastq_reader(
 void panda_assembler_copy_configuration(
 	PandaAssembler dest,
 	PandaAssembler src) {
-	int it;
+	size_t it;
 	for (it = 0; it < src->modules_length; it++) {
 		panda_assembler_add_module(dest, src->modules[it]);
 	}
@@ -273,7 +273,7 @@ int panda_assembler_get_minimum_overlap(
 void panda_assembler_set_minimum_overlap(
 	PandaAssembler assembler,
 	int overlap) {
-	if (overlap > 1 && overlap < 2 * PANDA_MAX_LEN) {
+	if (overlap > 1 && (size_t) overlap < 2 * PANDA_MAX_LEN) {
 		assembler->minoverlap = overlap;
 	}
 }
@@ -286,7 +286,7 @@ int panda_assembler_get_maximum_overlap(
 void panda_assembler_set_maximum_overlap(
 	PandaAssembler assembler,
 	int overlap) {
-	if (overlap >= 0 && overlap < 2 * PANDA_MAX_LEN) {
+	if (overlap >= 0 && (size_t) overlap < 2 * PANDA_MAX_LEN) {
 		assembler->maxoverlap = overlap;
 	}
 }

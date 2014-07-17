@@ -136,7 +136,7 @@ static bool common_tweak_general(
 	case 'k':
 		errno = 0;
 		value = strtol(argument, NULL, 10);
-		if (errno != 0 || value < 0 || value > PANDA_MAX_LEN) {
+		if (errno != 0 || value < 0 || (size_t) value > PANDA_MAX_LEN) {
 			fprintf(stderr, "Bad k-mer list length.\n");
 			return false;
 		}
@@ -249,8 +249,6 @@ bool panda_diff_parse_args(
 		fail);
 	panda_tweak_assembler_opt options[50];
 	size_t options_used;
-	panda_tweak_assembler_opt control_options[50];
-	size_t control_options_used;
 	PandaWriter writer = panda_writer_new_null();
 
 	data.general = tweak;

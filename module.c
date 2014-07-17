@@ -98,7 +98,7 @@ struct panda_module {
 
 void module_destroy(
 	PandaAssembler assembler) {
-	int it;
+	size_t it;
 	if (assembler->rejected)
 		free(assembler->rejected);
 	for (it = 0; it < assembler->modules_length; it++) {
@@ -110,7 +110,7 @@ void module_destroy(
 
 void module_init(
 	PandaAssembler assembler) {
-	int it;
+	size_t it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
 		if (module->handle != NULL) {
@@ -124,7 +124,7 @@ void module_init(
 bool module_checkseq(
 	PandaAssembler assembler,
 	panda_result_seq *sequence) {
-	int it;
+	size_t it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
 		if (module->check != NULL && !module->check(assembler->logger, sequence, module->user_data)) {
@@ -142,7 +142,7 @@ bool module_precheckseq(
 	size_t forward_length,
 	const panda_qual *reverse,
 	size_t reverse_length) {
-	int it;
+	size_t it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		PandaModule module = assembler->modules[it];
 		if (module->precheck != NULL && !module->precheck(assembler->logger, id, forward, forward_length, reverse, reverse_length, module->user_data)) {
@@ -196,7 +196,7 @@ bool panda_assembler_foreach_module(
 	PandaAssembler assembler,
 	PandaModuleCallback callback,
 	void *data) {
-	int it;
+	size_t it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		if (!callback(assembler, assembler->modules[it], assembler->rejected[it], data)) {
 			return false;
@@ -236,7 +236,6 @@ PandaModule panda_module_load(
 	PandaDestroy destroy;
 	size_t name_length;
 	int *api;
-	char **version;
 	char *name;
 
 	name_length = strcspn(path, path_sep_string);
@@ -363,10 +362,10 @@ int panda_module_get_api(
 const char *panda_module_get_description(
 	PandaModule module) {
 	char **val;
-	const lt_dlinfo *info;
+	//const lt_dlinfo *info;
 	if (module->handle == NULL)
 		return NULL;
-	info = lt_dlgetinfo(module->handle);
+	//info = lt_dlgetinfo(module->handle);
 	val = lt_dlsym(module->handle, "desc");
 	return val == NULL ? NULL : *val;
 }
@@ -384,10 +383,8 @@ const char *panda_module_get_version(
 const char *panda_module_get_usage(
 	PandaModule module) {
 	char **val;
-	const lt_dlinfo *info;
 	if (module->handle == NULL)
 		return NULL;
-	info = lt_dlgetinfo(module->handle);
 	val = lt_dlsym(module->handle, "usage");
 	return val == NULL ? NULL : *val;
 }
@@ -404,6 +401,7 @@ static int show_module(
 	const char **usage;
 	const char **version;
 
+	(void) data;
 	handle = lt_dlopenext(filename);
 	if (handle == NULL) {
 		return 0;

@@ -133,5 +133,7 @@ bool panda_args_fastq_setup(
 	PandaArgsFastq data,
 	PandaAssembler assembler) {
 	/* This doesn't do anything, but it might in future and it's not worth changing the API. */
+	(void) data;
+	(void) assembler;
 	return true;
 }

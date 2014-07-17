@@ -24,6 +24,9 @@ static bool check_func(
 	double product = 1;
 	size_t i;
 	double oes = data->alpha * (sequence->overlap - sequence->overlap_mismatches) + data->beta * sequence->overlap_mismatches;
+
+	(void) logger;
+
 	for (i = sequence->overlap; i < sequence->forward_length && i < sequence->reverse_length; i++) {
 		double sum = 0;
 		size_t k;
@@ -44,7 +47,7 @@ struct {
 	{.name = "alpha",.holder = offsetof(struct data, alpha)},
 	{.name = "beta",.holder = offsetof(struct data, beta)},
 	{.name = "cutoff",.holder = offsetof(struct data, cutoff)},
-	{NULL}
+	{NULL, 0}
 };
 
 bool parse_argument(
@@ -53,6 +56,9 @@ bool parse_argument(
 	const char *arg_name,
 	double *output) {
 	char *remainder = NULL;
+
+	(void) logger;
+
 	errno = 0;
 	*output = strtod(value, &remainder);
 	if (errno != 0) {
@@ -80,9 +86,9 @@ static bool key_processor(
 }
 
 OPEN {
-	char *value;
 	struct data data;
 
+	(void) precheck;
 	data.alpha = 1;
 	data.beta = -1;
 	data.cutoff = 0.01;

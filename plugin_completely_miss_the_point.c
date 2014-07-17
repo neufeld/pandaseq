@@ -10,18 +10,23 @@ static bool check_func(
 	PandaLogProxy logger,
 	const panda_result_seq *sequence,
 	void *user_data) {
-	return sequence->overlap_mismatches <= *(int *) user_data;
+	(void) logger;
+
+	return sequence->overlap_mismatches <= (size_t) *(int *) user_data;
 }
 
 OPEN {
 	int mismatches;
+
+	(void) precheck;
+
 	if (args == NULL || *args == '\0') {
 		panda_log_proxy_write_str(logger, "Please supply the maximum allowed mismatches.\n");
 		return false;
 	}
 	errno = 0;
-	mismatches = (size_t) strtol(args, NULL, 10);
-	if (errno != 0 || mismatches < 0 || mismatches > PANDA_MAX_LEN) {
+	mismatches = strtol(args, NULL, 10);
+	if (errno != 0 || mismatches < 0 || (size_t) mismatches > PANDA_MAX_LEN) {
 		panda_log_proxy_write_str(logger, "Bad maximum allowed mismatches.\n");
 		return false;
 	}

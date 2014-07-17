@@ -167,7 +167,7 @@ double panda_log1mexp(
 /**
  * The current version string
  */
-char const *const panda_version(
+char const *panda_version(
 	void);
 
 /* === Flags === */
@@ -197,7 +197,7 @@ PANDA_EXTERN PandaDebug panda_debug_flags;
  * The output-file representation of an error code.
  * Returns: (transfer none): The string representation
  */
-char const *const panda_code_str(
+char const *panda_code_str(
 	PandaCode code);
 
 /**

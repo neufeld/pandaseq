@@ -25,7 +25,7 @@
 #endif
 #include "pandaseq.h"
 
-char const *const panda_version(
+char const *panda_version(
 	void) {
 	return PACKAGE_STRING;
 }

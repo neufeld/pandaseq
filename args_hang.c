@@ -122,10 +122,10 @@ bool panda_args_hang_tweak(
 	}
 }
 
-static const panda_tweak_general hang_forward = { 'P', false, "primer", "The sequence in the forward read overhang cut-off." };
-static const panda_tweak_general hang_reverse = { 'Q', false, "primer", "The sequence in the reverse read overhang cut-off." };
-static const panda_tweak_general hang_skip = { 's', true, NULL, "Skip reads that do not contain the primer (otherwise, assembly will be attempted)." };
-static const panda_tweak_general hang_threshold = { 't', true, "threshold", "The minimum probability that a sequence must have to match a primer." };
+static const panda_tweak_general hang_forward = { 'P', false, "primer", "The sequence in the forward read overhang cut-off.", false };
+static const panda_tweak_general hang_reverse = { 'Q', false, "primer", "The sequence in the reverse read overhang cut-off.", false };
+static const panda_tweak_general hang_skip = { 's', true, NULL, "Skip reads that do not contain the primer (otherwise, assembly will be attempted).", false };
+static const panda_tweak_general hang_threshold = { 't', true, "threshold", "The minimum probability that a sequence must have to match a primer.", false };
 
 const panda_tweak_general **panda_args_hang_args(
 	const panda_tweak_general *const *const general_args,
@@ -149,7 +149,6 @@ PandaNextSeq panda_args_hang_opener(
 	PandaDestroy *fail_destroy,
 	void **next_data,
 	PandaDestroy *next_destroy) {
-	size_t it;
 	MANAGED_STACK(PandaNextSeq,
 		inner);
 

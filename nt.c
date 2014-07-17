@@ -115,14 +115,14 @@ char panda_result_phred(
 
 	while (lower < upper) {
 		char mid = lower + (upper - lower) / 2;
-		if (qual_score[mid] == r->p) {
+		if (qual_score[(int) mid] == r->p) {
 			return mid;
 		}
 		if (mid == lower) {
 			return lower;
-		} else if (qual_score[mid] > r->p) {
+		} else if (qual_score[(int) mid] > r->p) {
 			upper = mid;
-		} else if (qual_score[mid] < r->p) {
+		} else if (qual_score[(int) mid] < r->p) {
 			lower = mid + 1;
 		}
 	}

@@ -13,6 +13,12 @@ static bool precheck_func(
 	const panda_qual *reverse,
 	size_t reverse_length,
 	void *user_data) {
+
+	(void) logger;
+	(void) forward;
+	(void) forward_length;
+	(void) reverse;
+	(void) reverse_length;
 	return panda_idset_contains((PandaSet) user_data, id);
 }
 
@@ -21,6 +27,8 @@ OPEN {
 	bool close = false;
 	FILE *file;
 	PandaSet set;
+
+	(void) check;
 
 	if (args == NULL || *args == '\0') {
 		file = stdin;

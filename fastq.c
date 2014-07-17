@@ -50,8 +50,8 @@ static bool read_seq(
 	struct fastq_data *data,
 	size_t *length) {
 	const char *input;
-	int pos = 0;
-	int qpos = 0;
+	size_t pos = 0;
+	size_t qpos = 0;
 	input = panda_linebuf_next(linebuf);
 	if (input == NULL) {
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PREMATURE_EOF);
@@ -64,7 +64,7 @@ static bool read_seq(
 			}
 		} else {
 			if ((buffer[pos++].nt = table[*input & 0x1F]) == '\0') {
-				LOGV(PANDA_DEBUG_FILE, PANDA_CODE_BAD_NT, "%c@%d", *input, pos);
+				LOGV(PANDA_DEBUG_FILE, PANDA_CODE_BAD_NT, "%c@%zd", *input, pos);
 				return false;
 			}
 		}

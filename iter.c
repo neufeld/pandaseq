@@ -99,7 +99,7 @@ const panda_kmer *panda_iter_next(
 			}
 		} else {
 			iter->it.posn++;
-			_FOREACH_KMER(iter->it, iter->qual,.nt, iter->it.posn, iter->it.bad, <iter->qual_length, ++, iter->k) {
+			_FOREACH_KMER(iter->it, iter->qual,.nt, iter->it.posn, iter->it.bad, <(ssize_t) iter->qual_length, ++, iter->k) {
 				RETURN_KMER;
 			}
 		}
@@ -112,7 +112,7 @@ const panda_kmer *panda_iter_next(
 			}
 		} else {
 			iter->it.posn++;
-			_FOREACH_KMER(iter->it, iter->nt,, iter->it.posn, iter->it.bad, <iter->nt_length, ++, iter->k) {
+			_FOREACH_KMER(iter->it, iter->nt,, iter->it.posn, iter->it.bad, <(ssize_t) iter->nt_length, ++, iter->k) {
 				RETURN_KMER;
 			}
 		}
@@ -125,12 +125,13 @@ const panda_kmer *panda_iter_next(
 			}
 		} else {
 			iter->it.posn++;
-			_FOREACH_KMER(iter->it, iter->result,.nt, iter->it.posn, iter->it.bad, <iter->result_length, ++, iter->k) {
+			_FOREACH_KMER(iter->it, iter->result,.nt, iter->it.posn, iter->it.bad, <(ssize_t) iter->result_length, ++, iter->k) {
 				RETURN_KMER;
 			}
 		}
 		return NULL;
 	}
+	return NULL;
 }
 
 static PandaIter iter_new(
@@ -143,7 +144,7 @@ static PandaIter iter_new(
 	if (k < 1) {
 		iter->k = KMER_LEN;
 	} else {
-		iter->k = (k < sizeof(size_t) * 4) ? k : (sizeof(size_t) * 4);
+		iter->k = ((size_t) k < sizeof(size_t) * 4) ? (size_t) k : (sizeof(size_t) * 4);
 	}
 	return iter;
 }

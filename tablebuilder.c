@@ -76,7 +76,7 @@ void panda_tbld_array(
 	PandaArrayFormula formula,
 	void *formula_context,
 	size_t max) {
-	int i;
+	size_t i;
 	fprintf(t_bld->header, "extern const double %s[%zd];\n", name, max);
 	fprintf(t_bld->source, "const double %s[%zd] = {\n", name, max);
 	for (i = 0; i < max; i++) {
@@ -131,7 +131,7 @@ void panda_tbld_matrix(
 	void *formula_context,
 	size_t x_max,
 	size_t y_max) {
-	int i, j;
+	size_t i, j;
 	fprintf(t_bld->header, "extern const double %s[][%zd];\n", name, y_max);
 	fprintf(t_bld->source, "const double %s[][%zd] = {\n", name, y_max);
 	for (i = 0; i < x_max; i++) {

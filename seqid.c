@@ -172,7 +172,7 @@ int panda_seqid_parse_fail(
 		id->flowcell[0] = '\0';
 		dest = id->instrument;
 		PARSE_CHUNK {
-			if (dest - id->instrument > sizeof(id->instrument))
+			if ((size_t) (dest - id->instrument) > sizeof(id->instrument))
 				return 0;
 			*dest++ = (**endptr);
 		}
@@ -214,7 +214,7 @@ int panda_seqid_parse_fail(
 			*detected_format = PANDA_IDFMT_CASAVA_1_7;
 		dest = id->instrument;
 		PARSE_CHUNK {
-			if (dest - id->instrument > sizeof(id->instrument))
+			if ((size_t) (dest - id->instrument) > sizeof(id->instrument))
 				return 0;
 			*dest++ = (**endptr);
 		}
@@ -225,7 +225,7 @@ int panda_seqid_parse_fail(
 		id->run = value;
 		dest = id->flowcell;
 		PARSE_CHUNK {
-			if (dest - id->flowcell > sizeof(id->flowcell))
+			if ((size_t) (dest - id->flowcell) > sizeof(id->flowcell))
 				return 0;
 			*dest++ = (**endptr);
 		}

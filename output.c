@@ -20,7 +20,7 @@
 #include "pandaseq.h"
 #include "buffer.h"
 
-const char *const panda_code_str(
+const char *panda_code_str(
 	PandaCode code) {
 	switch (code) {
 	case PANDA_CODE_BAD_NT:
@@ -125,6 +125,7 @@ void panda_output_fail(
 	size_t reverse_length,
 	PandaWriter writer) {
 	size_t it;
+	(void) assembler;
 	panda_writer_append_c(writer, '>');
 	panda_writer_append_id(writer, id);
 	panda_writer_append_c(writer, '\n');
@@ -148,6 +149,7 @@ void panda_output_fail_qual(
 	size_t reverse_length,
 	PandaWriter writer) {
 	size_t it;
+	(void) assembler;
 	panda_writer_append_c(writer, '@');
 	panda_writer_append_id(writer, id);
 	panda_writer_append_c(writer, '\n');

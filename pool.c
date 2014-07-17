@@ -112,7 +112,7 @@ bool panda_run_pool(
 	PandaOutputSeq output,
 	void *output_data,
 	PandaDestroy output_destroy) {
-	size_t it;
+	int it;
 	struct thread_info self;
 	struct shared_info shared_info;
 	bool some_seqs = false;

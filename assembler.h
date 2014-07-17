@@ -42,8 +42,8 @@ struct panda_assembler {
 	size_t modules_size;
 
 	double threshold;
-	int minoverlap;
-	int maxoverlap;
+	size_t minoverlap;
+	size_t maxoverlap;
 
 	seqindex *kmerseen;
 	size_t num_kmers;
