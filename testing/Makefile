@@ -1,7 +1,7 @@
 PANDASEQ_PREFIX=/usr/local
 
 reg-test: reg-test.vala control_setup.o experiment_setup.o renamed_pandaseq.a
-	PKG_CONFIG_PATH=${PANDASEQ_PREFIX}/lib/pkgconfig valac --vapidir ${PANDASEQ_PREFIX}/share/vala/vapi reg-test.vala --pkg pandaseq-2 --pkg pandaseq-2-url -X control_setup.o -X experiment_setup.o -X renamed_pandaseq.a -g --save-temps
+	PKG_CONFIG_PATH=${PANDASEQ_PREFIX}/lib/pkgconfig valac --vapidir ${PANDASEQ_PREFIX}/share/vala/vapi reg-test.vala --pkg pandaseq-2 --pkg pandaseq-2-url -X control_setup.o -X experiment_setup.o -X renamed_pandaseq.a -g --save-temps -X -lpthread -X -lbz2 -X -lz -X -lm -X -lltdl
 
 setup.c: setup.vala
 	PKG_CONFIG_PATH=${PANDASEQ_PREFIX}/lib/pkgconfig valac -g -C setup.vala --pkg pandaseq-2
