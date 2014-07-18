@@ -38,7 +38,7 @@ mktable$(EXEEXT): mktable.c tablebuilder.c
 COMMON_CPPFLAGS = \
 	-std=c99 \
 	-g \
-  -Wall -Wextra -Wformat -Wpedantic \
+  -Wall -Wextra -Wformat \
 	$(NULL)
 
 pandaseq_CPPFLAGS = $(COMMON_CPPFLAGS)
