@@ -17,6 +17,8 @@ static bool check_func(
 
 	struct data *data = (struct data *) user_data;
 
+	(void) logger;
+
 	if (sequence->overlaps_examined > 0) {
 		data->counts[sequence->overlaps_examined - 1]++;
 	}
