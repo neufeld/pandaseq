@@ -99,7 +99,7 @@ const panda_kmer *panda_iter_next(
 			}
 		} else {
 			iter->it.posn++;
-			_FOREACH_KMER(iter->it, iter->qual,.nt, iter->it.posn, iter->it.bad, <(ssize_t) iter->qual_length, ++, iter->k) {
+			_FOREACH_KMER(iter->it, iter->qual,.nt, iter->it.posn, iter->it.bad, <(ptrdiff_t) iter->qual_length, ++, iter->k) {
 				RETURN_KMER;
 			}
 		}
@@ -112,7 +112,7 @@ const panda_kmer *panda_iter_next(
 			}
 		} else {
 			iter->it.posn++;
-			_FOREACH_KMER(iter->it, iter->nt,, iter->it.posn, iter->it.bad, <(ssize_t) iter->nt_length, ++, iter->k) {
+			_FOREACH_KMER(iter->it, iter->nt,, iter->it.posn, iter->it.bad, <(ptrdiff_t) iter->nt_length, ++, iter->k) {
 				RETURN_KMER;
 			}
 		}
@@ -125,7 +125,7 @@ const panda_kmer *panda_iter_next(
 			}
 		} else {
 			iter->it.posn++;
-			_FOREACH_KMER(iter->it, iter->result,.nt, iter->it.posn, iter->it.bad, <(ssize_t) iter->result_length, ++, iter->k) {
+			_FOREACH_KMER(iter->it, iter->result,.nt, iter->it.posn, iter->it.bad, <(ptrdiff_t) iter->result_length, ++, iter->k) {
 				RETURN_KMER;
 			}
 		}

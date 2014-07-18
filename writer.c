@@ -264,6 +264,8 @@ void panda_writer_commit(
 	if (writer->commit_slave != NULL) {
 		panda_writer_commit(writer->commit_slave);
 	}
+#else
+	(void) writer;
 #endif
 }
 
@@ -271,6 +273,8 @@ void panda_writer_flush(
 	PandaWriter writer) {
 #ifdef HAVE_PTHREAD
 	flush_buffer(writer, get_write_buffer(writer));
+#else
+	(void) writer;
 #endif
 }
 

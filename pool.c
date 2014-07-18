@@ -52,7 +52,9 @@ struct thread_info {
 static void printtime(
 	struct thread_info *info,
 	long count) {
+#ifndef _WIN32
 	char buf[27];
+#endif
 	time_t now;
 	(void) time(&now);
 #ifndef _WIN32
@@ -112,12 +114,17 @@ bool panda_run_pool(
 	PandaOutputSeq output,
 	void *output_data,
 	PandaDestroy output_destroy) {
-	int it;
 	struct thread_info self;
 	struct shared_info shared_info;
 	bool some_seqs = false;
+#if HAVE_PTHREAD
+	int it;
 	struct thread_info *thread_list;
 	PandaWriter log_writer = panda_log_proxy_get_writer(assembler->logger);
+#else
+	(void) threads;
+	(void) mux;
+#endif
 
 	if (assembler == NULL)
 		return false;

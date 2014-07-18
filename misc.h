@@ -18,6 +18,7 @@
 #ifndef MISC_H
 #        define MISC_H
 
+#        include <stddef.h>
 #        include <unistd.h>
 #        include "pandaseq.h"
 
@@ -34,11 +35,11 @@ typedef unsigned short seqindex;
 
 typedef struct {
 	size_t kmer;
-	ssize_t posn;
-	ssize_t bad;
+	ptrdiff_t posn;
+	ptrdiff_t bad;
 } kmer_it;
 #        define _FOREACH_KMER(iterator,sequence,suffix,start,badstart,check,step,badreset) for ((iterator).posn = (start), (iterator).kmer = 0, (iterator).bad = badstart; (iterator).posn check; (iterator).posn step) if ((iterator).kmer = (((iterator).kmer << 2) | ((sequence)[(iterator).posn]suffix == PANDA_NT_T ? 3 : (sequence)[(iterator).posn]suffix == PANDA_NT_G ? 2 : (sequence)[(iterator).posn]suffix == PANDA_NT_C ? 1 : 0)) & ((1 << (2 * badreset)) - 1), PANDA_NT_IS_N((sequence)[(iterator).posn]suffix)) { (iterator).bad = badreset; } else if ((iterator).bad > 0) { (iterator).bad--; } else
-#        define FOREACH_KMER(iterator,sequence,suffix) _FOREACH_KMER(iterator, sequence, suffix, 0, KMER_LEN, < (ssize_t)sequence ## _length, ++, KMER_LEN)
+#        define FOREACH_KMER(iterator,sequence,suffix) _FOREACH_KMER(iterator, sequence, suffix, 0, KMER_LEN, < (ptrdiff_t)sequence ## _length, ++, KMER_LEN)
 #        define FOREACH_KMER_REVERSE(iterator,sequence,suffix) _FOREACH_KMER(iterator, sequence, suffix, sequence ## _length - 1, KMER_LEN, >= 0, --, KMER_LEN)
 #        define KMER(kmerit) ((kmerit).kmer)
 #        define KMER_POSITION(kmerit) ((kmerit).posn)

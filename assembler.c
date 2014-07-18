@@ -49,7 +49,7 @@ static bool align(
 	PandaAssembler assembler,
 	panda_result_seq *result) {
 	size_t i, j;
-	ssize_t df, dr;
+	ptrdiff_t df, dr;
 	/* Cache all algorithm information. */
 	double qual_nn = assembler->algo->clazz->prob_unpaired;
 	void *algo_data = panda_algorithm_data(assembler->algo);
@@ -58,7 +58,7 @@ static bool align(
 	/* For determining overlap. */
 	size_t maxoverlap = result->forward_length + result->reverse_length - assembler->minoverlap - result->forward_offset - result->reverse_offset - 1;
 	double bestprobability = qual_nn * (result->forward_length + result->reverse_length);
-	ssize_t bestoverlap = -1;
+	ptrdiff_t bestoverlap = -1;
 	size_t counter;
 	kmer_it it;
 	size_t unmasked_forward_length;
@@ -68,7 +68,7 @@ static bool align(
 	double fquality = 0;
 	double oquality = 0;
 	double rquality = 0;
-	ssize_t len;
+	ptrdiff_t len;
 
 	if (assembler->maxoverlap == 0) {
 		maxoverlap = result->forward_length < result->reverse_length ? result->forward_length : result->reverse_length;
@@ -85,11 +85,11 @@ static bool align(
 
 	/* Scan forward sequence building k-mers and appending the position to kmerseen[k] */
 	FOREACH_KMER(it, result->forward,.nt) {
-		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_FORWARD_KMER, "%zd@%zd", KMER(it), KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) << 1) + j] != 0; j++) ;
 		if (j == assembler->num_kmers) {
 			/* If we run out of storage, we lose k-mers. */
-			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
+			LOGV(PANDA_DEBUG_BUILD, PANDA_CODE_LOST_KMER, "%zd@%zd", KMER(it), KMER_POSITION(it));
 		} else {
 			assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] = KMER_POSITION(it);
 		}
@@ -97,7 +97,7 @@ static bool align(
 
 	/* Scan reverse sequence building k-mers. For each position in the forward sequence for this kmer (i.e., kmerseen[k]), flag that we should check the corresponding overlap. */
 	FOREACH_KMER_REVERSE(it, result->reverse,.nt) {
-		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%zd@%zu", KMER(it), KMER_POSITION(it));
+		LOGV(PANDA_DEBUG_KMER, PANDA_CODE_REVERSE_KMER, "%zd@%zd", KMER(it), KMER_POSITION(it));
 		for (j = 0; j < assembler->num_kmers && assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] != (seqindex) 0; j++) {
 			int index = result->forward_length + result->reverse_length - KMER_POSITION(it) - assembler->kmerseen[(KMER(it) * assembler->num_kmers) + j] - assembler->minoverlap - 1;
 			BIT_LIST_SET(posn, index);
@@ -138,7 +138,7 @@ static bool align(
 	}
 
 	/* Compute the correct alignment and the quality score of the entire sequence. */
-	len = result->forward_length - (ssize_t) result->forward_offset - bestoverlap + result->reverse_length - (ssize_t) result->reverse_offset + 1;
+	len = result->forward_length - (ptrdiff_t) result->forward_offset - bestoverlap + result->reverse_length - (ptrdiff_t) result->reverse_offset + 1;
 	if (len <= 0) {
 		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
 		return false;
@@ -150,8 +150,8 @@ static bool align(
 	result->sequence_length = len - 1;
 	result->degenerates = 0;
 
-	df = (ssize_t) result->forward_length - (ssize_t) result->forward_offset - bestoverlap;
-	dr = (ssize_t) result->reverse_length - (ssize_t) result->reverse_offset - bestoverlap;
+	df = (ptrdiff_t) result->forward_length - (ptrdiff_t) result->forward_offset - bestoverlap;
+	dr = (ptrdiff_t) result->reverse_length - (ptrdiff_t) result->reverse_offset - bestoverlap;
 	/* Copy the unpaired forward sequence. */
 	LOGV(PANDA_DEBUG_RECON, PANDA_CODE_RECONSTRUCTION_PARAM, "bestoverlap = %zd, dforward = %zd, dreverse = %zd, len = %zd", bestoverlap, df, dr, len);
 	for (i = 0; i < (size_t) VEEZ(df); i++) {

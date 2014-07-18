@@ -210,7 +210,7 @@ void panda_assembler_module_stats(
 	size_t it;
 	for (it = 0; it < assembler->modules_length; it++) {
 		if (assembler->rejected[it] > 0) {
-			LOGV(PANDA_CODE_REJECT_STAT, "%s\t%ld", assembler->modules[it]->name, assembler->rejected[it]);
+			LOGV(PANDA_CODE_REJECT_STAT, "%s\t%zu", assembler->modules[it]->name, assembler->rejected[it]);
 		}
 	}
 }
@@ -229,7 +229,10 @@ PandaModule panda_module_load(
 	const char *path) {
 	PandaModule m;
 	lt_dlhandle handle;
-	PandaPluginOpen opener;
+	union {
+		PandaPluginOpen func;
+		void *ptr;
+	} opener;
 	PandaCheck check = NULL;
 	PandaPreCheck precheck = NULL;
 	void *user_data;
@@ -265,8 +268,8 @@ PandaModule panda_module_load(
 		return NULL;
 	}
 
-	*(void **) (&opener) = lt_dlsym(handle, "opener");
-	if (opener == NULL) {
+	opener.ptr = lt_dlsym(handle, "opener");
+	if (opener.ptr == NULL) {
 		lt_dlclose(handle);
 		fprintf(stderr, "Could not find opener function in %s\n", name);
 		free(name);
@@ -274,7 +277,7 @@ PandaModule panda_module_load(
 		return NULL;
 	}
 
-	if ((*opener) (logger, (path[name_length] == LT_PATHSEP_CHAR) ? (path + name_length + 1) : NULL, &precheck, &check, &user_data, &destroy) && (precheck != NULL || check != NULL)) {
+	if ((*opener.func) (logger, (path[name_length] == LT_PATHSEP_CHAR) ? (path + name_length + 1) : NULL, &precheck, &check, &user_data, &destroy) && (precheck != NULL || check != NULL)) {
 		m = malloc(sizeof(struct panda_module));
 		m->api = *api;
 		m->check = check;

@@ -18,6 +18,7 @@
 #include "config.h"
 #include <math.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "pandaseq.h"
@@ -66,14 +67,14 @@ static size_t computeoffset(
 	}
 
 	for (index = 0; index < seq_length; index++) {
-		ssize_t x;
+		ptrdiff_t x;
 		/* The last bucket in the buffer holds the probability of a complete alignment. If it so better than we have seen previously, store it. */
 		if (probabilities[CIRC(index, primerlen)] > bestpr) {
 			bestpr = probabilities[CIRC(index, primerlen)];
 			bestindex = index + 1;
 		}
 		probabilities[CIRC(index, primerlen)] = 0;
-		for (x = (ssize_t) (primerlen > index ? index : primerlen - 1); x >= 0; x--) {
+		for (x = (ptrdiff_t) (primerlen > index ? index : primerlen - 1); x >= 0; x--) {
 			if (!PANDA_NT_IS_N(primer[x])) {
 				panda_nt nt;
 				double p;

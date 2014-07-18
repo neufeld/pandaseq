@@ -221,6 +221,9 @@ PandaNextSeq panda_create_async_reader(
 	size_t length,
 	void **user_data,
 	PandaDestroy *destroy) {
+
+	(void) length;
+
 	*user_data = next_data;
 	*destroy = next_destroy;
 	return next;
