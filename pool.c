@@ -116,7 +116,7 @@ bool panda_run_pool(
 	PandaDestroy output_destroy) {
 	struct thread_info self;
 	struct shared_info shared_info;
-	bool some_seqs = false;
+	bool some_seqs;
 #if HAVE_PTHREAD
 	int it;
 	struct thread_info *thread_list;
@@ -165,6 +165,7 @@ bool panda_run_pool(
 	self.index = 0;
 	self.assembler = assembler;
 	do_assembly(&self);
+	some_seqs = self.some_seqs;
 #if HAVE_PTHREAD
 	if (threads > 1 && mux != NULL) {
 		for (it = 0; it < threads - 1; it++) {
