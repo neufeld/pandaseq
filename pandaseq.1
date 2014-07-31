@@ -98,6 +98,8 @@ Set the algorithm used for assembly. Currently there are:
 .RS
 .IP simple_bayesian[:\fIerror_estimation\fR]
 Uses the formula described in the original paper (Masella 2012), optionally with an error estimation (\[*e]) provided.
+.IP ea_util
+Uses the formula by FastqJoin in the ea-utils package (Aronesty 2013). No parameters are tunable.
 .IP pear[:\fIrandom_base\fR]
 Uses the formula described in the PEAR paper (Zhang 2013), optionally with the probability of a random base (q) provided.
 .IP rdp_mle
@@ -379,6 +381,12 @@ Andre P Masella, Andrea K Bartram, Jakub M Truszkowski, Daniel G Brown and Josh 
 .I PANDAseq: paired-end assembler for Illumina sequences.
 BMC Bioinformatics 2012, 13:31. 
 .UR http://www.biomedcentral.com/1471-2105/13/31
+.UE
+
+E. Aronesty.
+.I Comparison of Sequencing Utility Programs
+TOBioiJ (2013); doi:10.2174/1875036201307010001
+.UR http://benthamscience.com/open/openaccess.php?tobioij/articles/V007/1TOBIOIJ.htm
 .UE
 
 J. Zhang, K. Kobert, T. Flouri, and A. Stamatakis.

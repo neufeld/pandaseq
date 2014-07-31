@@ -74,6 +74,7 @@ libpandaseq_la_LDFLAGS = \
 	$(NULL)
 libpandaseq_la_SOURCES = \
 	algo.c \
+	algo_ea_util.c \
 	algo_pear.c \
 	algo_rdp_mle.c \
 	algo_simple_bayes.c \

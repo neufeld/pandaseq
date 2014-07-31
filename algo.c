@@ -123,6 +123,7 @@ __attribute__ ((constructor))
 static void lib_init(
 	void) {
 	panda_algorithms = calloc(sizeof(PandaAlgorithmClass), algorithms_size);
+	panda_algorithm_register(&panda_algorithm_ea_util_class);
 	panda_algorithm_register(&panda_algorithm_pear_class);
 	panda_algorithm_register(&panda_algorithm_rdp_mle_class);
 	panda_algorithm_register(&panda_algorithm_simple_bayes_class);

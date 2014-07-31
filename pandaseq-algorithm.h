@@ -120,6 +120,22 @@ void panda_algorithm_simple_bayes_set_error_estimation(
 	PandaAlgorithm algorithm,
 	double q);
 
+/* === Expression Analysis Utils FastqJoin === */
+
+/**
+ * This algorithm uses the FastqJoin algorithm, from Aronesty 2011, to find the
+ * best overlap region.
+ */
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_ea_util_class;
+#        define class_panda_algorithm_ea_util panda_algorithm_ea_util_class;
+typedef struct panda_algorithm panda_algorithm_ea_util;
+
+/**
+ * Create a FastqJoin algorithm from the Expression Analysis Utils.
+ */
+PandaAlgorithm panda_algorithm_ea_util_new(
+	void);
+
 /* === PEAR === */
 
 PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_pear_class;

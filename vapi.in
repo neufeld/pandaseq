@@ -258,6 +258,14 @@ namespace Panda {
 	[CCode (cname = "panda_algorithm", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
 	[Compact]
 	public class Algorithm {
+		[CCode (cname = "panda_algorithm_ea_util", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class EAUtil : Algorithm {
+			/**
+			 * Create a FastqJoin algorithm from the EA utils package.
+			 */
+			[CCode (cname = "panda_algorithm_ea_util_new")]
+			public EAUtil ();
+		}
 		[CCode (cname = "panda_algorithm_pear", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
 		public class Pear : Algorithm {
 			/**
