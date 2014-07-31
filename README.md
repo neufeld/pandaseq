@@ -93,6 +93,13 @@ Again, these scores are not meant to be interpreted as regular scores and should
 ### The scores of the non-overlapping regions are not the same as the original reads. Why?
 The PHRED scores from the input are not copied directly to the output when using FASTQ (`-F`) output. They go through a transformation from PHRED scores into probabilities, which is how PANDAseq uses them. When output as FASTQ, the probability is converted back to a PHRED scores. The rounding error involved can cause a score to jump by one.
 
+### How many sequences should there be in the output?
+You should expect that PANDAseq will output fewer sequences than the read pairs given to it. There are several `STAT` lines in the log that will help with the analysis. First, `STAT READS` is the number of read pairs in the input. Sequences first go through a number of basic checks and the user-specified checks. If provided, forward and reverse primers are aligned and clipped. The optimal overlap is selected and the sequence is constructed. The quality score is check and any user-specified checks are done. Any of these steps might fail and cause the sequence to be rejected. Each of the rejection reasons will have a `STAT` line, which is described in the _Output Statistics_ section of the manual.
+
+If multiple threads are used, which the default on most platforms, each thread collects this information separately. The output log will output a group of `STAT` lines per thread.
+
+The `STAT SLOW` line is informative; those sequences were not rejected. The other `STAT` lines (i.e., not `READS` or `SLOW`) should sum to the `STAT READS` line.
+
 ALTERNATIVES
 ------------
 
