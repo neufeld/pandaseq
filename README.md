@@ -90,7 +90,6 @@ In the overlap region where there is a mismatch, it is the probability that one 
 
 Again, these scores are not meant to be interpreted as regular scores and should not be processed by downstream applications expecting PHRED scores from Illumina sequences.
 
-
 ### The scores of the non-overlapping regions are not the same as the original reads. Why?
 The PHRED scores from the input are not copied directly to the output when using FASTQ (`-F`) output. They go through a transformation from PHRED scores into probabilities, which is how PANDAseq uses them. When output as FASTQ, the probability is converted back to a PHRED scores. The rounding error involved can cause a score to jump by one.
 
@@ -99,7 +98,7 @@ ALTERNATIVES
 
 [PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear)  
 [FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/)  
-[COPE (Connecting Overlapped Pair-End reads)](ftp://ftp.genomics.org.cn/pub/cope)  
+[COPE (Connecting Overlapped Pair-End reads)](http://sourceforge.net/projects/coperead/)
 [XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)  
 
 CITATION
