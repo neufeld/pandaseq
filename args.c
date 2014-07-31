@@ -190,7 +190,7 @@ bool panda_dispatch_args(
 		}
 	}
 	MAYBE(args_unused) = optind;
-	if (optind < args_length && (args[optind][0] & 0x70) != 0) {
+	if (optind < args_length && (((int)args[optind][0]) & 0x80) != 0) {
 		fprintf(stderr, "You pasted stuff from the man page. Replace the dashes with hyphens.\n");
 		CLEANUP();
 		return false;
