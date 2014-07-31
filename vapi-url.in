@@ -10,7 +10,7 @@ namespace Panda {
 	 * @param source the underlying stream to decompress.
 	 * @param verbosity the BZip logging level.
 	 */
-	[CCode (cname = "panda_bz_decompress")]
+	[CCode (cname = "panda_bz_decompress", cheader_filename = "pandaseq-url.h")]
 	public BufferRead? bz_decompress (owned BufferRead? source, int verbosity = 0);
 
 	/**
@@ -30,13 +30,13 @@ namespace Panda {
 		 *
 		 * @return whether the library was successfully initialised.
 		 */
-		[CCode (cname = "panda_curl_ref")]
+		[CCode (cname = "panda_curl_ref", cheader_filename = "pandaseq-url.h")]
 		public bool @ref ();
 
 		/**
 		 * Decrement the reference count on the cURL library.
 		 */
-		[CCode (cname = "panda_curl_unref")]
+		[CCode (cname = "panda_curl_unref", cheader_filename = "pandaseq-url.h")]
 		public void unref ();
 	}
 }
