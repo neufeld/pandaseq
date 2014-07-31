@@ -104,7 +104,7 @@ ALTERNATIVES
 ------------
 
 [PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear)  
-[FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/)  
+[FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/) – Algorithm included in PANDAseq
 [COPE (Connecting Overlapped Pair-End reads)](http://sourceforge.net/projects/coperead/)
 [XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)  
 FastqJoin in [ea-utils](https://code.google.com/p/ea-utils/wiki/FastqJoin) – Algorithm included in PANDAseq

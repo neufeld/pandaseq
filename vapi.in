@@ -266,6 +266,14 @@ namespace Panda {
 			[CCode (cname = "panda_algorithm_ea_util_new")]
 			public EAUtil ();
 		}
+		[CCode (cname = "panda_algorithm_flash", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class Flash : Algorithm {
+			/**
+			 * Create a Flash algorithm.
+			 */
+			[CCode (cname = "panda_algorithm_flash_new")]
+			public Flash ();
+		}
 		[CCode (cname = "panda_algorithm_pear", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
 		public class Pear : Algorithm {
 			/**

@@ -136,6 +136,22 @@ typedef struct panda_algorithm panda_algorithm_ea_util;
 PandaAlgorithm panda_algorithm_ea_util_new(
 	void);
 
+/* === FLASH === */
+
+/**
+ * This algorithm uses the FLASH algorithm, from Magoc 2011, to find the best
+ * overlap region.
+ */
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_flash_class;
+#        define class_panda_algorithm_flash panda_algorithm_flash_class;
+typedef struct panda_algorithm panda_algorithm_flash;
+
+/**
+ * Create a FLASH algorithm.
+ */
+PandaAlgorithm panda_algorithm_flash_new(
+	void);
+
 /* === PEAR === */
 
 PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_pear_class;
