@@ -103,12 +103,16 @@ The `STAT SLOW` line is informative; those sequences were not rejected. The othe
 ALTERNATIVES
 ------------
 
-[PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear)  
-[FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/) – Algorithm included in PANDAseq
-[COPE (Connecting Overlapped Pair-End reads)](http://sourceforge.net/projects/coperead/)
-[XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)  
-[stitch](https://github.com/audy/stitch)
-FastqJoin in [ea-utils](https://code.google.com/p/ea-utils/wiki/FastqJoin) – Algorithm included in PANDAseq
+Similar algorithms (i.e., determine the overlap, then fuse the reads):
+ - [COPE (Connecting Overlapped Pair-End reads)](http://sourceforge.net/projects/coperead/) – Algorithm similar to FLASH
+ - FastqJoin in [ea-utils](https://code.google.com/p/ea-utils/wiki/FastqJoin) – Algorithm included in PANDAseq
+ - [FLASH (Fast Length Adjustment of SHort reads)](http://ccb.jhu.edu/software/FLASH/) – Algorithm included in PANDAseq
+ - [PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear) – Algorithm included in PANDAseq
+ - [stitch](https://github.com/audy/stitch)
+ - [XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)
+
+Completely different methods:
+ - [SeqPrep](https://github.com/jstjohn/SeqPrep/) – Uses alignment
 
 CITATION
 --------
