@@ -19,6 +19,7 @@
 
  */
 #include "config.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "pandaseq.h"
@@ -51,7 +52,7 @@ static double overlap_probability(
 		real_overlap++;
 	}
 
-	return (((double) mismatches) * mismatches + 1) / real_overlap;
+	return log((((double) mismatches) * mismatches + 1) / real_overlap);
 }
 
 static double match_probability(

@@ -56,7 +56,7 @@ static double overlap_probability(
 		real_overlap++;
 	}
 
-	return mismatches / real_overlap;
+	return log(mismatches / real_overlap);
 }
 
 static double match_probability(

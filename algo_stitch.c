@@ -53,7 +53,7 @@ static double overlap_probability(
 		}
 	}
 
-	return score / (double) (forward_length + reverse_length);
+	return log(score / (double) (forward_length + reverse_length));
 }
 
 static double match_probability(
