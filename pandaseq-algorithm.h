@@ -190,5 +190,21 @@ typedef struct panda_algorithm panda_algorithm_rdp_mle;
 PandaAlgorithm panda_algorithm_rdp_mle_new(
 	void);
 
+/* === Stitch === */
+
+/**
+ * This algorithm uses the Stitch algorithm, by Austin G. Davis-Richardson, to
+ * find the best overlap region.
+ */
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_stitch_class;
+#        define class_panda_algorithm_stitch panda_algorithm_stitch_class;
+typedef struct panda_algorithm panda_algorithm_stitch;
+
+/**
+ * Create a Stitch algorithm.
+ */
+PandaAlgorithm panda_algorithm_stitch_new(
+	void);
+
 EXTERN_C_END
 #endif

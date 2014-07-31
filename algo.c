@@ -128,6 +128,7 @@ static void lib_init(
 	panda_algorithm_register(&panda_algorithm_pear_class);
 	panda_algorithm_register(&panda_algorithm_rdp_mle_class);
 	panda_algorithm_register(&panda_algorithm_simple_bayes_class);
+	panda_algorithm_register(&panda_algorithm_stitch_class);
 }
 
 __attribute__ ((destructor))

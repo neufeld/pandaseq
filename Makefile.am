@@ -79,6 +79,7 @@ libpandaseq_la_SOURCES = \
 	algo_pear.c \
 	algo_rdp_mle.c \
 	algo_simple_bayes.c \
+	algo_stitch.c \
 	args.c \
 	args_array.c \
 	args_assembler.c \

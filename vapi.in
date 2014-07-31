@@ -319,6 +319,14 @@ namespace Panda {
 			[CCode (cname = "panda_algorithm_simple_bayes_new")]
 			public SimpleBayes ();
 		}
+		[CCode (cname = "panda_algorithm_stitch", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class Stitch : Algorithm {
+			/**
+			 * Create a Stitch algorithm.
+			 */
+			[CCode (cname = "panda_algorithm_stitch_new")]
+			public Stitch ();
+		}
 
 		/**
 		 * Compute the log probability of bases matching or mismatching with the supplied PHRED scores.
