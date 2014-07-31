@@ -276,6 +276,15 @@ namespace Panda {
 			[CCode (cname = "panda_algorithm_pear_new")]
 			public Pear ();
 		}
+		[CCode (cname = "panda_algorithm_rdp_mle", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class RdpMle : Algorithm {
+			/**
+			 * Create a RDP MLE algorithm.
+			 */
+			[CCode (cname = "panda_algorithm_rdp_mle_new")]
+			public RdpMle ();
+		}
+
 		[CCode (cname = "panda_algorithm_simple_bayes", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
 		public class SimpleBayes : Algorithm {
 			/**
@@ -293,14 +302,6 @@ namespace Panda {
 			 */
 			[CCode (cname = "panda_algorithm_simple_bayes_new")]
 			public SimpleBayes ();
-		}
-		[CCode (cname = "panda_algorithm_rdp_mle", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
-		public class RdpMle : Algorithm {
-			/**
-			 * Create a RDP MLE algorithm.
-			 */
-			[CCode (cname = "panda_algorithm_rdp_mle_new")]
-			public RdpMle ();
 		}
 
 		/**
