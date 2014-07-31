@@ -185,6 +185,7 @@ CLEANFILES = \
 	table.h \
 	$(bin_SCRIPTS) \
 	mktable$(EXEEXT) \
+	*.[ch]~ \
 	$(NULL)
 if LIBCURL
 lib_LTLIBRARIES += libpandaseq-url.la
