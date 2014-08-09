@@ -1,11 +1,11 @@
 Name:           pandaseq
-Version:        2.0
+Version:        @PACKAGE_VERSION@
 Release:        1%{?dist}
 Summary:        Pair-end read assembly
-Source:         pandaseq-2.0.tar.bz2
 Group:          Applications/Engineering
 
 License:        GPLv3+
+Source:         https://github.com/neufeld/pandaseq/archive/v%{version}.tar.gz
 URL:            http://github.com/neufeld/pandaseq
 
 BuildRequires:  zlib-devel
@@ -21,7 +21,7 @@ PANDA assembles forward and reverse reads from Illumina FASTQ data
 %package devel
 Summary:        Pair-end read assembly -- Development tools
 Requires:       libtool
-Requires:	pandaseq
+Requires:       pandaseq-lib
 
 %description devel
 PANDA assembles forward and reverse reads from Illumina FASTQ data
@@ -29,30 +29,49 @@ This package contains development tools for creating PANDAseq
 validation modules. If you are only assembling sequences, this is
 not necessary.
 
+%package lib
+Summary:        Pair-end read assembly -- Libraries
+
+%description lib
+PANDA assembles forward and reverse reads from Illumina FASTQ data
+This package contains shared libraries.
+
 %prep
-%setup -q
-autoreconf -i
+%setup
 
 %build
-%configure
+autoreconf -i
+%configure --disable-static
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf %{buildroot}
+make install DESTDIR=%{buildroot}
+rm -f %{buildroot}%{_libdir}/*.la %{buildroot}%{_libdir}/pandaseq*/*.la
+
+%clean
+rm -rf ${buildroot}
 
 %files devel
 %{_bindir}/pandaxs
-%{_includedir}/pandaseq.h
+%{_includedir}/pandaseq*/*
+%{_libdir}/pkgconfig/*.pc
+%{_libdir}/libpandaseq*.so
+%{_datarootdir}/vala/vapi/*
 %doc %{_mandir}/man1/pandaxs.1.gz
-%doc %{_defaultdocdir}/pandaseq/sample.c
+%doc %{_defaultdocdir}/pandaseq/plugin_sample.c
+
+%files lib
+%{_libdir}/libpandaseq*.so.*
+%{_libdir}/pandaseq*/*.so*
+
 %files
-%{_bindir}/pandaseq
-%{_libdir}/pandaseq
-%doc %{_mandir}/man1/pandaseq.1.gz
+%{_bindir}/pandaseq*
+%doc %{_mandir}/man1/pandaseq*.1.gz
 %doc %{_defaultdocdir}/pandaseq/README
 
-%changelog
- * Thu Apr 14 2011 Andre Masella <andre@masella.name> 2.0-1
- - First version in C
+%post
+/sbin/ldconfig
 
+%postun
+/sbin/ldconfig

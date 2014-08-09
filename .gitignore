@@ -5,6 +5,8 @@
 *.lo
 *.o
 *.pc
+*.rpm
+*.tar.gz
 *~
 .deps
 .libs
@@ -39,6 +41,7 @@ pandaseq
 pandaseq-checkid
 pandaseq-diff
 pandaseq-hang
+pandaseq.spec
 pandaxs
 pkgroot
 stamp-h1

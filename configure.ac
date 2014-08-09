@@ -107,6 +107,7 @@ AC_SUBST(LIB_VER)
 AC_SUBST(LIB_URL_VER)
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([pandaseq.spec])
 AC_CONFIG_FILES(${LIB_NAME}.pc:pc.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES(${LIB_NAME}.vapi:vapi.in, [], [LIB_NAME=$LIB_NAME])
 AC_CONFIG_FILES(${LIB_NAME}-url.deps:deps-url.in, [], [LIB_NAME=$LIB_NAME])
