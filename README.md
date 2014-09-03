@@ -6,8 +6,7 @@ PANDASEQ is a program to align Illumina reads, optionally with PCR primers embed
 INSTALLATION
 ------------
 
-pandaseq: [![Build Status](https://travis-ci.org/neufeld/pandaseq.png?branch=master)](https://travis-ci.org/neufeld/pandaseq)  
-pandaseq-sam: [![Build Status](https://travis-ci.org/neufeld/pandaseq-sam.png?branch=master)](https://travis-ci.org/neufeld/pandaseq-sam)
+[![Build Status](https://travis-ci.org/neufeld/pandaseq.png?branch=master)](https://travis-ci.org/neufeld/pandaseq)  
 
 Binary packages are available for recent versions of Windows, MacOS and Linux. Source code is also available. See [Installation instructions](https://github.com/neufeld/pandaseq/wiki/Installation) for details.
 
@@ -89,13 +88,13 @@ Nothing. The quality scores of the output do not have any similarity to the orig
 
 In the overlap region where there is a mismatch, it is probable that one base was sequenced correctly and the other was sequenced incorrectly. If both bases have high scores (i.e., are probably correct), the chance of the resulting base is low (i.e., is probably incorrect). For more information, see the paper. Also, remember that the PHRED to probability conversion is not linear, so most scores are relatively high. It's also not uncommon to see the PHRED score `!`, which is zero, but in this context, it means less than `"` (PHRED = 1, P = .20567).
 
-Again, these scores are not meant to be interpreted as PHRED scores and should not be processed by downstream applications expecting PHRED scores from Illumina sequences.
+Again, these scores are not meant to be interpreted as regular scores and should not be processed by downstream applications expecting PHRED scores from Illumina sequences.
 
 ### The scores of the non-overlapping regions are not the same as the original reads. Why?
 The PHRED scores from the input are not copied directly to the output when using FASTQ (`-F`) output. They go through a transformation from PHRED scores into probabilities, which is what PANDAseq uses. When output as FASTQ, the probabilities are converted back to PHRED scores. The rounding error involved can cause a score to jump by one.
 
 ### How many sequences should there be in the output?
-You should expect that PANDAseq will output fewer sequences than the read pairs given to it. There are several `STAT` lines in the log that will help with the analysis. First, `STAT READS` is the number of read pairs in the input. Sequences first go through a number of basic checks and the user-specified checks. If provided, forward and reverse primers are aligned and clipped. The optimal overlap is selected and the sequence is constructed. The quality score is check and any user-specified validation is done. Any of these steps might fail and cause the sequence to be rejected. Each of the rejection reasons will have a `STAT` line, which is described in the _Output Statistics_ section of the manual.
+You should expect that PANDAseq will output fewer sequences than the read pairs given to it. The log contains several `STAT` lines that will help with the analysis. Lines containing `STAT READS` report the number of read pairs in the input. Sequences first go through a number of basic filtering steps and then user-specified filtering steps. If provided, forward and reverse primers are aligned and clipped. The optimal overlap is selected and the sequence is constructed. The quality score is verified and any user-specified filtering is done. Any of these steps might fail and cause the sequence to be rejected. For each of the possible rejection reasons, the log file will contain a `STAT` line reporting the number of sequences filtered, as is described in the _Output Statistics_ section of the manual.
 
 If multiple threads are used, which the default on most platforms, each thread collects this information separately. The output log will output a group of `STAT` lines per thread.
 
