@@ -112,7 +112,7 @@ Similar algorithms (i.e., determine the overlap, then fuse the reads):
  - [XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)
 
 Completely different methods:
- - [SeqPrep](https://github.com/jstjohn/SeqPrep/) – Uses alignments
+ - [SeqPrep](https://github.com/jstjohn/SeqPrep/) – Uses alignment
 
 CITATION
 --------
