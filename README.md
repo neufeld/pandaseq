@@ -110,6 +110,7 @@ Similar algorithms (i.e., determine the overlap, then fuse the reads):
  - [PEAR (Paired-End AssembleR)](http://www.exelixis-lab.org/pear) – Algorithm included in PANDAseq
  - [stitch](https://github.com/audy/stitch)
  - [XORRO (Rapid Pair-end Read Overlapper)](http://arxiv.org/pdf/1304.4620v1.pdf)
+ - [leeHom](http://nar.oxfordjournals.org/content/42/18/e141.full)
 
 Completely different methods:
  - [SeqPrep](https://github.com/jstjohn/SeqPrep/) – Uses alignment
