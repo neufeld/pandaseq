@@ -68,6 +68,11 @@ panda_nt panda_nt_from_ascii(
 panda_nt panda_nt_from_ascii_complement(
 	char c);
 /**
+ * Get the complementary nucleotide.
+ */
+panda_nt panda_nt_complement(
+	panda_nt nt);
+/**
  * Convert a nucleotide to an IUPAC representation
  */
 char panda_nt_to_ascii(

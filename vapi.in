@@ -231,6 +231,11 @@ namespace Panda {
 		[CCode (cname = "panda_nt_from_ascii_complement")]
 		public static Nt from_ascii_complement (char c);
 		/**
+		 * Get the complementary nucleotide.
+		 */
+		[CCode(cname = "panda_nt_complement")]
+		public Nt complement();
+		/**
 		 * Convert a nucleotide to an IUPAC representation
 		 */
 		[CCode (cname = "panda_nt_to_ascii")]

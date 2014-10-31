@@ -24,6 +24,8 @@
 
 static char ntchar[16] = { 'N', 'A', 'C', 'M', 'G', 'R', 'S', 'V', 'T', 'W', 'Y', 'H', 'K', 'D', 'B', 'N' };
 
+static panda_nt complementary_nt[] = { 0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15 };
+
 panda_nt iupac_forward[32] = {
 	/*@ */ PANDA_NT_Z,
 	 /*A*/ PANDA_NT_A,
@@ -138,6 +140,11 @@ panda_nt panda_nt_from_ascii(
 panda_nt panda_nt_from_ascii_complement(
 	char c) {
 	return iupac_reverse[(int) c & 0x1F];
+}
+
+panda_nt panda_nt_complement(
+	panda_nt nt) {
+	return complementary_nt[nt & 0xF];
 }
 
 char panda_nt_to_ascii(
