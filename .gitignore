@@ -37,6 +37,7 @@ m4/libtool.m4
 m4/lt*.m4
 missing
 mktable
+mock
 pandaseq
 pandaseq-checkid
 pandaseq-diff

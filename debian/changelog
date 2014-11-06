@@ -1,3 +1,18 @@
+pandaseq (2.8~ppa0) precise; urgency=medium
+
+  * Add a plugin to display overlaps examined
+  * Add -D flag to add a penalty for shifting primers
+  * Added UPARSE algorithm
+  * Add FastqJoin algorithm
+  * Add FLASH algorithm
+  * Add Sitch algorithm
+  * Fix bug causing spurious “no sequences” with one thread
+  * Issue an error if the command line arguments have UTF-8 characters
+  * Remove min_readqscore since it doesn't work as advertised
+  * Sanity check sequence length after primer stripping
+
+ -- Andre Masella <andre@masella.name>  Thu, 06 Nov 2014 10:12:31 -0500
+
 pandaseq (2.7~ppa0) precise; urgency=low
 
   * Supress warning about PHRED+64 when the header is CASAVA 1.7+

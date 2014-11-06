@@ -19,6 +19,6 @@ experiment_setup.o: experiment_raw_setup.o
 	nm $< -B -g | awk 'NF == 2 && $$2 ~ /^panda_/ { print $$2, "xx" $$2 }' | objcopy --redefine-syms=/dev/stdin $< $@
 
 clean:
-	rm -f reg-test *.o *.a setup.c
+	rm -f reg-test *.o *.a setup.c reg-test.c
 
 .PHONY: clean

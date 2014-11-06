@@ -12,7 +12,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Pair-end read assembler
  PANDA assembles forward and reverse reads from Illumina FASTQ data
 
-Package: libpandaseq5
+Package: libpandaseq6
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Pair-end read assembler
@@ -28,7 +28,7 @@ Description: Pair-end read assembler -- URL handler
 
 Package: pandaseq-dev
 Architecture: any
-Depends: ${misc:Depends}, libpandaseq5 (= ${binary:Version}), libpandaseq-url0 (= ${binary:Version}), libtool
+Depends: ${misc:Depends}, libpandaseq6 (= ${binary:Version}), libpandaseq-url0 (= ${binary:Version}), libtool
 Description: Pair-end read assembler -- Development tools
  PANDA assembles forward and reverse reads from Illumina FASTQ data
  .
