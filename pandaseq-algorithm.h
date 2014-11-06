@@ -206,5 +206,26 @@ typedef struct panda_algorithm panda_algorithm_stitch;
 PandaAlgorithm panda_algorithm_stitch_new(
 	void);
 
+/* === UPARSE === */
+
+PANDA_EXTERN const struct panda_algorithm_class panda_algorithm_uparse_class;
+#        define class_panda_algorithm_uparse panda_algorithm_uparse_class
+typedef struct panda_algorithm panda_algorithm_uparse;
+
+/**
+ * Create a simple Bayesian algorithm.
+ */
+PandaAlgorithm panda_algorithm_uparse_new(
+	void);
+
+/**
+ * The minimum error estimation in the sequence data (epsilon)
+ */
+double panda_algorithm_uparse_get_error_estimation(
+	PandaAlgorithm algorithm);
+void panda_algorithm_uparse_set_error_estimation(
+	PandaAlgorithm algorithm,
+	double q);
+
 EXTERN_C_END
 #endif

@@ -103,6 +103,28 @@ double mismatch_rdp_assembled(
 	return (value == 0) ? DBL_MIN : value;
 }
 
+static double match_uparse(
+	double p,
+	double q,
+	void *data) {
+
+	(void) data;
+
+	return p * q / (1 - p - q + 4 * p * q / 3);
+}
+
+static double mismatch_uparse(
+	double p,
+	double q,
+	void *data) {
+	double min = (p <= q) ? p : q;
+	double max = (p <= q) ? q : p;
+
+	(void) data;
+
+	return (min + max / 3) / (min + max - 4 * min * max / 3);
+}
+
 int main(
 	void) {
 	PandaTBld t_bld;
@@ -119,6 +141,8 @@ int main(
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_pear", mismatch_pear, NULL, true);
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_rdp_mle", mismatch_rdp, NULL, true);
 	panda_tbld_matrix_prob(t_bld, "qual_mismatch_assembled_rdp_mle", mismatch_rdp_assembled, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_match_uparse", match_uparse, NULL, true);
+	panda_tbld_matrix_prob(t_bld, "qual_mismatch_uparse", mismatch_uparse, NULL, true);
 	panda_tbld_array_prob(t_bld, "qual_score", score, NULL, false);
 	panda_tbld_array_prob(t_bld, "qual_score_err", score_err, NULL, false);
 

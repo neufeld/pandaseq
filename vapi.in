@@ -333,6 +333,25 @@ namespace Panda {
 			public Stitch ();
 		}
 
+		[CCode (cname = "panda_algorithm_uparse", ref_function = "panda_algorithm_ref", unref_function = "panda_algorithm_unref")]
+		public class UParse : Algorithm {
+			/**
+			 * The minimum error estimation in the sequence data (epsilon)
+			 */
+			public double error_estimation {
+				[CCode (cname = "panda_algorithm_uparse_get_error_estimation")]
+				get;
+				[CCode (cname = "uparse_set_error_estimation")]
+				set;
+			}
+
+			/**
+			 * Create an UParse algorithm.
+			 */
+			[CCode (cname = "panda_algorithm_uparse_new")]
+			public UParse ();
+		}
+
 		/**
 		 * Compute the log probability of bases matching or mismatching with the supplied PHRED scores.
 		 */
