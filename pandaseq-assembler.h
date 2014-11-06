@@ -395,5 +395,14 @@ void panda_assembler_set_threshold(
 PandaLogProxy panda_assembler_get_logger(
 	PandaAssembler assembler);
 
+/**
+ * The penalty for moving the primer down the window.
+ */
+double panda_assembler_get_primer_penalty(
+	PandaAssembler assembler);
+void panda_assembler_set_primer_penalty(
+	PandaAssembler assembler,
+	double threshold);
+
 EXTERN_C_END
 #endif

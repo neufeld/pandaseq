@@ -46,6 +46,7 @@ typedef void (
 
 static size_t computeoffset(
 	double threshold,
+	double penalty,
 	bool reverse,
 	const unsigned char *seq,
 	size_t seq_length,
@@ -55,7 +56,7 @@ static size_t computeoffset(
 	size_t primerlen) {
 	/* Circular buffer of probabilities of primer alignment indexed by the offset. */
 	double probabilities[primerlen];
-	double bestpr = primerlen * threshold;
+	double bestpr = exp(primerlen * threshold);
 	size_t bestindex = 0;
 	size_t index;
 	if (primerlen > seq_length) {
@@ -68,9 +69,10 @@ static size_t computeoffset(
 
 	for (index = 0; index < seq_length; index++) {
 		ptrdiff_t x;
+		double last_pr = exp(probabilities[CIRC(index, primerlen)] / (index + 1)) - index * penalty;
 		/* The last bucket in the buffer holds the probability of a complete alignment. If it so better than we have seen previously, store it. */
-		if (probabilities[CIRC(index, primerlen)] > bestpr) {
-			bestpr = probabilities[CIRC(index, primerlen)];
+		if (last_pr > bestpr) {
+			bestpr = last_pr;
 			bestindex = index + 1;
 		}
 		probabilities[CIRC(index, primerlen)] = 0;
@@ -100,12 +102,13 @@ void qual_base_score(
 
 size_t panda_compute_offset_qual(
 	double threshold,
+	double penalty,
 	bool reverse,
 	const panda_qual *haystack,
 	size_t haystack_length,
 	const panda_nt *needle,
 	size_t needle_length) {
-	return computeoffset(threshold, reverse, (const unsigned char *) haystack, haystack_length, sizeof(panda_qual), qual_base_score, needle, needle_length);
+	return computeoffset(threshold, penalty, reverse, (const unsigned char *) haystack, haystack_length, sizeof(panda_qual), qual_base_score, needle, needle_length);
 }
 
 void result_base_score(
@@ -120,10 +123,11 @@ void result_base_score(
 
 size_t panda_compute_offset_result(
 	double threshold,
+	double penalty,
 	bool reverse,
 	const panda_result *haystack,
 	size_t haystack_length,
 	const panda_nt *needle,
 	size_t needle_length) {
-	return computeoffset(threshold, reverse, (const unsigned char *) haystack, haystack_length, sizeof(panda_result), result_base_score, needle, needle_length);
+	return computeoffset(threshold, penalty, reverse, (const unsigned char *) haystack, haystack_length, sizeof(panda_result), result_base_score, needle, needle_length);
 }

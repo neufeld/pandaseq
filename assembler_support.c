@@ -94,6 +94,8 @@ PandaAssembler panda_assembler_new_kmer(
 	memset(assembler->kmerseen, 0, KMERSEEN_SIZE(num_kmers));
 	panda_assembler_set_maximum_overlap(assembler, 0);
 	panda_assembler_set_minimum_overlap(assembler, 2);
+	panda_assembler_set_primer_penalty(assembler, 0);
+
 	return assembler;
 }
 
@@ -131,6 +133,7 @@ void panda_assembler_copy_configuration(
 	dest->post_primers = src->post_primers;
 	panda_algorithm_unref(dest->algo);
 	dest->algo = panda_algorithm_ref(src->algo);
+	dest->primer_penalty = src->primer_penalty;
 }
 
 PandaAssembler panda_assembler_ref(
@@ -390,5 +393,18 @@ void panda_assembler_set_threshold(
 	double threshold) {
 	if (threshold > 0 && threshold < 1) {
 		assembler->threshold = log(threshold);
+	}
+}
+
+double panda_assembler_get_primer_penalty(
+	PandaAssembler assembler) {
+	return exp(assembler->primer_penalty);
+}
+
+void panda_assembler_set_primer_penalty(
+	PandaAssembler assembler,
+	double threshold) {
+	if (threshold >= 0 && threshold < 1) {
+		assembler->primer_penalty = threshold;
 	}
 }

@@ -256,7 +256,7 @@ bool assemble_seq(
 	}
 	if (!assembler->post_primers) {
 		if (assembler->forward_primer_length > 0) {
-			assembler->result.forward_offset = panda_compute_offset_qual(assembler->threshold, false, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
+			assembler->result.forward_offset = panda_compute_offset_qual(assembler->threshold, assembler->primer_penalty, false, assembler->result.forward, assembler->result.forward_length, assembler->forward_primer, assembler->forward_primer_length);
 			if (assembler->result.forward_offset == 0) {
 				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
 				assembler->nofpcount++;
@@ -267,7 +267,7 @@ bool assemble_seq(
 			assembler->result.forward_offset = assembler->forward_trim;
 		}
 		if (assembler->reverse_primer_length > 0) {
-			assembler->result.reverse_offset = panda_compute_offset_qual(assembler->threshold, false, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
+			assembler->result.reverse_offset = panda_compute_offset_qual(assembler->threshold, assembler->primer_penalty, false, assembler->result.reverse, assembler->result.reverse_length, assembler->reverse_primer, assembler->reverse_primer_length);
 			if (assembler->result.reverse_offset == 0) {
 				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
 				assembler->norpcount++;
@@ -295,7 +295,7 @@ bool assemble_seq(
 	if (assembler->post_primers) {
 		size_t it;
 		if (assembler->forward_primer_length > 0) {
-			assembler->result.forward_offset = panda_compute_offset_result(assembler->threshold, false, assembler->result.sequence, assembler->result.sequence_length, assembler->forward_primer, assembler->forward_primer_length);
+			assembler->result.forward_offset = panda_compute_offset_result(assembler->threshold, assembler->primer_penalty, false, assembler->result.sequence, assembler->result.sequence_length, assembler->forward_primer, assembler->forward_primer_length);
 			if (assembler->result.forward_offset == 0) {
 				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_FORWARD_PRIMER);
 				assembler->nofpcount++;
@@ -306,7 +306,7 @@ bool assemble_seq(
 			assembler->result.forward_offset = assembler->forward_trim;
 		}
 		if (assembler->reverse_primer_length > 0) {
-			assembler->result.reverse_offset = panda_compute_offset_result(assembler->threshold, true, assembler->result.sequence, assembler->result.sequence_length, assembler->reverse_primer, assembler->reverse_primer_length);
+			assembler->result.reverse_offset = panda_compute_offset_result(assembler->threshold, assembler->primer_penalty, true, assembler->result.sequence, assembler->result.sequence_length, assembler->reverse_primer, assembler->reverse_primer_length);
 			if (assembler->result.reverse_offset == 0) {
 				LOG(PANDA_DEBUG_STAT, PANDA_CODE_NO_REVERSE_PRIMER);
 				assembler->norpcount++;

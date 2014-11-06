@@ -224,6 +224,10 @@ PANDA_EXTERN const panda_tweak_assembler panda_stdargs_primers_after;
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_module;
 /**
+ * The penalise primers if they are further from the start of the sequence (-D).
+ */
+PANDA_EXTERN const panda_tweak_assembler panda_stdargs_primer_penalty;
+/**
  * The minimum length filter switch (-l).
  */
 PANDA_EXTERN const panda_tweak_assembler panda_stdargs_min_len;

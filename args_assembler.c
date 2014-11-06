@@ -78,6 +78,31 @@ static bool set_primers_after(
 
 const panda_tweak_assembler panda_stdargs_primers_after = { 'a', NULL, "Strip the primers after assembly, rather than before.", set_primers_after, false };
 
+static bool set_primer_penalty(
+	PandaAssembler assembler,
+	char flag,
+	char *argument) {
+
+	double threshold = 0;
+	(void) flag;
+
+	if (argument != NULL) {
+		errno = 0;
+		threshold = strtod(argument, NULL);
+		if (errno != 0 || threshold < 0) {
+			fprintf(stderr, "Bad threshold: %s. It should be between 0 and 1.\n", argument);
+			free(argument);
+			return false;
+		}
+		free(argument);
+	}
+
+	panda_assembler_set_primer_penalty(assembler, threshold);
+	return true;
+}
+
+const panda_tweak_assembler panda_stdargs_primer_penalty = { 'D', "threshold", "Penalise primers if the further they are from the start of the sequence.", set_primer_penalty, false };
+
 bool no_n_check(
 	PandaLogProxy logger,
 	const panda_result_seq *sequence,
@@ -330,6 +355,7 @@ const panda_tweak_assembler panda_stdargs_max_overlap = { 'O', "length", "Maximu
 const panda_tweak_assembler *const panda_stdargs[] = {
 	&panda_stdargs_algorithm,
 	&panda_stdargs_module,
+	&panda_stdargs_primer_penalty,
 	&panda_stdargs_max_len,
 	&panda_stdargs_degenerates,
 	&panda_stdargs_max_overlap,

@@ -62,6 +62,7 @@ EXTERN_C_BEGIN
 /**
  * Find the best offset of a small sequence in a large sequence.
  * @threshold: the minimum log probability to match
+ * @penalty: the penalty to subtract from the probability for each base from the start of the sequence
  * @reverse: if false, scan the sequence from start to finish, else, scan in the opposite direction
  * @haystack: (array length=haystack_length): the sequence to be searched
  * @needle: (array length=needle_length): the sequence for which to look
@@ -69,6 +70,7 @@ EXTERN_C_BEGIN
  */
 size_t panda_compute_offset_qual(
 	double threshold,
+	double penalty,
 	bool reverse,
 	const panda_qual *haystack,
 	size_t haystack_length,
@@ -78,6 +80,7 @@ size_t panda_compute_offset_qual(
 /**
  * Find the best offset of a small sequence in a large sequence.
  * @threshold: the minimum log probability to match
+ * @penalty: the penalty to subtract from the probability for each base from the start of the sequence
  * @reverse: if false, scan the sequence from start to finish, else, scan in the opposite direction
  * @haystack: (array length=haystack_length): the sequence to be searched
  * @needle: (array length=needle_length): the sequence for which to look
@@ -85,6 +88,7 @@ size_t panda_compute_offset_qual(
  */
 size_t panda_compute_offset_result(
 	double threshold,
+	double penalty,
 	bool reverse,
 	const panda_result *haystack,
 	size_t haystack_length,

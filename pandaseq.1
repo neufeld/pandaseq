@@ -24,6 +24,9 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .B \-d
 .I flags
 ] [
+.B \-D
+.I penalty
+] [
 .B \-F 
 ] [
 .B \-g
@@ -123,6 +126,9 @@ Loads an optional validation module to verify sequences are valid before emittin
 .TP
 \-d flags
 Set debugging/output flags to provide more details about what PANDAseq is doing. To enable a flag, capitalise it; to disable, include a uncapitalise it. Provide information about the \fBb\fRuilding of a sequence. Show excruciating detail about \fBr\fReconstruction. Show some optional \fBs\fRtatistics. Show information about building the \fBk\fR-mer table. Provide error about the \fBf\fRile parsing. Show every \fBm\fRismatch. The default is \fBBFSrk\fR.
+.TP
+\-D penalty
+Sometimes, with repetitive sequence, the primer aligns further down the sequence. To avoid this, a primer penalty can be applied. For each base further down the sequence, \fIpenalty\fR is subtracted from the proability that the primer alings to this location. By default, the value is zero, and if used, the value should be rather small; 0.01 seesm to be sufficient in most cases.
 .TP
 \-f forward.fastq
 The location of the forward reads in FASTQ format. The file may be plain FASTQ, or compressed with

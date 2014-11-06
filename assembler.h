@@ -75,6 +75,7 @@ struct panda_assembler {
 	long overlapcount[2 * MAX_LEN];
 	size_t longest_overlap;
 	char name[MAX_LEN];
+	double primer_penalty;
 };
 
 #endif
