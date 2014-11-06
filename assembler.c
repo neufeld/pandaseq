@@ -70,6 +70,11 @@ static bool align(
 	double rquality = 0;
 	ptrdiff_t len;
 
+	if (assembler->minoverlap + result->forward_offset >= result->forward_length || assembler->minoverlap + result->reverse_offset >= result->reverse_length) {
+		LOG(PANDA_DEBUG_BUILD, PANDA_CODE_NEGATIVE_SEQUENCE_LENGTH);
+		return false;
+	}
+
 	if (assembler->maxoverlap == 0) {
 		maxoverlap = result->forward_length < result->reverse_length ? result->forward_length : result->reverse_length;
 	} else if (maxoverlap > assembler->maxoverlap) {
