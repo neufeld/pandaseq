@@ -149,57 +149,64 @@ pkglibx_LTLIBRARIES = \
 	$(NULL)
 after_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=after \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 after_la_SOURCES = plugin_after.c panda_api.c
-after_la_LDFLAGS = -module $(MODULE_LIBS)
+after_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 after_la_LIBADD = libpandaseq.la
 before_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=before \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 before_la_SOURCES = plugin_before.c panda_api.c
-before_la_LDFLAGS = -module $(MODULE_LIBS)
+before_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 before_la_LIBADD = libpandaseq.la
 completely_miss_the_point_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=completely_miss_the_point \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 completely_miss_the_point_la_SOURCES = plugin_completely_miss_the_point.c panda_api.c
-completely_miss_the_point_la_LDFLAGS = -module $(MODULE_LIBS)
+completely_miss_the_point_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 completely_miss_the_point_la_LIBADD = libpandaseq.la
 filter_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=filter \
 	$(COMMON_CPPFLAGS)
 filter_la_SOURCES = plugin_filter.c panda_api.c
-filter_la_LDFLAGS = -module $(MODULE_LIBS)
+filter_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 filter_la_LIBADD = libpandaseq.la
 min_phred_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=min_phred \
 	$(COMMON_CPPFLAGS)
 min_phred_la_SOURCES = plugin_min_phred.c panda_api.c
-min_phred_la_LDFLAGS = -module $(MODULE_LIBS)
+min_phred_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 min_phred_la_LIBADD = libpandaseq.la
 min_overlapbits_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=min_overlapbits \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 min_overlapbits_la_SOURCES = plugin_min_overlapbits.c panda_api.c
-min_overlapbits_la_LDFLAGS = -module $(MODULE_LIBS)
+min_overlapbits_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 min_overlapbits_la_LIBADD = libpandaseq.la
 overlap_stat_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=overlap_stat \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 overlap_stat_la_SOURCES = plugin_overlap_stat.c panda_api.c
-overlap_stat_la_LDFLAGS = -module $(MODULE_LIBS) $(LIBM)
+overlap_stat_la_LDFLAGS = -module $(MODULE_LDFLAGS) $(LIBM)
 overlap_stat_la_LIBADD = libpandaseq.la
 pear_test_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=pear_test \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 pear_test_la_SOURCES = plugin_pear_test.c panda_api.c
-pear_test_la_LDFLAGS = -module $(MODULE_LIBS) $(LIBM)
+pear_test_la_LDFLAGS = -module $(MODULE_LDFLAGS) $(LIBM)
 pear_test_la_LIBADD = libpandaseq.la
 validtag_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=validtag \
+	$(MODULE_CFLAGS) \
 	$(COMMON_CPPFLAGS)
 validtag_la_SOURCES = plugin_validtag.c panda_api.c
-validtag_la_LDFLAGS = -module $(MODULE_LIBS)
+validtag_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 validtag_la_LIBADD = libpandaseq.la
 BUILT_SOURCES = table.c table.h
 CLEANFILES = \
