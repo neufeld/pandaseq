@@ -24,6 +24,24 @@ library_include_HEADERS = \
 if PTHREAD
 library_include_HEADERS += pandaseq-mux.h
 endif
+EXTRA_DIST = \
+	algo.h \
+	assembler.h \
+	buffer.h \
+	buffer.list \
+	config.h \
+	misc.h \
+	mktable.c \
+	module.h \
+	nt.h \
+	pandaseq-tablebuilder.h \
+	prob.h \
+	README.md \
+	tablebuilder.c \
+	table.h \
+	$(doc_DATA) \
+	$(man1_MANS) \
+	$(NULL)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(LIB_NAME).pc
 vapidir = $(datadir)/vala/vapi
