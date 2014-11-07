@@ -1,3 +1,9 @@
+pandaseq (2.8~ppa2) precise; urgency=medium
+
+  * Fix copy-pasta in UPARSE
+
+ -- Andre Masella <andre@masella.name>  Fri, 07 Nov 2014 09:58:23 -0500
+
 pandaseq (2.8~ppa1) precise; urgency=medium
 
   * Fix packaging error
