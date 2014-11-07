@@ -81,7 +81,7 @@ static PandaAlgorithm from_string(
 	char *end;
 
 	if (argument == NULL)
-		return panda_algorithm_simple_bayes_new();
+		return panda_algorithm_uparse_new();
 	errno = 0;
 	err_estimation = strtod(argument, &end);
 	if (errno == ERANGE || *end != '\0') {
@@ -92,8 +92,8 @@ static PandaAlgorithm from_string(
 		fprintf(stderr, "Error estimation %f is not a probability.\n", err_estimation);
 		return NULL;
 	}
-	algo = panda_algorithm_simple_bayes_new();
-	panda_algorithm_simple_bayes_set_error_estimation(algo, err_estimation);
+	algo = panda_algorithm_uparse_new();
+	panda_algorithm_uparse_set_error_estimation(algo, err_estimation);
 	return algo;
 }
 
@@ -110,7 +110,7 @@ const struct panda_algorithm_class panda_algorithm_uparse_class = {
 PandaAlgorithm panda_algorithm_uparse_new(
 	void) {
 	PandaAlgorithm algo = panda_algorithm_new(&panda_algorithm_uparse_class);
-	panda_algorithm_simple_bayes_set_error_estimation(algo, 0.36);
+	panda_algorithm_uparse_set_error_estimation(algo, 0.36);
 	return algo;
 }
 
