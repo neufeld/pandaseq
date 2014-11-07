@@ -1,3 +1,9 @@
+pandaseq (2.8~ppa1) precise; urgency=medium
+
+  * Fix packaging error
+
+ -- Andre Masella <andre@masella.name>  Fri, 07 Nov 2014 06:23:57 -0500
+
 pandaseq (2.8~ppa0) precise; urgency=medium
 
   * Add a plugin to display overlaps examined
