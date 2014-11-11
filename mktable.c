@@ -107,20 +107,26 @@ static double match_uparse(
 	double p,
 	double q,
 	void *data) {
+	double value;
 
 	(void) data;
 
-	return p * q / (1 - p - q + 4 * p * q / 3);
+	value = 1 - p * q / (1 - p - q + 4 * p * q / 3);
+	/* This should never be negative, but it is. */
+	return (value <= 0) ? DBL_MIN : value;
 }
 
 static double mismatch_uparse(
 	double p,
 	double q,
 	void *data) {
+	double value;
 
 	(void) data;
 
-	return (p + q / 3) / (p + q - 4 * p * q / 3);
+	value = 1 - (p + q / 3) / (p + q - 4 * p * q / 3);
+	/* This should never be negative, but it is. */
+	return (value <= 0) ? DBL_MIN : value;
 }
 
 int main(
