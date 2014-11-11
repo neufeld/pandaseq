@@ -117,12 +117,10 @@ static double mismatch_uparse(
 	double p,
 	double q,
 	void *data) {
-	double min = (p <= q) ? p : q;
-	double max = (p <= q) ? q : p;
 
 	(void) data;
 
-	return (min + max / 3) / (min + max - 4 * min * max / 3);
+	return (p + q / 3) / (p + q - 4 * p * q / 3);
 }
 
 int main(

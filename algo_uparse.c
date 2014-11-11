@@ -129,7 +129,7 @@ void panda_algorithm_uparse_set_error_estimation(
 	if (q > 0 && q < 1 && panda_algorithm_is_a(algorithm, &panda_algorithm_uparse_class)) {
 		struct uparse *data = panda_algorithm_data(algorithm);
 		data->q = q;
-		data->pmatch = log(q * q * (1 - 2 * q + 4 * q * q / 3));
-		data->pmismatch = log(4 * q / 3 / (2 * q - 4 * q * q / 3));
+		data->pmatch = log(1 - q * q * (1 - 2 * q + 4 * q * q / 3));
+		data->pmismatch = log(1 - 4 * q / 3 / (2 * q - 4 * q * q / 3));
 	}
 }
