@@ -18,6 +18,8 @@ On MacOS, the Apple Developer tools and Fink (or MacPorts or Brew) must be insta
 
 	sudo fink install bzip2-dev
 
+The newer AutoTools from Fink are needed over the ones provided by Apple, so ensure that Fink's `bin` directory precedes `/usr/bin` in the `$PATH`.
+
 After the support packages are installed, one should be able to do:
 
 	./autogen.sh && ./configure && make && sudo make install
