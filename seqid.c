@@ -54,15 +54,14 @@ void panda_seqid_clear(
 	id->tag[0] = '\0';
 }
 
+#define STRCMP(x) do { if (result == 0) result = strncmp(one->x, two->x, sizeof(((panda_seq_identifier*)0)->x)); } while (0)
 int panda_seqid_compare(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two) {
-	int result;
-	result = strcmp(one->instrument, two->instrument);
-	if (result == 0)
-		result = strcmp(one->run, two->run);
-	if (result == 0)
-		result = strcmp(one->flowcell, two->flowcell);
+	int result = 0;
+	STRCMP(instrument);
+	STRCMP(run);
+	STRCMP(flowcell);
 	if (result == 0)
 		result = one->lane - two->lane;
 	if (result == 0)
@@ -71,10 +70,10 @@ int panda_seqid_compare(
 		result = one->x - two->x;
 	if (result == 0)
 		result = one->y - two->y;
-	if (result == 0)
-		result = strcmp(one->tag, two->tag);
+	STRCMP(tag);
 	return result;
 }
+#undef STRCMP
 
 void panda_seqid_copy(
 	const panda_seq_identifier *src,
@@ -89,12 +88,14 @@ void panda_seqid_copy(
 	strncpy(dest->tag, src->tag, PANDA_TAG_LEN);
 }
 
+#define STRCMP(x) (strncmp(one->x, two->x, sizeof(((panda_seq_identifier*)0)->x)) == 0)
 bool panda_seqid_equal(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two) {
-	return one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->run, two->run) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
-	;
+	return one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && STRCMP(instrument) && STRCMP(run) && STRCMP(flowcell) && STRCMP(tag);
 }
+
+#undef STRCMP
 
 void panda_seqid_print(
 	const panda_seq_identifier *id,
