@@ -233,7 +233,7 @@ typedef struct {
  */
 typedef struct {
 	char instrument[100];
-	int run;
+	char run[100];
 	char flowcell[100];
 	int lane;
 	int tile;

@@ -45,7 +45,7 @@ bool panda_idfmt_has_direction(
 void panda_seqid_clear(
 	panda_seq_identifier *id) {
 	id->instrument[0] = '\0';
-	id->run = 0;
+	id->run[0] = '\0';
 	id->flowcell[0] = '\0';
 	id->lane = 0;
 	id->tile = 0;
@@ -60,7 +60,7 @@ int panda_seqid_compare(
 	int result;
 	result = strcmp(one->instrument, two->instrument);
 	if (result == 0)
-		result = one->run - two->run;
+		result = strcmp(one->run, two->run);
 	if (result == 0)
 		result = strcmp(one->flowcell, two->flowcell);
 	if (result == 0)
@@ -79,12 +79,12 @@ int panda_seqid_compare(
 void panda_seqid_copy(
 	const panda_seq_identifier *src,
 	panda_seq_identifier *dest) {
-	dest->run = src->run;
 	dest->lane = src->lane;
 	dest->tile = src->tile;
 	dest->x = src->x;
 	dest->y = src->y;
 	strncpy(dest->instrument, src->instrument, sizeof(src->instrument));
+	strncpy(dest->run, src->run, sizeof(src->run));
 	strncpy(dest->flowcell, src->flowcell, sizeof(src->flowcell));
 	strncpy(dest->tag, src->tag, PANDA_TAG_LEN);
 }
@@ -92,7 +92,7 @@ void panda_seqid_copy(
 bool panda_seqid_equal(
 	const panda_seq_identifier *one,
 	const panda_seq_identifier *two) {
-	return one->run == two->run && one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
+	return one->lane == two->lane && one->tile == two->tile && one->x == two->x && one->y == two->y && strcmp(one->instrument, two->instrument) == 0 && strcmp(one->run, two->run) == 0 && strcmp(one->flowcell, two->flowcell) == 0 && strcmp(one->tag, two->tag) == 0;
 	;
 }
 
@@ -108,7 +108,7 @@ void panda_seqid_xprint(
 	void *x) {
 	if (id == NULL)
 		return;
-	xprintf(x, "%s:%d:%s:%d:%d:%d:%d:%s", id->instrument, id->run, id->flowcell, id->lane, id->tile, id->x, id->y, id->tag);
+	xprintf(x, "%s:%s:%s:%d:%d:%d:%d:%s", id->instrument, id->run, id->flowcell, id->lane, id->tile, id->x, id->y, id->tag);
 }
 
 const char *panda_seqid_str(
@@ -133,6 +133,7 @@ int panda_seqid_parse(
 #define PARSE_CHUNK if (**endptr == '\0') return 0; PARSE_CHUNK_MAYBE
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 #define PARSE_SRA_INT do { value = 0; for(;**endptr != '\0' && **endptr != '.' && **endptr != ' '; (*endptr)++){ if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
+#define PARSE_STR(target) do { dest = target; PARSE_CHUNK { if ((size_t) (dest - target) > sizeof(target)) return 0; *dest++ = (**endptr); } *dest = '\0'; } while(0);
 
 int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
@@ -168,16 +169,9 @@ int panda_seqid_parse_fail(
 		/* Old CASAVA 1.4-1.6 format */
 		if (detected_format != NULL)
 			*detected_format = PANDA_IDFMT_CASAVA_1_4;
-		id->run = 0;
+		id->run[0] = '\0';
 		id->flowcell[0] = '\0';
-		dest = id->instrument;
-		PARSE_CHUNK {
-			if ((size_t) (dest - id->instrument) > sizeof(id->instrument))
-				return 0;
-			*dest++ = (**endptr);
-		}
-		(*endptr)++;
-		*dest = '\0';
+		PARSE_STR(id->instrument);
 		PARSE_INT;
 		(*endptr)++;
 		id->lane = value;
@@ -212,25 +206,12 @@ int panda_seqid_parse_fail(
 		int mate;
 		if (detected_format != NULL)
 			*detected_format = PANDA_IDFMT_CASAVA_1_7;
-		dest = id->instrument;
-		PARSE_CHUNK {
-			if ((size_t) (dest - id->instrument) > sizeof(id->instrument))
-				return 0;
-			*dest++ = (**endptr);
-		}
+		PARSE_STR(id->instrument);
 		(*endptr)++;
-		*dest = '\0';
-		PARSE_INT;
+		PARSE_STR(id->run);
 		(*endptr)++;
-		id->run = value;
-		dest = id->flowcell;
-		PARSE_CHUNK {
-			if ((size_t) (dest - id->flowcell) > sizeof(id->flowcell))
-				return 0;
-			*dest++ = (**endptr);
-		}
+		PARSE_STR(id->flowcell);
 		(*endptr)++;
-		*dest = '\0';
 		PARSE_INT;
 		(*endptr)++;
 		id->lane = value;

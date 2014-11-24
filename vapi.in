@@ -1260,7 +1260,7 @@ namespace Panda {
 		string flowcell;
 		string instrument;
 		int lane;
-		int run;
+		string run;
 		string tag;
 		int tile;
 		int x;
