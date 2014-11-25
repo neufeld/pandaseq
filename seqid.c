@@ -173,6 +173,7 @@ int panda_seqid_parse_fail(
 		id->run[0] = '\0';
 		id->flowcell[0] = '\0';
 		PARSE_STR(id->instrument);
+		(*endptr)++;
 		PARSE_INT;
 		(*endptr)++;
 		id->lane = value;
