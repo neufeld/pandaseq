@@ -12,11 +12,11 @@ Binary packages are available for recent versions of Windows, MacOS and Linux. S
 
 Development packages for zlib and libbz2 are needed, as well as a standard compiler environment. On Ubuntu, this can be installed via:
 
-	sudo apt-get install build-essential libtool automake zlib1g-dev libbz2-dev
+	sudo apt-get install build-essential libtool automake zlib1g-dev libbz2-dev pkg-config
 
 On MacOS, the Apple Developer tools and Fink (or MacPorts or Brew) must be installed, then:
 
-	sudo fink install bzip2-dev
+	sudo fink install bzip2-dev pkgconfig
 
 The newer AutoTools from Fink are needed over the ones provided by Apple, so ensure that Fink's `bin` directory precedes `/usr/bin` in the `$PATH`.
 
