@@ -27,6 +27,7 @@
 struct fastq_data {
 	PandaLineBuf forward;
 	PandaLineBuf reverse;
+	PandaLineBuf index;
 	PandaLogProxy logger;
 	unsigned char qualmin;
 	panda_qual forward_seq[MAX_LEN];
@@ -161,6 +162,36 @@ static bool stream_next_seq(
 		*reverse_length = 0;
 		return false;
 	}
+	if (data->index != NULL) {
+		panda_seq_identifier iid;
+		panda_qual index[PANDA_TAG_LEN - 1];
+		size_t index_length;
+		size_t it;
+		if ((line = panda_linebuf_next(data->index)) == NULL) {
+			*forward_length = 0;
+			*reverse_length = 0;
+			return false;
+		}
+		if (panda_seqid_parse(&iid, line + 1, data->policy) == 0) {
+			LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", line + 1);
+			*forward_length = 0;
+			*reverse_length = 0;
+			return false;
+		}
+		if (!panda_seqid_equal(id, &iid)) {
+			LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
+			return false;
+		}
+		if (!read_seq(&iid, index, PANDA_TAG_LEN - 1, data->index, iupac_forward, data, &index_length)) {
+			*forward_length = 0;
+			*reverse_length = 0;
+			return false;
+		}
+		for (it = 0; it < index_length; it++) {
+			id->tag[it] = panda_nt_to_ascii(index[it].nt);
+		}
+		id->tag[index_length] = '\0';
+	}
 	*forward = data->forward_seq;
 	*reverse = data->reverse_seq;
 	return true;
@@ -175,6 +206,7 @@ static void stream_destroy(
 	}
 	panda_linebuf_free(data->forward);
 	panda_linebuf_free(data->reverse);
+	panda_linebuf_free(data->index);
 	panda_log_proxy_unref(data->logger);
 	free(data);
 }
@@ -189,15 +221,19 @@ PandaNextSeq panda_create_fastq_reader(
 	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
+	PandaBufferRead index,
+	void *index_data,
+	PandaDestroy index_destroy,
 	void **user_data,
 	PandaDestroy *destroy) {
 	struct fastq_data *data;
 	data = malloc(sizeof(struct fastq_data));
 	data->forward = panda_linebuf_new(forward, forward_data, forward_destroy);
 	data->reverse = panda_linebuf_new(reverse, reverse_data, reverse_destroy);
+	data->index = panda_linebuf_new(index, index_data, index_destroy);
 	data->logger = panda_log_proxy_ref(logger);
 	data->qualmin = qualmin;
-	data->policy = policy;
+	data->policy = index == NULL ? policy : PANDA_TAG_OPTIONAL;
 	data->seen_under_64 = false;
 	data->non_empty = false;
 	*user_data = data;

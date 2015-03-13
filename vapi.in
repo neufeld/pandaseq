@@ -1596,7 +1596,7 @@ namespace Panda {
 	 * @param policy method to handle unbarcoded sequences
 	 */
 	[CCode (cname = "panda_create_fastq_reader")]
-	public static NextSeq create_fastq_reader (owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	public static NextSeq create_fastq_reader (owned BufferRead forward, owned BufferRead reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT, owned BufferRead? index = null);
 
 	/**
 	 * The current module API version of the running library
@@ -1655,7 +1655,7 @@ namespace Panda {
 	 * @param qualmin the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
 	 */
 	[CCode (cname = "panda_open_fastq")]
-	public NextSeq? open_fastq (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT);
+	public NextSeq? open_fastq (string forward, string reverse, LogProxy logger, uint8 qualmin = 33, Tagging policy = Tagging.PRESENT, string? index = null);
 
 	/**
 	 * Spawn threads and assemble sequences.

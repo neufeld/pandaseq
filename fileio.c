@@ -103,12 +103,15 @@ PandaNextSeq panda_open_fastq(
 	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
+	const char *index,
 	void **user_data,
 	PandaDestroy *destroy) {
 	MANAGED_STACK(PandaBufferRead,
 		forward_file);
 	MANAGED_STACK(PandaBufferRead,
 		reverse_file);
+	MANAGED_STACK(PandaBufferRead,
+		index_file);
 
 	*user_data = NULL;
 	*destroy = NULL;
@@ -123,8 +126,14 @@ PandaNextSeq panda_open_fastq(
 		DESTROY_STACK(forward_file);
 		return NULL;
 	}
+	index_file = index == NULL ? NULL : panda_open_buffer(index, logger, &index_file_data, &index_file_destroy);
+	if (index != NULL && index_file == NULL) {
+		DESTROY_STACK(forward_file);
+		DESTROY_STACK(reverse_file);
+		return NULL;
+	}
 
-	return panda_create_fastq_reader(forward_file, forward_file_data, forward_file_destroy, reverse_file, reverse_file_data, reverse_file_destroy, logger, qualmin, policy, user_data, destroy);
+	return panda_create_fastq_reader(forward_file, forward_file_data, forward_file_destroy, reverse_file, reverse_file_data, reverse_file_destroy, logger, qualmin, policy, index_file, index_file_data, index_file_destroy, user_data, destroy);
 }
 
 PandaAssembler panda_assembler_open_fastq(
@@ -136,7 +145,7 @@ PandaAssembler panda_assembler_open_fastq(
 	PandaNextSeq next;
 	void *next_data;
 	PandaDestroy next_destroy;
-	if ((next = panda_open_fastq(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
+	if ((next = panda_open_fastq(forward, reverse, logger, qualmin, policy, NULL, &next_data, &next_destroy)) == NULL) {
 		return NULL;
 	}
 
@@ -153,7 +162,7 @@ PandaMux panda_mux_open_fastq(
 	PandaNextSeq next;
 	void *next_data;
 	PandaDestroy next_destroy;
-	if ((next = panda_open_fastq(forward, reverse, logger, qualmin, policy, &next_data, &next_destroy)) == NULL) {
+	if ((next = panda_open_fastq(forward, reverse, logger, qualmin, policy, NULL, &next_data, &next_destroy)) == NULL) {
 
 		return NULL;
 	}

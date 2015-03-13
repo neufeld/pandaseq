@@ -104,6 +104,7 @@ size_t panda_compute_offset_result(
  * @qualmin: the quality to subtract from the incoming file (usually 33 or 64, depending on CASAVA versi
 n)
  * @policy: method to handle unbarcoded sequences
+ * @index: (closure index_data) (scope notified): the functions to provide the stream of index/barcode characters.
  * @logger: the logging function to use during assembly.
  * Returns: (closure user_data) (scope notified): The function to call.
  */
@@ -117,6 +118,9 @@ PandaNextSeq panda_create_fastq_reader(
 	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
+	PandaBufferRead index,
+	void *index_data,
+	PandaDestroy index_destroy,
 	void **user_data,
 	PandaDestroy *destroy);
 
@@ -246,6 +250,7 @@ PandaBufferRead panda_open_buffer(
  * @reverse: the reverse filename
  * @logger: the logging function to use during assembly.
  * @qualmin: the value to strip from the quality scores. Usually 33 or 64, depending on CASAVA version.
+ * @index: a file containing separate barcodes
  * Returns: (closure user_data) (scope notified): The function to call.
  */
 PandaNextSeq panda_open_fastq(
@@ -254,6 +259,7 @@ PandaNextSeq panda_open_fastq(
 	PandaLogProxy logger,
 	unsigned char qualmin,
 	PandaTagging policy,
+	const char *index,
 	void **user_data,
 	PandaDestroy *destroy);
 

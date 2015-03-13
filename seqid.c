@@ -73,6 +73,7 @@ int panda_seqid_compare(
 	STRCMP(tag);
 	return result;
 }
+
 #undef STRCMP
 
 void panda_seqid_copy(

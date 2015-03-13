@@ -35,6 +35,9 @@ pandaseq \- PAired-eND Assembler for DNA sequences
 .B \-G
 .I log.txt.bz2
 ] [
+.B \-i
+.I index.fastq
+] [
 .B \-k
 .I kmers
 ] [ 
@@ -144,6 +147,9 @@ Normally, output will be as a FASTA even though per-base quality information is 
 .TP
 \-g log.txt
 Log all output to a plain text file, \fIlog.txt\fR, instead of standard error.
+.TP
+\-i index.fastq
+If the index/barcode reads are in a separate FASTQ file, read them an apply them to the input reads.
 .TP
 \-G log.txt.bz2
 Log all output to a

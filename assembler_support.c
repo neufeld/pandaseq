@@ -112,7 +112,7 @@ PandaAssembler panda_assembler_new_fastq_reader(
 	void *user_data;
 	PandaDestroy destroy;
 	PandaNextSeq next;
-	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, qualmin, policy, &user_data, &destroy);
+	next = panda_create_fastq_reader(forward, forward_data, forward_destroy, reverse, reverse_data, reverse_destroy, logger, qualmin, policy, NULL, NULL, NULL, &user_data, &destroy);
 	return panda_assembler_new(next, user_data, destroy, logger);
 }
 
