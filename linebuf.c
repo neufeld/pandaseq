@@ -48,6 +48,8 @@ PandaLineBuf panda_linebuf_new(
 
 void panda_linebuf_free(
 	PandaLineBuf linebuf) {
+	if (linebuf == NULL)
+		return;
 	DESTROY_MEMBER(linebuf, read);
 	free(linebuf);
 }
