@@ -140,6 +140,7 @@ pkglibx_LTLIBRARIES = \
 	after.la \
 	before.la \
 	completely_miss_the_point.la \
+	empty.la \
 	filter.la \
 	min_phred.la \
 	min_overlapbits.la \
@@ -168,6 +169,12 @@ completely_miss_the_point_la_CPPFLAGS = \
 completely_miss_the_point_la_SOURCES = plugin_completely_miss_the_point.c panda_api.c
 completely_miss_the_point_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 completely_miss_the_point_la_LIBADD = libpandaseq.la
+empty_la_CPPFLAGS = \
+	-DPANDASEQ_MODULE=empty \
+	$(COMMON_CPPFLAGS)
+empty_la_SOURCES = plugin_empty.c panda_api.c
+empty_la_LDFLAGS = -module $(MODULE_LDFLAGS)
+empty_la_LIBADD = libpandaseq.la
 filter_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=filter \
 	$(COMMON_CPPFLAGS)
