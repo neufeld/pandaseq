@@ -190,7 +190,7 @@ void destroy_curl(
 	panda_curl_unref();
 }
 
-#define SET_OPT(opt, value)  if ((res = curl_easy_setopt(curl_handle, (opt), (value))) != CURLE_OK) { panda_log_proxy_write_f(logger, "%s: %s", data->url, curl_easy_strerror(res)); curl_easy_cleanup(curl_handle); panda_curl_unref(); if (data != NULL) free(data); return NULL; }
+#define SET_OPT(opt, value)  if ((res = curl_easy_setopt(curl_handle, (opt), (value))) != CURLE_OK) { panda_log_proxy_write_f(logger, "%s: %s", url, curl_easy_strerror(res)); curl_easy_cleanup(curl_handle); panda_curl_unref(); if (data != NULL) free(data); return NULL; }
 
 PandaBufferRead panda_open_url(
 	const char *url,
@@ -204,7 +204,7 @@ PandaBufferRead panda_open_url(
 	union data_ints passed;
 	struct rlimit stack_size;
 	if (getrlimit(RLIMIT_STACK, &stack_size) != 0) {
-		panda_log_proxy_write_f(data->logger, "%s: getrlimit(RLIMIT_STACK): %s", url, strerror(errno));
+		panda_log_proxy_write_f(logger, "%s: getrlimit(RLIMIT_STACK): %s", url, strerror(errno));
 		return NULL;
 	}
 #endif

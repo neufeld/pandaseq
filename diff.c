@@ -260,9 +260,9 @@ bool panda_diff_parse_args(
 	MAYBE(out_control_assembler) = NULL;
 	MAYBE(out_experimental_assembler) = NULL;
 	MAYBE(out_suppress_quality_diffs) = false;
-	MAYBE(next) = NULL;
-	MAYBE(next_data) = NULL;
-	MAYBE(next_destroy) = NULL;
+	*next = NULL;
+	*next_data = NULL;
+	*next_destroy = NULL;
 
 	/* Process command line arguments. */
 	panda_tweak_general_append(&combined_general_args, &combined_general_args_length, general_args, general_args_length);

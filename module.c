@@ -169,7 +169,7 @@ bool panda_assembler_add_module(
 			assembler->modules_size *= 2;
 		}
 		assembler->modules = realloc(assembler->modules, assembler->modules_size * sizeof(PandaModule));
-		assembler->rejected = realloc(assembler->rejected, assembler->modules_size * sizeof(long));
+		assembler->rejected = realloc(assembler->rejected, assembler->modules_size * sizeof(size_t));
 	}
 	assembler->rejected[assembler->modules_length] = 0;
 	assembler->modules[assembler->modules_length++] = panda_module_ref(module);

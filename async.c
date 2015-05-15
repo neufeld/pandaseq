@@ -142,7 +142,6 @@ static void *async_thread(
 				pthread_mutex_lock(&data->ready_mutex);
 				pthread_cond_broadcast(&data->is_ready);
 				pthread_mutex_unlock(&data->ready_mutex);
-				seq = next;
 				pthread_exit(NULL);
 			}
 		}

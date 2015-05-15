@@ -158,6 +158,8 @@ PandaWriter panda_writer_open_file(
 
 PandaWriter panda_writer_ref(
 	PandaWriter writer) {
+	if (writer == NULL)
+		return NULL;
 #ifdef HAVE_PTHREAD
 	flush_buffer(writer, get_write_buffer(writer));
 	pthread_mutex_lock(&writer->mutex);

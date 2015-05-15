@@ -119,7 +119,7 @@ bool panda_run_pool(
 	bool some_seqs;
 #if HAVE_PTHREAD
 	int it;
-	struct thread_info *thread_list;
+	struct thread_info *thread_list = NULL;
 	PandaWriter log_writer = panda_log_proxy_get_writer(assembler->logger);
 #else
 	(void) threads;
@@ -172,8 +172,9 @@ bool panda_run_pool(
 			pthread_join(thread_list[it].thread, NULL);
 			some_seqs |= thread_list[it].some_seqs;
 		}
-		free(thread_list);
 	}
+	if (thread_list != NULL)
+		free(thread_list);
 #endif
 	DESTROY_MEMBER(&shared_info, output);
 	return some_seqs;

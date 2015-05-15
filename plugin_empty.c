@@ -19,7 +19,7 @@ OPEN {
 	*destroy = NULL;
 	*user_data = NULL;
 
-	if (args != NULL || *args != '\0') {
+	if (args != NULL && *args != '\0') {
 		panda_log_proxy_write_f(logger, "No arguments allowed to empty filter.");
 		return false;
 	}
