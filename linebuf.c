@@ -79,7 +79,7 @@ const char *panda_linebuf_next(
 	}
 
 	/* White out any carriage returns if we get DOS-formatted files. */
-	if (end[-1] == '\r') {
+	if (end != linebuf->data && end[-1] == '\r') {
 		end[-1] = '\0';
 	}
 
