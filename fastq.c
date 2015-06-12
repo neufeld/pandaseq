@@ -58,16 +58,10 @@ static bool read_seq(
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_PREMATURE_EOF);
 		return false;
 	}
-	for (; pos < max_len; input++) {
-		if (*input == '\0') {
-			if (pos != 0) {
-				break;
-			}
-		} else {
-			if ((buffer[pos++].nt = table[*input & 0x1F]) == '\0') {
-				LOGV(PANDA_DEBUG_FILE, PANDA_CODE_BAD_NT, "%c@%zd", *input, pos);
-				return false;
-			}
+	for (; *input != '\0' && pos < max_len; input++) {
+		if ((buffer[pos++].nt = table[*input & 0x1F]) == '\0') {
+			LOGV(PANDA_DEBUG_FILE, PANDA_CODE_BAD_NT, "%c@%zd", *input, pos);
+			return false;
 		}
 	}
 	input = panda_linebuf_next(linebuf);
