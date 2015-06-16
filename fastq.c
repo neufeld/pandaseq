@@ -91,13 +91,12 @@ static bool read_seq(
 		buffer[qpos++].qual = TOINDEX(*input);
 	}
 
-	if (pos == 0) {
-		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NO_DATA);
-		return false;
-	}
 	if (qpos != pos) {
 		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NO_QUALITY_INFO);
 		return false;
+	}
+	if (pos == 0) {
+		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NO_DATA);
 	}
 	*length = pos;
 	data->non_empty = true;
@@ -119,75 +118,77 @@ static bool stream_next_seq(
 	int fdir;
 	int rdir;
 
-	*forward = NULL;
-	*reverse = NULL;
-	*forward_length = 0;
-	*reverse_length = 0;
+	do {
+		*forward = NULL;
+		*reverse = NULL;
+		*forward_length = 0;
+		*reverse_length = 0;
 
-	if ((line = panda_linebuf_next(data->forward)) == NULL) {
-		return false;
-	}
-	if ((fdir = panda_seqid_parse_fail(id, line + 1, data->policy, &format, NULL)) == 0) {
-		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", line + 1);
-		return false;
-	}
-	if ((line = panda_linebuf_next(data->reverse)) == NULL) {
-		return false;
-	}
-	if ((rdir = panda_seqid_parse(&rid, line + 1, data->policy)) == 0) {
-		LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", line + 1);
-		return false;
-	}
-	if (!panda_seqid_equal(id, &rid) || (panda_idfmt_has_direction(format) && rdir == fdir)) {
-		LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
-		return false;
-	}
-	if (format == PANDA_IDFMT_CASAVA_1_7) {
-		/* We know that CASAVA 1.7+ is always PHRED+33, so supress the warning. */
-		data->seen_under_64 = true;
-	}
-	if (!read_seq(id, data->forward_seq, MAX_LEN, data->forward, iupac_forward, data, forward_length)) {
-		*forward_length = 0;
-		*reverse_length = 0;
-		return false;
-	}
-	if (!read_seq(id, data->reverse_seq, MAX_LEN, data->reverse, iupac_reverse, data, reverse_length)) {
-		*forward_length = 0;
-		*reverse_length = 0;
-		return false;
-	}
-	if (data->index != NULL) {
-		panda_seq_identifier iid;
-		panda_qual index[PANDA_TAG_LEN - 1];
-		size_t index_length;
-		size_t it;
-		if ((line = panda_linebuf_next(data->index)) == NULL) {
-			*forward_length = 0;
-			*reverse_length = 0;
+		if ((line = panda_linebuf_next(data->forward)) == NULL) {
 			return false;
 		}
-		if (panda_seqid_parse(&iid, line + 1, data->policy) == 0) {
+		if ((fdir = panda_seqid_parse_fail(id, line + 1, data->policy, &format, NULL)) == 0) {
 			LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", line + 1);
-			*forward_length = 0;
-			*reverse_length = 0;
 			return false;
 		}
-		if (!panda_seqid_equal(id, &iid)) {
+		if ((line = panda_linebuf_next(data->reverse)) == NULL) {
+			return false;
+		}
+		if ((rdir = panda_seqid_parse(&rid, line + 1, data->policy)) == 0) {
+			LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", line + 1);
+			return false;
+		}
+		if (!panda_seqid_equal(id, &rid) || (panda_idfmt_has_direction(format) && rdir == fdir)) {
 			LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
 			return false;
 		}
-		if (!read_seq(&iid, index, PANDA_TAG_LEN - 1, data->index, iupac_forward, data, &index_length)) {
+		if (format == PANDA_IDFMT_CASAVA_1_7) {
+			/* We know that CASAVA 1.7+ is always PHRED+33, so supress the warning. */
+			data->seen_under_64 = true;
+		}
+		if (!read_seq(id, data->forward_seq, MAX_LEN, data->forward, iupac_forward, data, forward_length)) {
 			*forward_length = 0;
 			*reverse_length = 0;
 			return false;
 		}
-		for (it = 0; it < index_length; it++) {
-			id->tag[it] = panda_nt_to_ascii(index[it].nt);
+		if (!read_seq(id, data->reverse_seq, MAX_LEN, data->reverse, iupac_reverse, data, reverse_length)) {
+			*forward_length = 0;
+			*reverse_length = 0;
+			return false;
 		}
-		id->tag[index_length] = '\0';
-	}
-	*forward = data->forward_seq;
-	*reverse = data->reverse_seq;
+		if (data->index != NULL) {
+			panda_seq_identifier iid;
+			panda_qual index[PANDA_TAG_LEN - 1];
+			size_t index_length;
+			size_t it;
+			if ((line = panda_linebuf_next(data->index)) == NULL) {
+				*forward_length = 0;
+				*reverse_length = 0;
+				return false;
+			}
+			if (panda_seqid_parse(&iid, line + 1, data->policy) == 0) {
+				LOGV(PANDA_DEBUG_FILE, PANDA_CODE_ID_PARSE_FAILURE, "%s", line + 1);
+				*forward_length = 0;
+				*reverse_length = 0;
+				return false;
+			}
+			if (!panda_seqid_equal(id, &iid)) {
+				LOG(PANDA_DEBUG_FILE, PANDA_CODE_NOT_PAIRED);
+				return false;
+			}
+			if (!read_seq(&iid, index, PANDA_TAG_LEN - 1, data->index, iupac_forward, data, &index_length)) {
+				*forward_length = 0;
+				*reverse_length = 0;
+				return false;
+			}
+			for (it = 0; it < index_length; it++) {
+				id->tag[it] = panda_nt_to_ascii(index[it].nt);
+			}
+			id->tag[index_length] = '\0';
+		}
+		*forward = data->forward_seq;
+		*reverse = data->reverse_seq;
+	} while (*forward_length == 0);
 	return true;
 }
 
