@@ -352,7 +352,7 @@ and store the logging output
 .B s_7.log.bz2.
 
 .B pandaseq -f s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q ATTACCGCGGCTGCTGG -G s_7.log.bz2 | bzip2 > s_7.fasta.bz2
-.SH VALIDATON MODULES
+.SH VALIDATION MODULES
 Validation modules are capable of making decisions about whether or not to keep output sequences. For example, one could write a module to check secondary structure of a RNA, or that a coding sequence contains no stop codons. To create a module, please see
 .BR pandaxs (1).
 Invoking a module can be done using the
