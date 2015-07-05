@@ -1,3 +1,12 @@
+pandaseq (2.9~ppa0) trusty; urgency=medium
+
+  * Skip read pairs with no sequence
+  * Do not free an empty line buffer.
+  * Allow reading separate index reads
+  * Miscellaneous bug fixes
+
+ -- Andre Masella <andre@masella.name>  Sun, 05 Jul 2015 07:38:20 -0400
+
 pandaseq (2.8~ppa2) precise; urgency=medium
 
   * Fix copy-pasta in UPARSE
