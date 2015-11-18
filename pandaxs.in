@@ -32,7 +32,7 @@ do
 	@MODULE_LIBTOOL@ --tag=CC --mode=compile @CC@ -DPANDASEQ_MODULE=$MOD @DEFS@ -I@includedir@/@LIB_NAME@ @MODULE_CFLAGS@ -c -o "$LO" "$each" $PT || exit 1
 	LO_FILES="$LO_FILES $LO"
 done
-@MODULE_LIBTOOL@ --tag=CC --mode=link @CC@ @MODULE_CFLAGS@ -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @MODULE_LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" $LO_FILES $PT || exit 1
+@MODULE_LIBTOOL@ --tag=CC --mode=link @CC@ -module @MODULE_CFLAGS@ -export-dynamic -export-symbols-regex "^${MOD}_LTX_" @MODULE_LDFLAGS@ -rpath @libdir@/@PACKAGE@@LIB_MAJOR@ -o "${MOD}.la" $LO_FILES $PT || exit 1
 if [ -d "@libdir@/@PACKAGE@@LIB_MAJOR@" -a -w "@libdir@/@PACKAGE@@LIB_MAJOR@" ]
 then
 	@MODULE_LIBTOOL@ --mode=install @INSTALL@  "${MOD}.la" "@libdir@/@PACKAGE@@LIB_MAJOR@/${MOD}.la"
