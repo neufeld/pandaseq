@@ -384,6 +384,9 @@ Check the PHRED score of every base in the output sequence and make sure it is a
 min_overlapbits:\fIvalue\fR
 Check that the number of “bits saved” (Cole, et al. 2013) is above the provided value.
 .TP
+other_primer:\fIdirection\fR:\fIprimer\fR
+Sometimes, libraries are constructed with a mix of primer sequences. The allows separating the primer mix. To do this given primers, run PANDAseq twice: once with the each primer given to \fB-p\fR or \fB-q\fR and the other primer given as the \fIprimer\fR option to this module. The \fIdirection\fR must be specified as either \fBf\fR or \fBp\fR for the forward primer or \fBr\fR or \fBq\fR for the reverse primer. This module will reject and reads that match the primer, eliminating them from the output.
+.TP
 overlap_stat
 Produces a histogram of the number of overlaps that were examined for each of the sequences that assembled. This does not indicate the number of overlaps that were examined for discarded sequences.
 .TP

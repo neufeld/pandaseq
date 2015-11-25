@@ -144,6 +144,7 @@ pkglibx_LTLIBRARIES = \
 	filter.la \
 	min_phred.la \
 	min_overlapbits.la \
+	other_primer.la \
 	overlap_stat.la \
 	pear_test.la \
 	validtag.la \
@@ -194,6 +195,13 @@ min_overlapbits_la_CPPFLAGS = \
 min_overlapbits_la_SOURCES = plugin_min_overlapbits.c panda_api.c
 min_overlapbits_la_LDFLAGS = -module $(MODULE_LDFLAGS)
 min_overlapbits_la_LIBADD = libpandaseq.la
+other_primer_la_CPPFLAGS = \
+	-DPANDASEQ_MODULE=other_primer \
+	$(MODULE_CFLAGS) \
+	$(COMMON_CPPFLAGS)
+other_primer_la_SOURCES = plugin_other_primer.c panda_api.c
+other_primer_la_LDFLAGS = -module $(MODULE_LDFLAGS) $(LIBM)
+other_primer_la_LIBADD = libpandaseq.la
 overlap_stat_la_CPPFLAGS = \
 	-DPANDASEQ_MODULE=overlap_stat \
 	$(MODULE_CFLAGS) \
