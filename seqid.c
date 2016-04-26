@@ -136,6 +136,7 @@ int panda_seqid_parse(
 #define PARSE_INT do { value = 0; PARSE_CHUNK { if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 #define PARSE_SRA_INT do { value = 0; for(;**endptr != '\0' && **endptr != '.' && **endptr != ' '; (*endptr)++){ if (**endptr >= '0' && **endptr <= '9') { value = 10*value + (int)(**endptr - '0'); } else { return 0; } } } while(0)
 #define PARSE_STR(target) do { dest = target; PARSE_CHUNK { if ((size_t) (dest - target) > sizeof(target)) return 0; *dest++ = (**endptr); } *dest = '\0'; } while(0);
+#define PARSE_PUSH do { if (**endptr == '\0') return 0; (*endptr)++; } while(0)
 
 int panda_seqid_parse_fail(
 	panda_seq_identifier *id,
@@ -158,12 +159,12 @@ int panda_seqid_parse_fail(
 		*endptr += 3;
 		panda_seqid_clear(id);
 		PARSE_SRA_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		sprintf(id->instrument, "%cRR%d", (int) input[0], value);
 		PARSE_SRA_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->lane = value;
-		(*endptr)++;
+		PARSE_PUSH;
 		/* endptr still contains stuff, but it's just mangled SRA version of the
 		 * Illumina header, so ignore it. */
 		return 1;
@@ -174,18 +175,18 @@ int panda_seqid_parse_fail(
 		id->run[0] = '\0';
 		id->flowcell[0] = '\0';
 		PARSE_STR(id->instrument);
-		(*endptr)++;
+		PARSE_PUSH;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->lane = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->tile = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->x = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->y = value;
 		dest = id->tag;
 		id->tag[0] = '\0';
@@ -196,13 +197,13 @@ int panda_seqid_parse_fail(
 				*dest++ = (**endptr);
 				*dest = '\0';
 			}
-			(*endptr)++;
+			PARSE_PUSH;
 		}
 		if (policy != PANDA_TAG_OPTIONAL && policy != ((id->tag[0] == '\0') ? PANDA_TAG_ABSENT : PANDA_TAG_PRESENT)) {
 			return 0;
 		}
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		return value;
 	} else {
 		/* New CASAVA 1.7+ format */
@@ -210,31 +211,31 @@ int panda_seqid_parse_fail(
 		if (detected_format != NULL)
 			*detected_format = PANDA_IDFMT_CASAVA_1_7;
 		PARSE_STR(id->instrument);
-		(*endptr)++;
+		PARSE_PUSH;
 		PARSE_STR(id->run);
-		(*endptr)++;
+		PARSE_PUSH;
 		PARSE_STR(id->flowcell);
-		(*endptr)++;
+		PARSE_PUSH;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->lane = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->tile = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->x = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		id->y = value;
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		mate = value;
 		PARSE_CHUNK;
-		(*endptr)++;
+		PARSE_PUSH;
 		/* filtered */
 		PARSE_INT;
-		(*endptr)++;
+		PARSE_PUSH;
 		/* control bits */
 		dest = id->tag;
 		id->tag[0] = '\0';
