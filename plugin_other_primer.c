@@ -20,6 +20,9 @@ static bool precheck_func(
 	size_t reverse_length,
 	struct data *data) {
 
+	(void) logger;
+	(void) id;
+
 	return panda_compute_offset_qual(log(0.9), 0.01, !data->forward, data->forward ? forward : reverse, data->forward ? forward_length : reverse_length, data->primer, data->primer_length) == 0;
 }
 
@@ -27,6 +30,8 @@ OPEN {
 	struct data *data;
 	bool forward;
 	size_t it;
+
+	(void) check;
 
 	if (args == NULL || *args == '\0') {
 		return false;
