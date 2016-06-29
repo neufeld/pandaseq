@@ -1,3 +1,11 @@
+pandaseq (2.10~ppa0) trusty; urgency=medium
+
+  * Fix buffer overrun during parsing
+  * Add a primer filter module
+  * Fix -module flag in pandaxs
+
+ -- Andre Masella <andre@masella.name>  Wed, 29 Jun 2016 06:37:29 -0400
+
 pandaseq (2.9~ppa0) trusty; urgency=medium
 
   * Skip read pairs with no sequence
