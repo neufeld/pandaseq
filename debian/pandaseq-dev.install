@@ -1,5 +1,6 @@
 usr/bin/pandaxs
 usr/include/*
+usr/lib/*.a
 usr/lib/*.so
 usr/lib/pkgconfig
 usr/share/doc/pandaseq/plugin_sample.c
