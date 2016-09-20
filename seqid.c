@@ -30,6 +30,8 @@ const char *panda_idfmt_str(
 		return "NCBI Short Read Archive";
 	case PANDA_IDFMT_CASAVA_1_4:
 		return "CASAVA 1.4-1.6";
+	case PANDA_IDFMT_CASAVA_CONVERTED:
+		return "CASAVA converted";
 	case PANDA_IDFMT_CASAVA_1_7:
 		return "CASAVA 1.7+";
 	default:
@@ -169,25 +171,56 @@ int panda_seqid_parse_fail(
 		 * Illumina header, so ignore it. */
 		return 1;
 	} else if (strchr(input, '/') != NULL) {
-		/* Old CASAVA 1.4-1.6 format */
-		if (detected_format != NULL)
-			*detected_format = PANDA_IDFMT_CASAVA_1_4;
-		id->run[0] = '\0';
-		id->flowcell[0] = '\0';
-		PARSE_STR(id->instrument);
-		PARSE_PUSH;
-		PARSE_INT;
-		PARSE_PUSH;
-		id->lane = value;
-		PARSE_INT;
-		PARSE_PUSH;
-		id->tile = value;
-		PARSE_INT;
-		PARSE_PUSH;
-		id->x = value;
-		PARSE_INT;
-		PARSE_PUSH;
-		id->y = value;
+		const char *colon_str;
+		size_t colon_count = 0;
+		for (colon_str = *endptr; *colon_str != '\0' && *colon_str != '#'; colon_str++) {
+			if (*colon_str == ':') {
+				colon_count++;
+			}
+		}
+		if (colon_count == 6) {
+			/* CASAVA 1.7 converted to 1.4 format */
+			if (detected_format != NULL)
+				*detected_format = PANDA_IDFMT_CASAVA_CONVERTED;
+			PARSE_STR(id->instrument);
+			PARSE_PUSH;
+			PARSE_STR(id->run);
+			PARSE_PUSH;
+			PARSE_STR(id->flowcell);
+			PARSE_PUSH;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->lane = value;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->tile = value;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->x = value;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->y = value;
+		} else {
+			/* Old CASAVA 1.4-1.6 format */
+			if (detected_format != NULL)
+				*detected_format = PANDA_IDFMT_CASAVA_1_4;
+			id->run[0] = '\0';
+			id->flowcell[0] = '\0';
+			PARSE_STR(id->instrument);
+			PARSE_PUSH;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->lane = value;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->tile = value;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->x = value;
+			PARSE_INT;
+			PARSE_PUSH;
+			id->y = value;
+		}
 		dest = id->tag;
 		id->tag[0] = '\0';
 		if (*(*endptr - 1) == '#') {
@@ -203,7 +236,6 @@ int panda_seqid_parse_fail(
 			return 0;
 		}
 		PARSE_INT;
-		PARSE_PUSH;
 		return value;
 	} else {
 		/* New CASAVA 1.7+ format */

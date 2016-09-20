@@ -191,6 +191,7 @@ typedef enum {
 	PANDA_IDFMT_CASAVA_1_4,
 	PANDA_IDFMT_CASAVA_1_7,
 	PANDA_IDFMT_EBI_SRA,
+	PANDA_IDFMT_CASAVA_CONVERTED,
 } PandaIdFmt;
 
 /* === Structures === */
