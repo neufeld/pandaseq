@@ -14,7 +14,7 @@ before_script:
   - test "x$GET_WIN" = x || wget -O- http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-windeps.tar.bz2 | tar xj
   - ./autogen.sh
   - test "x$GET_WIN" = x || export CC=i586-mingw32msvc-gcc
-script: "./configure $OPTIONS && make"
+script: "./configure $OPTIONS && make all && test x$GET_WIN = xtrue || make check"
 notifications:
   on_success: never
   on_failure: change

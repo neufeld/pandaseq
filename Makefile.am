@@ -49,6 +49,12 @@ dist_vapi_DATA = $(LIB_NAME).vapi
 man1_MANS = pandaseq.1 pandaxs.1 pandaseq-checkid.1 pandaseq-diff.1 pandaseq-hang.1
 docdir = $(datadir)/doc/@PACKAGE@
 doc_DATA = README plugin_sample.c
+TESTS = \
+	./check_parser \
+	$(NULL)
+check_PROGRAMS = \
+	check_parser \
+	$(NULL)
 
 mktable$(EXEEXT): mktable.c tablebuilder.c
 	@CC_FOR_BUILD@ $(COMMON_CPPFLAGS) -o $@ $^ -lm
@@ -59,6 +65,9 @@ COMMON_CPPFLAGS = \
   -Wall -Wextra -Wformat \
 	$(NULL)
 
+check_parser_CPPFLAGS = $(COMMON_CPPFLAGS)
+check_parser_SOURCES = check_parser.c
+check_parser_LDADD = libpandaseq.la
 pandaseq_CPPFLAGS = $(COMMON_CPPFLAGS)
 pandaseq_SOURCES = main.c
 pandaseq_LDADD = libpandaseq.la

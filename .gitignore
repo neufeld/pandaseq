@@ -3,10 +3,12 @@
 *.exe
 *.la
 *.lo
+*.log
 *.o
 *.pc
 *.rpm
 *.tar.gz
+*.trs
 *~
 .deps
 .libs
@@ -19,6 +21,7 @@ ar-lib
 autom4te.cache
 build-macos-pkg
 build-stamp
+check_parser
 compile
 config.*
 configure
@@ -48,6 +51,7 @@ pkgroot
 stamp-h1
 table.c
 table.h
+test-driver
 testing/reg-test
 testing/reg-test.c
 testing/setup.c
