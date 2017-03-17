@@ -365,10 +365,8 @@ int panda_module_get_api(
 const char *panda_module_get_description(
 	PandaModule module) {
 	char **val;
-	//const lt_dlinfo *info;
 	if (module->handle == NULL)
 		return NULL;
-	//info = lt_dlgetinfo(module->handle);
 	val = lt_dlsym(module->handle, "desc");
 	return val == NULL ? NULL : *val;
 }
