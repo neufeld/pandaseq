@@ -24,7 +24,24 @@
 
 static char ntchar[16] = { 'N', 'A', 'C', 'M', 'G', 'R', 'S', 'V', 'T', 'W', 'Y', 'H', 'K', 'D', 'B', 'N' };
 
-static panda_nt complementary_nt[] = { 0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15 };
+static panda_nt complementary_nt[] = {
+	 /*N*/ 0,
+	/*A-T */ PANDA_NT_T,
+	/*C-G */ PANDA_NT_G,
+	/*M-K */ PANDA_NT_G | PANDA_NT_T,
+	/*G-C */ PANDA_NT_C,
+	/*R-Y */ PANDA_NT_C | PANDA_NT_T,
+	/*S-S */ PANDA_NT_C | PANDA_NT_G,
+	 /*V*/ PANDA_NT_A | PANDA_NT_C | PANDA_NT_G,
+	/*T-A */ PANDA_NT_A,
+	/*W-W */ PANDA_NT_A | PANDA_NT_T,
+	/*Y-R */ PANDA_NT_A | PANDA_NT_G,
+	 /*H*/ PANDA_NT_A | PANDA_NT_C | PANDA_NT_G,
+	/*K-M */ PANDA_NT_A | PANDA_NT_C,
+	 /*D*/ PANDA_NT_A | PANDA_NT_C | PANDA_NT_T,
+	 /*B*/ PANDA_NT_A | PANDA_NT_C | PANDA_NT_G,
+	/*N-N */ PANDA_NT_A | PANDA_NT_C | PANDA_NT_G | PANDA_NT_T
+};
 
 panda_nt iupac_forward[32] = {
 	/*@ */ PANDA_NT_Z,
