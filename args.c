@@ -34,7 +34,7 @@
 #        include"pandaseq-mux.h"
 #endif
 
-#define MAX_OPT_LIST 53
+#define MAX_OPT_LIST 100
 #define MAX_MODULES 100
 
 int compare_general(
