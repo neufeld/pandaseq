@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.Tweak Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">Tweak</li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="struct">
+            <a href="Panda.Tweak.assembler.html">assembler</a></li>
+          <li class="struct">
+            <a href="Panda.Tweak.general.html">general</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.AssemblerHandler.html">AssemblerHandler</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.GeneralHandler.html">GeneralHandler</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.KeyParsed.html">KeyParsed</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.Opener.html">Opener</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.Setup.html">Setup</a></li>
+          <li class="static_method">
+            <a href="Panda.Tweak.parse_args.html">parse_args</a></li>
+          <li class="static_method">
+            <a href="Panda.Tweak.parse_key_values.html">parse_key_values</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">Panda.Tweak</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Description:</h2>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Structs:</h3>
+        <ul class="navi_inline">
+          <li class="struct">
+            <a href="Panda.Tweak.assembler.html">assembler</a> - <span class="brief_description">Describes a command line option that can be applied 
+              to an assembler. </span></li>
+          <li class="struct">
+            <a href="Panda.Tweak.general.html">general</a> - <span class="brief_description">Describes a command line option. </span></li>
+        </ul>
+        <h3 class="main_title">Delegates:</h3>
+        <ul class="navi_inline">
+          <li class="delegate">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.AssemblerHandler.html" class="delegate">AssemblerHandler</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/char.html" class="struct">char</a></span> flag, <span class="main_keyword">owned</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>? argument, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> is_set)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Process a command-line flag specified by the user. </span>
+            </div></li>
+          <li class="delegate">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.GeneralHandler.html" class="delegate">GeneralHandler</a></b> (<span class="main_type"><code>T</code></span> user_data, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/char.html" class="struct">char</a></span> flag, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>? argument)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Process a command-line flag specified by the user. </span>
+            </div></li>
+          <li class="delegate">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Panda.NextSeq.html" class="delegate">NextSeq</a></span> <b><a href="Panda.Tweak.Opener.html" class="delegate">Opener</a></b> (<span class="main_type"><code>T</code></span> user_data, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.FailAlign.html" class="delegate">FailAlign</a></span>? fail)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a sequence reader after argument parsing. </span>
+            </div></li>
+          <li class="delegate">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.Setup.html" class="delegate">Setup</a></b> (<span class="main_type"><code>T</code></span> user_data, <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Perform any modifications to the assembler after creation. </span>
+            </div></li>
+          <li class="delegate">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.KeyParsed.html" class="delegate">KeyParsed</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> key, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> value)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Process a key-value pair. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Functions:</h3>
+        <ul class="navi_inline">
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.parse_args.html" class="static_method">parse_args</a></b>&lt;<b><code>T</code></b>&gt; (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>[] args, <span class="main_type"><a href="Panda.Tweak.general.html" class="struct">general</a></span>?[] general_args, <span class="main_type"><a href="Panda.Tweak.assembler.html" class="struct">assembler</a></span>?[] assembler_args, <span class="main_type"><a href="Panda.Tweak.GeneralHandler.html" class="delegate">GeneralHandler</a></span>&lt;<span class="main_type"><code>T</code></span>&gt; tweak, <span class="main_type"><a href="Panda.Tweak.Opener.html" class="delegate">Opener</a></span>&lt;<span class="main_type"><code>T</code></span>&gt; opener, <span class="main_type"><a href="Panda.Tweak.Setup.html" class="delegate">Setup</a></span>&lt;<span class="main_type"><code>T</code></span>&gt; assembler_setup, <span class="main_type"><code>T</code></span> user_data, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span>? assembler, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.Mux.html" class="class">Mux</a></span>? mux, <span class="main_keyword">out</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/int.html" class="struct">int</a></span> threads, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.OutputSeq.html" class="delegate">OutputSeq</a></span> output)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Parse command line arguments to in order to construct assemblers. </span>
+            </div></li>
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.parse_key_values.html" class="static_method">parse_key_values</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>? str, <span class="main_type"><a href="Panda.Tweak.KeyParsed.html" class="delegate">KeyParsed</a></span> key_parsed)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Parse a list of comma separated separated key=value keys. </span>
+            </div></li>
+        </ul>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.Assembler.Assembler Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="class">
+            <a href="Panda.Assembler.html">Assembler</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="property">
+            <a href="Panda.Assembler.algorithm.html">algorithm</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.bad_read_count.html">bad_read_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.count.html">count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.failed_alignment_count.html">failed_alignment_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.forward_primer.html">forward_primer</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.forward_trim.html">forward_trim</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.logger.html">logger</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.low_quality_count.html">low_quality_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.minimum_overlap.html">minimum_overlap</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.name.html">name</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.no_forward_primer_count.html">no_forward_primer_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.no_reverse_primer_count.html">no_reverse_primer_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.num_kmer.html">num_kmer</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.ok_count.html">ok_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.overlaps.html">overlaps</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.primers_after.html">primers_after</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.reverse_primer.html">reverse_primer</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.reverse_trim.html">reverse_trim</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.slow_count.html">slow_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.threshold.html">threshold</a></li>
+          <li class="static_method">
+            <a href="Panda.Assembler.open.html">open</a></li>
+          <li class="static_method">
+            <a href="Panda.Assembler.open_bz2.html">open_bz2</a></li>
+          <li class="creation_method">Assembler</li>
+          <li class="creation_method">
+            <a href="Panda.Assembler.Assembler.fastq.html">Assembler.fastq</a></li>
+          <li class="creation_method">
+            <a href="Panda.Assembler.Assembler.kmer.html">Assembler.kmer</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.add_module.html">add_module</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.add_modules.html">add_modules</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.assemble.html">assemble</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.copy_configuration.html">copy_configuration</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.for_each_module.html">for_each_module</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.module_stats.html">module_stats</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.next.html">next</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.ref.html">ref</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.set_fail_alignment.html">set_fail_alignment</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.unref.html">unref</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">Assembler</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Assembler.Assembler.html" class="creation_method">Assembler</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.NextSeq.html" class="delegate">NextSeq</a></span>? next, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger)
+        </div>
+        <div class="description">
+          <p>Create a new assembler from a sequence source. </p>
+          <h2 class="main_title">Parameters:</h2>
+          <table class="main_parameter_table">
+            <tr>
+              <td class="main_parameter_table_name">next</td>
+              <td>the function to call to get the next sequence. The assembler does not manage the memory of the returned arrays, but assume it may 
+                use them until the next call or destruction. If not provided, you may use <a href="Panda.Assembler.assemble.html" class="method">
+                  assemble</a> but not <a href="Panda.Assembler.Assembler.next.html">next</a> </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">logger</td>
+              <td>the function to call to report information to the user. </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>

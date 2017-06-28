@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.Writer Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="class">Writer</li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="property">
+            <a href="Panda.Writer.slave.html">slave</a></li>
+          <li class="static_method">
+            <a href="Panda.Writer.open_file.html">open_file</a></li>
+          <li class="creation_method">
+            <a href="Panda.Writer.Writer.html">Writer</a></li>
+          <li class="creation_method">
+            <a href="Panda.Writer.Writer.file.html">Writer.file</a></li>
+          <li class="creation_method">
+            <a href="Panda.Writer.Writer.null.html">Writer.null</a></li>
+          <li class="creation_method">
+            <a href="Panda.Writer.Writer.stderr.html">Writer.stderr</a></li>
+          <li class="creation_method">
+            <a href="Panda.Writer.Writer.stdout.html">Writer.stdout</a></li>
+          <li class="method">
+            <a href="Panda.Writer.append.html">append</a></li>
+          <li class="method">
+            <a href="Panda.Writer.append_c.html">append_c</a></li>
+          <li class="method">
+            <a href="Panda.Writer.append_id.html">append_id</a></li>
+          <li class="method">
+            <a href="Panda.Writer.append_v.html">append_v</a></li>
+          <li class="method">
+            <a href="Panda.Writer.commit.html">commit</a></li>
+          <li class="method">
+            <a href="Panda.Writer.flush.html">flush</a></li>
+          <li class="method">
+            <a href="Panda.Writer.ref.html">ref</a></li>
+          <li class="method">
+            <a href="Panda.Writer.unref.html">unref</a></li>
+          <li class="method">
+            <a href="Panda.Writer.write_fail.html">write_fail</a></li>
+          <li class="method">
+            <a href="Panda.Writer.write_fail_qual.html">write_fail_qual</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">Writer</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Panda.Writer" alt="Object hierarchy for Writer" src="img/Panda.Writer.png"/>
+<map id="Panda.Writer" name="Panda.Writer">
+<area shape="rect" id="node1" href="Panda.Writer.html" title="Panda.Writer" alt="" coords="5,5,123,53"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><a href="Panda.Writer.html" class="class">Writer</a></b>
+        </div>
+        <div class="description">
+          <p>A transaction stream writer to improve output throughtput while using threads. </p>
+          <p>This buffers writes to output into small transactions that are written in groups to an output source. This is mean to alleviate 
+            contention since each thread need not obtain an output lock for every write. </p>
+        </div>
+        <br/>
+        <div class="namespace_note">
+          <b>Namespace:</b> Panda</div>
+        <div class="package_note">
+          <b>Package:</b> pandaseq-2</div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Properties:</h3>
+        <ul class="navi_inline">
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Writer.html" class="class">Writer</a></span>? <b><a href="Panda.Writer.slave.html" class="property">slave</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">A target write to be commited at the same time as this one. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Panda.Writer.html" class="class">Writer</a></span>? <b><a href="Panda.Writer.open_file.html" class="static_method">open_file</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> filename, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> bzip)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Open a file for writing. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Writer.Writer.html" class="creation_method">Writer</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.BufferWrite.html" class="delegate">BufferWrite</a></span> write)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new writer, backed by some target. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Writer.Writer.file.html" class="creation_method">Writer.file</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="http://www.valadoc.org/glib-2.0/GLib.FileStream.html" class="class">FileStream</a></span> file)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new writer, backed by an open file. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Writer.Writer.null.html" class="creation_method">Writer.null</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a writer which discards all writes. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Writer.Writer.stderr.html" class="creation_method">Writer.stderr</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new writer, backed by standard error. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Writer.Writer.stdout.html" class="creation_method">Writer.stdout</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new writer, backed by standard output. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.append.html" class="method">append</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> format, ...)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write a printf-like formatted string to the output. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.append_v.html" class="method">append_v</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> format, <span class="main_type"><a href="http://www.valadoc.org/glib-2.0/va_list.html" class="struct">va_list</a></span> va)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write a printf-like formatted string to the output. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.append_c.html" class="method">append_c</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/char.html" class="struct">char</a></span> c)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write a single character to the output. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.append_id.html" class="method">append_id</a></b> (<span class="main_type"><a href="Panda.identifier.html" class="struct">identifier</a></span> id)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write a sequence identifier to the output. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.commit.html" class="method">commit</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">End the current transaction and start another. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.flush.html" class="method">flush</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Force writing all buffered data to the output. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">weak</span> <span class="main_type"><a href="Panda.Writer.html" class="class">Writer</a></span> <b><a href="Panda.Writer.ref.html" class="method">ref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Increase the reference count on a writer. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.unref.html" class="method">unref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Decrease the reference count on a writer. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.write_fail.html" class="method">write_fail</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_type"><a href="Panda.identifier.html" class="struct">identifier</a></span> id, <span class="main_type"><a href="Panda.qual.html" class="struct">qual</a></span>[] forward, <span class="main_type"><a href="Panda.qual.html" class="struct">qual</a></span>[] reverse)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write an unassembled sequence to a FASTA file as a concatenated pair. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Writer.write_fail_qual.html" class="method">write_fail_qual</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_type"><a href="Panda.identifier.html" class="struct">identifier</a></span> id, <span class="main_type"><a href="Panda.qual.html" class="struct">qual</a></span>[] forward, <span class="main_type"><a href="Panda.qual.html" class="struct">qual</a></span>[] reverse)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write an unassembled sequence to a FASTQ file as a concatenated pair. </span>
+            </div></li>
+        </ul>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>

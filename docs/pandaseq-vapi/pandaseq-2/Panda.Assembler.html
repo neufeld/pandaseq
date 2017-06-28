@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.Assembler Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="class">Assembler</li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="property">
+            <a href="Panda.Assembler.algorithm.html">algorithm</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.bad_read_count.html">bad_read_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.count.html">count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.failed_alignment_count.html">failed_alignment_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.forward_primer.html">forward_primer</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.forward_trim.html">forward_trim</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.logger.html">logger</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.low_quality_count.html">low_quality_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.minimum_overlap.html">minimum_overlap</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.name.html">name</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.no_forward_primer_count.html">no_forward_primer_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.no_reverse_primer_count.html">no_reverse_primer_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.num_kmer.html">num_kmer</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.ok_count.html">ok_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.overlaps.html">overlaps</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.primers_after.html">primers_after</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.reverse_primer.html">reverse_primer</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.reverse_trim.html">reverse_trim</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.slow_count.html">slow_count</a></li>
+          <li class="property">
+            <a href="Panda.Assembler.threshold.html">threshold</a></li>
+          <li class="static_method">
+            <a href="Panda.Assembler.open.html">open</a></li>
+          <li class="static_method">
+            <a href="Panda.Assembler.open_bz2.html">open_bz2</a></li>
+          <li class="creation_method">
+            <a href="Panda.Assembler.Assembler.html">Assembler</a></li>
+          <li class="creation_method">
+            <a href="Panda.Assembler.Assembler.fastq.html">Assembler.fastq</a></li>
+          <li class="creation_method">
+            <a href="Panda.Assembler.Assembler.kmer.html">Assembler.kmer</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.add_module.html">add_module</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.add_modules.html">add_modules</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.assemble.html">assemble</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.copy_configuration.html">copy_configuration</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.for_each_module.html">for_each_module</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.module_stats.html">module_stats</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.next.html">next</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.ref.html">ref</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.set_fail_alignment.html">set_fail_alignment</a></li>
+          <li class="method">
+            <a href="Panda.Assembler.unref.html">unref</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">Assembler</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Panda.Assembler" alt="Object hierarchy for Assembler" src="img/Panda.Assembler.png"/>
+<map id="Panda.Assembler" name="Panda.Assembler">
+<area shape="rect" id="node1" href="Panda.Assembler.html" title="Panda.Assembler" alt="" coords="5,5,155,53"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><a href="Panda.Assembler.html" class="class">Assembler</a></b>
+        </div>
+        <div class="description">
+          <p>The manager for an assembly </p>
+        </div>
+        <br/>
+        <div class="namespace_note">
+          <b>Namespace:</b> Panda</div>
+        <div class="package_note">
+          <b>Package:</b> pandaseq-2</div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Properties:</h3>
+        <ul class="navi_inline">
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Algorithm.html" class="class">Algorithm</a></span> <b><a href="Panda.Assembler.algorithm.html" class="property">algorithm</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The algorithm used in overlap selection. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.bad_read_count.html" class="property">bad_read_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences rejected because the reads are unsatisfactory in some way. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.count.html" class="property">count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences processed so far. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.failed_alignment_count.html" class="property">failed_alignment_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences rejected because the overlap could not be determined. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Nt.html" class="enum">Nt</a></span>[]? <b><a href="Panda.Assembler.forward_primer.html" class="property">forward_primer</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The forward primer sequence to be stripped </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> <b><a href="Panda.Assembler.forward_trim.html" class="property">forward_trim</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The amount of forward sequence to strip </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> <b><a href="Panda.Assembler.logger.html" class="property">logger</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.low_quality_count.html" class="property">low_quality_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences rejected because the quality score is too low. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/int.html" class="struct">int</a></span> <b><a href="Panda.Assembler.minimum_overlap.html" class="property">minimum_overlap</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The minimum overlap two sequences must have to be accepted. It must be greater than one. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>? <b><a href="Panda.Assembler.name.html" class="property">name</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The assembler's name in logging output. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.no_forward_primer_count.html" class="property">no_forward_primer_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences rejected because the forward primer could not be aligned. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.no_reverse_primer_count.html" class="property">no_reverse_primer_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences rejected because the reverse primer could not be aligned. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> <b><a href="Panda.Assembler.num_kmer.html" class="property">num_kmer</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The size of the k-mer table in this assembler. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.ok_count.html" class="property">ok_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The number of sequences accepted. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Overlaps.html" class="class">Overlaps</a></span> <b><a href="Panda.Assembler.overlaps.html" class="property">overlaps</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The distribution of overlaps produced so far. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Assembler.primers_after.html" class="property">primers_after</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Whether to strip the primers before or after assembly. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Nt.html" class="enum">Nt</a></span>[]? <b><a href="Panda.Assembler.reverse_primer.html" class="property">reverse_primer</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The reverse primer sequence to be stripped </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> <b><a href="Panda.Assembler.reverse_trim.html" class="property">reverse_trim</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The amount of reverse sequence to strip </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> <b><a href="Panda.Assembler.slow_count.html" class="property">slow_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The numer of sequences where all possible overlaps had to be examined, instead of a quick hashing. 
+              </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/double.html" class="struct">double</a></span> <b><a href="Panda.Assembler.threshold.html" class="property">threshold</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">The minimum quality threshold to have an assembly accepted. Must be between 0 and 1, exclusive. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span>? <b><a href="Panda.Assembler.open_bz2.html" class="static_method">open_bz2</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> forward, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> reverse, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/uint8.html" class="struct">uint8</a></span> qualmin =<span class="main_optional_parameter">33</span>, <span class="main_type"><a href="Panda.Tagging.html" class="enum">Tagging</a></span> policy = <b><a href="Panda.Tagging.PRESENT.html" class="enumvalue">PRESENT</a></b>)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Open a pair of bzipped for assembly. </span>
+            </div></li>
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span>? <b><a href="Panda.Assembler.open.html" class="static_method">open</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> forward, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> reverse, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/uint8.html" class="struct">uint8</a></span> qualmin =<span class="main_optional_parameter">33</span>, <span class="main_type"><a href="Panda.Tagging.html" class="enum">Tagging</a></span> policy = <b><a href="Panda.Tagging.PRESENT.html" class="enumvalue">PRESENT</a></b>)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Open a pair of FASTQ files for assembly. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Assembler.Assembler.html" class="creation_method">Assembler</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.NextSeq.html" class="delegate">NextSeq</a></span>? next, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new assembler from a sequence source. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Assembler.Assembler.kmer.html" class="creation_method">Assembler.kmer</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.NextSeq.html" class="delegate">NextSeq</a></span>? next, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> num_kmers =<span class="main_optional_parameter">2</span>)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new assembler from a sequence source with a custom <i>k</i>-mer table size. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Assembler.Assembler.fastq.html" class="creation_method">Assembler.fastq</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.BufferRead.html" class="delegate">BufferRead</a></span> forward, <span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.BufferRead.html" class="delegate">BufferRead</a></span> reverse, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/uint8.html" class="struct">uint8</a></span> qualmin =<span class="main_optional_parameter">33</span>, <span class="main_type"><a href="Panda.Tagging.html" class="enum">Tagging</a></span> policy = <b><a href="Panda.Tagging.PRESENT.html" class="enumvalue">PRESENT</a></b>)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new assembler for given to FASTQ streams. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">unowned</span> <span class="main_type"><a href="Panda.result_seq.html" class="struct">result_seq</a></span>? <b><a href="Panda.Assembler.assemble.html" class="method">assemble</a></b> (<span class="main_type"><a href="Panda.identifier.html" class="struct">identifier</a></span> id, <span class="main_type"><a href="Panda.qual.html" class="struct">qual</a></span>[] forward, <span class="main_type"><a href="Panda.qual.html" class="struct">qual</a></span>[] reverse)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Assemble a single sequence pair not drawn from the sequence stream. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Assembler.add_module.html" class="method">add_module</a></b> (<span class="main_type"><a href="Panda.Module.html" class="class">Module</a></span> module)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Add a module to this assembly process. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> <b><a href="Panda.Assembler.add_modules.html" class="method">add_modules</a></b> (<span class="main_type"><a href="Panda.Module.html" class="class">Module</a></span>[] modules)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Add a collection of modules to this assembly process. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Assembler.copy_configuration.html" class="method">copy_configuration</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> src)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Clone the configuration of one assembler to another. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Assembler.for_each_module.html" class="method">for_each_module</a></b> (<span class="main_type"><a href="Panda.ModuleCallback.html" class="delegate">ModuleCallback</a></span> callback)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Review all the modules associated with an assembler. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Assembler.module_stats.html" class="method">module_stats</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Log the number of sequences rejected by each module. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">unowned</span> <span class="main_type"><a href="Panda.result_seq.html" class="struct">result_seq</a></span>? <b><a href="Panda.Assembler.next.html" class="method">next</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Assemble the next sequence from the input </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">weak</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> <b><a href="Panda.Assembler.ref.html" class="method">ref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Increment reference count. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Assembler.set_fail_alignment.html" class="method">set_fail_alignment</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.FailAlign.html" class="delegate">FailAlign</a></span>? handler)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Attached a callback for every sequence that fails to have an overlap. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Assembler.unref.html" class="method">unref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Decrement reference count. </span>
+            </div></li>
+        </ul>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>

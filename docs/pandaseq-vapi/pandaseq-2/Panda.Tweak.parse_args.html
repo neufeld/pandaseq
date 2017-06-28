@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.Tweak.parse_args Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.Tweak.html">Tweak</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="struct">
+            <a href="Panda.Tweak.assembler.html">assembler</a></li>
+          <li class="struct">
+            <a href="Panda.Tweak.general.html">general</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.AssemblerHandler.html">AssemblerHandler</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.GeneralHandler.html">GeneralHandler</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.KeyParsed.html">KeyParsed</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.Opener.html">Opener</a></li>
+          <li class="delegate">
+            <a href="Panda.Tweak.Setup.html">Setup</a></li>
+          <li class="static_method">parse_args</li>
+          <li class="static_method">
+            <a href="Panda.Tweak.parse_key_values.html">parse_key_values</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">parse_args</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.Tweak.parse_args.html" class="static_method">parse_args</a></b>&lt;<b><code>T</code></b>&gt; (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>[] args, <span class="main_type"><a href="Panda.Tweak.general.html" class="struct">general</a></span>?[] general_args, <span class="main_type"><a href="Panda.Tweak.assembler.html" class="struct">assembler</a></span>?[] assembler_args, <span class="main_type"><a href="Panda.Tweak.GeneralHandler.html" class="delegate">GeneralHandler</a></span>&lt;<span class="main_type"><code>T</code></span>&gt; tweak, <span class="main_type"><a href="Panda.Tweak.Opener.html" class="delegate">Opener</a></span>&lt;<span class="main_type"><code>T</code></span>&gt; opener, <span class="main_type"><a href="Panda.Tweak.Setup.html" class="delegate">Setup</a></span>&lt;<span class="main_type"><code>T</code></span>&gt; assembler_setup, <span class="main_type"><code>T</code></span> user_data, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span>? assembler, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.Mux.html" class="class">Mux</a></span>? mux, <span class="main_keyword">out</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/int.html" class="struct">int</a></span> threads, <span class="main_keyword">out</span> <span class="main_type"><a href="Panda.OutputSeq.html" class="delegate">OutputSeq</a></span> output)
+        </div>
+        <div class="description">
+          <p>Parse command line arguments to in order to construct assemblers. </p>
+          <p>This is meant to serve as a general framework for parsing command line arguments with maximum code reuse. There are two kinds of 
+            arguments: assembler-only and general. Assembler-only arguments need no context (i.e., they on modify the assembler based on their 
+            argument). General arguments might do this or they might be involved in selecting the sequence source. </p>
+          <p>Lists of command line arguments are passed in and parsed. The opener is then called to open the data source and provide a sequence 
+            source. Then, an assembler and multiplexer will be created. All the assembler-only arguments and any additional setup are applied to the 
+            assembler. Any needed modules are loaded. Finally, the assembler and multiplexer are output, for use by the thread pool code. </p>
+          <h2 class="main_title">Parameters:</h2>
+          <table class="main_parameter_table">
+            <tr>
+              <td class="main_parameter_table_name">args</td>
+              <td>the strings from the command line </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">assembler_args</td>
+              <td>descriptors of all the assembler-only command line arguments </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">general_args</td>
+              <td>descriptors of all the command line arguments userstood by the callbacks </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">tweak</td>
+              <td>a callback for every command line argument matching a general argument </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">opener</td>
+              <td>a callback to open the sequence source </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">assembler_setup</td>
+              <td>a callback to configure the assembler </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">assembler</td>
+              <td>the assembler constructed after argument parsing </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">mux</td>
+              <td>the multiplexer constructed after argument parsing </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">threads</td>
+              <td>the number of threads the user wishes to use </td>
+            </tr>
+          </table>
+          <h2 class="main_title">Returns:</h2>
+          <table class="main_parameter_table">
+            <tr>
+              <td>whether command line parsing was successful and the output parameters have been populated </td>
+            </tr>
+          </table>
+        </div>
+        <br/>
+        <div class="namespace_note">
+          <b>Namespace:</b> Panda.Tweak</div>
+        <div class="package_note">
+          <b>Package:</b> pandaseq-2</div>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>
