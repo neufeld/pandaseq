@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.Mux Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="class">Mux</li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="property">
+            <a href="Panda.Mux.child_count.html">child_count</a></li>
+          <li class="property">
+            <a href="Panda.Mux.logger.html">logger</a></li>
+          <li class="static_method">
+            <a href="Panda.Mux.open.html">open</a></li>
+          <li class="creation_method">
+            <a href="Panda.Mux.Mux.html">Mux</a></li>
+          <li class="creation_method">
+            <a href="Panda.Mux.Mux.fastq.html">Mux.fastq</a></li>
+          <li class="method">
+            <a href="Panda.Mux.create_assembler.html">create_assembler</a></li>
+          <li class="method">
+            <a href="Panda.Mux.create_assembler_kmer.html">create_assembler_kmer</a></li>
+          <li class="method">
+            <a href="Panda.Mux.ref.html">ref</a></li>
+          <li class="method">
+            <a href="Panda.Mux.set_fail_alignment.html">set_fail_alignment</a></li>
+          <li class="method">
+            <a href="Panda.Mux.unref.html">unref</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">Mux</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Panda.Mux" alt="Object hierarchy for Mux" src="img/Panda.Mux.png"/>
+<map id="Panda.Mux" name="Panda.Mux">
+<area shape="rect" id="node1" href="Panda.Mux.html" title="Panda.Mux" alt="" coords="5,5,112,53"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><a href="Panda.Mux.html" class="class">Mux</a></b>
+        </div>
+        <div class="description">
+          <p>A threading-safe wrapper to allow multiple assemblers to share a single data source. </p>
+        </div>
+        <br/>
+        <div class="namespace_note">
+          <b>Namespace:</b> Panda</div>
+        <div class="package_note">
+          <b>Package:</b> pandaseq-2</div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Properties:</h3>
+        <ul class="navi_inline">
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> <b><a href="Panda.Mux.child_count.html" class="property">child_count</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Get the number of assemblers created so far. </span>
+            </div></li>
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> <b><a href="Panda.Mux.logger.html" class="property">logger</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Panda.Mux.html" class="class">Mux</a></span>? <b><a href="Panda.Mux.open.html" class="static_method">open</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> forward, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> reverse, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/uint8.html" class="struct">uint8</a></span> qualmin =<span class="main_optional_parameter">33</span>, <span class="main_type"><a href="Panda.Tagging.html" class="enum">Tagging</a></span> policy = <b><a href="Panda.Tagging.PRESENT.html" class="enumvalue">PRESENT</a></b>)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Open a pair of FASTQ files for multi-threaded assembled. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Mux.Mux.html" class="creation_method">Mux</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.NextSeq.html" class="delegate">NextSeq</a></span> next, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new multiplexed data source from a sequence callback. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.Mux.Mux.fastq.html" class="creation_method">Mux.fastq</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.BufferRead.html" class="delegate">BufferRead</a></span> forward, <span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.BufferRead.html" class="delegate">BufferRead</a></span> reverse, <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> logger, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/uint8.html" class="struct">uint8</a></span> qualmin =<span class="main_optional_parameter">33</span>, <span class="main_type"><a href="Panda.Tagging.html" class="enum">Tagging</a></span> policy = <b><a href="Panda.Tagging.PRESENT.html" class="enumvalue">PRESENT</a></b>)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new multiplexed reader for given to FASTQ streams. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> <b><a href="Panda.Mux.create_assembler.html" class="method">create_assembler</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new assembler using the multiplexer as it sequence source. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> <b><a href="Panda.Mux.create_assembler_kmer.html" class="method">create_assembler_kmer</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> num_kmers)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new assembler using the multiplexer as it sequence source with a custom <i>k</i>-mer table 
+                size. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">weak</span> <span class="main_type"><a href="Panda.Mux.html" class="class">Mux</a></span> <b><a href="Panda.Mux.ref.html" class="method">ref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Increase the reference count on a multiplexer. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Mux.set_fail_alignment.html" class="method">set_fail_alignment</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.FailAlign.html" class="delegate">FailAlign</a></span>? handler)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Attached a callback for every sequence that fails to have an overlap. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.Mux.unref.html" class="method">unref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Decrease the reference count on a multiplexer. </span>
+            </div></li>
+        </ul>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.run_pool Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.StdArgs.html">StdArgs</a></li>
+          <li class="namespace">
+            <a href="Panda.Tweak.html">Tweak</a></li>
+          <li class="enum">
+            <a href="Panda.Code.html">Code</a></li>
+          <li class="enum">
+            <a href="Panda.Debug.html">Debug</a></li>
+          <li class="enum">
+            <a href="Panda.IdFormat.html">IdFormat</a></li>
+          <li class="enum">
+            <a href="Panda.Nt.html">Nt</a></li>
+          <li class="enum">
+            <a href="Panda.Tagging.html">Tagging</a></li>
+          <li class="class">
+            <a href="Panda.Algorithm.html">Algorithm</a></li>
+          <li class="class">
+            <a href="Panda.Assembler.html">Assembler</a></li>
+          <li class="class">
+            <a href="Panda.Iterator.html">Iterator</a></li>
+          <li class="class">
+            <a href="Panda.LineBuf.html">LineBuf</a></li>
+          <li class="class">
+            <a href="Panda.LogProxy.html">LogProxy</a></li>
+          <li class="class">
+            <a href="Panda.Module.html">Module</a></li>
+          <li class="class">
+            <a href="Panda.Mux.html">Mux</a></li>
+          <li class="class">
+            <a href="Panda.Overlaps.html">Overlaps</a></li>
+          <li class="class">
+            <a href="Panda.Set.html">Set</a></li>
+          <li class="class">
+            <a href="Panda.Writer.html">Writer</a></li>
+          <li class="struct">
+            <a href="Panda.identifier.html">identifier</a></li>
+          <li class="struct">
+            <a href="Panda.kmer.html">kmer</a></li>
+          <li class="struct">
+            <a href="Panda.qual.html">qual</a></li>
+          <li class="struct">
+            <a href="Panda.result.html">result</a></li>
+          <li class="struct">
+            <a href="Panda.result_seq.html">result_seq</a></li>
+          <li class="constant">
+            <a href="Panda.DEFAULT_NUM_KMERS.html">DEFAULT_NUM_KMERS</a></li>
+          <li class="constant">
+            <a href="Panda.MAX_LEN.html">MAX_LEN</a></li>
+          <li class="delegate">
+            <a href="Panda.BufferRead.html">BufferRead</a></li>
+          <li class="delegate">
+            <a href="Panda.BufferWrite.html">BufferWrite</a></li>
+          <li class="delegate">
+            <a href="Panda.FailAlign.html">FailAlign</a></li>
+          <li class="delegate">
+            <a href="Panda.ModuleCallback.html">ModuleCallback</a></li>
+          <li class="delegate">
+            <a href="Panda.NextSeq.html">NextSeq</a></li>
+          <li class="delegate">
+            <a href="Panda.OutputSeq.html">OutputSeq</a></li>
+          <li class="delegate">
+            <a href="Panda.PrintfFunc.html">PrintfFunc</a></li>
+          <li class="static_method">
+            <a href="Panda.create_async_reader.html">create_async_reader</a></li>
+          <li class="static_method">
+            <a href="Panda.create_fail_writer.html">create_fail_writer</a></li>
+          <li class="static_method">
+            <a href="Panda.create_fastq_reader.html">create_fastq_reader</a></li>
+          <li class="static_method">
+            <a href="Panda.get_api_version.html">get_api_version</a></li>
+          <li class="static_method">
+            <a href="Panda.get_default_worker_threads.html">get_default_worker_threads</a></li>
+          <li class="static_method">
+            <a href="Panda.get_version.html">get_version</a></li>
+          <li class="static_method">
+            <a href="Panda.log1mexp.html">log1mexp</a></li>
+          <li class="static_method">
+            <a href="Panda.open_buffer.html">open_buffer</a></li>
+          <li class="static_method">
+            <a href="Panda.open_fastq.html">open_fastq</a></li>
+          <li class="static_method">run_pool</li>
+          <li class="static_method">
+            <a href="Panda.trim_overhangs.html">trim_overhangs</a></li>
+          <li class="field">
+            <a href="Panda.debug_flags.html">debug_flags</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">run_pool</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> <b><a href="Panda.run_pool.html" class="static_method">run_pool</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/int.html" class="struct">int</a></span> threads, <span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.Mux.html" class="class">Mux</a></span>? mux, <span class="main_keyword">owned</span> <span class="main_type"><a href="Panda.OutputSeq.html" class="delegate">OutputSeq</a></span> output)
+        </div>
+        <div class="description">
+          <p>Spawn threads and assemble sequences. </p>
+          <h2 class="main_title">Parameters:</h2>
+          <table class="main_parameter_table">
+            <tr>
+              <td class="main_parameter_table_name">threads</td>
+              <td>the number of threads to spawn </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">assembler</td>
+              <td>the main assembler to use. If multiple threads are to be used, the configuration of this assembler will be copied to all the slave 
+                assemblers. </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">mux</td>
+              <td>the multiplexer to use. If null, no threads will be created. The provided assembler must be a product of this multiplexer. </td>
+            </tr>
+            <tr>
+              <td class="main_parameter_table_name">output</td>
+              <td>the delegate that will write assembled sequences to where they belong. </td>
+            </tr>
+          </table>
+        </div>
+        <br/>
+        <div class="namespace_note">
+          <b>Namespace:</b> Panda</div>
+        <div class="package_note">
+          <b>Package:</b> pandaseq-2</div>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>
