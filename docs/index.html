@@ -1,0 +1,1088 @@
+<!-- Creator     : groff version 1.21 -->
+<!-- CreationDate: Wed Jun 29 08:23:21 2016 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>pandaseq</title>
+
+</head>
+<body>
+
+<h1 align="center">pandaseq</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#OUTPUT STATISTICS">OUTPUT STATISTICS</a><br>
+<a href="#LOGGING MESSAGES">LOGGING MESSAGES</a><br>
+<a href="#EXAMPLES">EXAMPLES</a><br>
+<a href="#VALIDATION MODULES">VALIDATION MODULES</a><br>
+<a href="#INCLUDED MODULES">INCLUDED MODULES</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">pandaseq
+&minus; PAired-eND Assembler for DNA sequences</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>pandaseq
+&minus;f</b> <i>forward.fastq</i> <b>&minus;r</b>
+<i>reverse.fastq</i> [ <b>&minus;6</b> ] [ <b>&minus;A</b>
+<i>algorithm</i> ] [ <b>&minus;a</b> ] [ <b>&minus;B</b> ] [
+<b>&minus;C</b> <i>module</i> ] [ <b>&minus;d</b>
+<i>flags</i> ] [ <b>&minus;D</b> <i>penalty</i> ] [
+<b>&minus;F</b> ] [ <b>&minus;g</b> <i>log.txt</i> ] [
+<b>&minus;G</b> <i>log.txt.bz2</i> ] [ <b>&minus;i</b>
+<i>index.fastq</i> ] [ <b>&minus;k</b> <i>kmers</i> ] [
+<b>&minus;l</b> <i>minlen</i> ] [ <b>&minus;L</b>
+<i>maxlen</i> ] [ <b>&minus;N</b> ] [ <b>&minus;o</b>
+<i>minoverlap</i> ] [ <b>&minus;O</b> <i>maxoverlap</i> ] [
+<b>&minus;p</b> <i>forwardprimer</i> ] [ <b>&minus;q</b>
+<i>reverseprimer</i> ] [ <b>&minus;t</b> <i>threshold</i> ]
+[ <b>&minus;T</b> <i>threads</i> ] [ { <b>&minus;u</b> |
+<b>&minus;U</b> } <i>unpaired.txt</i> ] [ <b>&minus;w</b>
+<i>output.fasta</i> ] [ <b>&minus;W</b>
+<i>output.fasta.bz2</i> ]</p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">PANDASEQ
+assembles paired-end Illumina reads into sequences, trying
+to correct for errors and uncalled bases. The assembler
+reads two files in FASTQ format with quality information. If
+amplification primers were used (e.g., to isolate a variable
+region of the 16S gene, or the constant regions around zinc
+finger binding residues), they can be removed from the
+sequence during assembly. The final sequence will correct
+any uncalled bases in the overlapping region using the
+complementary strand. When mismatches occur in the
+overlapping region, the base with the better quality score
+is chosen.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The algorithm
+is as follows:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>1.</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Find the positions where the forward and reverse primers
+match best above the threshold and discard the ends of the
+sequence, including the primer.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>2.</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Pick and overlap to maximise the probability of the
+forward and reverse reads having come from a single piece of
+DNA.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>3.</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Identify the masking of the end of the read with the
+quality score <b>B</b> or <b>#</b> as done by CASAVA and
+adjust the probabilities in this region.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>4.</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Construct an assembled sequence between the primers and
+calculate the quality.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>5.</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Check for various constraints, including quality,
+length, uncalled bases, and user-supplied modules.</p></td></tr>
+</table>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p style="margin-top: 1em">&minus;6</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em">Input files will have their
+quality encoded as PHRED + 64 instead of the PHRED + 33.
+PHRED + 64 was used originally in the CASAVA pipeline from
+version 1.3 through 1.7. In CASAVA 1.8, the score is encoded
+as PHRED + 33, the default.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">&minus;A algorithm</p>
+
+<p style="margin-left:22%;">Set the algorithm used for
+assembly. Currently there are: <br>
+simple_bayesian[:<i>error_estimation</i>]</p>
+
+<p style="margin-left:32%;">Uses the formula described in
+the original paper (Masella 2012), optionally with an error
+estimation (&epsilon;) provided.</p>
+
+<p style="margin-left:22%;">ea_util</p>
+
+<p style="margin-left:32%;">Uses the formula by FastqJoin
+in the ea-utils package (Aronesty 2013). No parameters are
+tunable.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="22%"></td>
+<td width="7%">
+
+
+<p>flash</p></td>
+<td width="3%"></td>
+<td width="68%">
+
+
+<p>Uses the formula by FLASH paper (Magoc 2011). No
+parameters are tunable.</p></td></tr>
+</table>
+
+<p style="margin-left:22%;">pear[:<i>random_base</i>]</p>
+
+<p style="margin-left:32%;">Uses the formula described in
+the PEAR paper (Zhang 2013), optionally with the probability
+of a random base (q) provided.</p>
+
+<p style="margin-left:22%;">rdp_mle</p>
+
+<p style="margin-left:32%;">Uses the formula by RDP paper
+(Cole 2013). No parameters are tunable.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="22%"></td>
+<td width="9%">
+
+
+<p>stitch</p></td>
+<td width="1%"></td>
+<td width="68%">
+
+
+<p>Uses the formula in the Sitch software, developed by
+Austin Richardson. No parameters are tunable.</p></td></tr>
+</table>
+
+
+<p style="margin-left:22%;">uparse[:<i>error_estimation</i>]</p>
+
+<p style="margin-left:32%;">Uses the scoring algorithm from
+UPARSE/USEARCH (Edgar 2013), optionally with an error
+estimation (&epsilon;) provided.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>&minus;a</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Strip the primers after assembly, rather than before.
+Stripping the primers first saves time, but if the overlap
+region is very large compared to the read, the read may have
+sequence from the other primer (i.e., the forward read ends
+with reverse primer, and/or the reverse read ends with
+forward primer). If the primers are stripped first, the
+reads will fail to assemble. This option attempts assembly
+first, then tries to strip the primers, so the heavily
+overlapping case will assemble. You should only need this if
+the region of interest is smaller than the whole read. It is
+undesirable, unless necessary, as it slows assembly
+down.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>&minus;B</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Allow input sequences to lack a barcode/tag. Normally,
+Illumina sequences have barcodes attached to the sequence.
+This allows the barcode to be missing. The tool
+<b>panda-checkid</b>(1) will determine if an Illumina
+identifier is undestood by PANDAseq and if the tag is
+included.</p> </td></tr>
+</table>
+
+<p style="margin-left:11%;">&minus;C module</p>
+
+<p style="margin-left:22%;">Loads an optional validation
+module to verify sequences are valid before emitting them.
+See below for more information. You may repeat this option
+to use multiple validation modules.</p>
+
+<p style="margin-left:11%;">&minus;d flags</p>
+
+<p style="margin-left:22%;">Set debugging/output flags to
+provide more details about what PANDAseq is doing. To enable
+a flag, capitalise it; to disable, include a uncapitalise
+it. Provide information about the <b>b</b>uilding of a
+sequence. Show excruciating detail about
+<b>r</b>econstruction. Show some optional <b>s</b>tatistics.
+Show information about building the <b>k</b>-mer table.
+Provide error about the <b>f</b>ile parsing. Show every
+<b>m</b>ismatch. The default is <b>BFSrk</b>.</p>
+
+<p style="margin-left:11%;">&minus;D penalty</p>
+
+<p style="margin-left:22%;">Sometimes, with repetitive
+sequence, the primer aligns further down the sequence. To
+avoid this, a primer penalty can be applied. For each base
+further down the sequence, <i>penalty</i> is subtracted from
+the proability that the primer aligns to this location. By
+default, the value is zero, and if used, the value should be
+rather small; 0.01 seesm to be sufficient in most cases.</p>
+
+<p style="margin-left:11%;">&minus;f forward.fastq</p>
+
+<p style="margin-left:22%;">The location of the forward
+reads in FASTQ format. The file may be plain FASTQ, or
+compressed with <b>gzip</b>(1) or <b>bzip2</b>(1). File
+compression is automatically detected.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>&minus;F</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Normally, output will be as a FASTA even though per-base
+quality information is available. To retain this quality
+information, this option will output the sequence and the
+quality information in FASTQ format with quality scores
+encoded as PHRED + 33 (even if the input scores are PHRED +
+64). The meaning of the quality score is conceptually
+different from the input quality scores for the overlap
+region, but this may not matter depending on your downstream
+application. If you intend to use this information for
+further quality filtering, especially by a program expecting
+Illumina reads, you are not using this data correctly.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">&minus;g log.txt</p>
+
+<p style="margin-left:22%;">Log all output to a plain text
+file, <i>log.txt</i>, instead of standard error.</p>
+
+<p style="margin-left:11%;">&minus;i index.fastq</p>
+
+<p style="margin-left:22%;">If the index/barcode reads are
+in a separate FASTQ file, read them an apply them to the
+input reads.</p>
+
+<p style="margin-left:11%;">&minus;G log.txt.bz2</p>
+
+<p style="margin-left:22%;">Log all output to a
+<b>bzip2</b>(1) compressed text file, <i>log.txt.bz2</i>,
+instead of standard error.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>&minus;j</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>This option is ignored. It used to indicate that input
+files specified by <b>-f</b> and <b>-r</b> are compressed by
+<b>bzip2</b>(1). This is automatically detected now.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">&minus;k kmers</p>
+
+<p style="margin-left:22%;">Sets the number of sequence
+locations for a particular <i>k</i>-mer. When attempting to
+align the sequences, the assembler will store the location
+of every <i>k</i>-mer in a table. If the same <i>k</i>-mer
+is present multiple times, only the first ones will be
+stored until the table is full; when this occurs, an
+<b>FML</b> error is emitted. If the sequences are highly
+repetitive, lost positions can prevent good alignments; this
+can be alleviated by increasing this amount. This should be
+small (no more than 10; the default is 2), or the
+<i>k</i>-mer table will be extremely large, using a large
+amount of RAM per thread. Try increasing the value until
+<b>FML</b> errors go away.</p>
+
+<p style="margin-left:11%;">&minus;l minlen</p>
+
+<p style="margin-left:22%;">Sets the minimum length for a
+sequence, after primers are removed. By default, all
+sequences are kept. With this option, sequences shorter than
+desired can be discarded.</p>
+
+<p style="margin-left:11%;">&minus;L maxlen</p>
+
+<p style="margin-left:22%;">Sets maximum length for a
+sequence, after primers are removed. By default, all
+sequences are kept. With this option, sequences longer than
+desired can be discarded.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p>&minus;N</p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Eliminate all sequences with uncalled nucleotides in the
+output. Otherwise, during assembly, uncalled bases&nbsp;(Ns)
+from unpaired regions may be emitted.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">&minus;o minoverlap</p>
+
+<p style="margin-left:22%;">Sets the minimum overlap
+between forward and reverse reads. By default, this is at
+least one nucleotide of overlap. Raising this number does
+not generally increase the quality of the output as
+alignments with small overlaps tend to score poorly and are
+discarded anyway.</p>
+
+<p style="margin-left:11%;">&minus;O maxoverlap</p>
+
+<p style="margin-left:22%;">Sets the maximum overlap
+between forward and reverse reads. By default, this is the
+read length. In highly overlapping sequences (i.e., those
+where the end of one read precede the start of the other),
+this parameter should be set to the sum of the input reads,
+or a value larger than that.</p>
+
+<p style="margin-left:11%;">&minus;p forwardprimer</p>
+
+<p style="margin-left:22%;">Strip out primers from the
+start of the sequence. If the data contains a forward primer
+(e.g., a conserved region to amplify a 16S variable region),
+specifying it here will cause the primer to be located in
+the read and the primer, and any sequence before it, will be
+discarded. It is also possible to specify a number and the
+same number of leading bases will be stripped from the
+sequence. It may be useful to user a number if the sequence
+has many uncalled bases in the primer region, preventing a
+nucleotide primer from matching.</p>
+
+<p style="margin-left:11%;">&minus;q reverseprimer</p>
+
+<p style="margin-left:22%;">Strip out primers from the end
+of the sequence. The primer is specified as it appears in
+the reverse read (i.e., it is a reverse complement of what
+it would be in the alignment).</p>
+
+<p style="margin-left:11%;">&minus;r reverse.fastq</p>
+
+<p style="margin-left:22%;">FASTQ file containing the
+reverse reads. See <b>-f</b> for more information.</p>
+
+<p style="margin-left:11%;">&minus;t threshold</p>
+
+<p style="margin-left:22%;">The score, between zero and
+one, that a sequence must meet to be kept in the output. Any
+alignments lower than this will be discarded as low quality.
+Increasing this number will not necessarily prevent uncalled
+bases&nbsp;(Ns) from appearing in the final sequence. It is
+also used as the threshold to match primers, if primers are
+supplied. The default value is 0.6.</p>
+
+<p style="margin-left:11%;">&minus;T threads</p>
+
+<p style="margin-left:22%;">The number of threads to spawn.
+This will only be avilable if PANDAseq was compiled with
+<b>pthreads</b>(7). In most cases, PANDAseq is IO-bound, not
+CPU-bound; therefore, adding more CPU capacity would have no
+effect. Try monitoring a running copy of PANDAseq with
+<b>top</b>(1); watch the CPU% for the PANDAseq process and
+the overall system CPU waiting time (<i>%wa</i> in the
+banner at the top). If waiting time is low and CPU% is very
+high, then multi-threading may increase speed. If the CPU
+waiting time is high, threading will simply not help.</p>
+
+<p style="margin-left:22%; margin-top: 1em">Note that using
+multiple threads prevents sequences from being output in the
+same order as the original file. If you a filtering reads
+downstream, consider using the <b>filter</b> validation
+module as matching them up may be difficult.</p>
+
+<p style="margin-left:11%;">&minus;[U|u] unpaired.txt</p>
+
+<p style="margin-left:22%;">Write sequences for which the
+optimal alignment cannot be computed to a file as
+concatenated pairs. For downstream processing or to stare at
+wistfully. If <b>-U</b> is used, the quality scores will be
+included.</p>
+
+<p style="margin-left:11%;">&minus;w output.fasta</p>
+
+<p style="margin-left:22%;">Write all assembled sequences
+to a FASTA (or FASTQ) file, <i>output.fasta</i>, instead of
+standard output.</p>
+
+<p style="margin-left:11%;">&minus;W output.fasta.bz2</p>
+
+<p style="margin-left:22%;">Write all assembled sequences
+to a <b>bzip2</b>(1) compressed FASTA (or FASTQ) file,
+<i>output.fasta</i>, instead of standard output.</p>
+
+<h2>OUTPUT STATISTICS
+<a name="OUTPUT STATISTICS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">At the end of
+reconstruction, several statistics are output on lines
+beginning with <b>STAT</b>.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>READS</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of reads in the input files.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>NOALGN</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where there exists no overlap
+with a probability above the threshold.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>BADR</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the reads are
+unsatisfactory (too short to assemble).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>SLOW</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the fast hashing algorithm
+could not figure out the optimal overlap, and so every
+possible overlap had to be considered. Nothing is
+necessarily wrong with these sequences; they just take
+longer to assemble. Very repetitive patterns can cause
+PANDAseq to spend more time investigating overlaps that are
+likely wrong, resulting the processing time of the file to
+be quite long if there are many sequences in this category.
+If they are a significant percentage of the input data, try
+increasing the size of the <i>k</i>-mer table, using the
+<b>-k</b> option; this will cause PANDAseq to use more
+memory, but it may be faster.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>NOFP</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the forward primer could
+not be aligned. This is only done when <b>-p</b> is supplied
+and a nucleotide sequence.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>NORP</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the reverse primer could
+not be aligned. This is only done when <b>-q</b> is supplied
+and a nucleotide sequence.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p>LOWQ</p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the quality score of the
+reconstruction is below the threshold. This says nothing
+about the quality scores of the individual bases in the
+forward and reverse reads.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">DEGENERATE</p>
+
+<p style="margin-left:22%;">The number of sequences
+containing uncalled/degenerate/N bases in the final
+reconstruction (it is immaterial if there are uncalled bases
+in the reads.) This is only done when <b>-N</b> is
+provided.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p>SHORT</p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the final reconstructed
+sequence is too short. This is only done when <b>-l</b> is
+provided.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p>LONG</p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>The number of sequences where the final reconstructed
+sequence is too long. This is only done when <b>-L</b> is
+provided.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p>OK</p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>The number of sequences output.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">OVERLAPS</p>
+
+<p style="margin-left:22%;">The number of sequences
+assembled for each possible overlapping length. The first
+number is the number of sequences with only one overlapping
+base, the second with two overlapping bases, and so on.</p>
+
+<h2>LOGGING MESSAGES
+<a name="LOGGING MESSAGES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">During output,
+the assembler may output any of the following errors. <br>
+ERR BADID</p>
+
+<p style="margin-left:22%;">The name of the input read did
+not follow the known Illumina standard formats. Older
+versions of CASAVA produce sequences with IDs that look like
+<b>HWUSI-EAS1661_9323_FC619KG:7:1:1190:15190#ATCACG/1</b>,
+where the fields are
+<i>instrument:lane:tile:x:y#tag/direction</i>. Newer version
+of CASAVA produce IDs that look like
+<b>HWI-ST822:85:C05C3ACXX:1:1101:1171:2104 3:N:0:TAGACA</b>,
+where the fields are
+<i>instrument:run:flowcell:lane:tile:x:y
+direction:filtered:flags:tag</i>. If your sequence headers
+do not look like either of these, either Illumina has
+created yet-another header format or, more likely, your
+sequence headers have been manipulated by some upstream
+processing, possibly at your sequencing centre. PANDAseq
+needs the original Illumina probabilities; not ones
+manipulated by other programs. We&rsquo;re very picky about
+that. Sometimes, for mysterious reasons, the sequences lack
+the barcoding tag. The <b>-B</b> option will cause the lack
+of barcode to be ignored. This will obviously invalidate the
+use of validation modules that depend on the barcode.</p>
+
+<p style="margin-left:11%;">ERR BADNT</p>
+
+<p style="margin-left:22%;">An invalid letter was found in
+a nucleotide read. Likely caused by incorrect or corrupt
+input files.</p>
+
+<p style="margin-left:11%;">ERR BADSEQ</p>
+
+<p style="margin-left:22%;">The an unexpected character or
+end of the input file was detected. Likely caused by
+incorrect or corrupt input files.</p>
+
+<p style="margin-left:11%;">ERR EOF</p>
+
+<p style="margin-left:22%;">The end of the input file was
+detected before it was expected. Likely caused by incorrect
+or corrupt input files.</p>
+
+<p style="margin-left:11%;">ERR KLNG</p>
+
+<p style="margin-left:22%;">The <i>k</i>-mer table is too
+small to hold a read of the size requested. This is a bug or
+platform-dependent behaviour. Please file a ticket either
+way.</p>
+
+<p style="margin-left:11%;">ERR LOWQ</p>
+
+<p style="margin-left:22%;">The sequence is discarded
+because the quality is too low given the supplied
+threshold.</p>
+
+<p style="margin-left:11%;">ERR NEGS</p>
+
+<p style="margin-left:22%;">The reconstruction parameters
+do not produce a valid sequence. Instead, they produce a
+negative-length sequence. This read pair is discarded.</p>
+
+<p style="margin-left:11%;">ERR NODATA</p>
+
+<p style="margin-left:22%;">A FASTQ record has no sequence
+data. Likely caused by incorrect or corrupt input files.</p>
+
+<p style="margin-left:11%;">ERR NOFILE</p>
+
+<p style="margin-left:22%;">The input file was not found or
+could not be read.</p>
+
+<p style="margin-left:11%;">ERR NOFP</p>
+
+<p style="margin-left:22%;">The forward primer could not be
+matched to the forward read. Either the primer is incorrect
+or the read is low quality or the sequence provided is not
+the correct original molecule.</p>
+
+<p style="margin-left:11%;">ERR NOQUAL</p>
+
+<p style="margin-left:22%;">Quality information is missing
+from the FASTQ file. This data is required to reconstruct
+the sequence.</p>
+
+<p style="margin-left:11%;">ERR NORP</p>
+
+<p style="margin-left:22%;">The reverse primer could not be
+matched to the reverse read. See <b>NOFP</b>.</p>
+
+<p style="margin-left:11%;">ERR NOTPAIRED</p>
+
+<p style="margin-left:22%;">Sequences from FASTQ files are
+not pairing correctly given their sequence names. Likely,
+the files are mismatched.</p>
+
+<p style="margin-left:11%;">ERR OOM</p>
+
+<p style="margin-left:22%;">An out of memory condition has
+occurred. Given the memory available, assembly of this
+sequence is not possible. As Illumina sequencing gets
+longer, the amount of memory needed can be adjusted. Please
+file a ticket.</p>
+
+<p style="margin-left:11%;">ERR READLEN</p>
+
+<p style="margin-left:22%;">The read length is too long for
+this version of PANDAseq. PANDAseq needs to be recompiled
+with a longer allowable seqeuence length; this length is
+kept short to improve performance.</p>
+
+<p style="margin-left:11%;">INFO ARG[<i>n</i>]</p>
+
+<p style="margin-left:22%;">The <i>n</i>th command line
+argument that generated this output, for posterity.</p>
+
+<p style="margin-left:11%;">INFO BESTOLP</p>
+
+<p style="margin-left:22%;">The best overlap parameter for
+a sequence.</p>
+
+<p style="margin-left:11%;">INFO BUILD</p>
+
+<p style="margin-left:22%;">The parameters of a
+reconstructed base.</p>
+
+<p style="margin-left:11%;">INFO MISM</p>
+
+<p style="margin-left:22%;">A mismatch has been identified
+in the reconstruction.</p>
+
+<p style="margin-left:11%;">INFO MOD</p>
+
+<p style="margin-left:22%;">Information about a module.</p>
+
+<p style="margin-left:11%;">INFO OLD</p>
+
+<p style="margin-left:22%;">An overlap possibility, with
+probability, as been identified.</p>
+
+<p style="margin-left:11%;">INFO RECR</p>
+
+<p style="margin-left:22%;">The proposed reconstruction
+parameters.</p>
+
+<p style="margin-left:11%;">INFO VER</p>
+
+<p style="margin-left:22%;">The version of PANDAseq that
+generated this output, for posterity.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p>STAT</p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Some information about the assembly process. See
+above.</p> </td></tr>
+</table>
+
+<p style="margin-left:11%;">DBG FMER</p>
+
+<p style="margin-left:22%;">A <i>k</i>-mer has been
+identified in the forward read.</p>
+
+<p style="margin-left:11%;">DBG FML</p>
+
+<p style="margin-left:22%;">A duplicate <i>k</i>-mer has
+been identified in the forward read and discarded. This
+might cause failure to assemble a sequence if repeated too
+often. See the <b>-k</b> option to correct this.</p>
+
+<p style="margin-left:11%;">DBG RMER</p>
+
+<p style="margin-left:22%;">A <i>k</i>-mer has been
+identified in the reverse read.</p>
+
+<p style="margin-left:11%;">ERR UNKNOWN ERROR</p>
+
+<p style="margin-left:22%;">Something truly unexpected has
+happened. This probably involves an validation module.</p>
+
+<h2>EXAMPLES
+<a name="EXAMPLES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">This will
+assemble a data from a run in lane 7:</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>pandaseq -f
+s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 &gt; s_7.fasta</b></p>
+
+<p style="margin-left:11%; margin-top: 1em">This will
+assemble data from lane 7, stripping conserved regions
+around the prokaryotic 16S V3 region and store the results
+in <b>s_7.fasta.bz2</b> and store the logging output
+<b>s_7.log.bz2.</b></p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>pandaseq -f
+s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -p CCTACGGGAGGCAGCAG -q
+ATTACCGCGGCTGCTGG -G s_7.log.bz2 | bzip2 &gt;
+s_7.fasta.bz2</b></p>
+
+<h2>VALIDATION MODULES
+<a name="VALIDATION MODULES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Validation
+modules are capable of making decisions about whether or not
+to keep output sequences. For example, one could write a
+module to check secondary structure of a RNA, or that a
+coding sequence contains no stop codons. To create a module,
+please see <b>pandaxs</b>(1). Invoking a module can be done
+using the <b>-C</b> option on the command line. As many
+modules as desired may be added. The path to the module may
+be followed by a colon (on Windows, a semicolon) and
+arguments. For example, the following will include all
+sequences after <b>HWI-ST822:85:C05C3ACXX:1:1101:1171:2104
+3:N:0:TAGACA</b> in the input file:</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>pandaseq -f
+s_7_1.fastq.bz2 -r s_7_2.fastq.bz2 -C
+&quot;after:HWI-ST822:85:C05C3ACXX:1:1101:1171:2104
+3:N:0:TAGACA&quot; &gt; s_7.fasta</b></p>
+
+<h2>INCLUDED MODULES
+<a name="INCLUDED MODULES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">There are some
+included modules: <br>
+&quot;after:<i>identifer</i>&quot;</p>
+
+<p style="margin-left:22%;">Assemble only the sequences
+after (and including) the sequence specified. This is done
+in file order.</p>
+
+
+<p style="margin-left:11%;">&quot;before:<i>identifer</i>&quot;</p>
+
+<p style="margin-left:22%;">Assemble only the sequences
+before (and excluding) the sequence specified. This is done
+in file order.</p>
+
+<p style="margin-left:11%;">completely_miss_the_point</p>
+
+<p style="margin-left:22%;">This can be used to only
+include sequences with perfect overlap regions. You
+shouldn&rsquo;t want to do it. The whole point is to fix
+sequences which are probably good. Moreover, assuming that
+the sequencer is right in the overlap region and in the
+non-overlapping regions requires an unsound leap in
+statistics. My dislike has been appropriately embodied in
+the name of this validation module.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p>empty</p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>Sometimes, an assembled sequence can have zero length.
+Some downstream applications do not like this, so this
+filter allows removing any such sequences.</p></td></tr>
+</table>
+
+<p style="margin-left:11%;">filter:<i>file</i></p>
+
+<p style="margin-left:22%;">Output only the sequences whose
+identifiers match those in the file specified, one per line.
+If the file is missing, sequences are read from standard
+input.</p>
+
+<p style="margin-left:11%;">min_phred:<i>value</i></p>
+
+<p style="margin-left:22%;">Check the PHRED score of every
+base in the output sequence and make sure it is at least
+<i>value</i>. The threshold is based on the sequence as a
+whole, but this is based on the individual base scores, as
+they would be seen with the <b>-F</b> option.</p>
+
+
+<p style="margin-left:11%;">min_overlapbits:<i>value</i></p>
+
+<p style="margin-left:22%;">Check that the number of
+&ldquo;bits saved&rdquo; (Cole, et al. 2013) is above the
+provided value.</p>
+
+
+<p style="margin-left:11%;">other_primer:<i>direction</i>:<i>primer</i></p>
+
+<p style="margin-left:22%;">Sometimes, libraries are
+constructed with a mix of primer sequences. The allows
+separating the primer mix. To do this given primers, run
+PANDAseq twice: once with the each primer given to <b>-p</b>
+or <b>-q</b> and the other primer given as the <i>primer</i>
+option to this module. The <i>direction</i> must be
+specified as either <b>f</b> or <b>p</b> for the forward
+primer or <b>r</b> or <b>q</b> for the reverse primer. This
+module will reject and reads that match the primer,
+eliminating them from the output.</p>
+
+<p style="margin-left:11%;">overlap_stat</p>
+
+<p style="margin-left:22%;">Produces a histogram of the
+number of overlaps that were examined for each of the
+sequences that assembled. This does not indicate the number
+of overlaps that were examined for discarded sequences.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p>pear</p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Perform the false-positive test described in section 2.2
+of Zhang 2013.</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;">validtag:<i>tag1</i>:<i>tag2</i>:...</p>
+
+<p style="margin-left:22%;">Only include sequences in the
+output with one of the tags specified. This can be used to
+demultiplex sequences. This will not work well with
+<b>-B</b> option.</p>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>pandaseq-checkid</b>(1),
+<b>pandaxs</b>(1), <b>gzip</b>(1), <b>bzip2</b>(1).</p>
+
+<p style="margin-left:11%; margin-top: 1em">Andre P
+Masella, Andrea K Bartram, Jakub M Truszkowski, Daniel G
+Brown and Josh D Neufeld. <i>PANDAseq: paired-end assembler
+for Illumina sequences.</i> BMC Bioinformatics 2012, 13:31.
+<a href="http://www.biomedcentral.com/1471-2105/13/31">http://www.biomedcentral.com/1471-2105/13/31</a></p>
+
+<p style="margin-left:11%; margin-top: 1em">E. Aronesty.
+<i>Comparison of Sequencing Utility Programs</i> TOBioiJ
+(2013); doi:10.2174/1875036201307010001
+<a href="http://benthamscience.com/open/openaccess.php?tobioij/articles/V007/1TOBIOIJ.htm">http://benthamscience.com/open/openaccess.php?tobioij/articles/V007/1TOBIOIJ.htm</a></p>
+
+<p style="margin-left:11%; margin-top: 1em">J. Zhang, K.
+Kobert, T. Flouri, and A. Stamatakis. <i>PEAR: A fast and
+accurate Illumina Paired-End reAd mergeR</i> Bioinformatics
+2013 : btt593v1-btt593.
+<a href="http://bioinformatics.oxfordjournals.org/content/early/2013/10/18/bioinformatics.btt593.short">http://bioinformatics.oxfordjournals.org/content/early/2013/10/18/bioinformatics.btt593.short</a></p>
+
+<p style="margin-left:11%; margin-top: 1em">J. R. Cole, Q.
+Wang, J. A. Fish, B. Chai, D. M. McGarrell, Y. Sun, C. T.
+Brown, A. Porras-Alfaro, C. R. Kuske, and J. M. Tiedje.
+<i>Ribosomal Database Project: data and tools for high
+throughput rRNA analysis</i> Nucl. Acids Res. Database
+issue: first published online 27 Nov 2013; doi:
+10.1093/nar/gkt1244
+<a href="http://nar.oxfordjournals.org/content/early/2013/11/26/nar.gkt1244.full">http://nar.oxfordjournals.org/content/early/2013/11/26/nar.gkt1244.full</a></p>
+
+<p style="margin-left:11%; margin-top: 1em">T. Magoc, and
+S. Salzberg. <i>FLASH: Fast length adjustment of short reads
+to improve genome assemblies.</i> Bioinformatics 27:21
+(2011), 2957-63.a
+<a href="http://ccb.jhu.edu/software/FLASH/FLASH-reprint.pdf">http://ccb.jhu.edu/software/FLASH/FLASH-reprint.pdf</a></p>
+
+<p style="margin-left:11%; margin-top: 1em">R. C. Edgar.
+<i>personal communication</i></p>
+<hr>
+</body>
+</html>

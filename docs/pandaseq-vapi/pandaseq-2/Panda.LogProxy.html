@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/>
+    <script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Panda.LogProxy Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index">
+            <a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package">
+            <a href="index.htm">pandaseq-2</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace">
+            <a href="Panda.html">Panda</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="class">LogProxy</li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="property">
+            <a href="Panda.LogProxy.writer.html">writer</a></li>
+          <li class="static_method">
+            <a href="Panda.LogProxy.open_file.html">open_file</a></li>
+          <li class="creation_method">
+            <a href="Panda.LogProxy.LogProxy.html">LogProxy</a></li>
+          <li class="creation_method">
+            <a href="Panda.LogProxy.LogProxy.file.html">LogProxy.file</a></li>
+          <li class="creation_method">
+            <a href="Panda.LogProxy.LogProxy.stderr.html">LogProxy.stderr</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.perror.html">perror</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.ref.html">ref</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.stat_double.html">stat_double</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.stat_long.html">stat_long</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.stat_size_t.html">stat_size_t</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.stat_str.html">stat_str</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.unref.html">unref</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.write.html">write</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.write_f.html">write_f</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.write_overlap.html">write_overlap</a></li>
+          <li class="method">
+            <a href="Panda.LogProxy.write_str.html">write_str</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">LogProxy</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Panda.LogProxy" alt="Object hierarchy for LogProxy" src="img/Panda.LogProxy.png"/>
+<map id="Panda.LogProxy" name="Panda.LogProxy">
+<area shape="rect" id="node1" href="Panda.LogProxy.html" title="Panda.LogProxy" alt="" coords="5,5,147,53"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><a href="Panda.LogProxy.html" class="class">LogProxy</a></b>
+        </div>
+        <div class="description">
+          <p>Logging proxy </p>
+        </div>
+        <br/>
+        <div class="namespace_note">
+          <b>Namespace:</b> Panda</div>
+        <div class="package_note">
+          <b>Package:</b> pandaseq-2</div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Properties:</h3>
+        <ul class="navi_inline">
+          <li class="property">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Panda.Writer.html" class="class">Writer</a></span> <b><a href="Panda.LogProxy.writer.html" class="property">writer</a></b> { <span class="main_keyword">get</span>; }
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span>? <b><a href="Panda.LogProxy.open_file.html" class="static_method">open_file</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> filename, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/bool.html" class="struct">bool</a></span> bzip)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Open a file for writing error messages. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.LogProxy.LogProxy.html" class="creation_method">LogProxy</a></b> (<span class="main_type"><a href="Panda.Writer.html" class="class">Writer</a></span> writer)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new proxy with a callback. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.LogProxy.LogProxy.file.html" class="creation_method">LogProxy.file</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="http://www.valadoc.org/glib-2.0/GLib.FileStream.html" class="class">FileStream</a></span> file)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Write the log to an open file. </span>
+            </div></li>
+          <li class="creation_method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Panda.LogProxy.LogProxy.stderr.html" class="creation_method">LogProxy.stderr</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Create a new proxy to standard error. </span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.perror.html" class="method">perror</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span>? prefix)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Writes an error message to the log with the same semantics as the POSIX perror function. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">weak</span> <span class="main_type"><a href="Panda.LogProxy.html" class="class">LogProxy</a></span> <b><a href="Panda.LogProxy.ref.html" class="method">ref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Increase the reference count on a proxy. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.unref.html" class="method">unref</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Decrease the reference count on a proxy. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.write.html" class="method">write</a></b> (<span class="main_type"><a href="Panda.Code.html" class="enum">Code</a></span> code, <span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span>? assembler, <span class="main_type"><a href="Panda.identifier.html" class="struct">identifier</a></span>? id, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> message)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print a message to the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.write_f.html" class="method">write_f</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> format, ...)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Put a printf-like message in the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.write_overlap.html" class="method">write_overlap</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print the overlap histogram of an assember to the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.write_str.html" class="method">write_str</a></b> (<span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> str)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print a string to the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.stat_double.html" class="method">stat_double</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> name, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/double.html" class="struct">double</a></span> value)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print a double with a STAT header to the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.stat_long.html" class="method">stat_long</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> name, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/long.html" class="struct">long</a></span> value)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print a double with a STAT header to the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.stat_size_t.html" class="method">stat_size_t</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> name, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/size_t.html" class="struct">size_t</a></span> value)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print a size_t with a STAT header to the log. </span>
+            </div></li>
+          <li class="method">
+            <span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Panda.LogProxy.stat_str.html" class="method">stat_str</a></b> (<span class="main_type"><a href="Panda.Assembler.html" class="class">Assembler</a></span> assembler, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> name, <span class="main_basic_type"><a href="http://www.valadoc.org/glib-2.0/string.html" class="class">string</a></span> value)
+            </span>
+            <div class="leaf_brief_description">
+              <span class="brief_description">Print a string with a STAT header to the log. </span>
+            </div></li>
+        </ul>
+      </div>
+    </div>
+    <br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>
