@@ -55,3 +55,4 @@ test-driver
 testing/reg-test
 testing/reg-test.c
 testing/setup.c
+mktable.dSYM
