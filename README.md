@@ -35,7 +35,7 @@ Please consult the manual page by invoking:
 
 	man pandaseq
 
-or visiting [online PANDAseq manual page](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq_man1.html).
+or visiting [online PANDAseq manual page](https://storage.googleapis.com/pandaseq/pandaseq.html).
 
 The short version is:
 
@@ -71,8 +71,6 @@ PANDAseq may be used in other programs via a programmatic interface. Consult the
 or using, in `configure.ac`:
 
 	PKG_CHECK_MODULES(PANDASEQ, [ pandaseq-2 >= 2.5 ])
-
-A [Vala binding](http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-vapi/) is also included.
 
 Other language bindings are welcome.
 

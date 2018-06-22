@@ -1,20 +1,44 @@
 language: c
+addons:
+  apt:
+    packages:
+    - groff
 env:
-  - OPTIONS= GET_WIN=
-  - OPTIONS="--host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared --with-libcurl=./win" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
-  - OPTIONS=--disable-threads GET_WIN=
-  - OPTIONS="--disable-threads --host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared --with-libcurl=./win" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib" CPPFLAGS="-I./win/include" GET_WIN=true
+- OPTIONS= GET_WIN=
+- OPTIONS="--host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu --enable-shared
+  --with-libcurl=./win" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib"
+  CPPFLAGS="-I./win/include" GET_WIN=true
+- OPTIONS=--disable-threads GET_WIN=
+- OPTIONS="--disable-threads --host=i586-mingw32msvc --build=$(uname -m)-pc-linux-gnu
+  --enable-shared --with-libcurl=./win" PKG_CONFIG_PATH=./win/lib/pkgconfig LDFLAGS="-L./win/lib"
+  CPPFLAGS="-I./win/include" GET_WIN=true
 matrix:
   include:
-    - env: OPTIONS= GET_WIN=
-      compiler: clang
-    - env: OPTIONS=--disable-threads GET_WIN=
-      compiler: clang
+  - env: OPTIONS= GET_WIN=
+    compiler: clang
+  - env: OPTIONS=--disable-threads GET_WIN=
+    compiler: clang
 before_script:
-  - test "x$GET_WIN" = x || wget -O- http://neufeldserver.uwaterloo.ca/~apmasell/pandaseq-windeps.tar.bz2 | tar xj
-  - ./autogen.sh
-  - test "x$GET_WIN" = x || export CC=i586-mingw32msvc-gcc
+- test "x$GET_WIN" = x || wget -O- https://storage.googleapis.com/pandaseq/pandaseq-windeps.tar.bz2
+  | tar xj
+- "./autogen.sh"
+- test "x$GET_WIN" = x || export CC=i586-mingw32msvc-gcc
 script: "./configure $OPTIONS && make all && test x$GET_WIN = xtrue || make check"
+before_deploy:
+- mkdir www
+- man -Thtml ./pandaseq.1 > www/pandaseq.html
 notifications:
   on_success: never
   on_failure: change
+deploy:
+  provider: gcs
+  access_key_id: GOOGFGAJFDXIBCUHHUBRG67I
+  secret_access_key:
+    secure: HvMEAOFb3pc1LmFi8tmjBJVpuD2oINLBAQsx93SdvPqJZllpSQAxwPyzZdSyThk0eClUHdNkTX4notXjjnoPaxKUjnzVtSeet/WhwrDVLhB/cGc7rxTZC7dO/iaNgzW2GmBHCPwb2CfzJ2bmLgTIWQrUDDCYPkGNvVBZb8ATR/Cbc61QuLspjKA6vqQYQJG51y7CdGqjPeTwCTWxc/KlYGzIoodEwBfs9uLaVk/FUkj81lN89SG848ubEYxjzOUABE2pWI1NonImbhbSC5pdSaJBnQhuRinxyfDIC4FfLgvhbb0OYc58FtYJQE/SYLLw7tQb9AAgJmHxsn3WGFaYvrlAPL1DSe19jJoBRouKG9+as9h/r0+ndyVfkV3JEgcojxJb6GzxZdZgIoHIuXmnXnibgoyg/KkhGQjbMNKYoJ8Pl8BEeEHsqP3xvnT6MNRThVgOkxs+5t52kJ8ovHV7KVM4wuL4DhfClfSQXLXu+D+AqvwLWH4PxRHyVWCLJs4q/C6EFB9ivf5ze6wRPbke9haN6jtJ3hZCdzB95la5Ap3MFdR5HHYNWGBJ/OilYFHDVhBz/KEazN+qsw0vjtcX1WZXRJs0aXW9P6q8XgIzgKoXDvYAhbdbYZIe1utdv06VsctWhSNjdkWxVse948D/moI5vUEiFeVd8nVXSKEWe7Y=
+  bucket: pandaseq
+  skip_cleanup: true
+  local_dir: www
+  acl: public_read
+  on:
+    branch: master
+    repo: neufeld/pandaseq
