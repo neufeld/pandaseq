@@ -86,6 +86,9 @@ bool panda_output_fasta(
 	const panda_result_seq *sequence,
 	PandaWriter writer) {
 	size_t it;
+	if (sequence->sequence_length == 0) {
+		return true;
+	}
 	panda_writer_append_c(writer, '>');
 	panda_writer_append_id(writer, &sequence->name);
 	panda_writer_append(writer, ";%f", exp(sequence->quality));
@@ -103,6 +106,9 @@ bool panda_output_fastq(
 	const panda_result_seq *sequence,
 	PandaWriter writer) {
 	size_t it;
+	if (sequence->sequence_length == 0) {
+		return true;
+	}
 	panda_writer_append_c(writer, '@');
 	panda_writer_append_id(writer, &sequence->name);
 	panda_writer_append(writer, ";%f", exp(sequence->quality));
