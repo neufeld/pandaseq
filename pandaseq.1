@@ -130,10 +130,10 @@ will determine if an Illumina identifier is undestood by PANDAseq and if the tag
 Loads an optional validation module to verify sequences are valid before emitting them. See below for more information. You may repeat this option to use multiple validation modules.
 .TP
 \-d flags
-Set debugging/output flags to provide more details about what PANDAseq is doing. To enable a flag, capitalise it; to disable, include a uncapitalise it. Provide information about the \fBb\fRuilding of a sequence. Show excruciating detail about \fBr\fReconstruction. Show some optional \fBs\fRtatistics. Show information about building the \fBk\fR-mer table. Provide error about the \fBf\fRile parsing. Show every \fBm\fRismatch. The default is \fBBFSrk\fR.
+Set debugging/output flags to provide more details about what PANDAseq is doing. To enable a flag, capitalise it; to disable, uncapitalise it. Provide information about the \fBb\fRuilding of a sequence. Show excruciating detail about \fBr\fReconstruction. Show some optional \fBs\fRtatistics. Show information about building the \fBk\fR-mer table. Provide errors about the \fBf\fRile parsing. Show every \fBm\fRismatch. The default is \fBBrSkFm\fR.
 .TP
 \-D penalty
-Sometimes, with repetitive sequence, the primer aligns further down the sequence. To avoid this, a primer penalty can be applied. For each base further down the sequence, \fIpenalty\fR is subtracted from the proability that the primer aligns to this location. By default, the value is zero, and if used, the value should be rather small; 0.01 seesm to be sufficient in most cases.
+Sometimes, with repetitive sequence, the primer aligns further down the sequence. To avoid this, a primer penalty can be applied. For each base further down the sequence, \fIpenalty\fR is subtracted from the proability that the primer aligns to this location. By default, the value is 0, and if used, the value should be rather small; 0.01 seesm to be sufficient in most cases.
 .TP
 \-f forward.fastq
 The location of the forward reads in FASTQ format. The file may be plain FASTQ, or compressed with
@@ -148,13 +148,13 @@ Normally, output will be as a FASTA even though per-base quality information is 
 \-g log.txt
 Log all output to a plain text file, \fIlog.txt\fR, instead of standard error.
 .TP
-\-i index.fastq
-If the index/barcode reads are in a separate FASTQ file, read them an apply them to the input reads.
-.TP
 \-G log.txt.bz2
 Log all output to a
 .BR bzip2 (1)
 compressed text file, \fIlog.txt.bz2\fR, instead of standard error.
+.TP
+\-i index.fastq
+If the index/barcode reads are in a separate FASTQ file, read them and apply them to the input reads.
 .TP
 \-j
 This option is ignored. It used to indicate that input files specified by
@@ -195,11 +195,11 @@ FASTQ file containing the reverse reads. See
 for more information.
 .TP
 \-t threshold
-The score, between zero and one, that a sequence must meet to be kept in the output. Any alignments lower than this will be discarded as low quality. Increasing this number will not necessarily prevent uncalled bases\ (Ns) from appearing in the final sequence.
+The score, between 0 and 1, that a sequence must meet to be kept in the output. Any alignments lower than this will be discarded as low quality. Increasing this number will not necessarily prevent uncalled bases\ (Ns) from appearing in the final sequence.
 It is also used as the threshold to match primers, if primers are supplied. The default value is 0.6.
 .TP
 \-T threads
-The number of threads to spawn. This will only be avilable if PANDAseq was compiled with 
+The number of threads to spawn. This will only be available if PANDAseq was compiled with 
 .BR pthreads (7).
 In most cases, PANDAseq is IO-bound, not CPU-bound; therefore, adding more CPU capacity would have no effect. Try monitoring a running copy of PANDAseq with 
 .BR top (1);
@@ -242,7 +242,7 @@ LOWQ
 The number of sequences where the quality score of the reconstruction is below the threshold. This says nothing about the quality scores of the individual bases in the forward and reverse reads.
 .TP
 DEGENERATE
-The number of sequences containing uncalled/degenerate/N bases in the final reconstruction (it is immaterial if there are uncalled bases in the reads.) This is only done when \fB-N\fR is provided.
+The number of sequences containing uncalled/degenerate/N bases in the final reconstruction (it is immaterial if there are uncalled bases in the reads). This is only done when \fB-N\fR is provided.
 .TP
 SHORT
 The number of sequences where the final reconstructed sequence is too short. This is only done when \fB-l\fR is provided.
@@ -340,7 +340,7 @@ DBG RMER
 A \fIk\fR-mer has been identified in the reverse read.
 .TP
 ERR UNKNOWN ERROR
-Something truly unexpected has happened. This probably involves an validation module.
+Something truly unexpected has happened. This probably involves a validation module.
 .SH EXAMPLES
 This will assemble a data from a run in lane 7:
 
